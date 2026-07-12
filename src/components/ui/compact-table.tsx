@@ -45,7 +45,10 @@ export function CompactTable<T extends { id: string }>({
         <tbody>
           {rows.length === 0 && (
             <tr>
-              <td colSpan={columns.length} className="px-3 py-8 text-center text-xs text-muted-foreground">
+              <td
+                colSpan={columns.length}
+                className="px-3 py-8 text-center text-xs text-muted-foreground"
+              >
                 {empty ?? "Nenhum registro encontrado."}
               </td>
             </tr>

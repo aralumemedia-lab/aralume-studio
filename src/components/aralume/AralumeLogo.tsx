@@ -27,12 +27,7 @@ export function AralumeIcon({ size = 20, className }: { size?: Size; className?:
 
 export function AralumeWordmark({ className }: { className?: string }) {
   return (
-    <span
-      className={cn(
-        "font-semibold tracking-[-0.02em] text-[15px] leading-none",
-        className,
-      )}
-    >
+    <span className={cn("font-semibold tracking-[-0.02em] text-[15px] leading-none", className)}>
       Aralume
     </span>
   );

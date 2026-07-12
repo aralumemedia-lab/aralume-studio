@@ -11,14 +11,7 @@ import type {
   WorkflowStatus,
 } from "@/contracts/status";
 
-type Tone =
-  | "neutral"
-  | "info"
-  | "ok"
-  | "attention"
-  | "warning"
-  | "critical"
-  | "muted";
+type Tone = "neutral" | "info" | "ok" | "attention" | "warning" | "critical" | "muted";
 
 const toneStyles: Record<Tone, string> = {
   neutral: "bg-secondary text-secondary-foreground border-border",
@@ -72,7 +65,11 @@ const channelLabel: Record<ChannelStatus, { label: string; tone: Tone }> = {
 };
 export function ChannelStatusBadge({ status }: { status: ChannelStatus }) {
   const s = channelLabel[status];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }
 
 const workflowLabel: Record<WorkflowStatus, { label: string; tone: Tone }> = {
@@ -87,7 +84,11 @@ const workflowLabel: Record<WorkflowStatus, { label: string; tone: Tone }> = {
 };
 export function WorkflowStatusBadge({ status }: { status: WorkflowStatus }) {
   const s = workflowLabel[status];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }
 
 const agentLabel: Record<AgentStatus, { label: string; tone: Tone }> = {
@@ -101,7 +102,11 @@ const agentLabel: Record<AgentStatus, { label: string; tone: Tone }> = {
 };
 export function AgentStatusBadge({ status }: { status: AgentStatus }) {
   const s = agentLabel[status];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }
 
 const riskLabel: Record<RiskLevel, { label: string; tone: Tone }> = {
@@ -113,7 +118,11 @@ const riskLabel: Record<RiskLevel, { label: string; tone: Tone }> = {
 };
 export function RiskBadge({ level }: { level: RiskLevel }) {
   const s = riskLabel[level];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }
 
 const costLabel: Record<CostStatus, { label: string; tone: Tone }> = {
@@ -138,7 +147,11 @@ const pubLabel: Record<PublicationStatus, { label: string; tone: Tone }> = {
 };
 export function PublicationStatusBadge({ status }: { status: PublicationStatus }) {
   const s = pubLabel[status];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }
 
 const complianceLabel: Record<ComplianceStatus, { label: string; tone: Tone }> = {
@@ -150,7 +163,11 @@ const complianceLabel: Record<ComplianceStatus, { label: string; tone: Tone }> =
 };
 export function ComplianceStatusBadge({ status }: { status: ComplianceStatus }) {
   const s = complianceLabel[status];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }
 
 const approvalLabel: Record<ApprovalStatus, { label: string; tone: Tone }> = {
@@ -162,7 +179,11 @@ const approvalLabel: Record<ApprovalStatus, { label: string; tone: Tone }> = {
 };
 export function ApprovalStatusBadge({ status }: { status: ApprovalStatus }) {
   const s = approvalLabel[status];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }
 
 const contentLabel: Record<ContentStatus, { label: string; tone: Tone }> = {
@@ -184,5 +205,9 @@ const contentLabel: Record<ContentStatus, { label: string; tone: Tone }> = {
 };
 export function ContentStatusBadge({ status }: { status: ContentStatus }) {
   const s = contentLabel[status];
-  return <StatusBadge tone={s.tone} dot>{s.label}</StatusBadge>;
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
 }

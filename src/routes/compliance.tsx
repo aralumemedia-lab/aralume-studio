@@ -8,21 +8,38 @@ import { ComplianceStatusBadge, RiskBadge, StatusBadge } from "@/components/stat
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/compliance")({
-  head: () => ({ meta: [{ title: "Conformidade — Aralume" }, { name: "description", content: "Alertas, bloqueios e riscos editoriais detectados." }] }),
-  component: () => {
+  head: () => ({
+    meta: [
+      { title: "Conformidade — Aralume" },
+      { name: "description", content: "Alertas, bloqueios e riscos editoriais detectados." },
+    ],
+  }),
+  component: function CompliancePage() {
     const { activeChannelId } = useChannelContext();
-    const q = useQuery({ queryKey: ["cc", activeChannelId], queryFn: () => getComplianceChecks(activeChannelId) });
+    const q = useQuery({
+      queryKey: ["cc", activeChannelId],
+      queryFn: () => getComplianceChecks(activeChannelId),
+    });
     const rows = q.data?.data ?? [];
     return (
       <div>
-        <PageHeader eyebrow="Governança" title="Conformidade" description="Alertas, bloqueios e riscos identificados pelo agente de Conformidade." />
+        <PageHeader
+          eyebrow="Governança"
+          title="Conformidade"
+          description="Alertas, bloqueios e riscos identificados pelo agente de Conformidade."
+        />
         <div className="p-4 space-y-3">
           {rows.map((c) => (
             <Card key={c.id}>
               <SectionHeader
                 title={`Conteúdo ${c.contentId}`}
                 description={`Requer revisão humana: ${c.requiresHumanReview ? "sim" : "não"}`}
-                action={<div className="flex items-center gap-1.5"><ComplianceStatusBadge status={c.status} /><RiskBadge level={c.riskLevel} /></div>}
+                action={
+                  <div className="flex items-center gap-1.5">
+                    <ComplianceStatusBadge status={c.status} />
+                    <RiskBadge level={c.riskLevel} />
+                  </div>
+                }
               />
               <ul className="divide-y divide-border rounded-sm border border-border">
                 {c.findings.map((f) => (
@@ -39,12 +56,20 @@ export const Route = createFileRoute("/compliance")({
                     </div>
                   </li>
                 ))}
-                {c.findings.length === 0 && <li className="p-3 text-[12px] text-muted-foreground">Sem findings.</li>}
+                {c.findings.length === 0 && (
+                  <li className="p-3 text-[12px] text-muted-foreground">Sem findings.</li>
+                )}
               </ul>
-              <div className="mt-2 text-[10.5px] text-muted-foreground">Avaliado em {formatDateTime(c.createdAt)}</div>
+              <div className="mt-2 text-[10.5px] text-muted-foreground">
+                Avaliado em {formatDateTime(c.createdAt)}
+              </div>
             </Card>
           ))}
-          {rows.length === 0 && <Card><EmptyState title="Nenhuma verificação no canal ativo" /></Card>}
+          {rows.length === 0 && (
+            <Card>
+              <EmptyState title="Nenhuma verificação no canal ativo" />
+            </Card>
+          )}
         </div>
       </div>
     );

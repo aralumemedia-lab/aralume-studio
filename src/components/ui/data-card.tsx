@@ -103,9 +103,7 @@ export function SectionHeader({
     <div className={cn("flex items-end justify-between gap-4 mb-3", className)}>
       <div className="min-w-0">
         <h2 className="text-[13.5px] font-semibold tracking-tight text-foreground">{title}</h2>
-        {description && (
-          <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
       </div>
       {action}
     </div>

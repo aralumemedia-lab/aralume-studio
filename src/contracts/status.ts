@@ -1,10 +1,4 @@
-export type ChannelStatus =
-  | "active"
-  | "paused"
-  | "draft"
-  | "archived"
-  | "blocked"
-  | "warning";
+export type ChannelStatus = "active" | "paused" | "draft" | "archived" | "blocked" | "warning";
 
 export type WorkflowStatus =
   | "queued"
@@ -17,26 +11,11 @@ export type WorkflowStatus =
   | "retrying";
 
 export type AgentStatus =
-  | "idle"
-  | "running"
-  | "waiting_input"
-  | "waiting_approval"
-  | "blocked"
-  | "failed"
-  | "completed";
+  "idle" | "running" | "waiting_input" | "waiting_approval" | "blocked" | "failed" | "completed";
 
-export type RiskLevel =
-  | "ok"
-  | "attention"
-  | "warning"
-  | "critical"
-  | "blocked";
+export type RiskLevel = "ok" | "attention" | "warning" | "critical" | "blocked";
 
-export type CostStatus =
-  | "healthy"
-  | "attention"
-  | "exceeded"
-  | "not_configured";
+export type CostStatus = "healthy" | "attention" | "exceeded" | "not_configured";
 
 export type PublicationStatus =
   | "not_connected"
@@ -48,18 +27,9 @@ export type PublicationStatus =
   | "failed";
 
 export type ComplianceStatus =
-  | "approved"
-  | "attention"
-  | "rejected"
-  | "blocked"
-  | "needs_human_review";
+  "approved" | "attention" | "rejected" | "blocked" | "needs_human_review";
 
-export type ApprovalStatus =
-  | "pending"
-  | "approved"
-  | "rejected"
-  | "changes_requested"
-  | "blocked";
+export type ApprovalStatus = "pending" | "approved" | "rejected" | "changes_requested" | "blocked";
 
 export type ContentStatus =
   | "idea"

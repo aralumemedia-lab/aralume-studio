@@ -7,7 +7,11 @@ export const formatNumber = (n: number) =>
   new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(n ?? 0);
 
 export const formatPercent = (v: number, digits = 0) =>
-  new Intl.NumberFormat("pt-BR", { style: "percent", minimumFractionDigits: digits, maximumFractionDigits: digits }).format(v ?? 0);
+  new Intl.NumberFormat("pt-BR", {
+    style: "percent",
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(v ?? 0);
 
 export const formatDuration = (seconds: number): string => {
   if (!seconds || seconds < 0) return "—";
@@ -21,7 +25,9 @@ export const formatDuration = (seconds: number): string => {
 
 export const formatDateTime = (iso: string) => {
   try {
-    return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
+    return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(
+      new Date(iso),
+    );
   } catch {
     return iso;
   }

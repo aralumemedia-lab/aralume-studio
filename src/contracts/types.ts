@@ -315,13 +315,7 @@ export type ScenePlan = {
 };
 
 export type MediaAssetType =
-  | "narration"
-  | "image"
-  | "video"
-  | "thumbnail"
-  | "music"
-  | "subtitle"
-  | "brand_asset";
+  "narration" | "image" | "video" | "thumbnail" | "music" | "subtitle" | "brand_asset";
 
 export type MediaAssetBase = {
   id: ID;
@@ -429,13 +423,7 @@ export type HumanApproval = {
   contentId: ID;
   title: string;
   approvalType:
-    | "idea"
-    | "script"
-    | "visual_plan"
-    | "video"
-    | "clip"
-    | "publication"
-    | "risk_exception";
+    "idea" | "script" | "visual_plan" | "video" | "clip" | "publication" | "risk_exception";
   status: ApprovalStatus;
   riskLevel: RiskLevel;
   recommendation: "approve" | "reject" | "request_changes" | "block";
@@ -495,15 +483,7 @@ export type CostEntry = {
   workflowRunId?: ID;
   agentRunId?: ID;
   providerName: string;
-  costType:
-    | "llm"
-    | "tts"
-    | "image"
-    | "video"
-    | "render"
-    | "storage"
-    | "publication"
-    | "other";
+  costType: "llm" | "tts" | "image" | "video" | "render" | "storage" | "publication" | "other";
   description: string;
   amountCents: number;
   createdAt: ISODate;
