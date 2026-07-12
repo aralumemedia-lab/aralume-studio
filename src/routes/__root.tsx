@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/layout/AppShell";
 import { ChannelProvider } from "@/components/aralume/channel-context";
+import { Toaster } from "sonner";
 
 function NotFoundComponent() {
   return (
@@ -113,6 +114,7 @@ function RootComponent() {
         <AppShell>
           <Outlet />
         </AppShell>
+        <Toaster position="bottom-right" toastOptions={{ style: { fontSize: 12 } }} />
       </ChannelProvider>
     </QueryClientProvider>
   );
