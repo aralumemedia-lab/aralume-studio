@@ -84,7 +84,7 @@ export async function getAgentDefinitions(): Promise<ApiListSuccess<AgentDefinit
 }
 
 export async function getDashboardSummary(channelId?: ID): Promise<ApiSuccess<DashboardSummary>> {
-  const channels = filterByChannel(mockChannels, channelId);
+  const channels = channelId ? mockChannels.filter((c) => c.id === channelId) : mockChannels;
   const workflows = filterByChannel(mockWorkflowRuns, channelId);
   const approvals = filterByChannel(mockApprovals, channelId).filter((a) => a.status === "pending");
   const publications = filterByChannel(mockPublicationJobs, channelId);
