@@ -28,7 +28,7 @@ import {
   Plus,
 } from "lucide-react";
 import { AralumeLogo } from "@/components/aralume/AralumeLogo";
-import { useChannelContext } from "@/components/aralume/channel-context";
+import { useChannelContext } from "@/components/aralume/channel-context-state";
 import { cn } from "@/lib/utils";
 import { ChannelStatusBadge } from "@/components/status/badges";
 import { formatCurrencyCents } from "@/lib/format";

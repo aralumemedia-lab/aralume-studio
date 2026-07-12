@@ -1,52 +1,71 @@
-# Aralume — Design System
+# Aralume Studio Frontend Design System
 
-Plataforma SaaS empresarial para operação de uma fábrica editorial multicanal com agentes de IA. Este documento resume os padrões visuais da interface.
+## Identity
+- Aralume Studio uses a dense SaaS admin visual language.
+- The logo family lives in `src/components/aralume/AralumeLogo.tsx` and has icon, wordmark, and compact variants.
+- The app uses Lucide icons with restrained stroke weight and small sizes.
 
-## Identidade
-- **Nome:** Aralume — combinação sutil de "aura" e "lume" (luz).
-- **Símbolo:** um "A" abstrato formado por um feixe luminoso que atravessa uma órbita. Componente reutilizável em `src/components/aralume/AralumeLogo.tsx` com variantes `AralumeIcon`, `AralumeWordmark`, `AralumeLogo` (com prop `compact` para sidebar recolhida).
-- **Iconografia:** Lucide (`lucide-react`) com traço `1.5`, cantos suaves, tamanhos padrão 13–16px.
+## Core tokens
+- Theme tokens are defined in `src/styles.css`.
+- Surfaces use semantic tokens for background, card, muted surface, border, and ring.
+- Status colors are semantic, not literal, and map to project enums in `src/contracts/status.ts`.
+- The sidebar has its own dark palette and active state tokens.
 
-## Tokens (src/styles.css, @theme inline + :root)
-- Superfícies: `--background`, `--surface`, `--surface-muted`, `--card`.
-- Texto: `--foreground`, `--muted-foreground`.
-- Primária: `--primary` (azul profundo oklch 0.46 0.14 250), `--primary-soft`.
-- Bordas: `--border`, `--border-strong`, `--input`, `--ring`.
-- Status: `--ok`, `--attention`, `--warning`, `--critical`, `--info` (cada uma com variante `-soft`).
-- Sidebar: paleta escura própria (`--sidebar`, `--sidebar-active`, `--sidebar-muted`, `--sidebar-border`).
-- Raio base `--radius: 0.375rem`.
+## Typography
+- Primary font: Inter.
+- Mono font: JetBrains Mono.
+- The UI is intentionally compact:
+- page titles are medium-sized and tight;
+- section titles are smaller than standard marketing dashboards;
+- body text is small enough for operational tables;
+- tables use tabular numerals where possible.
 
-## Tipografia
-- Família: `Inter` (via `<link>` no `__root`), fallback system-ui. Mono: `JetBrains Mono`.
-- Escala densa:
-  - Página H1: 22–26px, `font-semibold`, `tracking-tight`.
-  - H2/Section: 13.5px, `font-semibold`.
-  - Corpo: 13px base (body). Tabelas: 12px. Labels/eyebrows: 10.5–11px uppercase 0.06–0.1em.
-  - Números: `tabular-nums`.
+## Density and spacing
+- The app favors operational density over roomy consumer UI.
+- Sidebar width is wide when expanded and compact when collapsed.
+- Topbar height is consistent and shallow.
+- Cards use compact padding.
+- Table rows are short and readable.
+- Actions are small and aligned with admin workflows.
 
-## Densidade
-- Sidebar 248px expandida / 56px recolhida.
-- Topbar 56px.
-- Linhas de tabela 34px, header 32px.
-- Cards com padding 16px (`p-4`). KPIs compactos.
-- Botões: h-7 (11.5px) para tabelas, h-8 (12px) para topbar/ações.
+## Components
+- Layout primitives: `AppShell`, `Topbar`, `Sidebar`, `PageHeader`, `ChannelSwitcher`.
+- Content blocks: `Card`, `CardHeader`, `KpiCard`, `SectionHeader`, `EmptyState`, `LoadingState`, `ErrorState`.
+- Tables: `CompactTable`.
+- Status elements: `StatusBadge` plus domain-specific badges for channels, workflows, agents, risk, cost, publication, compliance, approval, and content.
+- Feedback: toast-based mock actions through `sonner`.
 
-## Componentes chave
-- **Layout:** `AppShell`, `PageHeader`, `Sidebar` (interno ao AppShell), `Topbar`, `ChannelSwitcher`.
-- **Cards:** `Card`, `CardHeader`, `KpiCard`, `SectionHeader`, `EmptyState`, `LoadingState`, `ErrorState` (`components/ui/data-card.tsx`).
-- **Tabelas:** `CompactTable<T>` com `Column<T>` (`components/ui/compact-table.tsx`).
-- **Progresso:** `ProgressBar` com `tone` semântico.
-- **Status Badges:** `StatusBadge` e helpers `ChannelStatusBadge`, `WorkflowStatusBadge`, `AgentStatusBadge`, `RiskBadge`, `CostBadge`, `PublicationStatusBadge`, `ComplianceStatusBadge`, `ApprovalStatusBadge`, `ContentStatusBadge`.
+## Page patterns
+1. `PageHeader` with eyebrow, title, description, and actions.
+2. KPI strip near the top.
+3. Main content area plus a secondary panel for supporting state.
+4. Badges on rows and cards for status-heavy views.
+5. Tables remain compact and legible on laptop and desktop widths.
 
-## Padrões de tela
-1. `PageHeader` com `eyebrow`, `title`, `description`, `actions`.
-2. Faixa de KPIs (grid 2/4/8 colunas conforme viewport).
-3. Duas colunas: conteúdo principal (workflows/tabelas) + painel lateral (custos, aprovações, alertas).
-4. Todas as tabelas: badge de status por linha, número tabular, ação inline opcional.
-5. Ações mockadas usam `sonner` toast; nenhuma chamada real é feita.
+## State patterns
+- Every page should support loading, empty, error, and data states.
+- Empty states should explain the missing data and the next operator action.
+- Error states should stay compact and recoverable.
 
-## Regras
-- **Nunca** usar `text-white`, `bg-black`, cores literais `#hex` em componentes — sempre tokens semânticos.
-- Estados obrigatórios em toda página: loading, empty, error, com dados.
-- Cores de status seguem estritamente os enums em `src/contracts/status.ts`.
-- Todas as páginas consomem `src/services/api-client.ts` (que hoje reexporta `mock-api`) — jamais importar mocks diretamente em componentes de página.
+## Navigation and shell
+- Sidebar is the main navigation anchor.
+- Topbar surfaces channel context and page-level controls.
+- Channel switching is a first-class interaction and should remain visually obvious.
+
+## Rules for new screens
+- Reuse existing tokens and primitives before adding new ones.
+- Do not introduce literal colors or ad hoc spacing scales.
+- Keep new screens dense, consistent, and business-oriented.
+- Status should always be expressed with the project enums and existing badge helpers.
+
+## QA minimum
+- Validate dashboard, channels, and agent office first.
+- Check for overflow, overlap, broken cards, unreadable tables, and oversized badges.
+- Verify desktop widths at 1366, 1600, and 1920.
+- Prefer structural fixes over restyling.
+
+## Sprint 1 snapshot
+- Lint warnings for `react-refresh/only-export-components` were removed by splitting shared exports into dedicated modules.
+- The visual language stayed intact; no broad redesign was introduced.
+- Screenshots were captured for dashboard, channels, and agent office at 1366x768, 1600x900, and 1920x1080.
+- Smoke checks were also performed on production, approvals, costs, compliance, and audit logs.

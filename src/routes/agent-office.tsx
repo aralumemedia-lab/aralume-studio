@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowRight, Bot, ShieldAlert } from "lucide-react";
 import { PageHeader } from "@/components/layout/AppShell";
-import { useChannelContext } from "@/components/aralume/channel-context";
+import { useChannelContext } from "@/components/aralume/channel-context-state";
 import { getAgentDefinitions, getAgentOfficeSnapshot } from "@/services/api-client";
 import { Card, EmptyState, KpiCard, SectionHeader } from "@/components/ui/data-card";
 import { AgentStatusBadge, RiskBadge, WorkflowStatusBadge } from "@/components/status/badges";
