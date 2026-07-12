@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChannelsRouteImport } from './routes/channels'
+import { Route as AgentOfficeRouteImport } from './routes/agent-office'
 import { Route as IndexRouteImport } from './routes/index'
 
 const DashboardRoute = DashboardRouteImport.update({
@@ -23,6 +24,11 @@ const ChannelsRoute = ChannelsRouteImport.update({
   path: '/channels',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentOfficeRoute = AgentOfficeRouteImport.update({
+  id: '/agent-office',
+  path: '/agent-office',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agent-office': typeof AgentOfficeRoute
   '/channels': typeof ChannelsRoute
   '/dashboard': typeof DashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agent-office': typeof AgentOfficeRoute
   '/channels': typeof ChannelsRoute
   '/dashboard': typeof DashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agent-office': typeof AgentOfficeRoute
   '/channels': typeof ChannelsRoute
   '/dashboard': typeof DashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/channels' | '/dashboard'
+  fullPaths: '/' | '/agent-office' | '/channels' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/channels' | '/dashboard'
-  id: '__root__' | '/' | '/channels' | '/dashboard'
+  to: '/' | '/agent-office' | '/channels' | '/dashboard'
+  id: '__root__' | '/' | '/agent-office' | '/channels' | '/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgentOfficeRoute: typeof AgentOfficeRoute
   ChannelsRoute: typeof ChannelsRoute
   DashboardRoute: typeof DashboardRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChannelsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent-office': {
+      id: '/agent-office'
+      path: '/agent-office'
+      fullPath: '/agent-office'
+      preLoaderRoute: typeof AgentOfficeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgentOfficeRoute: AgentOfficeRoute,
   ChannelsRoute: ChannelsRoute,
   DashboardRoute: DashboardRoute,
 }
