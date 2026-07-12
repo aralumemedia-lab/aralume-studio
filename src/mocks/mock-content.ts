@@ -1,0 +1,120 @@
+import type {
+  AgentHandoff,
+  AgentRun,
+  ContentIdea,
+  ProductionItem,
+  ResearchSession,
+  Script,
+  VideoAsset,
+  DerivedClip,
+  MediaAssetBase,
+  WorkflowRun,
+} from "@/contracts/types";
+
+// -------- content ideas --------
+export const mockContentIdeas: ContentIdea[] = [
+  { id: "idea_01", channelId: "ch_historia", title: "A queda de Constantinopla contada em 12 minutos", summary: "Reconstrução dos últimos dias da capital bizantina com foco em decisões estratégicas.", niche: "Idade Média", source: "Britannica + Cambridge Medieval History", opportunityScore: 87, originalityScore: 74, visualPotentialScore: 91, clipPotentialScore: 82, riskLevel: "ok", status: "research", createdAt: "2026-07-08T12:00:00.000Z", updatedAt: "2026-07-11T09:15:00.000Z" },
+  { id: "idea_02", channelId: "ch_historia", title: "Como os astecas mediam o tempo", summary: "O calendário sagrado, o civil e a engenharia por trás do sistema.", niche: "Antiguidade", source: "USP + Britannica", opportunityScore: 78, originalityScore: 88, visualPotentialScore: 84, clipPotentialScore: 79, riskLevel: "ok", status: "script", createdAt: "2026-07-04T10:00:00.000Z", updatedAt: "2026-07-11T18:22:00.000Z" },
+  { id: "idea_03", channelId: "ch_curiosidades", title: "Por que dormimos? A hipótese sináptica", summary: "Explicação atual sobre a função restaurativa do sono e evidências.", niche: "Corpo humano", source: "Nature Neuroscience", opportunityScore: 82, originalityScore: 69, visualPotentialScore: 71, clipPotentialScore: 88, riskLevel: "attention", status: "editing", createdAt: "2026-07-06T14:20:00.000Z", updatedAt: "2026-07-12T11:02:00.000Z" },
+  { id: "idea_04", channelId: "ch_curiosidades", title: "O paradoxo de Fermi em 8 respostas", summary: "Panorama das hipóteses para a ausência de contato extraterrestre.", niche: "Espaço", source: "Scientific American", opportunityScore: 91, originalityScore: 65, visualPotentialScore: 88, clipPotentialScore: 94, riskLevel: "warning", status: "waiting_approval", createdAt: "2026-07-02T15:00:00.000Z", updatedAt: "2026-07-12T13:44:00.000Z" },
+  { id: "idea_05", channelId: "ch_curiosidades", title: "Efeito Dunning-Kruger explicado", summary: "O que a pesquisa original realmente mostra e o que virou mito.", niche: "Psicologia", source: "APA + Nature", opportunityScore: 76, originalityScore: 81, visualPotentialScore: 62, clipPotentialScore: 90, riskLevel: "ok", status: "idea", createdAt: "2026-07-11T09:00:00.000Z", updatedAt: "2026-07-11T09:00:00.000Z" },
+  { id: "idea_06", channelId: "ch_historia", title: "A logística do Império Romano", summary: "Estradas, portos e cadeia de abastecimento em escala continental.", niche: "Antiguidade", source: "Cambridge + Britannica", opportunityScore: 84, originalityScore: 72, visualPotentialScore: 89, clipPotentialScore: 76, riskLevel: "ok", status: "clips", createdAt: "2026-06-28T09:00:00.000Z", updatedAt: "2026-07-12T08:00:00.000Z" },
+];
+
+// -------- research --------
+export const mockResearchSessions: ResearchSession[] = [
+  { id: "rs_01", channelId: "ch_historia", contentId: "idea_01", title: "Fontes e cronologia — Constantinopla 1453", status: "running", sourceCount: 12, claimCount: 34, confidenceScore: 82, riskLevel: "ok", createdAt: "2026-07-09T10:00:00.000Z", updatedAt: "2026-07-12T13:20:00.000Z" },
+  { id: "rs_02", channelId: "ch_historia", contentId: "idea_02", title: "Calendários astecas — fontes primárias", status: "completed", sourceCount: 9, claimCount: 21, confidenceScore: 88, riskLevel: "ok", createdAt: "2026-07-05T10:00:00.000Z", updatedAt: "2026-07-08T18:00:00.000Z" },
+  { id: "rs_03", channelId: "ch_curiosidades", contentId: "idea_04", title: "Paradoxo de Fermi — 12 hipóteses", status: "waiting_approval", sourceCount: 15, claimCount: 42, confidenceScore: 64, riskLevel: "warning", createdAt: "2026-07-03T10:00:00.000Z", updatedAt: "2026-07-11T22:10:00.000Z" },
+];
+
+// -------- scripts --------
+export const mockScripts: Script[] = [
+  { id: "sc_01", channelId: "ch_historia", contentId: "idea_02", title: "Como os astecas mediam o tempo — v3", status: "script", currentVersionId: "scv_01_v3", estimatedDurationSeconds: 720, hook: "Um calendário que previa o fim do mundo — e por que isso é mais interessante do que parece.", promise: "Você vai entender dois calendários interligados que sustentaram um império.", cta: "Assista à próxima parte da série sobre astecas.", riskLevel: "ok", createdAt: "2026-07-05T10:00:00.000Z", updatedAt: "2026-07-11T18:22:00.000Z" },
+  { id: "sc_02", channelId: "ch_curiosidades", contentId: "idea_03", title: "Por que dormimos — v2", status: "editing", currentVersionId: "scv_02_v2", estimatedDurationSeconds: 480, hook: "Toda noite, você entra em um dos estados mais estranhos que existem.", promise: "Você vai sair sabendo o que o cérebro faz enquanto você dorme.", cta: "Compartilhe com alguém que dorme mal.", riskLevel: "attention", createdAt: "2026-07-07T10:00:00.000Z", updatedAt: "2026-07-12T09:30:00.000Z" },
+];
+
+// -------- workflows --------
+export const mockWorkflowRuns: WorkflowRun[] = [
+  { id: "wf_01", channelId: "ch_historia", contentId: "idea_01", workflowType: "research", title: "Pesquisa — Constantinopla 1453", status: "running", currentAgentId: "ag_researcher", progressPercent: 62, riskLevel: "ok", costEstimateCents: 8400, costActualCents: 5210, startedAt: "2026-07-11T09:00:00.000Z", lastActivityAt: "2026-07-12T13:58:00.000Z", createdAt: "2026-07-11T09:00:00.000Z", updatedAt: "2026-07-12T13:58:00.000Z" },
+  { id: "wf_02", channelId: "ch_historia", contentId: "idea_02", workflowType: "script", title: "Roteiro — Calendário Asteca v3", status: "waiting_approval", currentAgentId: "ag_editorial", progressPercent: 95, riskLevel: "ok", costEstimateCents: 12000, costActualCents: 11640, startedAt: "2026-07-08T09:00:00.000Z", lastActivityAt: "2026-07-11T18:22:00.000Z", createdAt: "2026-07-08T09:00:00.000Z", updatedAt: "2026-07-11T18:22:00.000Z" },
+  { id: "wf_03", channelId: "ch_curiosidades", contentId: "idea_03", workflowType: "media_production", title: "Produção — Por que dormimos", status: "running", currentAgentId: "ag_editor", progressPercent: 74, riskLevel: "attention", costEstimateCents: 22000, costActualCents: 18320, startedAt: "2026-07-10T09:00:00.000Z", lastActivityAt: "2026-07-12T11:02:00.000Z", createdAt: "2026-07-10T09:00:00.000Z", updatedAt: "2026-07-12T11:02:00.000Z" },
+  { id: "wf_04", channelId: "ch_curiosidades", contentId: "idea_04", workflowType: "approval", title: "Aprovação — Paradoxo de Fermi", status: "waiting_approval", currentAgentId: "ag_compliance", progressPercent: 88, riskLevel: "warning", costEstimateCents: 26000, costActualCents: 24610, startedAt: "2026-07-05T09:00:00.000Z", lastActivityAt: "2026-07-12T13:44:00.000Z", createdAt: "2026-07-05T09:00:00.000Z", updatedAt: "2026-07-12T13:44:00.000Z" },
+  { id: "wf_05", channelId: "ch_curiosidades", contentId: "idea_04", workflowType: "media_production", title: "Render — Paradoxo de Fermi", status: "blocked", currentAgentId: "ag_compliance", progressPercent: 40, riskLevel: "critical", costEstimateCents: 30000, costActualCents: 12800, startedAt: "2026-07-09T09:00:00.000Z", lastActivityAt: "2026-07-11T20:00:00.000Z", blockedReason: "Claim sem fonte primária detectado pelo Conformidade.", createdAt: "2026-07-09T09:00:00.000Z", updatedAt: "2026-07-11T20:00:00.000Z" },
+  { id: "wf_06", channelId: "ch_historia", contentId: "idea_06", workflowType: "publication_preparation", title: "Publicação — Logística Romana", status: "completed", progressPercent: 100, riskLevel: "ok", costEstimateCents: 3200, costActualCents: 3040, startedAt: "2026-07-10T09:00:00.000Z", finishedAt: "2026-07-11T14:00:00.000Z", lastActivityAt: "2026-07-11T14:00:00.000Z", createdAt: "2026-07-10T09:00:00.000Z", updatedAt: "2026-07-11T14:00:00.000Z" },
+  { id: "wf_07", channelId: "ch_historia", contentId: "idea_01", workflowType: "visual_plan", title: "Plano visual — Constantinopla", status: "queued", progressPercent: 0, riskLevel: "ok", costEstimateCents: 6000, costActualCents: 0, startedAt: "2026-07-12T13:00:00.000Z", lastActivityAt: "2026-07-12T13:00:00.000Z", createdAt: "2026-07-12T13:00:00.000Z", updatedAt: "2026-07-12T13:00:00.000Z" },
+];
+
+// -------- agent runs (cockpit) --------
+export const mockAgentRuns: AgentRun[] = [
+  { id: "ar_01", channelId: "ch_historia", workflowRunId: "wf_01", workflowStepId: "st_01", agentId: "ag_researcher", agentName: "Pesquisador", status: "running", currentTask: "Cruzando 3 fontes para o cerco de Constantinopla", inputSummary: "Briefing editorial + escopo temporal 1451–1453", outputSummary: "12 fontes coletadas, 34 claims mapeados", progressPercent: 62, riskLevel: "ok", costEstimateCents: 4200, costActualCents: 2610, durationSeconds: 1820, modelName: "aralume-research-v2", providerName: "Aralume AI (mock)", startedAt: "2026-07-11T09:00:00.000Z", lastActivityAt: "2026-07-12T13:58:00.000Z" },
+  { id: "ar_02", channelId: "ch_historia", workflowRunId: "wf_02", workflowStepId: "st_02", agentId: "ag_editorial", agentName: "Editorial", status: "waiting_approval", currentTask: "Aguardando revisão humana do roteiro v3", inputSummary: "Roteiro v3 do Asteca", outputSummary: "Recomendação: aprovar com 2 ajustes menores", progressPercent: 95, riskLevel: "ok", costEstimateCents: 3000, costActualCents: 2910, durationSeconds: 2640, modelName: "aralume-editorial-v1", providerName: "Aralume AI (mock)", startedAt: "2026-07-10T09:00:00.000Z", lastActivityAt: "2026-07-11T18:22:00.000Z" },
+  { id: "ar_03", channelId: "ch_curiosidades", workflowRunId: "wf_03", workflowStepId: "st_03", agentId: "ag_editor", agentName: "Editor de Vídeo", status: "running", currentTask: "Montagem — sequência 4 de 7", inputSummary: "22 assets visuais + narração final", outputSummary: "Corte grosseiro em 74%", progressPercent: 74, riskLevel: "attention", costEstimateCents: 6800, costActualCents: 4820, durationSeconds: 3210, modelName: "aralume-editor-v1", providerName: "Aralume AI (mock)", startedAt: "2026-07-11T09:00:00.000Z", lastActivityAt: "2026-07-12T11:02:00.000Z" },
+  { id: "ar_04", channelId: "ch_curiosidades", workflowRunId: "wf_05", workflowStepId: "st_04", agentId: "ag_compliance", agentName: "Conformidade", status: "blocked", currentTask: "Bloqueio: claim sem fonte primária", inputSummary: "Roteiro Paradoxo de Fermi + 15 fontes", outputSummary: "3 findings — 1 bloqueante", progressPercent: 40, riskLevel: "critical", costEstimateCents: 2200, costActualCents: 980, durationSeconds: 1200, modelName: "aralume-compliance-v1", providerName: "Aralume AI (mock)", startedAt: "2026-07-11T18:00:00.000Z", lastActivityAt: "2026-07-11T20:00:00.000Z", errorMessage: "Claim 'colonizações prévias' sem fonte primária." },
+  { id: "ar_05", channelId: "ch_curiosidades", workflowRunId: "wf_04", workflowStepId: "st_05", agentId: "ag_publisher", agentName: "Publicador", status: "waiting_input", currentTask: "Aguardando decisão humana", inputSummary: "Pacote de publicação preliminar", progressPercent: 88, riskLevel: "warning", costEstimateCents: 1200, costActualCents: 1050, durationSeconds: 640, providerName: "Aralume AI (mock)", startedAt: "2026-07-12T09:00:00.000Z", lastActivityAt: "2026-07-12T13:44:00.000Z" },
+  { id: "ar_06", channelId: "ch_historia", workflowRunId: "wf_07", workflowStepId: "st_06", agentId: "ag_visual", agentName: "Direção Visual", status: "idle", currentTask: "Na fila", inputSummary: "Roteiro Constantinopla v1", progressPercent: 0, riskLevel: "ok", costEstimateCents: 3200, costActualCents: 0, providerName: "Aralume AI (mock)", startedAt: "2026-07-12T13:00:00.000Z", lastActivityAt: "2026-07-12T13:00:00.000Z" },
+  { id: "ar_07", channelId: "ch_curiosidades", workflowRunId: "wf_03", workflowStepId: "st_07", agentId: "ag_voice", agentName: "Narração", status: "completed", currentTask: "Narração final entregue", inputSummary: "Roteiro v2", outputSummary: "8m12s — Luíza PT-BR", progressPercent: 100, riskLevel: "ok", costEstimateCents: 1800, costActualCents: 1740, durationSeconds: 1120, modelName: "aralume-voice-v3", providerName: "Aralume AI (mock)", startedAt: "2026-07-11T14:00:00.000Z", finishedAt: "2026-07-11T14:19:00.000Z", lastActivityAt: "2026-07-11T14:19:00.000Z" },
+  { id: "ar_08", channelId: "ch_historia", workflowRunId: "wf_01", workflowStepId: "st_08", agentId: "ag_niche", agentName: "Inteligência de Nicho", status: "completed", currentTask: "Detecção concluída", inputSummary: "Tendências de busca — jul/2026", outputSummary: "5 oportunidades de alto potencial", progressPercent: 100, riskLevel: "ok", costEstimateCents: 800, costActualCents: 770, durationSeconds: 420, providerName: "Aralume AI (mock)", startedAt: "2026-07-10T09:00:00.000Z", finishedAt: "2026-07-10T09:07:00.000Z", lastActivityAt: "2026-07-10T09:07:00.000Z" },
+];
+
+export const mockAgentHandoffs: AgentHandoff[] = [
+  { id: "ho_01", channelId: "ch_historia", workflowRunId: "wf_01", fromAgentId: "ag_niche", toAgentId: "ag_researcher", artifactType: "briefing", status: "delivered", title: "Briefing — Constantinopla 1453", summary: "5 oportunidades, top pick: cerco 1453", createdAt: "2026-07-10T09:07:00.000Z", deliveredAt: "2026-07-10T09:08:00.000Z" },
+  { id: "ho_02", channelId: "ch_historia", workflowRunId: "wf_02", fromAgentId: "ag_researcher", toAgentId: "ag_editorial", artifactType: "research", status: "delivered", title: "Pesquisa — Calendário Asteca", summary: "9 fontes, 21 claims, confiança 88%", createdAt: "2026-07-08T18:00:00.000Z", deliveredAt: "2026-07-08T18:02:00.000Z" },
+  { id: "ho_03", channelId: "ch_historia", workflowRunId: "wf_02", fromAgentId: "ag_editorial", toAgentId: "ag_writer", artifactType: "editorial_review", status: "delivered", title: "Revisão editorial aprovada", summary: "Tom e escopo confirmados", createdAt: "2026-07-09T10:00:00.000Z", deliveredAt: "2026-07-09T10:00:30.000Z" },
+  { id: "ho_04", channelId: "ch_curiosidades", workflowRunId: "wf_03", fromAgentId: "ag_voice", toAgentId: "ag_editor", artifactType: "narration", status: "delivered", title: "Narração final — Por que dormimos", summary: "8m12s, Luíza PT-BR", createdAt: "2026-07-11T14:19:00.000Z", deliveredAt: "2026-07-11T14:20:00.000Z" },
+  { id: "ho_05", channelId: "ch_curiosidades", workflowRunId: "wf_05", fromAgentId: "ag_editor", toAgentId: "ag_compliance", artifactType: "video", status: "blocked", title: "Vídeo — Paradoxo de Fermi", summary: "Bloqueado por finding de conformidade", createdAt: "2026-07-11T18:00:00.000Z" },
+  { id: "ho_06", channelId: "ch_curiosidades", workflowRunId: "wf_04", fromAgentId: "ag_compliance", toAgentId: "ag_publisher", artifactType: "approval_package", status: "pending", title: "Pacote de aprovação — Fermi", summary: "Aguardando revisão humana", createdAt: "2026-07-12T13:44:00.000Z" },
+];
+
+// -------- production items --------
+export const mockProductionItems: ProductionItem[] = mockContentIdeas.map((idea, i) => {
+  const wf = mockWorkflowRuns.find((w) => w.contentId === idea.id) ?? mockWorkflowRuns[i % mockWorkflowRuns.length];
+  return {
+    id: `pi_${idea.id}`,
+    channelId: idea.channelId,
+    contentId: idea.id,
+    title: idea.title,
+    status: idea.status,
+    workflowRunId: wf.id,
+    currentAgentId: wf.currentAgentId,
+    currentAgentName: mockAgentRuns.find((a) => a.agentId === wf.currentAgentId)?.agentName,
+    progressPercent: wf.progressPercent,
+    costActualCents: wf.costActualCents,
+    riskLevel: idea.riskLevel,
+    nextAction:
+      idea.status === "waiting_approval"
+        ? "Aguardando aprovação humana"
+        : idea.status === "editing"
+          ? "Montagem em curso"
+          : idea.status === "research"
+            ? "Coleta de fontes"
+            : idea.status === "script"
+              ? "Revisão editorial"
+              : idea.status === "clips"
+                ? "Geração de cortes"
+                : "Aguardando etapa seguinte",
+    lastActivityAt: wf.lastActivityAt,
+  };
+});
+
+// -------- media, videos, clips --------
+export const mockMediaAssets: MediaAssetBase[] = [
+  { id: "ma_01", channelId: "ch_historia", contentId: "idea_02", type: "narration", title: "Narração — Asteca v3", status: "available", origin: "generated", licenseStatus: "verified", providerName: "Aralume TTS", modelName: "aralume-voice-v3", costActualCents: 1740, riskLevel: "ok", createdAt: "2026-07-11T14:19:00.000Z", updatedAt: "2026-07-11T14:19:00.000Z" },
+  { id: "ma_02", channelId: "ch_historia", contentId: "idea_02", type: "image", title: "Cena 04 — Templo Mayor", status: "available", origin: "generated", licenseStatus: "verified", providerName: "Aralume Vision", modelName: "aralume-img-v2", prompt: "Templo Mayor à luz do amanhecer, estilo cinematográfico", costActualCents: 320, riskLevel: "ok", createdAt: "2026-07-10T10:00:00.000Z", updatedAt: "2026-07-10T10:00:00.000Z" },
+  { id: "ma_03", channelId: "ch_curiosidades", contentId: "idea_03", type: "video", title: "B-roll — Cérebro dormindo", status: "processing", origin: "licensed", licenseStatus: "pending", providerName: "StockCo (mock)", costActualCents: 1800, riskLevel: "attention", createdAt: "2026-07-12T09:00:00.000Z", updatedAt: "2026-07-12T09:30:00.000Z" },
+  { id: "ma_04", channelId: "ch_curiosidades", contentId: "idea_04", type: "thumbnail", title: "Thumb — Paradoxo de Fermi", status: "blocked", origin: "generated", licenseStatus: "blocked", providerName: "Aralume Vision", costActualCents: 240, riskLevel: "critical", createdAt: "2026-07-11T20:00:00.000Z", updatedAt: "2026-07-11T20:00:00.000Z" },
+  { id: "ma_05", channelId: "ch_historia", type: "music", title: "Trilha — Épico contido", status: "available", origin: "licensed", licenseStatus: "verified", providerName: "MusicPool (mock)", costActualCents: 900, riskLevel: "ok", createdAt: "2026-06-30T09:00:00.000Z", updatedAt: "2026-06-30T09:00:00.000Z" },
+  { id: "ma_06", channelId: "ch_curiosidades", contentId: "idea_03", type: "subtitle", title: "Legendas PT-BR — Por que dormimos", status: "available", origin: "generated", licenseStatus: "verified", providerName: "Aralume Captions", costActualCents: 80, riskLevel: "ok", createdAt: "2026-07-12T10:00:00.000Z", updatedAt: "2026-07-12T10:00:00.000Z" },
+];
+
+export const mockVideoAssets: VideoAsset[] = [
+  { id: "vd_01", channelId: "ch_historia", contentId: "idea_06", title: "A logística do Império Romano", status: "published", durationSeconds: 842, format: "horizontal", resolution: "1920x1080", renderStatus: "rendered", qualityStatus: "passed", complianceStatus: "approved", costActualCents: 28400, createdAt: "2026-07-05T09:00:00.000Z", updatedAt: "2026-07-11T14:00:00.000Z" },
+  { id: "vd_02", channelId: "ch_curiosidades", contentId: "idea_03", title: "Por que dormimos?", status: "editing", durationSeconds: 492, format: "horizontal", resolution: "1920x1080", renderStatus: "rendering", qualityStatus: "not_checked", complianceStatus: "attention", costActualCents: 18320, createdAt: "2026-07-10T09:00:00.000Z", updatedAt: "2026-07-12T11:02:00.000Z" },
+  { id: "vd_03", channelId: "ch_curiosidades", contentId: "idea_04", title: "Paradoxo de Fermi — 8 respostas", status: "blocked", durationSeconds: 0, format: "horizontal", resolution: "1920x1080", renderStatus: "not_started", qualityStatus: "not_checked", complianceStatus: "blocked", costActualCents: 12800, createdAt: "2026-07-09T09:00:00.000Z", updatedAt: "2026-07-11T20:00:00.000Z" },
+];
+
+export const mockDerivedClips: DerivedClip[] = [
+  { id: "cl_01", channelId: "ch_historia", parentVideoId: "vd_01", title: "As estradas romanas em 45s", hook: "1 império, 400 mil km de estradas. E tudo começou por um motivo militar.", description: "Corte vertical destacando a rede viária.", durationSeconds: 45, targetPlatform: "youtube_shorts", status: "published", riskLevel: "ok", clipPotentialScore: 88, createdAt: "2026-07-11T15:00:00.000Z", updatedAt: "2026-07-11T15:00:00.000Z" },
+  { id: "cl_02", channelId: "ch_historia", parentVideoId: "vd_01", title: "Como Roma abastecia 1 milhão de pessoas", hook: "Uma cidade de 1 milhão, sem eletricidade, sem trem. Como?", description: "Foco em logística de grãos.", durationSeconds: 58, targetPlatform: "tiktok", status: "scheduled", riskLevel: "ok", clipPotentialScore: 91, createdAt: "2026-07-11T16:00:00.000Z", updatedAt: "2026-07-11T16:00:00.000Z" },
+  { id: "cl_03", channelId: "ch_curiosidades", parentVideoId: "vd_02", title: "Seu cérebro faz faxina enquanto você dorme", hook: "Existe um sistema de esgoto no seu cérebro. Sério.", description: "Sistema glinfático, corte inicial.", durationSeconds: 52, targetPlatform: "instagram_reels", status: "clips", riskLevel: "attention", clipPotentialScore: 94, createdAt: "2026-07-12T10:30:00.000Z", updatedAt: "2026-07-12T10:30:00.000Z" },
+];

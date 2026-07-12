@@ -1,0 +1,8 @@
+import type { HumanApproval } from "@/contracts/types";
+
+export const mockApprovals: HumanApproval[] = [
+  { id: "ap_01", channelId: "ch_historia", contentId: "idea_02", title: "Aprovar roteiro — Calendário Asteca v3", approvalType: "script", status: "pending", riskLevel: "ok", recommendation: "approve", summary: "Editorial recomenda aprovação com 2 ajustes menores de tom.", costActualCents: 11640, createdAt: "2026-07-11T18:22:00.000Z" },
+  { id: "ap_02", channelId: "ch_curiosidades", contentId: "idea_03", title: "Aprovar vídeo — Por que dormimos", approvalType: "video", status: "pending", riskLevel: "attention", recommendation: "request_changes", summary: "Qualidade sinaliza áudio com pico em 2 trechos. Revisão sugerida antes da publicação.", costActualCents: 18320, createdAt: "2026-07-12T11:02:00.000Z" },
+  { id: "ap_03", channelId: "ch_curiosidades", contentId: "idea_04", title: "Exceção de risco — Paradoxo de Fermi", approvalType: "risk_exception", status: "pending", riskLevel: "critical", recommendation: "block", summary: "Conformidade detectou claim sem fonte primária. Não recomendado publicar como está.", costActualCents: 24610, createdAt: "2026-07-12T13:44:00.000Z" },
+  { id: "ap_04", channelId: "ch_historia", contentId: "idea_06", title: "Publicação — Logística Romana", approvalType: "publication", status: "approved", riskLevel: "ok", recommendation: "approve", summary: "Aprovado por Ana Ribeiro.", costActualCents: 3040, createdAt: "2026-07-11T13:50:00.000Z", decidedAt: "2026-07-11T14:00:00.000Z", decidedBy: "Ana Ribeiro" },
+];
