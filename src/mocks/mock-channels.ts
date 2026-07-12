@@ -59,8 +59,7 @@ export const mockChannels: Channel[] = [
     id: "ch_negocios",
     name: "Aralume Negócios",
     slug: "aralume-negocios",
-    description:
-      "Análises de mercado, cases empresariais e estratégia para tomadores de decisão.",
+    description: "Análises de mercado, cases empresariais e estratégia para tomadores de decisão.",
     status: "draft",
     niche: "Negócios e estratégia corporativa",
     audience: "Executivos, empreendedores e analistas",
@@ -107,7 +106,8 @@ export const mockChannelSettings: ChannelSettings[] = mockChannels.map((c, i) =>
   visualIdentity: {
     primaryColor: ["#1B3A5C", "#B8412C", "#0F2A3F"][i] ?? "#1B3A5C",
     secondaryColor: ["#E8D9B4", "#F2C14E", "#C7D3DD"][i] ?? "#E8D9B4",
-    typography: ["Cormorant Garamond + Inter", "Space Grotesk + Inter", "Söhne + Inter"][i] ?? "Inter",
+    typography:
+      ["Cormorant Garamond + Inter", "Space Grotesk + Inter", "Söhne + Inter"][i] ?? "Inter",
     subtitleStyle: "Bloco inferior, alto contraste, 42px",
     openingStyle: "Fade 1.2s com stinger sonoro discreto",
     thumbnailStyle: "Retrato dominante + tipografia contrastante",

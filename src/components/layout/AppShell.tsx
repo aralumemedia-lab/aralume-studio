@@ -33,7 +33,11 @@ import { cn } from "@/lib/utils";
 import { ChannelStatusBadge } from "@/components/status/badges";
 import { formatCurrencyCents } from "@/lib/format";
 
-type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string; size?: number }> };
+type NavItem = {
+  to: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
+};
 type NavGroup = { label: string; items: NavItem[] };
 
 const navGroups: NavGroup[] = [
@@ -85,7 +89,12 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
         collapsed ? "w-[56px]" : "w-[248px]",
       )}
     >
-      <div className={cn("flex items-center h-14 px-3 border-b border-sidebar-border", collapsed && "justify-center px-0")}>
+      <div
+        className={cn(
+          "flex items-center h-14 px-3 border-b border-sidebar-border",
+          collapsed && "justify-center px-0",
+        )}
+      >
         <AralumeLogo compact={collapsed} iconClassName="text-primary-soft" />
       </div>
       <nav className="flex-1 overflow-y-auto scrollbar-thin py-3">
@@ -123,7 +132,12 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
           </div>
         ))}
       </nav>
-      <div className={cn("border-t border-sidebar-border px-3 py-2 text-[10.5px] text-sidebar-muted", collapsed && "text-center px-1")}>
+      <div
+        className={cn(
+          "border-t border-sidebar-border px-3 py-2 text-[10.5px] text-sidebar-muted",
+          collapsed && "text-center px-1",
+        )}
+      >
         {collapsed ? "v0.1" : "Aralume · v0.1 · Modo demo"}
       </div>
     </aside>
@@ -139,18 +153,37 @@ function ChannelSwitcher() {
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-2.5 h-8 text-[12px] hover:bg-accent/50"
       >
-        <span className={cn("h-1.5 w-1.5 rounded-full", activeChannel?.status === "active" ? "bg-ok" : activeChannel?.status === "warning" ? "bg-warning" : "bg-muted-foreground")} />
-        <span className="font-medium text-foreground truncate max-w-[180px]">{activeChannel?.name ?? "Selecionar canal"}</span>
+        <span
+          className={cn(
+            "h-1.5 w-1.5 rounded-full",
+            activeChannel?.status === "active"
+              ? "bg-ok"
+              : activeChannel?.status === "warning"
+                ? "bg-warning"
+                : "bg-muted-foreground",
+          )}
+        />
+        <span className="font-medium text-foreground truncate max-w-[180px]">
+          {activeChannel?.name ?? "Selecionar canal"}
+        </span>
         <ChevronDown size={13} className="text-muted-foreground" />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute left-0 top-9 z-20 w-[280px] rounded-md border border-border bg-popover shadow-lg p-1">
-            <div className="px-2 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.08em] text-muted-foreground">Canais</div>
+            <div className="px-2 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+              Canais
+            </div>
             <button
-              onClick={() => { setActiveChannelId(undefined); setOpen(false); }}
-              className={cn("flex items-center gap-2 w-full text-left rounded-sm px-2 h-8 text-[12px] hover:bg-accent/60", !activeChannelId && "bg-accent/50")}
+              onClick={() => {
+                setActiveChannelId(undefined);
+                setOpen(false);
+              }}
+              className={cn(
+                "flex items-center gap-2 w-full text-left rounded-sm px-2 h-8 text-[12px] hover:bg-accent/60",
+                !activeChannelId && "bg-accent/50",
+              )}
             >
               <span className="h-1.5 w-1.5 rounded-full bg-info" />
               <span className="flex-1">Todos os canais</span>
@@ -160,16 +193,25 @@ function ChannelSwitcher() {
             {channels.map((c) => (
               <button
                 key={c.id}
-                onClick={() => { setActiveChannelId(c.id); setOpen(false); }}
-                className={cn("flex items-center gap-2 w-full text-left rounded-sm px-2 py-1.5 hover:bg-accent/60", activeChannelId === c.id && "bg-accent/50")}
+                onClick={() => {
+                  setActiveChannelId(c.id);
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex items-center gap-2 w-full text-left rounded-sm px-2 py-1.5 hover:bg-accent/60",
+                  activeChannelId === c.id && "bg-accent/50",
+                )}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-[12px] font-medium text-foreground truncate">{c.name}</span>
+                    <span className="text-[12px] font-medium text-foreground truncate">
+                      {c.name}
+                    </span>
                     <ChannelStatusBadge status={c.status} />
                   </div>
                   <div className="text-[10.5px] text-muted-foreground mt-0.5 truncate">
-                    {c.niche} · {formatCurrencyCents(c.monthlyCostUsedCents)} / {formatCurrencyCents(c.monthlyBudgetCents)}
+                    {c.niche} · {formatCurrencyCents(c.monthlyCostUsedCents)} /{" "}
+                    {formatCurrencyCents(c.monthlyBudgetCents)}
                   </div>
                 </div>
                 {activeChannelId === c.id && <Check size={13} className="text-info" />}
@@ -182,7 +224,13 @@ function ChannelSwitcher() {
   );
 }
 
-function Topbar({ onToggleSidebar, collapsed }: { onToggleSidebar: () => void; collapsed: boolean }) {
+function Topbar({
+  onToggleSidebar,
+  collapsed,
+}: {
+  onToggleSidebar: () => void;
+  collapsed: boolean;
+}) {
   return (
     <header className="flex items-center gap-3 h-14 px-4 border-b border-border bg-surface">
       <button
@@ -194,7 +242,10 @@ function Topbar({ onToggleSidebar, collapsed }: { onToggleSidebar: () => void; c
       </button>
       <ChannelSwitcher />
       <div className="relative flex-1 max-w-[420px]">
-        <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Search
+          size={13}
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+        />
         <input
           placeholder="Buscar conteúdos, agentes, workflows..."
           className="h-8 w-full rounded-sm border border-border bg-surface pl-7 pr-3 text-[12px] outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20"
@@ -204,14 +255,19 @@ function Topbar({ onToggleSidebar, collapsed }: { onToggleSidebar: () => void; c
         <button className="inline-flex items-center gap-1.5 h-8 px-2 rounded-sm text-[12px] text-muted-foreground hover:bg-accent/50 hover:text-foreground">
           <AlertTriangle size={14} /> <span>3 alertas</span>
         </button>
-        <button className="inline-flex items-center justify-center h-8 w-8 rounded-sm text-muted-foreground hover:bg-accent/50 hover:text-foreground" aria-label="Notificações">
+        <button
+          className="inline-flex items-center justify-center h-8 w-8 rounded-sm text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+          aria-label="Notificações"
+        >
           <Bell size={14} />
         </button>
         <button className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-sm bg-primary text-primary-foreground text-[12px] font-medium hover:opacity-95">
           <Plus size={14} /> Nova pauta
         </button>
         <div className="ml-2 flex items-center gap-2 h-8 pl-2 pr-1 rounded-sm">
-          <div className="h-6 w-6 rounded-full bg-primary/15 text-primary text-[11px] font-semibold flex items-center justify-center">AR</div>
+          <div className="h-6 w-6 rounded-full bg-primary/15 text-primary text-[11px] font-semibold flex items-center justify-center">
+            AR
+          </div>
           <div className="text-[11px] leading-tight hidden md:block">
             <div className="font-medium text-foreground">Ana Ribeiro</div>
             <div className="text-muted-foreground">Editora-chefe</div>
@@ -255,8 +311,12 @@ export function PageHeader({
               {eyebrow}
             </div>
           )}
-          <h1 className="text-[22px] font-semibold tracking-tight text-foreground leading-tight mt-0.5">{title}</h1>
-          {description && <p className="text-[12.5px] text-muted-foreground mt-1 max-w-3xl">{description}</p>}
+          <h1 className="text-[22px] font-semibold tracking-tight text-foreground leading-tight mt-0.5">
+            {title}
+          </h1>
+          {description && (
+            <p className="text-[12.5px] text-muted-foreground mt-1 max-w-3xl">{description}</p>
+          )}
         </div>
         {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
       </div>

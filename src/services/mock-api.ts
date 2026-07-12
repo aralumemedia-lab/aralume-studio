@@ -50,12 +50,12 @@ const meta = (extra?: Partial<ApiMeta>): ApiMeta => ({
 
 const delay = (ms = 120) => new Promise((r) => setTimeout(r, ms));
 
-const wrap = async <T,>(data: T): Promise<ApiSuccess<T>> => {
+const wrap = async <T>(data: T): Promise<ApiSuccess<T>> => {
   await delay();
   return { data, meta: meta() };
 };
 
-const wrapList = async <T,>(data: T[]): Promise<ApiListSuccess<T>> => {
+const wrapList = async <T>(data: T[]): Promise<ApiListSuccess<T>> => {
   await delay();
   return { data, meta: meta({ total: data.length, page: 1, pageSize: data.length }) };
 };
@@ -108,20 +108,30 @@ export async function getDashboardSummary(channelId?: ID): Promise<ApiSuccess<Da
 
   const summary: DashboardSummary = {
     activeChannels: channels.filter((c) => c.status === "active" || c.status === "warning").length,
-    activeWorkflows: workflows.filter((w) => ["running", "queued", "waiting_approval", "retrying"].includes(w.status)).length,
+    activeWorkflows: workflows.filter((w) =>
+      ["running", "queued", "waiting_approval", "retrying"].includes(w.status),
+    ).length,
     pendingApprovals: approvals.length,
     scheduledPublications: publications.filter((p) => p.status === "scheduled").length,
     monthlyCostCents: costs.reduce((s, c) => s + c.amountCents, 0),
-    recentFailures: audits.filter((a) => a.status === "failed").length + workflows.filter((w) => w.status === "failed").length,
-    criticalAlerts: workflows.filter((w) => w.riskLevel === "critical" || w.riskLevel === "blocked").length,
+    recentFailures:
+      audits.filter((a) => a.status === "failed").length +
+      workflows.filter((w) => w.status === "failed").length,
+    criticalAlerts: workflows.filter((w) => w.riskLevel === "critical" || w.riskLevel === "blocked")
+      .length,
     runningAgents: agents.filter((a) => a.status === "running").length,
-    productionByStatus: Array.from(byStatus.entries()).map(([status, count]) => ({ status: status as ContentIdea["status"], count })),
+    productionByStatus: Array.from(byStatus.entries()).map(([status, count]) => ({
+      status: status as ContentIdea["status"],
+      count,
+    })),
     costByChannel,
   };
   return wrap(summary);
 }
 
-export async function getAgentOfficeSnapshot(channelId?: ID): Promise<ApiSuccess<AgentOfficeSnapshot>> {
+export async function getAgentOfficeSnapshot(
+  channelId?: ID,
+): Promise<ApiSuccess<AgentOfficeSnapshot>> {
   const agents = filterByChannel(mockAgentRuns, channelId);
   const handoffs = filterByChannel(mockAgentHandoffs, channelId);
   const workflows = filterByChannel(mockWorkflowRuns, channelId);
@@ -157,7 +167,9 @@ export async function getContentIdeas(channelId?: ID): Promise<ApiListSuccess<Co
   return wrapList(filterByChannel(mockContentIdeas, channelId));
 }
 
-export async function getResearchSessions(channelId?: ID): Promise<ApiListSuccess<ResearchSession>> {
+export async function getResearchSessions(
+  channelId?: ID,
+): Promise<ApiListSuccess<ResearchSession>> {
   return wrapList(filterByChannel(mockResearchSessions, channelId));
 }
 
@@ -185,7 +197,9 @@ export async function getPublicationJobs(channelId?: ID): Promise<ApiListSuccess
   return wrapList(filterByChannel(mockPublicationJobs, channelId));
 }
 
-export async function getPerformanceMetrics(channelId?: ID): Promise<ApiListSuccess<PerformanceMetric>> {
+export async function getPerformanceMetrics(
+  channelId?: ID,
+): Promise<ApiListSuccess<PerformanceMetric>> {
   return wrapList(filterByChannel(mockMetrics, channelId));
 }
 
@@ -193,7 +207,9 @@ export async function getCostEntries(channelId?: ID): Promise<ApiListSuccess<Cos
   return wrapList(filterByChannel(mockCostEntries, channelId));
 }
 
-export async function getComplianceChecks(channelId?: ID): Promise<ApiListSuccess<ComplianceCheck>> {
+export async function getComplianceChecks(
+  channelId?: ID,
+): Promise<ApiListSuccess<ComplianceCheck>> {
   return wrapList(filterByChannel(mockComplianceChecks, channelId));
 }
 

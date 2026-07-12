@@ -12,9 +12,7 @@ type ChannelContextValue = {
 const ChannelContext = createContext<ChannelContextValue | null>(null);
 
 export function ChannelProvider({ children }: { children: ReactNode }) {
-  const [activeChannelId, setActiveChannelId] = useState<string | undefined>(
-    mockChannels[0]?.id,
-  );
+  const [activeChannelId, setActiveChannelId] = useState<string | undefined>(mockChannels[0]?.id);
 
   const value = useMemo<ChannelContextValue>(
     () => ({
