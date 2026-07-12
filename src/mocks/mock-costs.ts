@@ -1,0 +1,13 @@
+import type { CostEntry } from "@/contracts/types";
+
+export const mockCostEntries: CostEntry[] = [
+  { id: "co_01", channelId: "ch_historia", contentId: "idea_02", workflowRunId: "wf_02", providerName: "Aralume AI", costType: "llm", description: "Roteirista — 3 iterações", amountCents: 4200, createdAt: "2026-07-10T11:00:00.000Z" },
+  { id: "co_02", channelId: "ch_historia", contentId: "idea_02", providerName: "Aralume TTS", costType: "tts", description: "Narração final Asteca", amountCents: 1740, createdAt: "2026-07-11T14:19:00.000Z" },
+  { id: "co_03", channelId: "ch_historia", contentId: "idea_06", providerName: "Aralume Vision", costType: "image", description: "18 cenas — Logística Romana", amountCents: 5760, createdAt: "2026-07-08T10:00:00.000Z" },
+  { id: "co_04", channelId: "ch_historia", contentId: "idea_06", providerName: "Aralume Render", costType: "render", description: "Render final 1080p", amountCents: 3400, createdAt: "2026-07-11T13:20:00.000Z" },
+  { id: "co_05", channelId: "ch_curiosidades", contentId: "idea_03", providerName: "Aralume AI", costType: "llm", description: "Roteirista + Editorial", amountCents: 6100, createdAt: "2026-07-10T09:00:00.000Z" },
+  { id: "co_06", channelId: "ch_curiosidades", contentId: "idea_03", providerName: "StockCo", costType: "video", description: "B-roll licenciado", amountCents: 1800, createdAt: "2026-07-12T09:00:00.000Z" },
+  { id: "co_07", channelId: "ch_curiosidades", contentId: "idea_04", providerName: "Aralume AI", costType: "llm", description: "Pesquisa + Roteiro", amountCents: 12800, createdAt: "2026-07-08T09:00:00.000Z" },
+  { id: "co_08", channelId: "ch_curiosidades", providerName: "Aralume Storage", costType: "storage", description: "Armazenamento mensal", amountCents: 2400, createdAt: "2026-07-01T00:00:00.000Z" },
+  { id: "co_09", channelId: "ch_historia", providerName: "Aralume Storage", costType: "storage", description: "Armazenamento mensal", amountCents: 2200, createdAt: "2026-07-01T00:00:00.000Z" },
+];

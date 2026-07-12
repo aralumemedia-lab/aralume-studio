@@ -9,8 +9,110 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VideosRouteImport } from './routes/videos'
+import { Route as ScriptsRouteImport } from './routes/scripts'
+import { Route as ResearchRouteImport } from './routes/research'
+import { Route as PublicationsRouteImport } from './routes/publications'
+import { Route as ProductionRouteImport } from './routes/production'
+import { Route as MetricsRouteImport } from './routes/metrics'
+import { Route as MediaAssetsRouteImport } from './routes/media-assets'
+import { Route as IdeasRouteImport } from './routes/ideas'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CostsRouteImport } from './routes/costs'
+import { Route as ComplianceRouteImport } from './routes/compliance'
+import { Route as ClipsRouteImport } from './routes/clips'
+import { Route as ChannelsRouteImport } from './routes/channels'
+import { Route as AuditLogsRouteImport } from './routes/audit-logs'
+import { Route as ApprovalsRouteImport } from './routes/approvals'
+import { Route as AgentOfficeRouteImport } from './routes/agent-office'
+import { Route as AdministrationRouteImport } from './routes/administration'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VideosRoute = VideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScriptsRoute = ScriptsRouteImport.update({
+  id: '/scripts',
+  path: '/scripts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicationsRoute = PublicationsRouteImport.update({
+  id: '/publications',
+  path: '/publications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductionRoute = ProductionRouteImport.update({
+  id: '/production',
+  path: '/production',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetricsRoute = MetricsRouteImport.update({
+  id: '/metrics',
+  path: '/metrics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MediaAssetsRoute = MediaAssetsRouteImport.update({
+  id: '/media-assets',
+  path: '/media-assets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IdeasRoute = IdeasRouteImport.update({
+  id: '/ideas',
+  path: '/ideas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CostsRoute = CostsRouteImport.update({
+  id: '/costs',
+  path: '/costs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComplianceRoute = ComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClipsRoute = ClipsRouteImport.update({
+  id: '/clips',
+  path: '/clips',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChannelsRoute = ChannelsRouteImport.update({
+  id: '/channels',
+  path: '/channels',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditLogsRoute = AuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApprovalsRoute = ApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentOfficeRoute = AgentOfficeRouteImport.update({
+  id: '/agent-office',
+  path: '/agent-office',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdministrationRoute = AdministrationRouteImport.update({
+  id: '/administration',
+  path: '/administration',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +121,270 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/administration': typeof AdministrationRoute
+  '/agent-office': typeof AgentOfficeRoute
+  '/approvals': typeof ApprovalsRoute
+  '/audit-logs': typeof AuditLogsRoute
+  '/channels': typeof ChannelsRoute
+  '/clips': typeof ClipsRoute
+  '/compliance': typeof ComplianceRoute
+  '/costs': typeof CostsRoute
+  '/dashboard': typeof DashboardRoute
+  '/ideas': typeof IdeasRoute
+  '/media-assets': typeof MediaAssetsRoute
+  '/metrics': typeof MetricsRoute
+  '/production': typeof ProductionRoute
+  '/publications': typeof PublicationsRoute
+  '/research': typeof ResearchRoute
+  '/scripts': typeof ScriptsRoute
+  '/videos': typeof VideosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/administration': typeof AdministrationRoute
+  '/agent-office': typeof AgentOfficeRoute
+  '/approvals': typeof ApprovalsRoute
+  '/audit-logs': typeof AuditLogsRoute
+  '/channels': typeof ChannelsRoute
+  '/clips': typeof ClipsRoute
+  '/compliance': typeof ComplianceRoute
+  '/costs': typeof CostsRoute
+  '/dashboard': typeof DashboardRoute
+  '/ideas': typeof IdeasRoute
+  '/media-assets': typeof MediaAssetsRoute
+  '/metrics': typeof MetricsRoute
+  '/production': typeof ProductionRoute
+  '/publications': typeof PublicationsRoute
+  '/research': typeof ResearchRoute
+  '/scripts': typeof ScriptsRoute
+  '/videos': typeof VideosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/administration': typeof AdministrationRoute
+  '/agent-office': typeof AgentOfficeRoute
+  '/approvals': typeof ApprovalsRoute
+  '/audit-logs': typeof AuditLogsRoute
+  '/channels': typeof ChannelsRoute
+  '/clips': typeof ClipsRoute
+  '/compliance': typeof ComplianceRoute
+  '/costs': typeof CostsRoute
+  '/dashboard': typeof DashboardRoute
+  '/ideas': typeof IdeasRoute
+  '/media-assets': typeof MediaAssetsRoute
+  '/metrics': typeof MetricsRoute
+  '/production': typeof ProductionRoute
+  '/publications': typeof PublicationsRoute
+  '/research': typeof ResearchRoute
+  '/scripts': typeof ScriptsRoute
+  '/videos': typeof VideosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/administration'
+    | '/agent-office'
+    | '/approvals'
+    | '/audit-logs'
+    | '/channels'
+    | '/clips'
+    | '/compliance'
+    | '/costs'
+    | '/dashboard'
+    | '/ideas'
+    | '/media-assets'
+    | '/metrics'
+    | '/production'
+    | '/publications'
+    | '/research'
+    | '/scripts'
+    | '/videos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/administration'
+    | '/agent-office'
+    | '/approvals'
+    | '/audit-logs'
+    | '/channels'
+    | '/clips'
+    | '/compliance'
+    | '/costs'
+    | '/dashboard'
+    | '/ideas'
+    | '/media-assets'
+    | '/metrics'
+    | '/production'
+    | '/publications'
+    | '/research'
+    | '/scripts'
+    | '/videos'
+  id:
+    | '__root__'
+    | '/'
+    | '/administration'
+    | '/agent-office'
+    | '/approvals'
+    | '/audit-logs'
+    | '/channels'
+    | '/clips'
+    | '/compliance'
+    | '/costs'
+    | '/dashboard'
+    | '/ideas'
+    | '/media-assets'
+    | '/metrics'
+    | '/production'
+    | '/publications'
+    | '/research'
+    | '/scripts'
+    | '/videos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdministrationRoute: typeof AdministrationRoute
+  AgentOfficeRoute: typeof AgentOfficeRoute
+  ApprovalsRoute: typeof ApprovalsRoute
+  AuditLogsRoute: typeof AuditLogsRoute
+  ChannelsRoute: typeof ChannelsRoute
+  ClipsRoute: typeof ClipsRoute
+  ComplianceRoute: typeof ComplianceRoute
+  CostsRoute: typeof CostsRoute
+  DashboardRoute: typeof DashboardRoute
+  IdeasRoute: typeof IdeasRoute
+  MediaAssetsRoute: typeof MediaAssetsRoute
+  MetricsRoute: typeof MetricsRoute
+  ProductionRoute: typeof ProductionRoute
+  PublicationsRoute: typeof PublicationsRoute
+  ResearchRoute: typeof ResearchRoute
+  ScriptsRoute: typeof ScriptsRoute
+  VideosRoute: typeof VideosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/videos': {
+      id: '/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof VideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scripts': {
+      id: '/scripts'
+      path: '/scripts'
+      fullPath: '/scripts'
+      preLoaderRoute: typeof ScriptsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/publications': {
+      id: '/publications'
+      path: '/publications'
+      fullPath: '/publications'
+      preLoaderRoute: typeof PublicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/production': {
+      id: '/production'
+      path: '/production'
+      fullPath: '/production'
+      preLoaderRoute: typeof ProductionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metrics': {
+      id: '/metrics'
+      path: '/metrics'
+      fullPath: '/metrics'
+      preLoaderRoute: typeof MetricsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/media-assets': {
+      id: '/media-assets'
+      path: '/media-assets'
+      fullPath: '/media-assets'
+      preLoaderRoute: typeof MediaAssetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ideas': {
+      id: '/ideas'
+      path: '/ideas'
+      fullPath: '/ideas'
+      preLoaderRoute: typeof IdeasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/costs': {
+      id: '/costs'
+      path: '/costs'
+      fullPath: '/costs'
+      preLoaderRoute: typeof CostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compliance': {
+      id: '/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof ComplianceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clips': {
+      id: '/clips'
+      path: '/clips'
+      fullPath: '/clips'
+      preLoaderRoute: typeof ClipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/channels': {
+      id: '/channels'
+      path: '/channels'
+      fullPath: '/channels'
+      preLoaderRoute: typeof ChannelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit-logs': {
+      id: '/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/audit-logs'
+      preLoaderRoute: typeof AuditLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/approvals': {
+      id: '/approvals'
+      path: '/approvals'
+      fullPath: '/approvals'
+      preLoaderRoute: typeof ApprovalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agent-office': {
+      id: '/agent-office'
+      path: '/agent-office'
+      fullPath: '/agent-office'
+      preLoaderRoute: typeof AgentOfficeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/administration': {
+      id: '/administration'
+      path: '/administration'
+      fullPath: '/administration'
+      preLoaderRoute: typeof AdministrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +397,24 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdministrationRoute: AdministrationRoute,
+  AgentOfficeRoute: AgentOfficeRoute,
+  ApprovalsRoute: ApprovalsRoute,
+  AuditLogsRoute: AuditLogsRoute,
+  ChannelsRoute: ChannelsRoute,
+  ClipsRoute: ClipsRoute,
+  ComplianceRoute: ComplianceRoute,
+  CostsRoute: CostsRoute,
+  DashboardRoute: DashboardRoute,
+  IdeasRoute: IdeasRoute,
+  MediaAssetsRoute: MediaAssetsRoute,
+  MetricsRoute: MetricsRoute,
+  ProductionRoute: ProductionRoute,
+  PublicationsRoute: PublicationsRoute,
+  ResearchRoute: ResearchRoute,
+  ScriptsRoute: ScriptsRoute,
+  VideosRoute: VideosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
