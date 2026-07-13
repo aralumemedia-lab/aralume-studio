@@ -64,7 +64,7 @@ function DashboardPage() {
   });
   const prodQ = useQuery({
     queryKey: ["prod", activeChannelId],
-    queryFn: () => getProductionItems(activeChannelId),
+    queryFn: () => getProductionItems({ channelId: activeChannelId }),
   });
   const approvalsQ = useQuery({
     queryKey: ["appr", activeChannelId],

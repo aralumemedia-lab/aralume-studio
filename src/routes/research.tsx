@@ -1,32 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+
 import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
-import { getResearchSessions } from "@/services/api-client";
-import { Card } from "@/components/ui/data-card";
-import { CompactTable, type Column } from "@/components/ui/compact-table";
 import { RiskBadge, WorkflowStatusBadge } from "@/components/status/badges";
+import { Card, EmptyState, ErrorState, LoadingState } from "@/components/ui/data-card";
+import { CompactTable, type Column } from "@/components/ui/compact-table";
 import { formatRelative } from "@/lib/format";
 import type { ResearchSession } from "@/contracts/types";
+import { describeResearchApiError, getResearchSessions } from "@/services/api-client";
 
 export const Route = createFileRoute("/research")({
   head: () => ({
     meta: [
-      { title: "Pesquisas — Aralume" },
-      { name: "description", content: "Sessões de pesquisa e fontes validadas." },
+      { title: "Pesquisas - Aralume" },
+      { name: "description", content: "Sessoes de pesquisa e fontes validadas." },
     ],
   }),
   component: function ResearchPage() {
     const { activeChannelId } = useChannelContext();
     const q = useQuery({
       queryKey: ["research", activeChannelId],
-      queryFn: () => getResearchSessions(activeChannelId),
+      queryFn: () => getResearchSessions({ channelId: activeChannelId }),
     });
     const rows = q.data?.data ?? [];
+    const isLoading = q.isPending && rows.length === 0;
+    const hasError = !!q.error && rows.length === 0;
     const cols: Column<ResearchSession>[] = [
       {
         key: "title",
-        header: "Sessão",
+        header: "Sessao",
         render: (r) => <span className="font-medium truncate">{r.title}</span>,
       },
       {
@@ -41,7 +44,7 @@ export const Route = createFileRoute("/research")({
       },
       {
         key: "conf",
-        header: "Confiança",
+        header: "Confianca",
         render: (r) => <span className="tabular-nums">{r.confidenceScore}%</span>,
       },
       { key: "risk", header: "Risco", render: (r) => <RiskBadge level={r.riskLevel} /> },
@@ -52,21 +55,41 @@ export const Route = createFileRoute("/research")({
         render: (r) => <span className="text-muted-foreground">{formatRelative(r.updatedAt)}</span>,
       },
     ];
+
     return (
       <div>
         <PageHeader
           eyebrow="Editorial"
           title="Pesquisas e fontes"
-          description="Sessões de pesquisa com fontes, claims e nível de confiança."
+          description="Sessoes de pesquisa com fontes, claims e nivel de confianca."
         />
         <div className="p-4">
           <Card padded={false}>
-            <CompactTable
-              rows={rows}
-              columns={cols}
-              className="border-0 rounded-none"
-              empty="Sem pesquisas no canal ativo."
-            />
+            {isLoading ? (
+              <LoadingState label="Carregando pesquisas" />
+            ) : hasError ? (
+              <div className="p-4">
+                <ErrorState message={describeResearchApiError(q.error)} />
+                <button
+                  onClick={() => void q.refetch()}
+                  className="mt-3 inline-flex items-center gap-1.5 h-8 px-2.5 rounded-sm border border-border bg-surface text-[12px] font-medium hover:bg-accent/50"
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            ) : rows.length === 0 ? (
+              <EmptyState
+                title="Sem pesquisas no canal selecionado"
+                description="Crie uma sessao de pesquisa via API ou troque para Todos os canais."
+              />
+            ) : (
+              <CompactTable
+                rows={rows}
+                columns={cols}
+                className="border-0 rounded-none"
+                empty="Sem pesquisas no canal ativo."
+              />
+            )}
           </Card>
         </div>
       </div>

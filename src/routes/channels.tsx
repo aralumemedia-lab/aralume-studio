@@ -676,7 +676,7 @@ function ChannelSidebar({ channel }: { channel: Channel }) {
   });
   const prodQ = useQuery({
     queryKey: ["ch-prod", channel.id],
-    queryFn: () => getProductionItems(channel.id),
+    queryFn: () => getProductionItems({ channelId: channel.id }),
   });
   const pubs = pubsQ.data?.data ?? [];
   const prod = prodQ.data?.data ?? [];
@@ -753,8 +753,8 @@ function ChannelSidebar({ channel }: { channel: Channel }) {
       <Card>
         <SectionHeader
           title="Produção atual"
-          description="Dados demo de apoio, fora do domínio de Canais nesta sprint."
-          action={<StatusBadge tone="muted">Demo</StatusBadge>}
+          description="Fila editorial real do canal selecionado."
+          action={<StatusBadge tone="info">Real</StatusBadge>}
         />
         <ul className="space-y-1.5 text-[12px]">
           {prod.slice(0, 4).map((item) => (
@@ -768,7 +768,7 @@ function ChannelSidebar({ channel }: { channel: Channel }) {
               </div>
             </li>
           ))}
-          {prod.length === 0 && <EmptyState title="Sem produção demo" />}
+          {prod.length === 0 && <EmptyState title="Sem produção no canal" />}
         </ul>
       </Card>
     </>

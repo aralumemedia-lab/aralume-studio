@@ -353,7 +353,10 @@ test("requestApiEnvelope maps network, timeout and unexpected envelope failures"
 
     await assert.rejects(
       requestApiEnvelope("/channels", {}, { timeoutMs: 1 }),
-      (error) => error instanceof ApiRequestError && error.kind === "timeout",
+      (error) =>
+        error instanceof ApiRequestError &&
+        error.kind === "timeout" &&
+        error.message === "A requisicao para a API expirou.",
     );
 
     globalThis.fetch = (async () => jsonResponse({ data: [] })) as typeof fetch;
