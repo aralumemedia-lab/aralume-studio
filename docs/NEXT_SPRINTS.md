@@ -16,6 +16,13 @@
 - A base segura de ambiente ficou pronta para receber migracao manual de credenciais.
 - Nao ha dependencia de backend real para concluir esta etapa documental.
 
+## Sprint 0.3 concluida
+- A Sprint 0.3 foi preparada no PR #5 com as specs `docs/specs/002-backend-foundation.md` ate `docs/specs/012-v1-acceptance.md`.
+- A etapa foi documental e nao introduziu backend, alteracao funcional de frontend, contrato novo ou mock novo.
+- A proxima recomendacao permanece **Sprint 2 - Backend Foundation**.
+- A execucao da Sprint 2 deve seguir `docs/specs/002-backend-foundation.md`.
+- O backend so deve comecar apos o PR #5 ser mergeado, o `main` permanecer limpo e as validacoes continuarem passando.
+
 ## Observacoes
 - Se o time quiser formalizar QA visual automatizado no repositorio, a unica alternativa sensata antes do backend e uma Sprint 1B curta para Playwright e capturas reproduziveis.
 - A recomendacao de Sprint 2 so vale se `main` seguir limpo, a documentacao de ambiente estiver pronta e as validacoes continuarem passando.
