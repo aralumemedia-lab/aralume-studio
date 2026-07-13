@@ -7,17 +7,20 @@
 - Sprint 2 - Backend Foundation foi concluida e integrada ao `main` via PR #6.
 - O commit de merge oficial e `20b7c503761840910d78ceec604d9f8de55c3e84`.
 - `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
-- Sprint 3 - Channels Domain Foundation foi implementada na branch `codex/sprint-3-channels-domain-foundation`.
-- O backend de Canais ja esta disponivel nesta branch e a tela `/channels` continua mockada ate a Sprint 4.
+- Sprint 3 - Channels Domain Foundation foi concluida e integrada ao `main` via PR #8.
+- O commit de merge oficial e `6bf1bfec40cafaa7d2228f040745127e7ede9041`.
+- `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
+- O backend de Canais ja esta disponivel no `main` e a tela `/channels` continua mockada ate a Sprint 4.
 - O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
 
 ## Sprint 3 - Channels Domain Foundation
 - Spec normativa: `docs/specs/003-channels.md`.
 - Escopo implementado: dominio de Canais no backend com listagem, criacao, consulta, atualizacao e settings.
+- Endpoints reais disponiveis: `GET /api/channels`, `POST /api/channels`, `GET /api/channels/:id`, `PATCH /api/channels/:id`, `GET /api/channels/:id/settings`.
 - Persistencia adotada: repositorio substituivel em memoria, sem banco real nesta sprint.
 - Integração frontend: nao foi iniciada; permanece reservada para a Sprint 4.
 - Exclusao fisica: nao implementada.
-- PR de Sprint 3: pendente de merge.
+- PR de Sprint 3: `#8` MERGED.
 
 ## Sprint 0.2 - Preparacao segura de variaveis de ambiente
 - O `.env.local` legado foi usado somente para extrair nomes de variaveis.
@@ -77,9 +80,9 @@
 
 ## Proximos passos recomendados
 - Sprint 4 - Channels Frontend Integration.
-- A spec normativa permanece `docs/specs/003-channels.md`.
-- A Sprint 4 vem depois da integracao backend de Canais ja implementada na Sprint 3.
-- O Bun foi verificado nesta rodada; se o ambiente mudar, revalidar no preflight da proxima sprint.
+- A Sprint 4 deve comecar por Spec Review e por uma spec propria antes da implementacao.
+- A spec normativa desta rodada permanece `docs/specs/003-channels.md`.
+- O frontend continua usando `mock-api` para `/channels` ate a integracao da Sprint 4.
 - Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
 
 ## Sprint 0.3 - SDD Specs Roadmap Foundation
@@ -97,7 +100,7 @@
 - Scripts adicionados: `backend:dev`, `backend:build`, `backend:check`, `backend:start`, `test`.
 - Setup documentado em `docs/BACKEND_SETUP.md`.
 - PR #6 foi mergeado e a fundacao backend foi integrada a `main`.
-- A sequencia autorizada agora segue para a Sprint 3 - Channels Domain Foundation.
+- A sequencia autorizada agora segue para a Sprint 4 - Channels Frontend Integration.
 - Nenhum dominio de Canais foi implementado.
 - Nenhum CRUD real foi criado.
 - Nenhuma integracao frontend/backend foi feita.
