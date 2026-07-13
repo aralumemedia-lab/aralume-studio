@@ -31,6 +31,8 @@ export type ComplianceStatus =
 
 export type ApprovalStatus = "pending" | "approved" | "rejected" | "changes_requested" | "blocked";
 
+export type QualityCheckStatus = "pending" | "passed" | "attention" | "blocked";
+
 export type ContentStatus =
   | "idea"
   | "research"

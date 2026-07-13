@@ -1,5 +1,18 @@
 # Next Sprints
 
+## Sprint 5 concluida e integrada
+- A Sprint 5 - Editorial Pipeline foi concluida formalmente.
+- O merge commit oficial e `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
+- `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
+- A camada editorial entregue inclui ideias, pesquisas, fontes, evidencias, roteiros, versoes de roteiro, planos visuais, cenas, repositorios in-memory, contratos frontend e testes.
+- As rotas `/ideas`, `/research`, `/scripts` e `/production` ja consomem a API real do dominio editorial.
+
+## Sprint 6 recomendada
+- **Sprint 6 - Approvals, Quality and Compliance**
+- A proxima fase oficial apos a Sprint 5 e a camada de governanca.
+- A sprint deve comecar por Spec Review da `docs/specs/006-approvals-compliance.md`.
+- O gate principal e impedir aprovacao indevida de conteudo com bloqueio de qualidade ou conformidade.
+
 ## Sprint 4 concluida e integrada
 - A Sprint 4 - Channels Frontend Integration foi concluida e integrada ao `main` via PR #10.
 - O merge commit oficial e `3ee439ca7e0ae414a68a459ab9fcba650e076148`.

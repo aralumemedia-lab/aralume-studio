@@ -10,6 +10,31 @@ export {
 } from "./channels-api";
 
 export {
+  approveApproval,
+  createApproval,
+  describeApprovalsApiError,
+  getApproval,
+  getApprovalHistory,
+  getApprovals,
+  rejectApproval,
+  requestApprovalChanges,
+} from "./approvals-api";
+
+export {
+  createComplianceCheck,
+  describeComplianceApiError,
+  getComplianceCheck,
+  getComplianceChecks,
+} from "./compliance-api";
+
+export {
+  createQualityCheck,
+  describeQualityApiError,
+  getQualityCheck,
+  getQualityChecks,
+} from "./quality-api";
+
+export {
   createClaimEvidence,
   createResearchSession,
   createResearchSource,
@@ -51,11 +76,9 @@ export {
   getAgentDefinitions,
   getAgentOfficeSnapshot,
   getAuditLogs,
-  getComplianceChecks,
   getCostEntries,
   getDashboardSummary,
   getDerivedClips,
-  getHumanApprovals,
   getMediaAssets,
   getPerformanceMetrics,
   getPublicationJobs,
