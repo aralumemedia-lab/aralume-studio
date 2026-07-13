@@ -11,13 +11,7 @@ export type WorkflowStatus =
   | "retrying";
 
 export type AgentStatus =
-  | "idle"
-  | "running"
-  | "waiting_input"
-  | "waiting_approval"
-  | "blocked"
-  | "failed"
-  | "completed";
+  "idle" | "running" | "waiting_input" | "waiting_approval" | "blocked" | "failed" | "completed";
 
 export type RiskLevel = "ok" | "attention" | "warning" | "critical" | "blocked";
 
@@ -33,11 +27,7 @@ export type PublicationStatus =
   | "failed";
 
 export type ComplianceStatus =
-  | "approved"
-  | "attention"
-  | "rejected"
-  | "blocked"
-  | "needs_human_review";
+  "approved" | "attention" | "rejected" | "blocked" | "needs_human_review";
 
 export type ApprovalStatus = "pending" | "approved" | "rejected" | "changes_requested" | "blocked";
 

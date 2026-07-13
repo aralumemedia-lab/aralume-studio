@@ -315,13 +315,7 @@ export type ScenePlan = {
 };
 
 export type MediaAssetType =
-  | "narration"
-  | "image"
-  | "video"
-  | "thumbnail"
-  | "music"
-  | "subtitle"
-  | "brand_asset";
+  "narration" | "image" | "video" | "thumbnail" | "music" | "subtitle" | "brand_asset";
 
 export type MediaAssetBase = {
   id: ID;
@@ -429,13 +423,7 @@ export type HumanApproval = {
   contentId: ID;
   title: string;
   approvalType:
-    | "idea"
-    | "script"
-    | "visual_plan"
-    | "video"
-    | "clip"
-    | "publication"
-    | "risk_exception";
+    "idea" | "script" | "visual_plan" | "video" | "clip" | "publication" | "risk_exception";
   status: ApprovalStatus;
   riskLevel: RiskLevel;
   recommendation: "approve" | "reject" | "request_changes" | "block";
