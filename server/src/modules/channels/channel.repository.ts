@@ -1,4 +1,3 @@
-import { seededChannelBundles } from "./channel.seed.js";
 import type {
   Channel,
   ChannelBundle,
@@ -12,7 +11,7 @@ const clone = <T>(value: T): T => structuredClone(value);
 export class InMemoryChannelsRepository implements ChannelsRepository {
   private readonly channels = new Map<ID, ChannelBundle>();
 
-  constructor(initialBundles: ChannelBundle[] = seededChannelBundles) {
+  constructor(initialBundles: ChannelBundle[] = []) {
     this.replaceAll(initialBundles);
   }
 

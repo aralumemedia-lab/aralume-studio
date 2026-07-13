@@ -83,6 +83,7 @@ export function createChannelsService(
         ...parsedInput,
         slug: parsedInput.slug ?? existing.slug,
         status: nextStatus,
+        costStatus: costStatusFromStatus(nextStatus),
         riskLevel: parsedInput.status
           ? riskLevelFromStatus(parsedInput.status)
           : existing.riskLevel,

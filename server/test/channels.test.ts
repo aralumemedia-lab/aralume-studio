@@ -117,9 +117,18 @@ test("service creates, lists, updates and resolves settings", () => {
 
   assert.equal(updated.name, "Canal Operacional 2");
   assert.equal(updated.status, "warning");
+  assert.equal(updated.costStatus, "attention");
   assert.equal(updated.createdAt, created.createdAt);
   assert.notEqual(updated.updatedAt, created.updatedAt);
   assert.equal(updated.riskLevel, "warning");
+
+  const activated = service.updateChannel(created.id, {
+    status: "active",
+  });
+
+  assert.equal(activated.status, "active");
+  assert.equal(activated.costStatus, "healthy");
+  assert.equal(activated.riskLevel, "ok");
 
   assert.equal(repository.listChannels().length, 1);
 });
