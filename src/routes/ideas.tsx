@@ -1,19 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
-import { getContentIdeas } from "@/services/api-client";
-import { Card } from "@/components/ui/data-card";
-import { CompactTable, type Column } from "@/components/ui/compact-table";
 import { ContentStatusBadge, RiskBadge } from "@/components/status/badges";
+import { Card, EmptyState, ErrorState, LoadingState } from "@/components/ui/data-card";
+import { CompactTable, type Column } from "@/components/ui/compact-table";
 import { formatRelative } from "@/lib/format";
 import type { ContentIdea } from "@/contracts/types";
-import { toast } from "sonner";
+import { describeEditorialApiError, getContentIdeas } from "@/services/api-client";
 
 export const Route = createFileRoute("/ideas")({
   head: () => ({
     meta: [
-      { title: "Pautas — Aralume" },
+      { title: "Pautas - Aralume" },
       { name: "description", content: "Oportunidades editoriais detectadas pelos agentes." },
     ],
   }),
@@ -21,9 +22,11 @@ export const Route = createFileRoute("/ideas")({
     const { activeChannelId } = useChannelContext();
     const q = useQuery({
       queryKey: ["ideas", activeChannelId],
-      queryFn: () => getContentIdeas(activeChannelId),
+      queryFn: () => getContentIdeas({ channelId: activeChannelId }),
     });
     const rows = q.data?.data ?? [];
+    const isLoading = q.isPending && rows.length === 0;
+    const hasError = !!q.error && rows.length === 0;
     const cols: Column<ContentIdea>[] = [
       {
         key: "title",
@@ -70,7 +73,7 @@ export const Route = createFileRoute("/ideas")({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                toast("Enviar para pesquisa — mockado");
+                toast("Enviar para pesquisa - mockado");
               }}
               className="h-6 px-2 rounded-sm border border-border bg-surface text-[11px] hover:bg-accent/50"
             >
@@ -79,7 +82,7 @@ export const Route = createFileRoute("/ideas")({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                toast("Priorizar — mockado");
+                toast("Priorizar - mockado");
               }}
               className="h-6 px-2 rounded-sm border border-border bg-surface text-[11px] hover:bg-accent/50"
             >
@@ -89,21 +92,41 @@ export const Route = createFileRoute("/ideas")({
         ),
       },
     ];
+
     return (
       <div>
         <PageHeader
           eyebrow="Editorial"
           title="Pautas"
-          description="Oportunidades editoriais detectadas pelos agentes de inteligência de nicho."
+          description="Oportunidades editoriais detectadas pelos agentes de inteligencia de nicho."
         />
         <div className="p-4">
           <Card padded={false}>
-            <CompactTable
-              rows={rows}
-              columns={cols}
-              className="border-0 rounded-none"
-              empty="Sem pautas no canal ativo."
-            />
+            {isLoading ? (
+              <LoadingState label="Carregando pautas" />
+            ) : hasError ? (
+              <div className="p-4">
+                <ErrorState message={describeEditorialApiError(q.error, "ideas")} />
+                <button
+                  onClick={() => void q.refetch()}
+                  className="mt-3 inline-flex items-center gap-1.5 h-8 px-2.5 rounded-sm border border-border bg-surface text-[12px] font-medium hover:bg-accent/50"
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            ) : rows.length === 0 ? (
+              <EmptyState
+                title="Sem pautas no canal selecionado"
+                description="Crie ideias via API editorial ou troque para Todos os canais."
+              />
+            ) : (
+              <CompactTable
+                rows={rows}
+                columns={cols}
+                className="border-0 rounded-none"
+                empty="Sem pautas no canal ativo."
+              />
+            )}
           </Card>
         </div>
       </div>
