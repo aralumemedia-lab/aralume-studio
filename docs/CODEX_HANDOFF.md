@@ -4,6 +4,9 @@
 - Frontend Lovable estabilizado e hardenizado sem criar backend real.
 - Sprint 0 consolidou `docs/PROJECT_MASTER.md`.
 - Sprint 1 corrigiu os warnings de `react-refresh/only-export-components` de forma estrutural.
+- Sprint 2 - Backend Foundation foi concluida e integrada ao `main` via PR #6.
+- O commit de merge oficial e `20b7c503761840910d78ceec604d9f8de55c3e84`.
+- `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
 - O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
 
 ## Sprint 0.2 - Preparacao segura de variaveis de ambiente
@@ -11,7 +14,7 @@
 - Nenhum valor real foi copiado, impresso, versionado ou validado.
 - `.env.example`, `.gitignore`, `docs/ENVIRONMENT.md` e as specs de SDD/ambiente foram preparados para a migracao segura.
 - O inventario distingue variaveis de backend foundation, futuro de IA/video/publicacao e itens de legado/revisao manual.
-- Proximo passo recomendado: Backend Foundation, apenas apos a migracao segura estar mergeada e o repositorio seguir limpo.
+- Naquele momento, o proximo passo recomendado era Backend Foundation, apenas apos a migracao segura estar mergeada e o repositorio seguir limpo.
 - Pendencias: copiar manualmente os valores reais quando necessario e rotacionar qualquer segredo que tenha sido exposto no projeto antigo.
 
 ## Stack real detectada
@@ -63,7 +66,10 @@
 - O conjunto de screenshots foi obtido com QA local ad hoc; nao foi adicionada automacao persistida de Playwright ao repositorio.
 
 ## Proximos passos recomendados
-- Sprint 2 - Backend Foundation.
+- Sprint 3 - Channels Domain Foundation.
+- A spec normativa da proxima sprint e `docs/specs/003-channels.md`.
+- A Sprint 4 - Channels Frontend Integration vem depois, conforme a sequencia definida na spec 003.
+- O Bun nao estava disponivel na sessao anterior e deve ser verificado no preflight da implementacao da Sprint 3.
 - Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
 
 ## Sprint 0.3 - SDD Specs Roadmap Foundation
@@ -72,7 +78,7 @@
 - Nenhum backend foi criado.
 - Nenhuma alteracao funcional de frontend foi feita.
 - Nenhum contrato ou mock foi alterado.
-- Proxima etapa recomendada: Sprint 2 - Backend Foundation.
+- A proxima etapa recomendada naquela fase foi Sprint 2 - Backend Foundation.
 
 ## Sprint 2 - Backend Foundation
 - Branch `codex/sprint-2-backend-foundation` contem a fundacao backend criada em `server/` com Express, env validation, request ID middleware, JSON parser, not found handler, error handler, request logging e `GET /health`.
@@ -80,10 +86,8 @@
 - `server/src/env.ts` valida `ARALUME_ENV` e `ARALUME_LOG_LEVEL` com defaults seguros; `DATABASE_URL` e `TEST_DATABASE_URL` permanecem opcionais.
 - Scripts adicionados: `backend:dev`, `backend:build`, `backend:check`, `backend:start`, `test`.
 - Setup documentado em `docs/BACKEND_SETUP.md`.
-- PR #6 esta aberto, em draft e em validacao.
-- O merge ainda nao foi realizado.
-- A fundacao backend ainda nao foi integrada a `main`.
-- Sprint 3 continua bloqueada ate aprovacao e merge do PR #6.
+- PR #6 foi mergeado e a fundacao backend foi integrada a `main`.
+- A sequencia autorizada agora segue para a Sprint 3 - Channels Domain Foundation.
 - Nenhum dominio de Canais foi implementado.
 - Nenhum CRUD real foi criado.
 - Nenhuma integracao frontend/backend foi feita.
