@@ -10,6 +10,7 @@ Este documento é o contrato que o futuro backend (Codex) deve seguir. O fronten
 - Convenção: `camelCase` em toda a superfície do frontend.
 - Dados operacionais SEMPRE têm `channelId` quando pertencem a um canal.
 - Status são enums fechados em `src/contracts/status.ts`.
+- `src/services/api-client.ts` concentra o transporte HTTP compartilhado e usa `VITE_ARALUME_API_BASE_URL` apenas como configuracao publica opcional, com `/api` como base relativa segura por padrao.
 
 ## Envelope de resposta
 ```ts
