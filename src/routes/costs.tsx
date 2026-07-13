@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/layout/AppShell";
-import { useChannelContext } from "@/components/aralume/channel-context";
+import { useChannelContext } from "@/components/aralume/channel-context-state";
 import { getCostEntries, getChannels } from "@/services/api-client";
 import { Card, KpiCard, SectionHeader } from "@/components/ui/data-card";
 import { CompactTable, type Column } from "@/components/ui/compact-table";

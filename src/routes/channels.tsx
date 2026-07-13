@@ -9,7 +9,7 @@ import {
   getPublicationJobs,
   getProductionItems,
 } from "@/services/api-client";
-import { useChannelContext } from "@/components/aralume/channel-context";
+import { useChannelContext } from "@/components/aralume/channel-context-state";
 import { Card, EmptyState, KpiCard, SectionHeader } from "@/components/ui/data-card";
 import {
   ChannelStatusBadge,

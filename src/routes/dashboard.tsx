@@ -12,7 +12,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/AppShell";
-import { useChannelContext } from "@/components/aralume/channel-context";
+import { useChannelContext } from "@/components/aralume/channel-context-state";
 import {
   getAuditLogs,
   getDashboardSummary,

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PageHeader } from "@/components/layout/AppShell";
-import { useChannelContext } from "@/components/aralume/channel-context";
+import { useChannelContext } from "@/components/aralume/channel-context-state";
 import { getHumanApprovals } from "@/services/api-client";
 import { Card, EmptyState, SectionHeader } from "@/components/ui/data-card";
 import { ApprovalStatusBadge, RiskBadge } from "@/components/status/badges";
