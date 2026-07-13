@@ -9,13 +9,26 @@ import { createErrorResponse, createSuccessResponse } from "../src/http/response
 
 let server: Server;
 let baseUrl = "";
+const logLines: string[] = [];
+const captureLogger = {
+  info: (message: string) => {
+    logLines.push(message);
+  },
+  warn: (message: string) => {
+    logLines.push(message);
+  },
+  error: (message: string) => {
+    logLines.push(message);
+  },
+};
 
 before(async () => {
   const app = createApp({
     env: {
       ARALUME_ENV: "development",
-      ARALUME_LOG_LEVEL: "error",
+      ARALUME_LOG_LEVEL: "info",
     },
+    logger: captureLogger,
   });
 
   server = app.listen(0);
@@ -83,7 +96,9 @@ test("response helpers create the standard envelopes", () => {
 });
 
 test("GET /health returns the foundation health payload", async () => {
+  logLines.length = 0;
   const response = await fetch(`${baseUrl}/health`);
+  const requestId = response.headers.get("x-request-id");
   const payload = (await response.json()) as {
     ok: boolean;
     service: string;
@@ -98,9 +113,23 @@ test("GET /health returns the foundation health payload", async () => {
     environment: "development",
     version: "0.1.0",
   });
+  assert.ok(requestId);
+  assert.equal(
+    logLines.some((line) => line.includes("/health")),
+    true,
+  );
+  assert.equal(
+    logLines.some((line) => line.includes(`[${requestId}]`)),
+    true,
+  );
+  assert.equal(
+    logLines.some((line) => line.includes("?")),
+    false,
+  );
 });
 
 test("POST /health with invalid JSON returns the standard error envelope", async () => {
+  logLines.length = 0;
   const response = await fetch(`${baseUrl}/health`, {
     method: "POST",
     headers: {
@@ -124,13 +153,18 @@ test("POST /health with invalid JSON returns the standard error envelope", async
   assert.equal(payload.error.code, "VALIDATION_ERROR");
   assert.equal(payload.error.message, "Invalid JSON payload");
   assert.deepEqual(payload.error.details, {});
+  assert.equal(response.headers.get("content-type")?.startsWith("application/json"), true);
   assert.ok(payload.meta.requestId.length > 0);
   assert.ok(payload.meta.generatedAt.length > 0);
   assert.equal("stack" in payload.error, false);
 });
 
-test("GET a missing route returns a not found envelope", async () => {
-  const response = await fetch(`${baseUrl}/missing-route`);
+test("GET a missing route with query returns a sanitized not found envelope and log", async () => {
+  logLines.length = 0;
+  const response = await fetch(
+    `${baseUrl}/rota-inexistente?token=segredo&email=teste%40example.com`,
+  );
+  const requestId = response.headers.get("x-request-id");
   const payload = (await response.json()) as {
     error: {
       code: string;
@@ -146,8 +180,33 @@ test("GET a missing route returns a not found envelope", async () => {
   assert.equal(response.status, 404);
   assert.equal(payload.error.code, "NOT_FOUND");
   assert.equal(payload.error.message, "Route not found");
-  assert.equal(payload.error.details.path, "/missing-route");
+  assert.equal(payload.error.details.path, "/rota-inexistente");
   assert.equal(payload.error.details.method, "GET");
+  assert.equal(JSON.stringify(payload).includes("token=segredo"), false);
+  assert.equal(JSON.stringify(payload).includes("teste@example.com"), false);
+  assert.ok(requestId);
+  assert.equal(requestId, payload.meta.requestId);
+  assert.equal(logLines.length > 0, true);
+  assert.equal(
+    logLines.some((line) => line.includes("token=segredo")),
+    false,
+  );
+  assert.equal(
+    logLines.some((line) => line.includes("teste@example.com")),
+    false,
+  );
+  assert.equal(
+    logLines.some((line) => line.includes("?")),
+    false,
+  );
+  assert.equal(
+    logLines.some((line) => line.includes("/rota-inexistente")),
+    true,
+  );
+  assert.equal(
+    logLines.some((line) => line.startsWith(`[${payload.meta.requestId}]`)),
+    true,
+  );
   assert.ok(payload.meta.requestId.length > 0);
   assert.ok(payload.meta.generatedAt.length > 0);
 });

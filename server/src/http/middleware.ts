@@ -18,6 +18,10 @@ function shouldLog(messageLevel: LogLevel, threshold: LogLevel): boolean {
   return levelOrder[messageLevel] >= levelOrder[threshold];
 }
 
+function getSanitizedPath(path: string): string {
+  return path;
+}
+
 export function requestContextMiddleware(): RequestHandler {
   return (req, res, next) => {
     const incomingRequestId = req.header("x-request-id")?.trim();
@@ -39,11 +43,12 @@ export function requestLoggerMiddleware(
 ): RequestHandler {
   return (req, res, next) => {
     const startedAt = Date.now();
+    const sanitizedPath = getSanitizedPath(req.path);
 
     res.once("finish", () => {
       const durationMs = Date.now() - startedAt;
       const requestId = typeof res.locals.requestId === "string" ? res.locals.requestId : "unknown";
-      const line = `[${requestId}] ${req.method} ${req.originalUrl} ${res.statusCode} ${durationMs}ms`;
+      const line = `[${requestId}] ${req.method} ${sanitizedPath} ${res.statusCode} ${durationMs}ms`;
 
       if (res.statusCode >= 500) {
         if (shouldLog("error", logLevel)) {
@@ -77,7 +82,7 @@ export function notFoundMiddleware(): RequestHandler {
         message: "Route not found",
         details: {
           method: req.method,
-          path: req.originalUrl,
+          path: req.path,
         },
       }),
     );

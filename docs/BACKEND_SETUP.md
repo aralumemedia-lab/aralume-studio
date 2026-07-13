@@ -17,7 +17,7 @@ No domain work is included yet.
 From the repository root:
 
 ```bash
-npm install
+bun install
 ```
 
 ## Run the backend
@@ -25,25 +25,25 @@ npm install
 Development mode:
 
 ```bash
-npm run backend:dev
+bun run backend:dev
 ```
 
 Production build:
 
 ```bash
-npm run backend:build
+bun run backend:build
 ```
 
 Typecheck the backend only:
 
 ```bash
-npm run backend:check
+bun run backend:check
 ```
 
 Start the built server:
 
 ```bash
-npm run backend:start
+bun run backend:start
 ```
 
 ## Health check
@@ -103,13 +103,17 @@ The following remain documented for later phases and are not required by Sprint 
 Frontend and backend checks:
 
 ```bash
-npm run lint
-npx tsc --noEmit
-npm run build
-npm run backend:check
-npm run backend:build
-npm run test
+bun run lint
+bunx tsc --noEmit
+bun run build
+bun run backend:check
+bun run backend:build
+bun run test
 ```
+
+## Package manager
+
+Bun is the official package manager for this repository. Keep `bun.lock` as the only lockfile and avoid regenerating `package-lock.json`.
 
 ## Out of scope
 
