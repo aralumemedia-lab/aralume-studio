@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementada na branch `codex/sprint-3-channels-domain-foundation`; merge pendente.
+Concluida no `main` via PR #8 e merge commit `6bf1bfec40cafaa7d2228f040745127e7ede9041`.
 
 ## Objetivo
 
@@ -136,4 +136,4 @@ Canais sao a base multicanal da plataforma. Toda operacao editorial, agente, con
 
 ## Proxima sprint recomendada
 
-Sprint 4 - Channels Frontend Integration.
+Sprint 4 - Channels Frontend Integration. Antes da implementacao, esta sprint deve passar por Spec Review e por uma spec propria.
