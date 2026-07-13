@@ -1,10 +1,21 @@
 # Next Sprints
 
+## Sprint 4 concluida e integrada
+- A Sprint 4 - Channels Frontend Integration foi concluida e integrada ao `main` via PR #10.
+- O merge commit oficial e `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
+- O commit de implementacao foi `af17736ad40aa691b09f4677671a43f218095643`.
+- A rota `/channels` agora consome a API real de Canais.
+- O `ChannelProvider` agora usa a camada real de servico e nao importa `mockChannels`.
+- O frontend de Canais usa `GET /api/channels`, `GET /api/channels/:id/settings` e `PATCH /api/channels/:id`.
+- Pausar e ativar canais passaram a usar o backend real.
+- Areas ainda nao integradas continuam explicitamente marcadas como demo quando aplicavel.
+- A configuracao de proxy Vite para `/api` foi aplicada e validada no desenvolvimento local.
+- As validacoes de lint, typecheck, build, backend check, testes, smoke integrado e QA visual foram executadas com sucesso.
+
 ## Sprint 3 concluida e integrada
 - A Sprint 3 - Channels Domain Foundation foi concluida e integrada ao `main` via PR #8.
 - O merge commit oficial e `6bf1bfec40cafaa7d2228f040745127e7ede9041`.
 - O backend de Canais ja disponibiliza `GET /api/channels`, `POST /api/channels`, `GET /api/channels/:id`, `PATCH /api/channels/:id` e `GET /api/channels/:id/settings`.
-- A tela `/channels` continua mockada no frontend; a integracao com a API real fica reservada para a Sprint 4, conforme `docs/specs/003-channels.md`.
 - A persistencia adotada nesta sprint foi um repositorio substituivel em memoria, porque a Sprint 2 nao disponibilizou banco operacional.
 - Nenhuma exclusao fisica foi implementada.
 
@@ -17,13 +28,13 @@
 - `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
 
 ## Recomendacao atual
-- **Sprint 4 - Channels Frontend Integration**
+- **Sprint 5 - Editorial Pipeline**
 
 ## Motivo
 - A fundacao backend de Canais ja esta integrada a `main`.
-- A proxima sprint deve comecar por Spec Review e por uma spec propria antes da implementacao.
-- A integracao da tela `/channels` deve consumir a API real entregue na Sprint 3, sem alterar o backend ja concluido.
-- A tela `/channels` continua mockada ate a conclusao dessa integracao.
+- A integracao da tela `/channels` foi concluida na Sprint 4 e nao esta mais pendente.
+- A proxima sprint autorizada e a Sprint 5 - Editorial Pipeline, conforme `docs/specs/004-agent-office-workflows.md` e `docs/specs/005-editorial-pipeline.md`.
+- A proxima implementacao deve comecar por Spec Review da spec 005 antes de qualquer alteracao funcional.
 
 ## Sprint 0.2 concluida
 - A preparacao segura de variaveis de ambiente foi concluida.
@@ -50,4 +61,4 @@
 
 ## Observacoes
 - Se o time quiser formalizar QA visual automatizado no repo, a unica alternativa sensata antes do backend e uma Sprint 1B curta para Playwright e capturas reproduziveis.
-- A recomendacao anterior de Sprint 3 nao se aplica mais porque o PR #8 ja foi mergeado e a base de Canais esta integrada.
+- A recomendacao anterior de Sprint 4 nao se aplica mais porque o PR #10 ja foi mergeado e a integracao de Canais esta concluida.

@@ -4,6 +4,14 @@
 
 Concluida no `main` via PR #8 e merge commit `6bf1bfec40cafaa7d2228f040745127e7ede9041`.
 
+## Encerramento da Sprint 4
+
+- A Sprint 4 - Channels Frontend Integration foi concluida no `main` via PR #10.
+- O merge commit oficial e `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
+- A rota `/channels` passou a consumir a API real de Canais e o `ChannelProvider` passou a usar a camada de servico real.
+- As areas ainda nao integradas da experiencia continuam marcadas explicitamente como demo.
+- O proximo passo autorizado apos este encerramento e a Sprint 5 - Editorial Pipeline, regida por `docs/specs/005-editorial-pipeline.md` e precedida por Spec Review.
+
 ## Objetivo
 
 Implementar o primeiro dominio real da Aralume Studio: Canais.
@@ -136,4 +144,4 @@ Canais sao a base multicanal da plataforma. Toda operacao editorial, agente, con
 
 ## Proxima sprint recomendada
 
-Sprint 4 - Channels Frontend Integration. Antes da implementacao, esta sprint deve passar por Spec Review e por uma spec propria.
+Sprint 5 - Editorial Pipeline. Antes da implementacao, esta sprint deve passar por Spec Review e seguir `docs/specs/005-editorial-pipeline.md`.
