@@ -6,6 +6,14 @@
 - Sprint 1 corrigiu os warnings de `react-refresh/only-export-components` de forma estrutural.
 - O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
 
+## Sprint 0.2 - Preparacao segura de variaveis de ambiente
+- O `.env.local` legado foi usado somente para extrair nomes de variaveis.
+- Nenhum valor real foi copiado, impresso, versionado ou validado.
+- `.env.example`, `.gitignore`, `docs/ENVIRONMENT.md` e as specs de SDD/ambiente foram preparados para a migracao segura.
+- O inventario distingue variaveis de backend foundation, futuro de IA/video/publicacao e itens de legado/revisao manual.
+- Proximo passo recomendado: Backend Foundation, apenas apos a migracao segura estar mergeada e o repositorio seguir limpo.
+- Pendencias: copiar manualmente os valores reais quando necessario e rotacionar qualquer segredo que tenha sido exposto no projeto antigo.
+
 ## Stack real detectada
 - React 19
 - TypeScript
