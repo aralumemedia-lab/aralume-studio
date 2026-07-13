@@ -220,6 +220,19 @@ test("editorial service creates linked content and preserves version history", (
   assert.throws(
     () =>
       editorialService.createScenePlan(visualPlan.id, {
+        order: 2,
+        title: "Cena invalida",
+        narrationExcerpt: "Invalida",
+        durationSeconds: 0,
+        visualDescription: "Visual invalido",
+        assetRequirements: [],
+      }),
+    (error) => error instanceof Error && error.name === "ZodError",
+  );
+
+  assert.throws(
+    () =>
+      editorialService.createScenePlan(visualPlan.id, {
         order: 1,
         title: "Cena duplicada",
         narrationExcerpt: "Duplicada",

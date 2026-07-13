@@ -93,7 +93,7 @@ export async function requestApiEnvelope<T>(
       throw new ApiRequestError({
         kind: "timeout",
         url,
-        message: "A requisicao para a API de Canais expirou.",
+        message: "A requisicao para a API expirou.",
         cause: error,
       });
     }

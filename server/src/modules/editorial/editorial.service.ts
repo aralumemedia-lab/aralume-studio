@@ -12,6 +12,7 @@ import {
   scriptCreateSchema,
   scriptPatchSchema,
   scriptVersionCreateSchema,
+  scenePlanCreateSchema,
   visualPlanCreateSchema,
   visualPlanPatchSchema,
 } from "./editorial.schema.js";
@@ -493,7 +494,7 @@ export function createEditorialService(
 
     createScenePlan(visualPlanId, input) {
       const plan = getRequiredVisualPlan(repository, visualPlanId);
-      const parsed = input;
+      const parsed = scenePlanCreateSchema.parse(input);
       if (parsed.order !== Math.trunc(parsed.order) || parsed.order <= 0) {
         throw validation("Scene order must be a positive integer", { order: parsed.order });
       }
