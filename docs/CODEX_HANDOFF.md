@@ -10,7 +10,10 @@
 - Sprint 3 - Channels Domain Foundation foi concluida e integrada ao `main` via PR #8.
 - O commit de merge oficial e `6bf1bfec40cafaa7d2228f040745127e7ede9041`.
 - `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
-- O backend de Canais ja esta disponivel no `main` e a tela `/channels` continua mockada ate a Sprint 4.
+- Sprint 4 - Channels Frontend Integration foi concluida e integrada ao `main` via PR #10.
+- O commit de implementacao e `af17736ad40aa691b09f4677671a43f218095643`.
+- O commit de merge oficial e `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
+- O backend de Canais continua disponivel no `main` e a tela `/channels` agora consome a API real.
 - O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
 
 ## Sprint 3 - Channels Domain Foundation
@@ -18,9 +21,21 @@
 - Escopo implementado: dominio de Canais no backend com listagem, criacao, consulta, atualizacao e settings.
 - Endpoints reais disponiveis: `GET /api/channels`, `POST /api/channels`, `GET /api/channels/:id`, `PATCH /api/channels/:id`, `GET /api/channels/:id/settings`.
 - Persistencia adotada: repositorio substituivel em memoria, sem banco real nesta sprint.
-- Integração frontend: nao foi iniciada; permanece reservada para a Sprint 4.
+- Integracao frontend: concluida na Sprint 4 via PR #10.
 - Exclusao fisica: nao implementada.
 - PR de Sprint 3: `#8` MERGED.
+
+## Sprint 4 - Channels Frontend Integration
+- Spec normativa: `docs/specs/013-channels-frontend-integration.md`.
+- Escopo implementado: `src/services/http-client.ts`, `src/services/channels-api.ts`, `src/components/aralume/channel-selection.ts`, `src/components/aralume/channel-context.tsx`, `src/components/layout/AppShell.tsx` e `src/routes/channels.tsx`.
+- Endpoints consumidos: `GET /api/channels`, `GET /api/channels/:id/settings`, `PATCH /api/channels/:id`.
+- Proxy local: `vite.config.ts` aponta `/api` para `http://127.0.0.1:3001`.
+- Estados validados: loading, empty, error, canal ativo, canal pausado, selecao de canal, mutacao de status e reload com backend em memoria.
+- Areas demo permanecem explicitamente marcadas como demo e nao foram promovidas a persistencia real.
+- Validacoes executadas: `bun install --frozen-lockfile`, `bun run lint`, `bun x tsc --noEmit`, `bun run build`, `bun run backend:check`, `bun run test`, testes especificos da integracao de Canais, smoke backend, smoke frontend e QA visual nas resolucoes definidas.
+- Limitacao residual: foi observado um warning de hydration mismatch no console de desenvolvimento, sem page error e sem bloqueio de fluxo; nao foi corrigido nesta branch documental.
+- PR de Sprint 4: `#10` MERGED.
+- Merge commit: `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
 
 ## Sprint 0.2 - Preparacao segura de variaveis de ambiente
 - O `.env.local` legado foi usado somente para extrair nomes de variaveis.
@@ -79,10 +94,9 @@
 - O conjunto de screenshots foi obtido com QA local ad hoc; nao foi adicionada automacao persistida de Playwright ao repositorio.
 
 ## Proximos passos recomendados
-- Sprint 4 - Channels Frontend Integration.
-- A Sprint 4 deve comecar por Spec Review e por uma spec propria antes da implementacao.
-- A spec normativa desta rodada permanece `docs/specs/003-channels.md`.
-- O frontend continua usando `mock-api` para `/channels` ate a integracao da Sprint 4.
+- Sprint 5 - Editorial Pipeline.
+- A Sprint 5 deve comecar por Spec Review e por `docs/specs/005-editorial-pipeline.md` antes de qualquer implementacao.
+- A sequencia autorizada agora segue para o pipeline editorial, sem reabrir a Sprint 4.
 - Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
 
 ## Sprint 0.3 - SDD Specs Roadmap Foundation
@@ -100,7 +114,7 @@
 - Scripts adicionados: `backend:dev`, `backend:build`, `backend:check`, `backend:start`, `test`.
 - Setup documentado em `docs/BACKEND_SETUP.md`.
 - PR #6 foi mergeado e a fundacao backend foi integrada a `main`.
-- A sequencia autorizada agora segue para a Sprint 4 - Channels Frontend Integration.
+- A sequencia autorizada agora segue para a Sprint 5 - Editorial Pipeline.
 - Nenhum dominio de Canais foi implementado.
 - Nenhum CRUD real foi criado.
 - Nenhuma integracao frontend/backend foi feita.

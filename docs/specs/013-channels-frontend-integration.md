@@ -2,7 +2,7 @@
 
 ## Status
 
-Aprovada.
+Concluida no `main` via PR #10 e merge commit `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
 
 ## Objetivo
 
@@ -279,4 +279,13 @@ Hoje a tela `/channels` e o contexto global de canal dependem de mocks locais. I
 - Testes e builds passam.
 - QA visual executado quando houver alteracao visual.
 - Documentacao de execucao local atualizada.
-- PR da Sprint 4 aberta, sem merge nesta rodada.
+- PR da Sprint 4 mergeada como `#10`.
+
+## Encerramento
+
+- PR da Sprint 4: `#10`.
+- Commit da implementacao: `af17736ad40aa691b09f4677671a43f218095643`.
+- Merge commit: `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
+- Validacoes executadas com sucesso: `bun install --frozen-lockfile`, `bun run lint`, `bun x tsc --noEmit`, `bun run build`, `bun run backend:check`, `bun run test`, testes especificos da integracao de Canais, smoke backend, smoke frontend via proxy Vite e QA visual nas resolucoes 1366x768, 1600x900, 1792x1024 e 1920x1080.
+- Limitacao residual observada: warning de hydration mismatch no console de desenvolvimento, sem page error e sem bloqueio operacional.
+- Estado final: `/channels` usa API real, `ChannelProvider` usa a camada real e os blocos ainda nao integrados seguem como demo.
