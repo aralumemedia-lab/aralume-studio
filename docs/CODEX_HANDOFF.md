@@ -7,7 +7,17 @@
 - Sprint 2 - Backend Foundation foi concluida e integrada ao `main` via PR #6.
 - O commit de merge oficial e `20b7c503761840910d78ceec604d9f8de55c3e84`.
 - `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
+- Sprint 3 - Channels Domain Foundation foi implementada na branch `codex/sprint-3-channels-domain-foundation`.
+- O backend de Canais ja esta disponivel nesta branch e a tela `/channels` continua mockada ate a Sprint 4.
 - O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
+
+## Sprint 3 - Channels Domain Foundation
+- Spec normativa: `docs/specs/003-channels.md`.
+- Escopo implementado: dominio de Canais no backend com listagem, criacao, consulta, atualizacao e settings.
+- Persistencia adotada: repositorio substituivel em memoria, sem banco real nesta sprint.
+- Integração frontend: nao foi iniciada; permanece reservada para a Sprint 4.
+- Exclusao fisica: nao implementada.
+- PR de Sprint 3: pendente de merge.
 
 ## Sprint 0.2 - Preparacao segura de variaveis de ambiente
 - O `.env.local` legado foi usado somente para extrair nomes de variaveis.
@@ -66,10 +76,10 @@
 - O conjunto de screenshots foi obtido com QA local ad hoc; nao foi adicionada automacao persistida de Playwright ao repositorio.
 
 ## Proximos passos recomendados
-- Sprint 3 - Channels Domain Foundation.
-- A spec normativa da proxima sprint e `docs/specs/003-channels.md`.
-- A Sprint 4 - Channels Frontend Integration vem depois, conforme a sequencia definida na spec 003.
-- O Bun nao estava disponivel na sessao anterior e deve ser verificado no preflight da implementacao da Sprint 3.
+- Sprint 4 - Channels Frontend Integration.
+- A spec normativa permanece `docs/specs/003-channels.md`.
+- A Sprint 4 vem depois da integracao backend de Canais ja implementada na Sprint 3.
+- O Bun foi verificado nesta rodada; se o ambiente mudar, revalidar no preflight da proxima sprint.
 - Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
 
 ## Sprint 0.3 - SDD Specs Roadmap Foundation

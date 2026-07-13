@@ -15,6 +15,11 @@ export type ApiSuccess<T> = {
   meta: ApiMeta;
 };
 
+export type ApiListSuccess<T> = {
+  data: T[];
+  meta: ApiMeta;
+};
+
 export type ApiErrorEnvelope = {
   error: {
     code: ApiErrorCode;
@@ -51,6 +56,21 @@ export function createSuccessResponse<T>(data: T, meta: ApiMetaInput = {}): ApiS
   return {
     data,
     meta: createApiMeta(meta),
+  };
+}
+
+export function createListSuccessResponse<T>(
+  data: T[],
+  meta: ApiMetaInput = {},
+): ApiListSuccess<T> {
+  return {
+    data,
+    meta: createApiMeta({
+      ...meta,
+      total: meta.total ?? data.length,
+      page: meta.page ?? 1,
+      pageSize: meta.pageSize ?? data.length,
+    }),
   };
 }
 
