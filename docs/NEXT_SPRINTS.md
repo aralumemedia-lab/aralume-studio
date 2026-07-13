@@ -1,5 +1,13 @@
 # Next Sprints
 
+## Sprint 3 implementada na branch
+- A Sprint 3 - Channels Domain Foundation foi implementada na branch `codex/sprint-3-channels-domain-foundation`.
+- O backend de Canais ja disponibiliza `GET /api/channels`, `POST /api/channels`, `GET /api/channels/:id`, `PATCH /api/channels/:id` e `GET /api/channels/:id/settings`.
+- A tela `/channels` permanece mockada nesta sprint; a integracao frontend fica reservada para a Sprint 4, conforme `docs/specs/003-channels.md`.
+- A persistencia adotada nesta sprint foi um repositorio substituivel em memoria, porque a Sprint 2 nao disponibilizou banco operacional.
+- Nenhuma exclusao fisica foi implementada.
+- O merge para `main` ainda esta pendente.
+
 ## Sprint 2 concluida e integrada
 - A fundacao backend foi criada na branch `codex/sprint-2-backend-foundation` com Express, validacao de ambiente, logger simples, middlewares essenciais, `GET /health` e envelopes padrao.
 - `docs/BACKEND_SETUP.md` foi adicionado para orientar a operacao local e os comandos de validacao.

@@ -44,6 +44,8 @@ Definidos em `src/contracts/types.ts`. Não renomear campos.
 - `Content` (idea) 1:N `HumanApproval, ComplianceCheck, QualityCheck`.
 
 ## Endpoints futuros (documentados, não implementados)
+Os endpoints de Canais abaixo já estão disponíveis no backend entregue na Sprint 3; os demais permanecem futuros até a integração correspondente.
+
 Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiListSuccess`.
 
 | Método | Path                                | Retorno                       |
