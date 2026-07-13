@@ -1,5 +1,21 @@
 # Next Sprints
 
+## Sprint 2 implementada na branch
+- A fundacao backend foi criada na branch `codex/sprint-2-backend-foundation` com Express, validacao de ambiente, logger simples, middlewares essenciais, `GET /health` e envelopes padrao.
+- `docs/BACKEND_SETUP.md` foi adicionado para orientar a operacao local e os comandos de validacao.
+- Os scripts backend foram adicionados sem alterar o dominio de Canais.
+- O PR #6 esta aberto e em validacao.
+- O merge ainda nao foi realizado.
+- A fundacao backend ainda nao foi integrada a `main`.
+
+## Recomendacao atual
+- **Sprint 3 - Channels Domain Foundation** apenas depois da aprovacao e merge do PR #6.
+
+## Motivo
+- A fundacao backend precisa permanecer em validacao ate a aprovacao final.
+- O dominio de Canais continua fora de escopo nesta sprint.
+- A proximidade com o contrato de frontend agora pode evoluir com a base HTTP ja estabilizada, mas ainda nao integrada a `main`.
+
 ## Sprint 0.2 concluida
 - A preparacao segura de variaveis de ambiente foi concluida.
 - `.env.example`, `.gitignore`, `docs/ENVIRONMENT.md` e as specs de SDD/ambiente foram preparados sem expor valores reais.
@@ -24,5 +40,5 @@
 - O backend so deve comecar apos o PR #5 ser mergeado, o `main` permanecer limpo e as validacoes continuarem passando.
 
 ## Observacoes
-- Se o time quiser formalizar QA visual automatizado no repositorio, a unica alternativa sensata antes do backend e uma Sprint 1B curta para Playwright e capturas reproduziveis.
-- A recomendacao de Sprint 2 so vale se `main` seguir limpo, a documentacao de ambiente estiver pronta e as validacoes continuarem passando.
+- Se o time quiser formalizar QA visual automatizado no repo, a unica alternativa sensata antes do backend e uma Sprint 1B curta para Playwright e capturas reproduziveis.
+- A recomendacao de Sprint 2 so vale enquanto o PR #6 permanecer aberto e nao integrado a `main`.
