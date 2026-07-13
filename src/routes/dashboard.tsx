@@ -16,13 +16,13 @@ import { useChannelContext } from "@/components/aralume/channel-context-state";
 import {
   getAuditLogs,
   getDashboardSummary,
-  getHumanApprovals,
+  getApprovals,
   getPerformanceMetrics,
   getProductionItems,
   getPublicationJobs,
   getWorkflowRuns,
 } from "@/services/api-client";
-import { Card, CardHeader, EmptyState, KpiCard, SectionHeader } from "@/components/ui/data-card";
+import { Card, EmptyState, KpiCard, SectionHeader } from "@/components/ui/data-card";
 import { formatCurrencyCents, formatDateTime, formatNumber, formatRelative } from "@/lib/format";
 import { CompactTable, type Column } from "@/components/ui/compact-table";
 import {
@@ -68,7 +68,7 @@ function DashboardPage() {
   });
   const approvalsQ = useQuery({
     queryKey: ["appr", activeChannelId],
-    queryFn: () => getHumanApprovals(activeChannelId),
+    queryFn: () => getApprovals({ channelId: activeChannelId }),
   });
   const pubsQ = useQuery({
     queryKey: ["pubs", activeChannelId],
@@ -86,7 +86,9 @@ function DashboardPage() {
   const s = summaryQ.data?.data;
   const productionRows = prodQ.data?.data ?? [];
   const workflowsRows = (workflowsQ.data?.data ?? []).slice(0, 6);
-  const approvalRows = (approvalsQ.data?.data ?? []).filter((a) => a.status === "pending");
+  const approvalRows = (approvalsQ.data?.data ?? []).filter(
+    (approval) => approval.status === "pending",
+  );
   const pubRows = (pubsQ.data?.data ?? []).filter(
     (p) => p.status === "scheduled" || p.status === "draft",
   );
@@ -273,7 +275,7 @@ function DashboardPage() {
                       <div className="min-w-0">
                         <div className="text-[12.5px] font-medium truncate">{a.title}</div>
                         <div className="text-[11px] text-muted-foreground mt-0.5">
-                          {formatRelative(a.createdAt)} · {formatCurrencyCents(a.costActualCents)}
+                          Solicitado {formatRelative(a.requestedAt)} · {a.requestedBy}
                         </div>
                       </div>
                       <div className="flex flex-col gap-1 items-end">

@@ -15,7 +15,7 @@
     "backend:build": "tsc -p server/tsconfig.json",
     "backend:check": "tsc -p server/tsconfig.json --noEmit",
     "backend:start": "node server/dist/index.js",
-    "test": "node --import tsx --test server/test/env.test.ts server/test/http.test.ts server/test/channels.test.ts"
+    "test": "node --import tsx --test server/test/env.test.ts server/test/http.test.ts server/test/channels.test.ts server/test/governance.test.ts src/services/channels-api.test.ts src/services/editorial-api.test.ts src/services/governance-api.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -6,6 +6,20 @@ import type {
   ContentStatus,
   CostStatus,
   PublicationStatus,
+  QualityCheckStatus,
+  RiskLevel,
+  WorkflowStatus,
+} from "./status";
+
+export type {
+  AgentStatus,
+  ApprovalStatus,
+  ChannelStatus,
+  ComplianceStatus,
+  ContentStatus,
+  CostStatus,
+  PublicationStatus,
+  QualityCheckStatus,
   RiskLevel,
   WorkflowStatus,
 } from "./status";
@@ -233,6 +247,44 @@ export type ResearchSession = {
   updatedAt: ISODate;
 };
 
+export type GovernanceEntityType =
+  | "content_idea"
+  | "production_item"
+  | "research_session"
+  | "script"
+  | "visual_plan";
+
+export type GovernanceTargetSnapshot = {
+  entityType: GovernanceEntityType;
+  entityId: ID;
+  channelId: ID;
+  title: string;
+  summary: string;
+  status: string;
+  riskLevel: RiskLevel;
+};
+
+export type QualityCheckResult = "pass" | "attention" | "blocked";
+
+export type QualityCheckItem = {
+  code: string;
+  name: string;
+  result: QualityCheckResult;
+  severity: RiskLevel;
+  message: string;
+  blocking: boolean;
+  metadata: Record<string, unknown>;
+};
+
+export type ComplianceFinding = {
+  code: string;
+  name: string;
+  severity: RiskLevel;
+  message: string;
+  blocking: boolean;
+  metadata: Record<string, unknown>;
+};
+
 export type ResearchSource = {
   id: ID;
   channelId: ID;
@@ -388,50 +440,68 @@ export type DerivedClip = {
 export type QualityCheck = {
   id: ID;
   channelId: ID;
-  contentId: ID;
-  videoAssetId?: ID;
-  status: "passed" | "warning" | "failed" | "not_checked";
-  resolutionOk: boolean;
-  audioOk: boolean;
-  subtitlesOk: boolean;
-  durationOk: boolean;
-  renderOk: boolean;
-  findings: string[];
+  entityType: GovernanceEntityType;
+  entityId: ID;
+  status: QualityCheckStatus;
+  score: number;
+  checks: QualityCheckItem[];
+  findings: QualityCheckItem[];
+  blockingFindings: QualityCheckItem[];
+  checkedAt: ISODate;
   createdAt: ISODate;
+  updatedAt: ISODate;
+  targetSnapshot: GovernanceTargetSnapshot;
+  summary?: string;
 };
 
 export type ComplianceCheck = {
   id: ID;
   channelId: ID;
-  contentId: ID;
+  entityType: GovernanceEntityType;
+  entityId: ID;
   status: ComplianceStatus;
   riskLevel: RiskLevel;
-  findings: {
-    id: ID;
-    severity: RiskLevel;
-    title: string;
-    description: string;
-    blocking: boolean;
-  }[];
-  requiresHumanReview: boolean;
+  findings: ComplianceFinding[];
+  blockingFindings: ComplianceFinding[];
+  checkedAt: ISODate;
   createdAt: ISODate;
+  updatedAt: ISODate;
+  targetSnapshot: GovernanceTargetSnapshot;
+  requiresHumanReview: boolean;
 };
 
 export type HumanApproval = {
   id: ID;
   channelId: ID;
-  contentId: ID;
+  entityType: GovernanceEntityType;
+  entityId: ID;
   title: string;
-  approvalType:
-    "idea" | "script" | "visual_plan" | "video" | "clip" | "publication" | "risk_exception";
   status: ApprovalStatus;
   riskLevel: RiskLevel;
-  recommendation: "approve" | "reject" | "request_changes" | "block";
   summary: string;
-  costActualCents: number;
-  createdAt: ISODate;
+  requestedAt: ISODate;
+  requestedBy: string;
   decidedAt?: ISODate;
   decidedBy?: string;
+  decisionReason?: string;
+  createdAt: ISODate;
+  updatedAt: ISODate;
+  targetSnapshot: GovernanceTargetSnapshot;
+  qualityCheckId?: ID;
+  complianceCheckId?: ID;
+  latestDecisionId?: ID;
+};
+
+export type ApprovalDecision = {
+  id: ID;
+  approvalId: ID;
+  previousStatus: ApprovalStatus;
+  nextStatus: ApprovalStatus;
+  decision: "approve" | "reject" | "request_changes" | "block";
+  justification: string;
+  actor: string;
+  decidedAt: ISODate;
+  createdAt: ISODate;
 };
 
 export type PublicationTarget = {

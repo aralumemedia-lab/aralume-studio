@@ -6,6 +6,7 @@ import type {
   ComplianceStatus,
   ContentStatus,
   CostStatus,
+  QualityCheckStatus,
   PublicationStatus,
   RiskLevel,
   WorkflowStatus,
@@ -163,6 +164,21 @@ const complianceLabel: Record<ComplianceStatus, { label: string; tone: Tone }> =
 };
 export function ComplianceStatusBadge({ status }: { status: ComplianceStatus }) {
   const s = complianceLabel[status];
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
+}
+
+const qualityCheckLabel: Record<QualityCheckStatus, { label: string; tone: Tone }> = {
+  pending: { label: "Pendente", tone: "muted" },
+  passed: { label: "Aprovado", tone: "ok" },
+  attention: { label: "Atenção", tone: "attention" },
+  blocked: { label: "Bloqueado", tone: "critical" },
+};
+export function QualityCheckStatusBadge({ status }: { status: QualityCheckStatus }) {
+  const s = qualityCheckLabel[status];
   return (
     <StatusBadge tone={s.tone} dot>
       {s.label}

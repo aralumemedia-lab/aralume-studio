@@ -1,6 +1,10 @@
 # Codex Handoff - Sprint 1
 
 ## Estado atual
+- Sprint 5 - Editorial Pipeline foi concluida e integrada ao `main`.
+- O merge commit oficial e `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
+- `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
+- A proxima sprint recomendada pelo roadmap e a Sprint 6 - Approvals, Quality and Compliance.
 - Frontend Lovable estabilizado e hardenizado sem criar backend real.
 - Sprint 0 consolidou `docs/PROJECT_MASTER.md`.
 - Sprint 1 corrigiu os warnings de `react-refresh/only-export-components` de forma estrutural.
@@ -15,6 +19,14 @@
 - O commit de merge oficial e `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
 - O backend de Canais continua disponivel no `main` e a tela `/channels` agora consome a API real.
 - O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
+
+## Sprint 5 - Editorial Pipeline
+- A Sprint 5 foi concluida formalmente e integrada ao `main`.
+- PR #12 foi mergeado.
+- Merge commit: `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
+- A camada editorial adicionou ideias, pesquisas, fontes, evidencias, roteiros, versoes de roteiro, planos visuais, cenas e testes deterministas.
+- As rotas `/ideas`, `/research`, `/scripts` e `/production` ja usam a API real do dominio editorial.
+- O proximo passo operacional e a Sprint 6 - Approvals, Quality and Compliance.
 
 ## Sprint 3 - Channels Domain Foundation
 - Spec normativa: `docs/specs/003-channels.md`.
