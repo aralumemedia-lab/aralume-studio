@@ -145,30 +145,60 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
 }
 
 function ChannelSwitcher() {
-  const { channels, activeChannelId, setActiveChannelId, activeChannel } = useChannelContext();
+  const {
+    channels,
+    activeChannelId,
+    setActiveChannelId,
+    activeChannel,
+    loading,
+    error,
+    refreshChannels,
+  } = useChannelContext();
   const [open, setOpen] = useState(false);
+  const isBusy = loading && channels.length === 0;
+  const isBlocked = !!error && channels.length === 0;
+  const label = isBusy
+    ? "Carregando canais..."
+    : isBlocked
+      ? "Falha ao carregar canais"
+      : (activeChannel?.name ?? "Selecionar canal");
+  const statusTone = isBlocked
+    ? "bg-critical"
+    : isBusy
+      ? "bg-info animate-pulse"
+      : activeChannel?.status === "active"
+        ? "bg-ok"
+        : activeChannel?.status === "warning"
+          ? "bg-warning"
+          : "bg-muted-foreground";
+
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-2.5 h-8 text-[12px] hover:bg-accent/50"
+        onClick={() => {
+          if (isBlocked) {
+            setOpen(false);
+            void refreshChannels();
+            return;
+          }
+
+          if (!isBusy) {
+            setOpen((v) => !v);
+          }
+        }}
+        disabled={isBusy}
+        title={isBlocked ? "Tentar novamente" : undefined}
+        className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-2.5 h-8 text-[12px] hover:bg-accent/50 disabled:cursor-not-allowed disabled:opacity-80"
       >
-        <span
-          className={cn(
-            "h-1.5 w-1.5 rounded-full",
-            activeChannel?.status === "active"
-              ? "bg-ok"
-              : activeChannel?.status === "warning"
-                ? "bg-warning"
-                : "bg-muted-foreground",
-          )}
-        />
-        <span className="font-medium text-foreground truncate max-w-[180px]">
-          {activeChannel?.name ?? "Selecionar canal"}
-        </span>
-        <ChevronDown size={13} className="text-muted-foreground" />
+        <span className={cn("h-1.5 w-1.5 rounded-full", statusTone)} />
+        <span className="font-medium text-foreground truncate max-w-[180px]">{label}</span>
+        {isBlocked ? (
+          <AlertTriangle size={13} className="text-critical" />
+        ) : (
+          <ChevronDown size={13} className="text-muted-foreground" />
+        )}
       </button>
-      {open && (
+      {open && !isBlocked && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute left-0 top-9 z-20 w-[280px] rounded-md border border-border bg-popover shadow-lg p-1">
