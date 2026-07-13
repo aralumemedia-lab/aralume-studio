@@ -88,7 +88,7 @@ A plataforma deve operar com limites de custo e impedir acoes caras sem configur
 - Bloquear operacao fora da politica.
 - Verificar limites diarios e mensais.
 
-## Critrios de aceite
+## Critérios de aceite
 - Modelos definidos.
 - Estados coerentes.
 - Nenhum custo real gerado.
@@ -98,4 +98,3 @@ A plataforma deve operar com limites de custo e impedir acoes caras sem configur
 
 ## Proxima sprint recomendada
 Sprint 8 - Media Assets and Storage Registry.
-

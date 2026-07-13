@@ -129,7 +129,7 @@ Quando houver novas fases ou sprints sem spec, criar e organizar em `docs/specs/
 ```text
 docs/specs/
   000-sdd-process.md
-  001-frontend-foundation.md
+  001-environment-safe-migration.md
   002-backend-foundation.md
   003-channels.md
   004-agent-office-workflows.md

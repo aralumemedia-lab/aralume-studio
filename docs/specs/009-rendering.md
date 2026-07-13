@@ -72,7 +72,7 @@ Definir a base de renderizacao controlada da Aralume Studio.
 - Rejeitar path inseguro.
 - Registrar erro de render.
 
-## Critrios de aceite
+## Critérios de aceite
 - `RenderJob` definido.
 - Validacao de inputs existe.
 - Paths seguros.
@@ -83,4 +83,3 @@ Definir a base de renderizacao controlada da Aralume Studio.
 
 ## Proxima sprint recomendada
 Sprint 10 - Assisted Publication.
-

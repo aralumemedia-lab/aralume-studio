@@ -103,7 +103,7 @@ Esta spec abre a fase backend depois da base documental e da migracao segura de 
 - Confirmar a validacao de ambiente.
 - Confirmar a consistencia dos envelopes.
 
-## Critrios de aceite
+## Critérios de aceite
 - Backend foundation existe.
 - Health check validavel.
 - Validacao de ambiente existe.
@@ -115,4 +115,3 @@ Esta spec abre a fase backend depois da base documental e da migracao segura de 
 
 ## Proxima sprint recomendada
 Sprint 3 - Channels Domain Foundation.
-

@@ -84,7 +84,7 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - Bloquear sem compliance.
 - Bloquear sem credencial valida.
 
-## Critrios de aceite
+## Critérios de aceite
 - Entidades definidas.
 - Fluxo assistido documentado.
 - Sem publicacao real se nao aprovada.
@@ -93,4 +93,3 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 
 ## Proxima sprint recomendada
 Sprint 11 - Metrics and Editorial Learning.
-

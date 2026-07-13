@@ -116,7 +116,7 @@ Definir a base do pipeline editorial da Aralume Studio: ideias, producao, pesqui
 - Criar script e versoes.
 - Verificar coerencia dos status.
 
-## Critrios de aceite
+## Critérios de aceite
 - Entidades principais modeladas.
 - Status coerentes.
 - Validacao existe.
@@ -127,4 +127,3 @@ Definir a base do pipeline editorial da Aralume Studio: ideias, producao, pesqui
 
 ## Proxima sprint recomendada
 Sprint 6 - Approvals and Compliance.
-

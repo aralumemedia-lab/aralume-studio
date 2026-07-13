@@ -91,11 +91,14 @@ O Escritorio de Agentes deve representar estado operacional real dos agentes, ha
 - Aprovacao humana futura deve ser conectavel.
 
 ## Endpoints esperados
-- `GET /api/agent-office/summary`
+- `GET /api/agent-office/snapshot`
 - `GET /api/agents`
 - `GET /api/workflows`
 - `GET /api/workflows/:workflowRunId`
 - `GET /api/workflows/:workflowRunId/steps`
+
+## Observacao
+- O retorno esperado e compativel com `AgentOfficeSnapshot` descrito em `docs/FRONTEND_API_CONTRACTS.md`.
 
 ## Validacoes
 - Listar estado do escritorio.
@@ -103,7 +106,7 @@ O Escritorio de Agentes deve representar estado operacional real dos agentes, ha
 - Validar transicoes de estado.
 - Garantir que bloqueios aparecam de forma explicita.
 
-## Critrios de aceite
+## Critérios de aceite
 - Entidades ou contratos definidos.
 - Endpoints minimos de leitura criados.
 - Estados coerentes com frontend.
@@ -113,4 +116,3 @@ O Escritorio de Agentes deve representar estado operacional real dos agentes, ha
 
 ## Proxima sprint recomendada
 Sprint 5 - Editorial Pipeline.
-

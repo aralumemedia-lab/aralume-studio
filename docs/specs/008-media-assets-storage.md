@@ -102,7 +102,7 @@ Antes de renderizacao real, a plataforma precisa controlar onde os arquivos vive
 - Rejeitar path externo.
 - Ler relacao entre origem e derivado.
 
-## Critrios de aceite
+## Critérios de aceite
 - Registry definido.
 - Validacao de storage root existe.
 - Nenhum arquivo fora do storage root e aceito.
@@ -112,4 +112,3 @@ Antes de renderizacao real, a plataforma precisa controlar onde os arquivos vive
 
 ## Proxima sprint recomendada
 Sprint 9 - Rendering.
-

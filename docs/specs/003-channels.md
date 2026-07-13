@@ -59,9 +59,13 @@ Canais sao a base multicanal da plataforma. Toda operacao editorial, agente, con
 
 ## Endpoints esperados
 - `GET /api/channels`
-- `GET /api/channels/:channelId`
 - `POST /api/channels`
-- `PATCH /api/channels/:channelId`
+- `GET /api/channels/:id`
+- `PATCH /api/channels/:id`
+- `GET /api/channels/:id/settings`
+
+## Observacao
+- `:id` representa o identificador do canal usado como `channelId` nas entidades operacionais.
 
 ## Regras obrigatorias
 - `channelId` e obrigatorio nas entidades operacionais futuras.
@@ -77,7 +81,7 @@ Canais sao a base multicanal da plataforma. Toda operacao editorial, agente, con
 - Validar payloads de entrada.
 - Verificar erro de validacao para dados invalidos.
 
-## Critrios de aceite
+## Critérios de aceite
 - Dominio de canais existe.
 - Validacao de entrada existe.
 - Endpoints basicos existem.
@@ -87,4 +91,3 @@ Canais sao a base multicanal da plataforma. Toda operacao editorial, agente, con
 
 ## Proxima sprint recomendada
 Sprint 4 - Channels Frontend Integration.
-

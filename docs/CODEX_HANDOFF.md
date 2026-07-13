@@ -71,4 +71,5 @@
 - Nenhuma implementacao de produto foi feita.
 - Nenhum backend foi criado.
 - Nenhuma alteracao funcional de frontend foi feita.
+- Nenhum contrato ou mock foi alterado.
 - Proxima etapa recomendada: Sprint 2 - Backend Foundation.

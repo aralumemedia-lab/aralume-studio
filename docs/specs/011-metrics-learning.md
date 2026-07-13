@@ -77,7 +77,7 @@ A Aralume deve registrar resultados de conteudo e usar esses dados para orientar
 - Diferenciar origem.
 - Agregar por canal.
 
-## Critrios de aceite
+## Critérios de aceite
 - Modelo de metricas existe.
 - Dados por canal.
 - Documentacao atualizada.
@@ -86,4 +86,3 @@ A Aralume deve registrar resultados de conteudo e usar esses dados para orientar
 
 ## Proxima sprint recomendada
 Sprint 12 - V1 Acceptance.
-

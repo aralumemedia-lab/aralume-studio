@@ -93,7 +93,7 @@ Nenhum conteudo deve avancar para publicacao real sem aprovacao humana e checage
 - Registrar motivo de rejeicao.
 - Bloquear avancos indevidos.
 
-## Critrios de aceite
+## Critérios de aceite
 - Entidades definidas.
 - Endpoints minimos existem.
 - Estados coerentes com frontend.
@@ -103,4 +103,3 @@ Nenhum conteudo deve avancar para publicacao real sem aprovacao humana e checage
 
 ## Proxima sprint recomendada
 Sprint 7 - Costs and Operational Modes.
-
