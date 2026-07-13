@@ -1,0 +1,90 @@
+# Spec 003 - Channels Domain Foundation
+
+## Status
+Planejada.
+
+## Objetivo
+Implementar o primeiro dominio real da Aralume Studio: Canais.
+
+## Contexto
+Canais sao a base multicanal da plataforma. Toda operacao editorial, agente, conteudo, custo, publicacao e metricas deve se ligar a um `channelId` quando aplicavel.
+
+## Pre-condicoes
+- Backend foundation concluido.
+- Ambiente seguro preparado.
+- Contratos frontend existentes.
+- `docs/FRONTEND_API_CONTRACTS.md` revisado.
+- Spec review executado.
+
+## Escopo
+- Modelagem de `Channel`.
+- Modelagem de configuracoes essenciais.
+- Validacao com Zod.
+- Endpoints REST ou padrao definido na fundacao.
+- Persistencia se banco ja estiver disponivel.
+- Mocks substituiveis se persistencia ainda estiver bloqueada.
+- Testes minimos.
+- Documentacao.
+
+## Fora de escopo
+- Producao editorial.
+- Agentes reais.
+- IA.
+- Video.
+- Publicacao.
+- Metricas reais.
+- Billing.
+- Autenticacao real, salvo spec aprovada.
+
+## Fontes de verdade
+- `AGENTS.md`
+- `docs/PROJECT_MASTER.md`
+- `docs/NEXT_SPRINTS.md`
+- `docs/CODEX_HANDOFF.md`
+- `docs/FRONTEND_API_CONTRACTS.md`
+- `docs/specs/000-sdd-process.md`
+- `docs/specs/001-environment-safe-migration.md`
+- `docs/specs/002-backend-foundation.md`
+
+## Entidade minima
+### Channel
+- `id`
+- `name`
+- `slug`
+- `status`
+- `timezone`
+- `language`
+- `createdAt`
+- `updatedAt`
+
+## Endpoints esperados
+- `GET /api/channels`
+- `GET /api/channels/:channelId`
+- `POST /api/channels`
+- `PATCH /api/channels/:channelId`
+
+## Regras obrigatorias
+- `channelId` e obrigatorio nas entidades operacionais futuras.
+- Nao misturar politica global com politica por canal.
+- Configuracoes de canal devem ser separadas da identidade global da plataforma.
+- Nenhum dado operacional futuro deve nascer sem canal quando aplicavel.
+- Slug deve ser unico e legivel.
+
+## Validacoes
+- Criar e listar canais.
+- Buscar canal por id.
+- Atualizar canal.
+- Validar payloads de entrada.
+- Verificar erro de validacao para dados invalidos.
+
+## Critrios de aceite
+- Dominio de canais existe.
+- Validacao de entrada existe.
+- Endpoints basicos existem.
+- Contratos documentados.
+- Nenhum segredo exposto.
+- Frontend continua saudavel.
+
+## Proxima sprint recomendada
+Sprint 4 - Channels Frontend Integration.
+

@@ -65,3 +65,10 @@
 ## Proximos passos recomendados
 - Sprint 2 - Backend Foundation.
 - Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
+
+## Sprint 0.3 - SDD Specs Roadmap Foundation
+- Specs `002` a `012` criadas.
+- Nenhuma implementacao de produto foi feita.
+- Nenhum backend foi criado.
+- Nenhuma alteracao funcional de frontend foi feita.
+- Proxima etapa recomendada: Sprint 2 - Backend Foundation.
