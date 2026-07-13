@@ -73,3 +73,18 @@
 - Nenhuma alteracao funcional de frontend foi feita.
 - Nenhum contrato ou mock foi alterado.
 - Proxima etapa recomendada: Sprint 2 - Backend Foundation.
+
+## Sprint 2 - Backend Foundation
+- Branch criada: `codex/sprint-2-backend-foundation`.
+- Foundation backend criada em `server/` com Express, env validation, request ID middleware, JSON parser, not found handler, error handler, request logging e `GET /health`.
+- Envelope padrao de sucesso e envelope padrao de erro foram implementados como helpers em `server/src/http/response.ts`.
+- `server/src/env.ts` valida `ARALUME_ENV` e `ARALUME_LOG_LEVEL` com defaults seguros; `DATABASE_URL` e `TEST_DATABASE_URL` permanecem opcionais.
+- Scripts adicionados: `backend:dev`, `backend:build`, `backend:check`, `backend:start`, `test`.
+- Setup documentado em `docs/BACKEND_SETUP.md`.
+- `docs/NEXT_SPRINTS.md` deve apontar agora para Sprint 3 - Channels Domain Foundation.
+- Nenhum dominio de Canais foi implementado.
+- Nenhum CRUD real foi criado.
+- Nenhuma integracao frontend/backend foi feita.
+- Nenhum Supabase foi conectado.
+- Nenhuma IA, video ou publicacao real foi implementada.
+- Nenhum segredo foi exposto.

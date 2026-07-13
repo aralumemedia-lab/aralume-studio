@@ -1,5 +1,18 @@
 # Next Sprints
 
+## Sprint 2 concluida
+- A fundacao backend foi criada em `server/` com Express, validacao de ambiente, logger simples, middlewares essenciais, `GET /health` e envelopes padrao.
+- `docs/BACKEND_SETUP.md` foi adicionado para orientar a operacao local e os comandos de validacao.
+- Os scripts backend foram adicionados sem alterar o dominio de Canais.
+
+## Recomendacao atual
+- **Sprint 3 - Channels Domain Foundation**
+
+## Motivo
+- A fundacao backend esta pronta para receber o primeiro dominio real.
+- O dominio de Canais continua fora de escopo nesta sprint.
+- A proximidade com o contrato de frontend agora pode evoluir com a base HTTP ja estabilizada.
+
 ## Sprint 0.2 concluida
 - A preparacao segura de variaveis de ambiente foi concluida.
 - `.env.example`, `.gitignore`, `docs/ENVIRONMENT.md` e as specs de SDD/ambiente foram preparados sem expor valores reais.
