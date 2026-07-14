@@ -1,6 +1,10 @@
 # Codex Handoff - Sprint 1
 
 ## Estado atual
+
+- Sprint 7 - Costs and Operational Modes esta em execucao na branch `codex/sprint-7-costs-operational-modes`.
+- A spec 007 foi revisada e a fundacao de backend e frontend desta sprint foi iniciada sem merge.
+- O foco atual esta em custos deterministas, budget por canal, policy operacional centralizada, bloqueio de demo e auditoria.
 - Sprint 5 - Editorial Pipeline foi concluida e integrada ao `main`.
 - O merge commit oficial e `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
 - `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
@@ -21,6 +25,7 @@
 - O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
 
 ## Sprint 5 - Editorial Pipeline
+
 - A Sprint 5 foi concluida formalmente e integrada ao `main`.
 - PR #12 foi mergeado.
 - Merge commit: `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
@@ -29,6 +34,7 @@
 - O proximo passo operacional e a Sprint 6 - Approvals, Quality and Compliance.
 
 ## Sprint 3 - Channels Domain Foundation
+
 - Spec normativa: `docs/specs/003-channels.md`.
 - Escopo implementado: dominio de Canais no backend com listagem, criacao, consulta, atualizacao e settings.
 - Endpoints reais disponiveis: `GET /api/channels`, `POST /api/channels`, `GET /api/channels/:id`, `PATCH /api/channels/:id`, `GET /api/channels/:id/settings`.
@@ -38,6 +44,7 @@
 - PR de Sprint 3: `#8` MERGED.
 
 ## Sprint 4 - Channels Frontend Integration
+
 - Spec normativa: `docs/specs/013-channels-frontend-integration.md`.
 - Escopo implementado: `src/services/http-client.ts`, `src/services/channels-api.ts`, `src/components/aralume/channel-selection.ts`, `src/components/aralume/channel-context.tsx`, `src/components/layout/AppShell.tsx` e `src/routes/channels.tsx`.
 - Endpoints consumidos: `GET /api/channels`, `GET /api/channels/:id/settings`, `PATCH /api/channels/:id`.
@@ -50,6 +57,7 @@
 - Merge commit: `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
 
 ## Sprint 0.2 - Preparacao segura de variaveis de ambiente
+
 - O `.env.local` legado foi usado somente para extrair nomes de variaveis.
 - Nenhum valor real foi copiado, impresso, versionado ou validado.
 - `.env.example`, `.gitignore`, `docs/ENVIRONMENT.md` e as specs de SDD/ambiente foram preparados para a migracao segura.
@@ -58,6 +66,7 @@
 - Pendencias: copiar manualmente os valores reais quando necessario e rotacionar qualquer segredo que tenha sido exposto no projeto antigo.
 
 ## Stack real detectada
+
 - React 19
 - TypeScript
 - Vite
@@ -68,6 +77,7 @@
 - componentes no estilo shadcn/ui
 
 ## Scripts disponiveis
+
 - `dev`
 - `build`
 - `build:dev`
@@ -77,6 +87,7 @@
 - Nao existe script de teste dedicado no `package.json`.
 
 ## Validacao executada
+
 - `npm run lint` passou sem warnings.
 - `npx tsc --noEmit` passou.
 - `npm run build` passou.
@@ -84,6 +95,7 @@
 - Smoke visual realizado em: `/production`, `/approvals`, `/costs`, `/compliance`, `/audit-logs`.
 
 ## Screenshots geradas
+
 - `screenshots/dashboard-1366x768.png`
 - `screenshots/dashboard-1600x900.png`
 - `screenshots/dashboard-1920x1080.png`
@@ -95,23 +107,27 @@
 - `screenshots/agent-office-1920x1080.png`
 
 ## Warnings
+
 - Warnings iniciais: 7 `react-refresh/only-export-components`.
 - Warnings corrigidos: 7.
 - Warnings restantes: 0.
 
 ## Limitações
+
 - Nao houve criacao de backend real.
 - Nao houve conexao com Supabase.
 - Nao houve auth, IA, video ou publicacao reais.
 - O conjunto de screenshots foi obtido com QA local ad hoc; nao foi adicionada automacao persistida de Playwright ao repositorio.
 
 ## Proximos passos recomendados
+
 - Sprint 5 - Editorial Pipeline.
 - A Sprint 5 deve comecar por Spec Review e por `docs/specs/005-editorial-pipeline.md` antes de qualquer implementacao.
 - A sequencia autorizada agora segue para o pipeline editorial, sem reabrir a Sprint 4.
 - Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
 
 ## Sprint 0.3 - SDD Specs Roadmap Foundation
+
 - Specs `002` a `012` criadas.
 - Nenhuma implementacao de produto foi feita.
 - Nenhum backend foi criado.
@@ -120,6 +136,7 @@
 - A proxima etapa recomendada naquela fase foi Sprint 2 - Backend Foundation.
 
 ## Sprint 2 - Backend Foundation
+
 - Branch `codex/sprint-2-backend-foundation` contem a fundacao backend criada em `server/` com Express, env validation, request ID middleware, JSON parser, not found handler, error handler, request logging e `GET /health`.
 - Envelope padrao de sucesso e envelope padrao de erro foram implementados como helpers em `server/src/http/response.ts`.
 - `server/src/env.ts` valida `ARALUME_ENV` e `ARALUME_LOG_LEVEL` com defaults seguros; `DATABASE_URL` e `TEST_DATABASE_URL` permanecem opcionais.

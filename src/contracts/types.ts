@@ -552,11 +552,117 @@ export type CostEntry = {
   contentId?: ID;
   workflowRunId?: ID;
   agentRunId?: ID;
+  stage:
+    | "research"
+    | "editorial"
+    | "script"
+    | "visual_plan"
+    | "narration"
+    | "production"
+    | "render"
+    | "publication"
+    | "infrastructure"
+    | "other";
   providerName: string;
   costType: "llm" | "tts" | "image" | "video" | "render" | "storage" | "publication" | "other";
   description: string;
   amountCents: number;
+  currency: "BRL";
   createdAt: ISODate;
+};
+
+export type CostBreakdownItem = {
+  key: string;
+  label: string;
+  amountCents: number;
+  count: number;
+  sharePercent: number;
+};
+
+export type CostChannelSummary = {
+  channelId: ID;
+  channelName: string;
+  budgetConfigured: boolean;
+  budgetCents: number;
+  consumedCents: number;
+  remainingCents: number;
+  consumptionPercent: number;
+  status: CostStatus;
+  entryCount: number;
+};
+
+export type CostSummary = {
+  channelId?: ID;
+  periodStart: ISODate;
+  periodEnd: ISODate;
+  budgetConfigured: boolean;
+  budgetCents: number;
+  consumedCents: number;
+  remainingCents: number;
+  consumptionPercent: number;
+  status: CostStatus;
+  totalCostCents: number;
+  entryCount: number;
+  policy: OperationalModePolicy;
+  byChannel: CostChannelSummary[];
+  byStage: CostBreakdownItem[];
+  byProvider: CostBreakdownItem[];
+  byContent: CostBreakdownItem[];
+  byPeriod: CostBreakdownItem[];
+};
+
+export type CostBreakdown = {
+  channelId?: ID;
+  periodStart: ISODate;
+  periodEnd: ISODate;
+  byChannel: CostBreakdownItem[];
+  byStage: CostBreakdownItem[];
+  byProvider: CostBreakdownItem[];
+  byContent: CostBreakdownItem[];
+  byPeriod: CostBreakdownItem[];
+};
+
+export type OperationalAction =
+  | "real_ai_generation"
+  | "real_tts_generation"
+  | "real_image_generation"
+  | "real_video_generation"
+  | "real_publication"
+  | "external_call"
+  | "paid_provider_call"
+  | "simulation_only";
+
+export type OperationalModeDecision = {
+  id: ID;
+  channelId: ID;
+  action: OperationalAction;
+  allowed: boolean;
+  decisionCode: string;
+  reason: string;
+  policySource: "global" | "channel" | "fallback" | "budget";
+  globalPolicyId: ID;
+  effectivePolicyId: ID;
+  evaluatedAt: ISODate;
+  channelPolicyId?: ID;
+  costEntryId?: ID;
+  plannedCostCents?: number;
+  actor?: string;
+};
+
+export type OperationalModeSnapshot = {
+  channelId?: ID;
+  globalPolicy: OperationalModePolicy;
+  channelPolicy?: OperationalModePolicy;
+  effectivePolicy: OperationalModePolicy;
+  budgetConfigured: boolean;
+  budgetCents: number;
+  consumedCents: number;
+  remainingCents: number;
+  consumptionPercent: number;
+  status: CostStatus;
+  allowedActions: OperationalModeDecision[];
+  blockedActions: OperationalModeDecision[];
+  evaluatedAt: ISODate;
 };
 
 export type AuditLog = {
@@ -584,6 +690,7 @@ export type OperationalModePolicy = {
   allowRealVideoGeneration: boolean;
   allowExternalPublication: boolean;
   requireHumanApproval: boolean;
+  budgetConfigured: boolean;
   dailyBudgetLimitCents: number;
   monthlyBudgetLimitCents: number;
   createdAt: ISODate;

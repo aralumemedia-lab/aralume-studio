@@ -42,7 +42,7 @@ Definidos em `src/contracts/types.ts`. Não renomear campos.
 - `MediaAssetBase`, `NarrationAsset`, `VisualAsset`, `VideoAsset`, `DerivedClip`
 - `QualityCheck`, `ComplianceCheck`, `HumanApproval`
 - `PublicationTarget`, `PublicationJob`
-- `PerformanceMetric`, `CostEntry`, `AuditLog`, `OperationalModePolicy`
+- `PerformanceMetric`, `CostEntry`, `CostSummary`, `CostBreakdown`, `OperationalModePolicy`, `OperationalModeDecision`, `OperationalModeSnapshot`, `AuditLog`
 - Auxiliares de tela: `DashboardSummary`, `AgentOfficeSnapshot`, `ProductionItem`
 
 ## Relacionamentos-chave
@@ -60,52 +60,60 @@ Os endpoints de Canais abaixo já estão disponíveis no backend entregue na Spr
 
 Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiListSuccess`.
 
-| Método | Path                               | Retorno               |
-| ------ | ---------------------------------- | --------------------- |
-| GET    | /api/dashboard/summary             | `DashboardSummary`    |
-| GET    | /api/channels                      | `Channel[]`           |
-| POST   | /api/channels                      | `Channel`             |
-| GET    | /api/channels/:id                  | `Channel`             |
-| PATCH  | /api/channels/:id                  | `Channel`             |
-| GET    | /api/channels/:id/settings         | `ChannelSettings`     |
-| GET    | /api/agents                        | `AgentDefinition[]`   |
-| GET    | /api/agent-office/snapshot         | `AgentOfficeSnapshot` |
-| GET    | /api/workflows                     | `WorkflowRun[]`       |
-| GET    | /api/workflows/:id                 | `WorkflowRun`         |
-| GET    | /api/production-items              | `ProductionItem[]`    |
-| GET    | /api/production-items/:id          | `ProductionItem`      |
-| GET    | /api/content-ideas                 | `ContentIdea[]`       |
-| POST   | /api/content-ideas                 | `ContentIdea`         |
-| GET    | /api/content-ideas/:id             | `ContentIdea`         |
-| PATCH  | /api/content-ideas/:id             | `ContentIdea`         |
-| GET    | /api/research-sessions             | `ResearchSession[]`   |
-| POST   | /api/research-sessions             | `ResearchSession`     |
-| GET    | /api/research-sessions/:id         | `ResearchSession`     |
-| POST   | /api/research-sessions/:id/sources | `ResearchSource`      |
-| POST   | /api/research-sessions/:id/claims  | `ClaimEvidence`       |
-| GET    | /api/scripts                       | `Script[]`            |
-| POST   | /api/scripts                       | `Script`              |
-| GET    | /api/scripts/:id                   | `Script`              |
-| PATCH  | /api/scripts/:id                   | `Script`              |
-| GET    | /api/scripts/:id/versions          | `ScriptVersion[]`     |
-| POST   | /api/scripts/:id/versions          | `ScriptVersion`       |
-| GET    | /api/visual-plans                  | `VisualPlan[]`        |
-| POST   | /api/visual-plans                  | `VisualPlan`          |
-| GET    | /api/visual-plans/:id              | `VisualPlan`          |
-| PATCH  | /api/visual-plans/:id              | `VisualPlan`          |
-| POST   | /api/visual-plans/:id/scenes       | `ScenePlan`           |
-| GET    | /api/media-assets                  | `MediaAssetBase[]`    |
-| GET    | /api/videos                        | `VideoAsset[]`        |
-| GET    | /api/clips                         | `DerivedClip[]`       |
-| GET    | /api/approvals                     | `HumanApproval[]`     |
-| POST   | /api/approvals/:id/approve         | `HumanApproval`       |
-| POST   | /api/approvals/:id/reject          | `HumanApproval`       |
-| POST   | /api/approvals/:id/request-changes | `HumanApproval`       |
-| GET    | /api/publications                  | `PublicationJob[]`    |
-| GET    | /api/metrics                       | `PerformanceMetric[]` |
-| GET    | /api/costs                         | `CostEntry[]`         |
-| GET    | /api/compliance                    | `ComplianceCheck[]`   |
-| GET    | /api/audit-logs                    | `AuditLog[]`          |
+| Método | Path                                       | Retorno                   |
+| ------ | ------------------------------------------ | ------------------------- |
+| GET    | /api/dashboard/summary                     | `DashboardSummary`        |
+| GET    | /api/channels                              | `Channel[]`               |
+| POST   | /api/channels                              | `Channel`                 |
+| GET    | /api/channels/:id                          | `Channel`                 |
+| PATCH  | /api/channels/:id                          | `Channel`                 |
+| GET    | /api/channels/:id/settings                 | `ChannelSettings`         |
+| GET    | /api/agents                                | `AgentDefinition[]`       |
+| GET    | /api/agent-office/snapshot                 | `AgentOfficeSnapshot`     |
+| GET    | /api/workflows                             | `WorkflowRun[]`           |
+| GET    | /api/workflows/:id                         | `WorkflowRun`             |
+| GET    | /api/production-items                      | `ProductionItem[]`        |
+| GET    | /api/production-items/:id                  | `ProductionItem`          |
+| GET    | /api/content-ideas                         | `ContentIdea[]`           |
+| POST   | /api/content-ideas                         | `ContentIdea`             |
+| GET    | /api/content-ideas/:id                     | `ContentIdea`             |
+| PATCH  | /api/content-ideas/:id                     | `ContentIdea`             |
+| GET    | /api/research-sessions                     | `ResearchSession[]`       |
+| POST   | /api/research-sessions                     | `ResearchSession`         |
+| GET    | /api/research-sessions/:id                 | `ResearchSession`         |
+| POST   | /api/research-sessions/:id/sources         | `ResearchSource`          |
+| POST   | /api/research-sessions/:id/claims          | `ClaimEvidence`           |
+| GET    | /api/scripts                               | `Script[]`                |
+| POST   | /api/scripts                               | `Script`                  |
+| GET    | /api/scripts/:id                           | `Script`                  |
+| PATCH  | /api/scripts/:id                           | `Script`                  |
+| GET    | /api/scripts/:id/versions                  | `ScriptVersion[]`         |
+| POST   | /api/scripts/:id/versions                  | `ScriptVersion`           |
+| GET    | /api/visual-plans                          | `VisualPlan[]`            |
+| POST   | /api/visual-plans                          | `VisualPlan`              |
+| GET    | /api/visual-plans/:id                      | `VisualPlan`              |
+| PATCH  | /api/visual-plans/:id                      | `VisualPlan`              |
+| POST   | /api/visual-plans/:id/scenes               | `ScenePlan`               |
+| GET    | /api/media-assets                          | `MediaAssetBase[]`        |
+| GET    | /api/videos                                | `VideoAsset[]`            |
+| GET    | /api/clips                                 | `DerivedClip[]`           |
+| GET    | /api/approvals                             | `HumanApproval[]`         |
+| POST   | /api/approvals/:id/approve                 | `HumanApproval`           |
+| POST   | /api/approvals/:id/reject                  | `HumanApproval`           |
+| POST   | /api/approvals/:id/request-changes         | `HumanApproval`           |
+| GET    | /api/publications                          | `PublicationJob[]`        |
+| GET    | /api/metrics                               | `PerformanceMetric[]`     |
+| GET    | /api/costs                                 | `CostEntry[]`             |
+| POST   | /api/costs                                 | `CostEntry`               |
+| GET    | /api/costs/:id                             | `CostEntry`               |
+| GET    | /api/costs/summary                         | `CostSummary`             |
+| GET    | /api/costs/breakdown                       | `CostBreakdown`           |
+| GET    | /api/operational-modes                     | `OperationalModeSnapshot` |
+| PATCH  | /api/operational-modes/global              | `OperationalModePolicy`   |
+| PATCH  | /api/operational-modes/channels/:channelId | `OperationalModePolicy`   |
+| POST   | /api/operational-modes/evaluate            | `OperationalModeDecision` |
+| GET    | /api/compliance                            | `ComplianceCheck[]`       |
+| GET    | /api/audit-logs                            | `AuditLog[]`              |
 
 ## Rotas do frontend
 

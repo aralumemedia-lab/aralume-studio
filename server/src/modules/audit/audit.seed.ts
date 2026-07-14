@@ -1,0 +1,60 @@
+import type { AuditSeed } from "./audit.types.js";
+
+const now = "2026-07-12T18:45:00.000Z";
+
+export const auditDemoSeed: AuditSeed = {
+  logs: [
+    {
+      id: "au_01",
+      channelId: "ch_historia",
+      actorType: "system",
+      actorName: "Aralume Core",
+      action: "cost.policy_updated",
+      entityType: "OperationalModePolicy",
+      entityId: "op_global",
+      status: "success",
+      message: "Policy global inicial carregada em modo demo.",
+      metadata: { scope: "global" },
+      createdAt: "2026-07-12T14:30:00.000Z",
+    },
+    {
+      id: "au_02",
+      channelId: "ch_curiosidades",
+      actorType: "system",
+      actorName: "Aralume Core",
+      action: "operational_mode.decision_blocked",
+      entityType: "OperationalModeDecision",
+      entityId: "od_01",
+      status: "warning",
+      message: "A operacao real foi bloqueada pelo modo demo.",
+      metadata: { action: "real_ai_generation", policySource: "global" },
+      createdAt: "2026-07-12T16:00:00.000Z",
+    },
+    {
+      id: "au_03",
+      channelId: "ch_historia",
+      actorType: "system",
+      actorName: "Aralume Core",
+      action: "cost.entry_created",
+      entityType: "CostEntry",
+      entityId: "co_04",
+      status: "success",
+      message: "Custo operacional registrado com sucesso.",
+      metadata: { amountCents: 3400, stage: "render" },
+      createdAt: "2026-07-12T17:30:00.000Z",
+    },
+    {
+      id: "au_04",
+      channelId: "ch_curiosidades",
+      actorType: "system",
+      actorName: "Aralume Core",
+      action: "cost.budget_updated",
+      entityType: "OperationalModePolicy",
+      entityId: "op_ch_curiosidades",
+      status: "warning",
+      message: "Budget do canal chegou ao nivel de atencao.",
+      metadata: { monthlyBudgetLimitCents: 25000, consumedCents: 23100 },
+      createdAt: now,
+    },
+  ],
+};
