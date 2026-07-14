@@ -1,6 +1,22 @@
 export * from "./http-client";
 
 export {
+  createCostEntry,
+  describeCostsApiError,
+  describeOperationalModesApiError,
+  evaluateOperationalAction,
+  getCostBreakdown,
+  getCostEntries,
+  getCostEntry,
+  getCostSummary,
+  getOperationalModes,
+  updateChannelOperationalModePolicy,
+  updateGlobalOperationalModePolicy,
+} from "./costs-api";
+
+export { describeAuditApiError, getAuditLogs } from "./audit-api";
+
+export {
   createChannel,
   describeChannelsApiError,
   getChannel,
@@ -75,8 +91,6 @@ export {
 export {
   getAgentDefinitions,
   getAgentOfficeSnapshot,
-  getAuditLogs,
-  getCostEntries,
   getDashboardSummary,
   getDerivedClips,
   getMediaAssets,
