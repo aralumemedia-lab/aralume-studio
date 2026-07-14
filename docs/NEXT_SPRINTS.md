@@ -1,14 +1,15 @@
 # Next Sprints
 
-## Sprint 10 em andamento
+## Sprint 10 concluida
 
 - **Sprint 10 - Cortes Derivados Controlados**
-- A branch `codex/sprint-10-controlled-derived-clips` concentra a geracao controlada, persistente e rastreavel de cortes derivados a partir de videos principais concluidos.
-- Escopo em curso: criacao de cortes, validacao temporal, storage root autorizado, FFmpeg controlado, FFprobe, idempotencia, auditoria, custos e exposicao em `/clips`.
-- A rota `/clips` agora e parte do fluxo operacional real e nao deve depender de mocks crus.
+- A Sprint 10 - Cortes Derivados Controlados foi concluida e integrada ao `main` via PR #17.
+- A implementacao consolidou cortes derivados persistentes e rastreaveis a partir de videos principais concluidos.
+- O merge commit oficial da Sprint 10 e `dffd197449176fffab6ad6b93b6dfb0904cca513`.
+- A rota `/clips` faz parte do fluxo operacional real e nao depende de mocks crus.
 - A Sprint 9 - Renderizacao Controlada foi concluida e integrada ao `main` via PR #16.
 - O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
-- A proxima sprint apos o fechamento desta branch sera a Sprint 11 - Publicacao Assistida.
+- A proxima sprint autorizada continua sendo a Sprint 11 - Publicacao Assistida.
 
 ## Sprint 11 planejada
 

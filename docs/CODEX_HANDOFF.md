@@ -2,17 +2,18 @@
 
 ## Estado atual
 
-- Sprint 10 - Cortes Derivados Controlados esta sendo executada na branch `codex/sprint-10-controlled-derived-clips`.
+- Sprint 10 - Cortes Derivados Controlados foi concluida e integrada ao `main` via PR #17.
 - A spec normativa e `docs/specs/010-derived-clips.md`.
 - O dominio novo cobre cortes derivados, validacao temporal, video principal de origem, storage root autorizado, FFmpeg e FFprobe controlados, auditoria, custos, idempotencia e a rota `/clips`.
 - O frontend da rota `/clips` agora consome o backend real de cortes derivados e nao depende de mocks crus.
 - A base de canais, editorial, aprovacoes, custos e assets de midia ja estava integrada antes desta sprint e foi reutilizada sem reabrir escopo anterior.
 - As validacoes locais principais ja passaram: typecheck, lint, build, testes e `git diff --check`.
 - FFmpeg e FFprobe estao disponiveis no ambiente e a integracao real de cortes sera validada.
-- O PR ainda precisa ser aberto nesta branch; nao houve merge.
+- O PR #17 foi mergeado.
+- Merge commit: `dffd197449176fffab6ad6b93b6dfb0904cca513`.
 - Sprint 9 - Renderizacao Controlada foi encerrada formalmente no PR #16 e permanece como base imediata desta implementacao.
 - O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
-- `main` e `origin/main` estavam alinhados nesse SHA no preflight.
+- `main` e `origin/main` estao alinhados nesse SHA no estado atual.
 - Historico anterior mantido abaixo para referencia operacional.
 
 ## Sprint 5 - Editorial Pipeline
