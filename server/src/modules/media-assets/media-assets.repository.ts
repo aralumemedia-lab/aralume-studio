@@ -9,6 +9,7 @@ import type {
   VideoAsset,
   VideoAssetFilters,
 } from "./media-assets.types.js";
+import { readJsonFile, resolveStateFilePath, writeJsonFile } from "../shared/persistent-state.js";
 
 const clone = <T>(value: T): T => structuredClone(value);
 
@@ -16,14 +17,24 @@ export class InMemoryMediaAssetsRepository implements MediaAssetsRepository {
   private readonly mediaAssets = new Map<ID, MediaAssetBase>();
   private readonly videoAssets = new Map<ID, VideoAsset>();
   private readonly derivedClips = new Map<ID, DerivedClip>();
+  private readonly storageFilePath?: string;
 
-  constructor(seed?: Partial<MediaAssetsSeed>) {
+  constructor(seed?: Partial<MediaAssetsSeed>, storageRoot?: string) {
+    this.storageFilePath = resolveStateFilePath(storageRoot, "media-assets.json");
+    const persisted = readJsonFile<MediaAssetsSeed>(this.storageFilePath);
+
+    if (persisted) {
+      this.replaceAll(persisted, false);
+      return;
+    }
+
     if (seed) {
-      this.replaceAll(seed);
+      this.replaceAll(seed, false);
+      this.persist();
     }
   }
 
-  replaceAll(seed: Partial<MediaAssetsSeed>): void {
+  replaceAll(seed: Partial<MediaAssetsSeed>, shouldPersist = true): void {
     this.mediaAssets.clear();
     this.videoAssets.clear();
     this.derivedClips.clear();
@@ -31,6 +42,9 @@ export class InMemoryMediaAssetsRepository implements MediaAssetsRepository {
     seed.mediaAssets?.forEach((asset) => this.mediaAssets.set(asset.id, clone(asset)));
     seed.videoAssets?.forEach((asset) => this.videoAssets.set(asset.id, clone(asset)));
     seed.derivedClips?.forEach((asset) => this.derivedClips.set(asset.id, clone(asset)));
+    if (shouldPersist) {
+      this.persist();
+    }
   }
 
   listMediaAssets(filters: Partial<MediaAssetFilters> = {}): MediaAssetBase[] {
@@ -50,6 +64,7 @@ export class InMemoryMediaAssetsRepository implements MediaAssetsRepository {
 
   upsertMediaAsset(asset: MediaAssetBase): void {
     this.mediaAssets.set(asset.id, clone(asset));
+    this.persist();
   }
 
   listVideoAssets(filters: Partial<VideoAssetFilters> = {}): VideoAsset[] {
@@ -69,6 +84,7 @@ export class InMemoryMediaAssetsRepository implements MediaAssetsRepository {
 
   upsertVideoAsset(asset: VideoAsset): void {
     this.videoAssets.set(asset.id, clone(asset));
+    this.persist();
   }
 
   listDerivedClips(filters: Partial<DerivedClipFilters> = {}): DerivedClip[] {
@@ -88,6 +104,7 @@ export class InMemoryMediaAssetsRepository implements MediaAssetsRepository {
 
   upsertDerivedClip(asset: DerivedClip): void {
     this.derivedClips.set(asset.id, clone(asset));
+    this.persist();
   }
 
   private cloneFromMap<T>(map: Map<ID, T>, id: ID): T | undefined {
@@ -122,10 +139,19 @@ export class InMemoryMediaAssetsRepository implements MediaAssetsRepository {
       )
       .map((item) => clone(item));
   }
+
+  private persist(): void {
+    writeJsonFile(this.storageFilePath, {
+      mediaAssets: Array.from(this.mediaAssets.values()),
+      videoAssets: Array.from(this.videoAssets.values()),
+      derivedClips: Array.from(this.derivedClips.values()),
+    });
+  }
 }
 
 export function createMediaAssetsRepository(
   seed?: Partial<MediaAssetsSeed>,
+  options?: { storageRoot?: string },
 ): MediaAssetsRepository {
-  return new InMemoryMediaAssetsRepository(seed);
+  return new InMemoryMediaAssetsRepository(seed, options?.storageRoot);
 }

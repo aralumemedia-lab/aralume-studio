@@ -24,6 +24,11 @@ import { createEditorialRouter } from "./modules/editorial/editorial.routes.js";
 import { createEditorialService } from "./modules/editorial/editorial.service.js";
 import type { EditorialRepository } from "./modules/editorial/editorial.types.js";
 import { editorialDemoSeed } from "./modules/editorial/editorial.seed.js";
+import { createRenderJobsRepository } from "./modules/renders/renders.repository.js";
+import { createRendersRouter } from "./modules/renders/renders.routes.js";
+import { createRendersService } from "./modules/renders/renders.service.js";
+import type { RenderJobsRepository } from "./modules/renders/renders.types.js";
+import { renderJobsDemoSeed } from "./modules/renders/renders.seed.js";
 import { createMediaAssetsRepository } from "./modules/media-assets/media-assets.repository.js";
 import { createMediaAssetsRouter } from "./modules/media-assets/media-assets.routes.js";
 import { createMediaAssetsService } from "./modules/media-assets/media-assets.service.js";
@@ -39,6 +44,7 @@ import { createGovernanceRouter } from "./modules/governance/governance.routes.j
 import { createGovernanceService } from "./modules/governance/governance.service.js";
 import type { GovernanceRepository } from "./modules/governance/governance.types.js";
 import { governanceDemoSeed } from "./modules/governance/governance.seed.js";
+import type { RenderEngine } from "./modules/renders/renders.types.js";
 
 export type CreateAppOptions = {
   env?: RuntimeEnv;
@@ -46,9 +52,13 @@ export type CreateAppOptions = {
   channelsRepository?: ChannelsRepository;
   editorialRepository?: EditorialRepository;
   mediaAssetsRepository?: MediaAssetsRepository;
+  renderJobsRepository?: RenderJobsRepository;
   governanceRepository?: GovernanceRepository;
   costsRepository?: CostsRepository;
   auditRepository?: AuditRepository;
+  renderEngine?: RenderEngine;
+  ffmpegPath?: string;
+  ffprobePath?: string;
 };
 
 export function createApp(options: CreateAppOptions = {}) {
@@ -63,8 +73,17 @@ export function createApp(options: CreateAppOptions = {}) {
   const mediaAssetsRepository =
     options.mediaAssetsRepository ??
     (!options.channelsRepository
-      ? createMediaAssetsRepository(mediaAssetsDemoSeed)
-      : createMediaAssetsRepository(mediaAssetsDemoSeed));
+      ? createMediaAssetsRepository(mediaAssetsDemoSeed, {
+          storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+        })
+      : createMediaAssetsRepository(mediaAssetsDemoSeed, {
+          storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+        }));
+  const renderJobsRepository =
+    options.renderJobsRepository ??
+    createRenderJobsRepository(renderJobsDemoSeed, {
+      storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+    });
   const governanceRepository =
     options.governanceRepository ??
     (!options.channelsRepository && !options.editorialRepository
@@ -72,10 +91,14 @@ export function createApp(options: CreateAppOptions = {}) {
       : createGovernanceRepository());
   const auditRepository =
     options.auditRepository ??
-    (!options.channelsRepository ? createAuditRepository(auditDemoSeed) : createAuditRepository());
+    (!options.channelsRepository
+      ? createAuditRepository(auditDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT })
+      : createAuditRepository(undefined, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT }));
   const costsRepository =
     options.costsRepository ??
-    (!options.channelsRepository ? createCostsRepository(costsDemoSeed) : createCostsRepository());
+    (!options.channelsRepository
+      ? createCostsRepository(costsDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT })
+      : createCostsRepository(undefined, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT }));
   const channelsService = createChannelsService(channelsRepository);
   const editorialService = createEditorialService(editorialRepository, channelsRepository);
   const mediaAssetsService = createMediaAssetsService(
@@ -98,6 +121,22 @@ export function createApp(options: CreateAppOptions = {}) {
     channelsRepository,
     auditRepository,
   });
+  const rendersService = createRendersService(
+    renderJobsRepository,
+    {
+      channelsRepository,
+      editorialRepository,
+      mediaAssetsRepository,
+      costsService,
+      auditRepository,
+    },
+    {
+      engine: options.renderEngine,
+      ffmpegPath: options.ffmpegPath,
+      ffprobePath: options.ffprobePath,
+      storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+    },
+  );
   const app = express();
 
   app.disable("x-powered-by");
@@ -108,6 +147,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use("/api/channels", createChannelsRouter(channelsService));
   app.use("/api", createEditorialRouter(editorialService));
   app.use("/api", createMediaAssetsRouter(mediaAssetsService));
+  app.use("/api", createRendersRouter(rendersService));
   app.use("/api", createGovernanceRouter(governanceService));
   app.use("/api", createCostsRouter(costsService));
   app.use("/api", createAuditRouter(auditService));

@@ -1,28 +1,19 @@
-# Codex Handoff - Sprint 1
+# Codex Handoff - Sprint 9
 
 ## Estado atual
 
-- Sprint 7 - Costs and Operational Modes esta em execucao na branch `codex/sprint-7-costs-operational-modes`.
-- A spec 007 foi revisada e a fundacao de backend e frontend desta sprint foi iniciada sem merge.
-- O foco atual esta em custos deterministas, budget por canal, policy operacional centralizada, bloqueio de demo e auditoria.
-- Sprint 5 - Editorial Pipeline foi concluida e integrada ao `main`.
-- O merge commit oficial e `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
-- `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
-- A proxima sprint recomendada pelo roadmap e a Sprint 6 - Approvals, Quality and Compliance.
-- Frontend Lovable estabilizado e hardenizado sem criar backend real.
-- Sprint 0 consolidou `docs/PROJECT_MASTER.md`.
-- Sprint 1 corrigiu os warnings de `react-refresh/only-export-components` de forma estrutural.
-- Sprint 2 - Backend Foundation foi concluida e integrada ao `main` via PR #6.
-- O commit de merge oficial e `20b7c503761840910d78ceec604d9f8de55c3e84`.
-- `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
-- Sprint 3 - Channels Domain Foundation foi concluida e integrada ao `main` via PR #8.
-- O commit de merge oficial e `6bf1bfec40cafaa7d2228f040745127e7ede9041`.
-- `main` e `origin/main` estao alinhados nesse SHA, sem divergencia.
-- Sprint 4 - Channels Frontend Integration foi concluida e integrada ao `main` via PR #10.
-- O commit de implementacao e `af17736ad40aa691b09f4677671a43f218095643`.
-- O commit de merge oficial e `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
-- O backend de Canais continua disponivel no `main` e a tela `/channels` agora consome a API real.
-- O layout segue o padrao SaaS empresarial premium do projeto, com densidade alta e foco operacional.
+- Sprint 9 - Renderizacao Controlada esta sendo executada na branch `codex/sprint-9-controlled-rendering`.
+- A spec normativa e `docs/specs/009-rendering.md`.
+- O dominio novo cobre jobs de render controlado, validacao de ativos por canal, storage root autorizado, FFmpeg controlado, auditoria, custos, idempotencia e a rota `/videos`.
+- O frontend da rota `/videos` agora consome o backend real de renderizacao e nao depende de mocks crus.
+- A base de canais, editorial, aprovacoes, custos e assets de midia ja estava integrada antes desta sprint e foi reutilizada sem reabrir escopo anterior.
+- As validacoes locais principais ja passaram: typecheck, lint, build, testes e `git diff --check`.
+- FFmpeg esta disponivel no ambiente e a integracao real de renderizacao foi validada.
+- O PR ainda precisa ser aberto nesta branch; nao houve merge.
+- Sprint 8 - Media Assets and Storage foi encerrada formalmente no PR #15 e permanece como base imediata desta implementacao.
+- O merge commit oficial da Sprint 8 e `9f184e3b9f376cc63e3aaa8f9d65443319534ab1`.
+- `main` e `origin/main` estavam alinhados nesse SHA no preflight.
+- Historico anterior mantido abaixo para referencia operacional.
 
 ## Sprint 5 - Editorial Pipeline
 

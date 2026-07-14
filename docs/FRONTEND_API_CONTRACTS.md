@@ -40,7 +40,7 @@ Definidos em `src/contracts/types.ts`. Não renomear campos.
 - `WorkflowRun`, `WorkflowStep`
 - `ContentIdea`, `ResearchSession`, `ResearchSource`, `ClaimEvidence`
 - `Script`, `ScriptVersion`, `VisualPlan`, `ScenePlan`
-- `MediaAssetBase`, `NarrationAsset`, `VisualAsset`, `VideoAsset`, `DerivedClip`, `MediaAssetUsage`, `MediaAssetStorageValidation`, `MediaAssetIntegrityValidation`
+- `MediaAssetBase`, `NarrationAsset`, `VisualAsset`, `VideoAsset`, `DerivedClip`, `RenderJob`, `RenderLogEntry`, `RenderType`, `MediaAssetUsage`, `MediaAssetStorageValidation`, `MediaAssetIntegrityValidation`
 - `QualityCheck`, `ComplianceCheck`, `HumanApproval`
 - `PublicationTarget`, `PublicationJob`
 - `PerformanceMetric`, `CostEntry`, `CostSummary`, `CostBreakdown`, `OperationalModePolicy`, `OperationalModeDecision`, `OperationalModeSnapshot`, `AuditLog`
@@ -48,11 +48,12 @@ Definidos em `src/contracts/types.ts`. Não renomear campos.
 
 ## Relacionamentos-chave
 
-- `Channel` 1:N `ChannelSettings, EditorialRules, WorkflowRun, AgentRun, ContentIdea, ResearchSession, Script, VisualPlan, MediaAssetBase, VideoAsset, DerivedClip, HumanApproval, PublicationTarget, PublicationJob, PerformanceMetric, CostEntry, AuditLog`.
+- `Channel` 1:N `ChannelSettings, EditorialRules, WorkflowRun, AgentRun, ContentIdea, ResearchSession, Script, VisualPlan, MediaAssetBase, VideoAsset, DerivedClip, RenderJob, HumanApproval, PublicationTarget, PublicationJob, PerformanceMetric, CostEntry, AuditLog`.
 - `WorkflowRun` 1:N `WorkflowStep, AgentRun, AgentHandoff`.
 - `ContentIdea` 1:N `ResearchSession, Script`.
 - `Script` 1:N `ScriptVersion`; `VisualPlan` 1:N `ScenePlan`.
 - `VideoAsset` 1:N `DerivedClip`.
+- `RenderJob` 1:1 `VideoAsset` quando a renderizacao conclui com sucesso e registra a saida.
 - `Content` (idea) 1:N `HumanApproval, ComplianceCheck, QualityCheck`.
 
 ## Endpoints
@@ -102,6 +103,9 @@ Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiLi
 | POST   | /api/media-assets/validate-storage         | `MediaAssetStorageValidation`   |
 | POST   | /api/media-assets/:id/validate-integrity   | `MediaAssetIntegrityValidation` |
 | GET    | /api/media-assets/:id/usages               | `MediaAssetUsage[]`             |
+| GET    | /api/renders                               | `RenderJob[]`                   |
+| POST   | /api/renders                               | `RenderJob`                     |
+| GET    | /api/renders/:id                           | `RenderJob`                     |
 | GET    | /api/videos                                | `VideoAsset[]`                  |
 | GET    | /api/clips                                 | `DerivedClip[]`                 |
 | GET    | /api/approvals                             | `HumanApproval[]`               |
@@ -125,6 +129,18 @@ Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiLi
 ## Rotas do frontend
 
 `/dashboard`, `/channels`, `/agent-office`, `/production`, `/ideas`, `/research`, `/scripts`, `/media-assets`, `/videos`, `/clips`, `/approvals`, `/publications`, `/metrics`, `/costs`, `/compliance`, `/administration`, `/audit-logs`. `/` redireciona para `/dashboard`.
+
+## Renderizacao controlada
+
+O fluxo controlado de video usa a API real abaixo e nao aceita caminhos arbitrarios do cliente.
+
+- `POST /api/renders`
+- `GET /api/renders?channelId=<id>`
+- `GET /api/renders/:id`
+- `GET /api/videos?channelId=<id>`
+
+`POST /api/renders` recebe `channelId`, `inputAssetIds`, `renderProfile`, `idempotencyKey` e, quando aplicavel, `contentId` e `workflowRunId`.
+O frontend da rota `/videos` usa essa superficie para listar jobs, iniciar renders controlados e mostrar o ativo de video resultante no canal ativo.
 
 ## Integração futura
 
