@@ -1,12 +1,20 @@
 # Next Sprints
 
-## Sprint 9 em andamento
+## Sprint 10 em andamento
 
-- **Sprint 9 - Renderizacao Controlada**
-- A branch `codex/sprint-9-controlled-rendering` concentra a primeira renderizacao de video controlada, auditavel e reproduzivel da Aralume Studio.
-- Escopo em curso: criacao de jobs, validacao de ativos por canal, storage root autorizado, FFmpeg controlado, idempotencia, auditoria, custos e exposicao em `/videos`.
-- A rota `/videos` agora e parte do fluxo operacional real e nao deve depender de mocks crus.
-- A proxima sprint apos o fechamento desta branch sera a fase seguinte do roadmap, sem reabrir o escopo de renderizacao controlada.
+- **Sprint 10 - Cortes Derivados Controlados**
+- A branch `codex/sprint-10-controlled-derived-clips` concentra a geracao controlada, persistente e rastreavel de cortes derivados a partir de videos principais concluidos.
+- Escopo em curso: criacao de cortes, validacao temporal, storage root autorizado, FFmpeg controlado, FFprobe, idempotencia, auditoria, custos e exposicao em `/clips`.
+- A rota `/clips` agora e parte do fluxo operacional real e nao deve depender de mocks crus.
+- A Sprint 9 - Renderizacao Controlada foi concluida e integrada ao `main` via PR #16.
+- O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
+- A proxima sprint apos o fechamento desta branch sera a Sprint 11 - Publicacao Assistida.
+
+## Sprint 11 planejada
+
+- **Sprint 11 - Publicacao Assistida**
+- A sprint permanece planejada e ainda nao foi implementada.
+- A publicacao assistida depende de aprovacao humana, compliance e contratos de publicacao ja documentados.
 
 ## Sprint 5 concluida e integrada
 

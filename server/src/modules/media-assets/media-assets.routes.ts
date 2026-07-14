@@ -3,7 +3,9 @@ import { z } from "zod";
 
 import { AppError } from "../../http/errors.js";
 import { createListSuccessResponse, createSuccessResponse } from "../../http/response.js";
+import { resolveAbsoluteStoragePath } from "./media-assets.storage.js";
 import {
+  derivedClipCreateSchema,
   derivedClipFiltersSchema,
   formatValidationIssues,
   mediaAssetCreateSchema,
@@ -16,8 +18,13 @@ import {
   videoAssetFiltersSchema,
 } from "./media-assets.schema.js";
 import type { MediaAssetsService } from "./media-assets.types.js";
+import type { RendersService } from "../renders/renders.types.js";
 
-export function createMediaAssetsRouter(service: MediaAssetsService): Router {
+export function createMediaAssetsRouter(
+  service: MediaAssetsService,
+  rendersService: RendersService,
+  storageRoot: string | undefined,
+): Router {
   const router = Router();
 
   router.get("/media-assets", (req, res) => {
@@ -77,6 +84,71 @@ export function createMediaAssetsRouter(service: MediaAssetsService): Router {
     const query = parseQuery(derivedClipFiltersSchema, req.query);
     const items = service.listDerivedClips(query);
     res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
+  });
+
+  router.post("/clips", async (req, res, next) => {
+    try {
+      const body = parseBody(derivedClipCreateSchema, req.body);
+      const createdJob = await rendersService.createRenderJob({
+        channelId: body.channelId,
+        inputAssetIds: [],
+        renderType: "controlled_clip",
+        renderProfile: "controlled_demo_clip_segment_v1",
+        idempotencyKey: body.idempotencyKey,
+        parentVideoId: body.parentVideoId,
+        startSeconds: body.startSeconds,
+        endSeconds: body.endSeconds,
+        targetPlatform: body.targetPlatform,
+        title: body.title,
+        hook: body.hook,
+        description: body.description,
+        requestedBy: body.requestedBy,
+      });
+
+      const clipId = createdJob.outputAssetId;
+      if (!clipId) {
+        throw new AppError({
+          code: "INTERNAL_ERROR",
+          status: 500,
+          message: "Derived clip output was not registered.",
+        });
+      }
+
+      const clip = service.getDerivedClip(body.channelId, clipId);
+      res.status(201).json(createSuccessResponse(clip, { requestId: getRequestId(res) }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/clips/:id", (req, res) => {
+    const params = parseParams(mediaAssetIdParamsSchema, req.params);
+    const query = parseChannelBody(req.query);
+    const clip = service.getDerivedClip(query.channelId, params.id);
+    res.json(createSuccessResponse(clip, { requestId: getRequestId(res) }));
+  });
+
+  router.get("/clips/:id/file", (req, res, next) => {
+    const params = parseParams(mediaAssetIdParamsSchema, req.params);
+    const query = parseChannelBody(req.query);
+    const clip = service.getDerivedClip(query.channelId, params.id);
+
+    if (clip.status !== "completed" || !clip.storagePath || !storageRoot?.trim()) {
+      throw new AppError({
+        code: "NOT_FOUND",
+        status: 404,
+        message: "Derived clip file not available.",
+        details: { channelId: query.channelId, clipId: clip.id },
+      });
+    }
+
+    const resolved = resolveAbsoluteStoragePath(storageRoot, clip.storagePath);
+    res.type(clip.mimeType ?? "video/mp4");
+    res.sendFile(resolved.absolutePath, (error) => {
+      if (error) {
+        next(error);
+      }
+    });
   });
 
   return router;

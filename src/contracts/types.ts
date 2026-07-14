@@ -154,7 +154,9 @@ export type WorkflowRun = {
   updatedAt: ISODate;
 };
 
-export type RenderType = "controlled_video";
+export type RenderType = "controlled_video" | "controlled_clip";
+export type RenderProfile = "controlled_demo_short_v1" | "controlled_demo_clip_segment_v1";
+export type RenderStatus = WorkflowStatus;
 
 export type RenderLogEntry = {
   timestamp: ISODate;
@@ -168,10 +170,14 @@ export type RenderJob = {
   id: ID;
   channelId: ID;
   renderType: RenderType;
-  status: WorkflowStatus;
+  status: RenderStatus;
   inputAssetIds: ID[];
   outputAssetId?: ID;
-  renderProfile: "controlled_demo_short_v1";
+  parentVideoId?: ID;
+  startSeconds?: number;
+  endSeconds?: number;
+  targetPlatform?: DerivedClip["targetPlatform"];
+  renderProfile: RenderProfile;
   idempotencyKey: string;
   outputStoragePath?: string;
   createdAt: ISODate;
@@ -526,12 +532,18 @@ export type DerivedClip = {
   id: ID;
   channelId: ID;
   parentVideoId: ID;
+  renderJobId: ID;
   title: string;
   hook: string;
   description: string;
+  startSeconds: number;
+  endSeconds: number;
   durationSeconds: number;
   targetPlatform: "youtube_shorts" | "tiktok" | "instagram_reels" | "linkedin" | "other";
-  status: ContentStatus;
+  status: WorkflowStatus;
+  format: "horizontal" | "vertical" | "square";
+  resolution: string;
+  aspectRatio: string;
   riskLevel: RiskLevel;
   clipPotentialScore: number;
   type?: "clip" | "video";
@@ -543,8 +555,52 @@ export type DerivedClip = {
   sizeBytes?: number;
   checksumAlgorithm?: "sha256";
   checksum?: string;
+  costActualCents?: number;
+  errorCode?: string;
+  errorMessage?: string;
   createdAt: ISODate;
   updatedAt: ISODate;
+};
+
+export type MediaAssetUsage = {
+  id: ID;
+  channelId: ID;
+  assetId: ID;
+  usageType: "content" | "workflow_run" | "script" | "scene" | "video" | "clip";
+  referenceId: ID;
+  referenceLabel: string;
+  summary: string;
+  createdAt: ISODate;
+};
+
+export type MediaAssetFilters = {
+  channelId: ID;
+  type?: MediaAssetType;
+  category?: MediaAssetCategory;
+  status?: MediaAssetStatus;
+  riskLevel?: RiskLevel;
+  origin?: MediaAssetOrigin;
+  licenseStatus?: MediaAssetLicenseStatus;
+  search?: string;
+  contentId?: ID;
+};
+
+export type VideoAssetFilters = {
+  channelId: ID;
+  status?: VideoAsset["status"];
+  renderStatus?: VideoAsset["renderStatus"];
+  qualityStatus?: VideoAsset["qualityStatus"];
+  complianceStatus?: VideoAsset["complianceStatus"];
+  search?: string;
+};
+
+export type DerivedClipFilters = {
+  channelId: ID;
+  status?: DerivedClip["status"];
+  targetPlatform?: DerivedClip["targetPlatform"];
+  parentVideoId?: ID;
+  renderJobId?: ID;
+  search?: string;
 };
 
 export type QualityCheck = {
@@ -669,6 +725,7 @@ export type CostEntry = {
     | "visual_plan"
     | "narration"
     | "production"
+    | "clips"
     | "render"
     | "publication"
     | "infrastructure"

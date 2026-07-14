@@ -9,6 +9,7 @@ export const costStageValues = [
   "visual_plan",
   "narration",
   "production",
+  "clips",
   "render",
   "publication",
   "infrastructure",

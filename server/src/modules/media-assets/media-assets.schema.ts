@@ -279,27 +279,41 @@ export const derivedClipFiltersSchema = z
     channelId: channelIdSchema,
     status: z
       .enum([
-        "idea",
-        "research",
-        "script",
-        "visual_plan",
-        "narration",
-        "editing",
-        "clips",
-        "quality_check",
-        "compliance_check",
+        "queued",
+        "running",
+        "waiting",
         "waiting_approval",
-        "approved",
-        "scheduled",
-        "published",
+        "completed",
         "failed",
         "blocked",
+        "retrying",
       ])
       .optional(),
     targetPlatform: clipPlatformSchema.optional(),
+    parentVideoId: idSchema.optional(),
+    renderJobId: idSchema.optional(),
     search: z.string().trim().min(1).max(200).optional(),
   })
   .strict();
+
+export const derivedClipCreateSchema = z
+  .object({
+    channelId: channelIdSchema,
+    parentVideoId: idSchema,
+    startSeconds: z.number().finite().min(0),
+    endSeconds: z.number().finite().positive(),
+    idempotencyKey: z.string().trim().min(1).max(200),
+    targetPlatform: clipPlatformSchema.optional(),
+    title: textSchema.optional(),
+    hook: textSchema.optional(),
+    description: textSchema.optional(),
+    requestedBy: textSchema.optional(),
+  })
+  .strict()
+  .refine((value) => value.endSeconds > value.startSeconds, {
+    message: "Clip end must be greater than start",
+    path: ["endSeconds"],
+  });
 
 export const mediaAssetUsagesParamsSchema = z.object({ id: idSchema }).strict();
 

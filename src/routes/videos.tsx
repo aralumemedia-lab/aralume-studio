@@ -19,6 +19,7 @@ import {
   LoadingState,
   SectionHeader,
 } from "@/components/ui/data-card";
+import { Button } from "@/components/ui/button";
 import { CompactTable, type Column } from "@/components/ui/compact-table";
 import {
   formatBytes,
@@ -28,7 +29,7 @@ import {
   formatDuration,
   formatRelative,
 } from "@/lib/format";
-import type { MediaAssetBase, RenderJob, VideoAsset } from "@/contracts/types";
+import type { MediaAssetBase, RenderJob, VideoAsset, WorkflowStatus } from "@/contracts/types";
 import {
   createRenderJob,
   describeMediaAssetsApiError,
@@ -774,6 +775,18 @@ function videoAssetColumns(): Column<VideoAsset>[] {
       ),
     },
     {
+      key: "clips",
+      header: "Cortes",
+      render: (row) =>
+        isConcludedVideoAsset(row) ? (
+          <Button asChild variant="secondary" size="sm">
+            <a href={`/clips?parentVideoId=${encodeURIComponent(row.id)}`}>Criar corte</a>
+          </Button>
+        ) : (
+          <StatusBadge tone="muted">Indisponivel</StatusBadge>
+        ),
+    },
+    {
       key: "updatedAt",
       header: "Atualizado",
       render: (row) => (
@@ -820,7 +833,7 @@ function isRenderableSourceAsset(asset: MediaAssetBase): boolean {
 }
 
 function countJobs(rows: RenderJob[]) {
-  return rows.reduce(
+  return rows.reduce<Record<WorkflowStatus, number>>(
     (acc, row) => {
       acc[row.status] += 1;
       return acc;
@@ -828,9 +841,12 @@ function countJobs(rows: RenderJob[]) {
     {
       queued: 0,
       running: 0,
+      waiting: 0,
+      waiting_approval: 0,
       completed: 0,
       failed: 0,
       blocked: 0,
+      retrying: 0,
     },
   );
 }
@@ -840,4 +856,11 @@ function renderTone(status: VideoAsset["renderStatus"]): "muted" | "info" | "ok"
   if (status === "rendering") return "info";
   if (status === "failed") return "critical";
   return "muted";
+}
+
+function isConcludedVideoAsset(video: VideoAsset): boolean {
+  return (
+    video.renderStatus === "rendered" &&
+    (video.status === "approved" || video.status === "published" || video.status === "scheduled")
+  );
 }

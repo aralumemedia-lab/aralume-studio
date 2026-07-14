@@ -53,7 +53,8 @@ Definidos em `src/contracts/types.ts`. Não renomear campos.
 - `ContentIdea` 1:N `ResearchSession, Script`.
 - `Script` 1:N `ScriptVersion`; `VisualPlan` 1:N `ScenePlan`.
 - `VideoAsset` 1:N `DerivedClip`.
-- `RenderJob` 1:1 `VideoAsset` quando a renderizacao conclui com sucesso e registra a saida.
+- `RenderJob` 1:1 `VideoAsset` quando a renderizacao principal conclui com sucesso e registra a saida.
+- `RenderJob` 1:1 `DerivedClip` quando o job executa um corte derivado controlado.
 - `Content` (idea) 1:N `HumanApproval, ComplianceCheck, QualityCheck`.
 
 ## Endpoints
@@ -108,6 +109,9 @@ Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiLi
 | GET    | /api/renders/:id                           | `RenderJob`                     |
 | GET    | /api/videos                                | `VideoAsset[]`                  |
 | GET    | /api/clips                                 | `DerivedClip[]`                 |
+| POST   | /api/clips                                 | `DerivedClip`                   |
+| GET    | /api/clips/:id                             | `DerivedClip`                   |
+| GET    | /api/clips/:id/file                        | `void`                          |
 | GET    | /api/approvals                             | `HumanApproval[]`               |
 | POST   | /api/approvals/:id/approve                 | `HumanApproval`                 |
 | POST   | /api/approvals/:id/reject                  | `HumanApproval`                 |
@@ -141,6 +145,19 @@ O fluxo controlado de video usa a API real abaixo e nao aceita caminhos arbitrar
 
 `POST /api/renders` recebe `channelId`, `inputAssetIds`, `renderProfile`, `idempotencyKey` e, quando aplicavel, `contentId` e `workflowRunId`.
 O frontend da rota `/videos` usa essa superficie para listar jobs, iniciar renders controlados e mostrar o ativo de video resultante no canal ativo.
+
+## Cortes derivados controlados
+
+O fluxo de cortes derivados usa a API real abaixo e nao aceita caminhos arbitrarios do cliente.
+
+- `GET /api/clips?channelId=<id>`
+- `GET /api/clips?channelId=<id>&parentVideoId=<id>`
+- `POST /api/clips`
+- `GET /api/clips/:id`
+- `GET /api/clips/:id/file`
+
+`POST /api/clips` recebe `channelId`, `parentVideoId`, `startSeconds`, `endSeconds`, `idempotencyKey` e, quando aplicavel, `targetPlatform`, `title`, `hook` e `description`.
+O frontend da rota `/clips` usa essa superficie para listar cortes, iniciar cortes derivados e mostrar o ativo de video resultante vinculado ao video principal.
 
 ## Integração futura
 

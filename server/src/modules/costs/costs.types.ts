@@ -15,6 +15,7 @@ export type CostStage =
   | "visual_plan"
   | "narration"
   | "production"
+  | "clips"
   | "render"
   | "publication"
   | "infrastructure"

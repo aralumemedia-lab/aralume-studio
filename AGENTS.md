@@ -1,4 +1,5 @@
 <!-- LOVABLE:BEGIN -->
+
 > [!IMPORTANT]
 > This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
 > published git history - force pushing, or rebasing/amending/squashing commits
@@ -7,6 +8,7 @@
 >
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
+
 <!-- LOVABLE:END -->
 
 # Aralume Studio - Instrucoes permanentes do Codex
@@ -138,9 +140,11 @@ docs/specs/
   007-costs-operational-modes.md
   008-media-assets-storage.md
   009-rendering.md
-  010-publication-assisted.md
-  011-metrics-learning.md
+  010-derived-clips.md
+  011-publication-assisted.md
   012-v1-acceptance.md
+  013-channels-frontend-integration.md
+  014-metrics-learning.md
 ```
 
 ## Relatorio final obrigatorio

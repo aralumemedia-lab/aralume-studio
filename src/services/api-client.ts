@@ -91,8 +91,10 @@ export {
 export { getAgentDefinitions, getAgentOfficeSnapshot, getDashboardSummary } from "./mock-api";
 
 export {
+  createDerivedClip,
   createMediaAsset,
   describeMediaAssetsApiError,
+  getDerivedClip,
   getDerivedClips,
   getMediaAsset,
   getMediaAssetUsages,
