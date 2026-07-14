@@ -1059,6 +1059,12 @@ Na Sprint 0, se screenshots não forem possíveis, registrar pendência formal.
 
 ## 20. Ordem atualizada de construção até a V1.0
 
+Nota operacional atualizada:
+
+- A Sprint 8 foi encerrada em Media Assets and Storage.
+- A Sprint 9 atual e Renderizacao Controlada.
+- As fases abaixo continuam como roadmap historico e podem ter numeracao diferente da sequencia operacional das sprints entregues.
+
 ### Fase 0 — Documento Mestre e contexto oficial
 
 **Status:** concluída parcialmente.

@@ -154,6 +154,41 @@ export type WorkflowRun = {
   updatedAt: ISODate;
 };
 
+export type RenderType = "controlled_video";
+
+export type RenderLogEntry = {
+  timestamp: ISODate;
+  level: "info" | "warn" | "error";
+  message: string;
+  code?: string;
+  metadata?: Record<string, unknown>;
+};
+
+export type RenderJob = {
+  id: ID;
+  channelId: ID;
+  renderType: RenderType;
+  status: WorkflowStatus;
+  inputAssetIds: ID[];
+  outputAssetId?: ID;
+  renderProfile: "controlled_demo_short_v1";
+  idempotencyKey: string;
+  outputStoragePath?: string;
+  createdAt: ISODate;
+  startedAt?: ISODate;
+  completedAt?: ISODate;
+  durationSeconds?: number;
+  attemptCount: number;
+  errorCode?: string;
+  errorMessage?: string;
+  logSummary?: string;
+  logEntries?: RenderLogEntry[];
+  technicalMetadata?: Record<string, unknown>;
+  contentId?: ID;
+  workflowRunId?: ID;
+  updatedAt: ISODate;
+};
+
 export type WorkflowStep = {
   id: ID;
   workflowRunId: ID;
@@ -481,6 +516,7 @@ export type VideoAsset = {
   providerName?: string;
   modelName?: string;
   prompt?: string;
+  technicalMetadata?: Record<string, unknown>;
   riskLevel?: RiskLevel;
   createdAt: ISODate;
   updatedAt: ISODate;

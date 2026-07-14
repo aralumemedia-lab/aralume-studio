@@ -103,4 +103,11 @@ export {
   validateMediaStorageReference,
 } from "./media-assets-api";
 
+export {
+  createRenderJob,
+  describeRendersApiError,
+  getRenderJob,
+  getRenderJobs,
+} from "./renders-api";
+
 export { getPerformanceMetrics, getPublicationJobs, getWorkflowRuns } from "./mock-api";

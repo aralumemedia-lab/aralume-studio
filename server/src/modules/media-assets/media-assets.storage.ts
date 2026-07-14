@@ -31,7 +31,8 @@ export function parseInternalUri(value: string): { channelId: string; assetId: s
 }
 
 export function normalizeRelativeStoragePath(input: string): string {
-  const normalized = input.replaceAll("\\", "/");
+  const decoded = decodeStoragePath(input);
+  const normalized = decoded.replaceAll("\\", "/");
 
   if (!normalized || normalized.trim().length === 0) {
     throw validation("Storage path is required", { storagePath: input });
@@ -51,6 +52,27 @@ export function normalizeRelativeStoragePath(input: string): string {
   }
 
   return path.posix.normalize(normalized);
+}
+
+function decodeStoragePath(input: string): string {
+  let current = input;
+
+  for (let i = 0; i < 2; i += 1) {
+    try {
+      const next = decodeURIComponent(current);
+      if (next === current) {
+        break;
+      }
+
+      current = next;
+    } catch {
+      throw validation("Storage path contains invalid escape sequences", {
+        storagePath: input,
+      });
+    }
+  }
+
+  return current;
 }
 
 export function resolveAbsoluteStoragePath(

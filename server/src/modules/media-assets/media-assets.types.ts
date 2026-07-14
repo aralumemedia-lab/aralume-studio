@@ -181,6 +181,7 @@ export type VideoAsset = {
   providerName?: string;
   modelName?: string;
   prompt?: string;
+  technicalMetadata?: Record<string, unknown>;
   riskLevel?: MediaAssetBase["riskLevel"];
   createdAt: ISODate;
   updatedAt: ISODate;

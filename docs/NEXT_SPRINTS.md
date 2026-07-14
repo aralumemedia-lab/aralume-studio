@@ -1,12 +1,12 @@
 # Next Sprints
 
-## Sprint 7 em andamento
+## Sprint 9 em andamento
 
-- **Sprint 7 - Costs and Operational Modes**
-- A sprint esta sendo executada em branch dedicada e ainda nao foi mergeada ao `main`.
-- Escopo em curso: custos deterministas, budget por canal, modos operacionais, bloqueios de demo e auditoria operacional.
-- Rotas previstas/implementadas nesta etapa: `/costs`, `/administration` e `/audit-logs`.
-- A proxima sprint apos o encerramento desta branch continua sendo a Sprint 8 - Media Assets and Storage Registry, desde que a Sprint 7 seja concluida e integrada.
+- **Sprint 9 - Renderizacao Controlada**
+- A branch `codex/sprint-9-controlled-rendering` concentra a primeira renderizacao de video controlada, auditavel e reproduzivel da Aralume Studio.
+- Escopo em curso: criacao de jobs, validacao de ativos por canal, storage root autorizado, FFmpeg controlado, idempotencia, auditoria, custos e exposicao em `/videos`.
+- A rota `/videos` agora e parte do fluxo operacional real e nao deve depender de mocks crus.
+- A proxima sprint apos o fechamento desta branch sera a fase seguinte do roadmap, sem reabrir o escopo de renderizacao controlada.
 
 ## Sprint 5 concluida e integrada
 
