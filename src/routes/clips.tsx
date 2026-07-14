@@ -1,30 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+
 import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
-import { getDerivedClips } from "@/services/api-client";
-import { Card } from "@/components/ui/data-card";
+import { Card, EmptyState, ErrorState, LoadingState } from "@/components/ui/data-card";
 import { CompactTable, type Column } from "@/components/ui/compact-table";
 import { ContentStatusBadge, RiskBadge } from "@/components/status/badges";
 import { formatDuration, formatRelative } from "@/lib/format";
 import type { DerivedClip } from "@/contracts/types";
+import { describeMediaAssetsApiError, getDerivedClips } from "@/services/api-client";
 
 export const Route = createFileRoute("/clips")({
   head: () => ({
     meta: [
-      { title: "Cortes — Aralume" },
+      { title: "Cortes - Aralume" },
       {
         name: "description",
-        content: "Cortes verticais e ganchos derivados dos vídeos principais.",
+        content: "Cortes verticais e ganchos derivados dos videos principais.",
       },
     ],
   }),
   component: function ClipsPage() {
     const { activeChannelId } = useChannelContext();
     const q = useQuery({
-      queryKey: ["cl", activeChannelId],
-      queryFn: () => getDerivedClips(activeChannelId),
+      queryKey: ["clips", activeChannelId],
+      enabled: Boolean(activeChannelId),
+      queryFn: () => getDerivedClips(activeChannelId as string),
     });
+
+    if (!activeChannelId) {
+      return (
+        <div>
+          <PageHeader eyebrow="Editorial" title="Cortes" description="Selecione um canal." />
+          <div className="p-4">
+            <EmptyState
+              title="Nenhum canal ativo"
+              description="Selecione um canal para listar cortes."
+            />
+          </div>
+        </div>
+      );
+    }
+
     const rows = q.data?.data ?? [];
     const cols: Column<DerivedClip>[] = [
       {
@@ -44,7 +61,7 @@ export const Route = createFileRoute("/clips")({
       },
       {
         key: "dur",
-        header: "Duração",
+        header: "Duracao",
         render: (r) => <span className="tabular-nums">{formatDuration(r.durationSeconds)}</span>,
       },
       {
@@ -60,21 +77,30 @@ export const Route = createFileRoute("/clips")({
         render: (r) => <span className="text-muted-foreground">{formatRelative(r.updatedAt)}</span>,
       },
     ];
+
     return (
       <div>
         <PageHeader
           eyebrow="Editorial"
           title="Cortes"
-          description="Cortes verticais derivados dos vídeos principais por plataforma."
+          description="Cortes verticais derivados dos videos principais por plataforma."
         />
         <div className="p-4">
           <Card padded={false}>
-            <CompactTable
-              rows={rows}
-              columns={cols}
-              className="border-0 rounded-none"
-              empty="Sem cortes no canal ativo."
-            />
+            {q.isLoading ? (
+              <LoadingState label="Carregando cortes" />
+            ) : q.isError ? (
+              <ErrorState message={describeMediaAssetsApiError(q.error, "clips")} />
+            ) : rows.length === 0 ? (
+              <EmptyState title="Sem cortes no canal ativo." />
+            ) : (
+              <CompactTable
+                rows={rows}
+                columns={cols}
+                className="border-0 rounded-none"
+                empty="Sem cortes no canal ativo."
+              />
+            )}
           </Card>
         </div>
       </div>

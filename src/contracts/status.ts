@@ -49,3 +49,39 @@ export type ContentStatus =
   | "published"
   | "failed"
   | "blocked";
+
+export type MediaAssetStatus =
+  | "available"
+  | "processing"
+  | "failed"
+  | "pending"
+  | "blocked"
+  | "invalid"
+  | "corrupted"
+  | "missing"
+  | "replaced"
+  | "archived";
+
+export type MediaAssetOrigin =
+  | "internal"
+  | "generated"
+  | "uploaded"
+  | "licensed"
+  | "demo"
+  | "channel_provided"
+  | "public_domain"
+  | "external_authorized"
+  | "unknown"
+  | "prohibited";
+
+export type MediaAssetLicenseStatus =
+  | "known"
+  | "verified"
+  | "not_applicable"
+  | "pending"
+  | "unknown"
+  | "confirmed"
+  | "unconfirmed"
+  | "restricted"
+  | "attribution_required"
+  | "blocked";

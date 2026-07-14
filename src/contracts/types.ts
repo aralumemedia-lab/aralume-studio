@@ -5,6 +5,9 @@ import type {
   ComplianceStatus,
   ContentStatus,
   CostStatus,
+  MediaAssetLicenseStatus,
+  MediaAssetOrigin,
+  MediaAssetStatus,
   PublicationStatus,
   QualityCheckStatus,
   RiskLevel,
@@ -18,6 +21,9 @@ export type {
   ComplianceStatus,
   ContentStatus,
   CostStatus,
+  MediaAssetLicenseStatus,
+  MediaAssetOrigin,
+  MediaAssetStatus,
   PublicationStatus,
   QualityCheckStatus,
   RiskLevel,
@@ -367,24 +373,70 @@ export type ScenePlan = {
 };
 
 export type MediaAssetType =
-  "narration" | "image" | "video" | "thumbnail" | "music" | "subtitle" | "brand_asset";
+  | "narration"
+  | "audio"
+  | "image"
+  | "video"
+  | "intermediate_video"
+  | "thumbnail"
+  | "soundtrack"
+  | "sound_effect"
+  | "subtitle"
+  | "caption"
+  | "auxiliary"
+  | "brand_asset"
+  | "music"
+  | "other";
+
+export type MediaAssetCategory = "audio" | "video" | "visual" | "text" | "auxiliary" | "brand" | "other";
+
+export type MediaAssetIntegrityState = {
+  checksumAlgorithm: "sha256";
+  checksum: string;
+  sizeBytes: number;
+  lastValidatedAt?: ISODate;
+  observedChecksum?: string;
+  observedSizeBytes?: number;
+  checksumMatches?: boolean;
+  sizeMatches?: boolean;
+};
 
 export type MediaAssetBase = {
   id: ID;
   channelId: ID;
-  contentId?: ID;
   type: MediaAssetType;
+  category?: MediaAssetCategory;
+  name?: string;
   title: string;
-  status: "available" | "processing" | "failed" | "blocked";
-  origin: "generated" | "uploaded" | "licensed" | "demo";
-  licenseStatus: "verified" | "pending" | "unknown" | "blocked";
+  description?: string;
+  mimeType?: string;
+  extension?: string;
+  sizeBytes?: number;
+  checksumAlgorithm?: "sha256";
+  checksum?: string;
+  internalUri?: string;
+  storagePath?: string;
+  origin: MediaAssetOrigin;
+  provenance?: string;
+  licenseStatus: MediaAssetLicenseStatus;
+  licenseName?: string;
+  status: MediaAssetStatus;
+  riskLevel: RiskLevel;
+  costActualCents: number;
+  contentId?: ID;
+  workflowRunId?: ID;
+  scriptId?: ID;
+  scenePlanId?: ID;
+  stepId?: ID;
   providerName?: string;
   modelName?: string;
   prompt?: string;
-  fileUrl?: string;
-  thumbnailUrl?: string;
-  costActualCents: number;
-  riskLevel: RiskLevel;
+  thumbnailUri?: string;
+  technicalMetadata?: Record<string, unknown>;
+  usageSummary?: string;
+  sourceAssetId?: ID;
+  notes?: string;
+  integrity?: MediaAssetIntegrityState;
   createdAt: ISODate;
   updatedAt: ISODate;
 };
@@ -397,7 +449,7 @@ export type NarrationAsset = MediaAssetBase & {
 };
 
 export type VisualAsset = MediaAssetBase & {
-  type: "image" | "video" | "thumbnail" | "brand_asset";
+  type: "image" | "video" | "thumbnail" | "brand_asset" | "intermediate_video";
   width?: number;
   height?: number;
   durationSeconds?: number;
@@ -417,6 +469,19 @@ export type VideoAsset = {
   qualityStatus: "not_checked" | "passed" | "warning" | "failed";
   complianceStatus: ComplianceStatus;
   costActualCents: number;
+  type?: "video";
+  origin?: MediaAssetOrigin;
+  licenseStatus?: MediaAssetLicenseStatus;
+  internalUri?: string;
+  storagePath?: string;
+  mimeType?: string;
+  sizeBytes?: number;
+  checksumAlgorithm?: "sha256";
+  checksum?: string;
+  providerName?: string;
+  modelName?: string;
+  prompt?: string;
+  riskLevel?: RiskLevel;
   createdAt: ISODate;
   updatedAt: ISODate;
 };
@@ -433,6 +498,15 @@ export type DerivedClip = {
   status: ContentStatus;
   riskLevel: RiskLevel;
   clipPotentialScore: number;
+  type?: "clip" | "video";
+  origin?: MediaAssetOrigin;
+  licenseStatus?: MediaAssetLicenseStatus;
+  internalUri?: string;
+  storagePath?: string;
+  mimeType?: string;
+  sizeBytes?: number;
+  checksumAlgorithm?: "sha256";
+  checksum?: string;
   createdAt: ISODate;
   updatedAt: ISODate;
 };

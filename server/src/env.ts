@@ -11,6 +11,7 @@ const optionalText = z.preprocess((value) => {
 const runtimeEnvSchema = z.object({
   ARALUME_ENV: z.enum(["development", "test", "production"]).default("development"),
   ARALUME_LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  ARALUME_ASSET_STORAGE_ROOT: optionalText,
   DATABASE_URL: optionalText,
   TEST_DATABASE_URL: optionalText,
 });
@@ -43,6 +44,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): RuntimeEnv {
   const result = runtimeEnvSchema.safeParse({
     ARALUME_ENV: source.ARALUME_ENV,
     ARALUME_LOG_LEVEL: source.ARALUME_LOG_LEVEL,
+    ARALUME_ASSET_STORAGE_ROOT: source.ARALUME_ASSET_STORAGE_ROOT,
     DATABASE_URL: source.DATABASE_URL,
     TEST_DATABASE_URL: source.TEST_DATABASE_URL,
   });

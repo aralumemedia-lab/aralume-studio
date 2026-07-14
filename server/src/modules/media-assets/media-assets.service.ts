@@ -1,0 +1,778 @@
+import { randomUUID } from "node:crypto";
+import path from "node:path";
+
+import { AppError } from "../../http/errors.js";
+import type { ChannelsRepository } from "../channels/channel.types.js";
+import {
+  buildInternalUri,
+  normalizeRelativeStoragePath,
+  resolveAbsoluteStoragePath,
+  resolveStorageRoot,
+  validation,
+} from "./media-assets.storage.js";
+import type {
+  IntegrityValidationInput,
+  MediaAssetBase,
+  MediaAssetCreateInput,
+  MediaAssetIntegrityValidation,
+  MediaAssetLicenseStatus,
+  MediaAssetOrigin,
+  MediaAssetPatchInput,
+  MediaAssetStatus,
+  MediaAssetStorageValidation,
+  MediaAssetType,
+  MediaAssetUsage,
+  MediaAssetsDependencies,
+  MediaAssetsRepository,
+  MediaAssetsService,
+  StorageReferenceValidationInput,
+  VideoAssetFilters,
+} from "./media-assets.types.js";
+
+export type MediaAssetsClock = () => Date;
+export type CreateMediaAssetsServiceOptions = {
+  clock?: MediaAssetsClock;
+  idFactory?: () => string;
+  storageRoot?: string;
+};
+
+const usableOrigins: MediaAssetOrigin[] = [
+  "internal",
+  "generated",
+  "uploaded",
+  "licensed",
+  "channel_provided",
+  "public_domain",
+  "external_authorized",
+];
+
+const usableLicenseStatuses: MediaAssetLicenseStatus[] = [
+  "known",
+  "verified",
+  "not_applicable",
+  "confirmed",
+  "restricted",
+  "attribution_required",
+];
+
+export function createMediaAssetsService(
+  repository: MediaAssetsRepository,
+  dependencies: MediaAssetsDependencies,
+  options: CreateMediaAssetsServiceOptions = {},
+): MediaAssetsService {
+  const clock = options.clock ?? (() => new Date());
+  const idFactory = options.idFactory ?? (() => randomUUID());
+  const storageRoot = resolveStorageRoot(
+    options.storageRoot,
+    path.resolve(process.cwd(), ".aralume", "storage", "media-assets"),
+  );
+
+  return {
+    listMediaAssets(filters) {
+      assertChannelExists(dependencies.channelsRepository, filters.channelId);
+      return repository.listMediaAssets(filters);
+    },
+
+    getMediaAsset(channelId, id) {
+      assertChannelExists(dependencies.channelsRepository, channelId);
+      return getAssetForChannel(
+        repository,
+        channelId,
+        id,
+        dependencies.auditRepository,
+        clock,
+        idFactory,
+      );
+    },
+
+    createMediaAsset(input) {
+      try {
+        assertChannelExists(dependencies.channelsRepository, input.channelId);
+        const validation = validateStorageReferenceInternal(
+          input.channelId,
+          input.storagePath,
+          input.type,
+          storageRoot,
+        );
+        const now = clock().toISOString();
+        const assetId = `ma_${idFactory()}`;
+        const internalUri = buildInternalUri(input.channelId, assetId);
+        const integrity = buildIntegrity(input.checksum, input.sizeBytes, now);
+        assertUsableState(input.status, input.origin, input.licenseStatus, integrity);
+
+        const asset: MediaAssetBase = {
+          id: assetId,
+          channelId: input.channelId,
+          type: input.type,
+          category: input.category,
+          name: input.name.trim(),
+          title: input.title?.trim() || input.name.trim(),
+          description: input.description.trim(),
+          mimeType: input.mimeType.trim(),
+          extension: input.extension.trim().toLowerCase(),
+          sizeBytes: input.sizeBytes,
+          checksumAlgorithm: "sha256",
+          checksum: input.checksum.toLowerCase(),
+          internalUri,
+          storagePath: validation.normalizedStoragePath,
+          origin: input.origin,
+          provenance: input.provenance.trim(),
+          licenseStatus: input.licenseStatus,
+          licenseName: input.licenseName?.trim(),
+          status: input.status,
+          riskLevel: input.riskLevel,
+          costActualCents: input.costActualCents,
+          contentId: input.contentId,
+          workflowRunId: input.workflowRunId,
+          scriptId: input.scriptId,
+          scenePlanId: input.scenePlanId,
+          stepId: input.stepId,
+          providerName: input.providerName?.trim(),
+          modelName: input.modelName?.trim(),
+          prompt: input.prompt?.trim(),
+          thumbnailUri: input.thumbnailUri?.trim(),
+          technicalMetadata: input.technicalMetadata,
+          usageSummary: input.usageSummary?.trim(),
+          sourceAssetId: input.sourceAssetId,
+          notes: input.notes?.trim(),
+          integrity,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        repository.upsertMediaAsset(asset);
+        recordAudit(dependencies.auditRepository, {
+          id: `au_${idFactory()}`,
+          channelId: asset.channelId,
+          actorType: "system",
+          actorName: "Aralume Core",
+          action: "media_asset.registered",
+          entityType: "MediaAsset",
+          entityId: asset.id,
+          status: "success",
+          message: "Media asset registered.",
+          metadata: {
+            type: asset.type,
+            category: asset.category,
+            storagePath: asset.storagePath,
+            internalUri: asset.internalUri,
+            origin: asset.origin,
+            licenseStatus: asset.licenseStatus,
+            checksumAlgorithm: asset.checksumAlgorithm,
+            sizeBytes: asset.sizeBytes,
+            costActualCents: asset.costActualCents,
+          },
+          createdAt: now,
+        });
+
+        return asset;
+      } catch (error) {
+        auditRejectedMediaAsset(dependencies.auditRepository, idFactory, clock, input.channelId, {
+          action: "media_asset.registration_rejected",
+          entityType: "MediaAsset",
+          entityId: input.contentId ?? input.channelId,
+          error,
+          metadata: {
+            type: input.type,
+            storagePath: input.storagePath,
+            origin: input.origin,
+            licenseStatus: input.licenseStatus,
+          },
+        });
+        throw error;
+      }
+    },
+
+    updateMediaAsset(channelId, id, input) {
+      try {
+        const existing = getAssetForChannel(
+          repository,
+          channelId,
+          id,
+          dependencies.auditRepository,
+          clock,
+          idFactory,
+        );
+        const now = clock().toISOString();
+        const nextStoragePath =
+          input.storagePath !== undefined
+            ? validateStorageReferenceInternal(
+                channelId,
+                input.storagePath,
+                input.type ?? existing.type,
+                storageRoot,
+                id,
+              ).normalizedStoragePath
+            : existing.storagePath;
+        const nextChecksum = input.checksum?.toLowerCase() ?? existing.checksum;
+        const nextSizeBytes = input.sizeBytes ?? existing.sizeBytes;
+        const nextIntegrity = buildIntegrity(nextChecksum, nextSizeBytes, now, existing.integrity);
+        const next: MediaAssetBase = {
+          ...existing,
+          ...input,
+          title: input.title?.trim() ?? existing.title,
+          name: input.name?.trim() ?? existing.name,
+          description: input.description?.trim() ?? existing.description,
+          mimeType: input.mimeType?.trim() ?? existing.mimeType,
+          extension: input.extension?.trim().toLowerCase() ?? existing.extension,
+          sizeBytes: nextSizeBytes,
+          checksum: nextChecksum,
+          storagePath: nextStoragePath,
+          origin: input.origin ?? existing.origin,
+          provenance: input.provenance?.trim() ?? existing.provenance,
+          licenseStatus: input.licenseStatus ?? existing.licenseStatus,
+          licenseName: input.licenseName?.trim() ?? existing.licenseName,
+          status: input.status ?? existing.status,
+          riskLevel: input.riskLevel ?? existing.riskLevel,
+          costActualCents: input.costActualCents ?? existing.costActualCents,
+          providerName: input.providerName?.trim() ?? existing.providerName,
+          modelName: input.modelName?.trim() ?? existing.modelName,
+          prompt: input.prompt?.trim() ?? existing.prompt,
+          thumbnailUri: input.thumbnailUri?.trim() ?? existing.thumbnailUri,
+          technicalMetadata: input.technicalMetadata ?? existing.technicalMetadata,
+          usageSummary: input.usageSummary?.trim() ?? existing.usageSummary,
+          sourceAssetId: input.sourceAssetId ?? existing.sourceAssetId,
+          notes: input.notes?.trim() ?? existing.notes,
+          integrity: nextIntegrity,
+          updatedAt: now,
+        };
+
+        assertUsableState(next.status, next.origin, next.licenseStatus, next.integrity);
+        repository.upsertMediaAsset(next);
+        recordAudit(dependencies.auditRepository, {
+          id: `au_${idFactory()}`,
+          channelId,
+          actorType: "system",
+          actorName: "Aralume Core",
+          action: "media_asset.updated",
+          entityType: "MediaAsset",
+          entityId: next.id,
+          status: "success",
+          message: "Media asset metadata updated.",
+          metadata: {
+            changedFields: Object.keys(input),
+            storagePath: next.storagePath,
+            checksum: next.checksum,
+            sizeBytes: next.sizeBytes,
+            status: next.status,
+          },
+          createdAt: now,
+        });
+        return next;
+      } catch (error) {
+        auditRejectedMediaAsset(dependencies.auditRepository, idFactory, clock, channelId, {
+          action: "media_asset.update_rejected",
+          entityType: "MediaAsset",
+          entityId: id,
+          error,
+          metadata: {
+            changedFields: Object.keys(input),
+            storagePath: input.storagePath,
+            origin: input.origin,
+            licenseStatus: input.licenseStatus,
+          },
+        });
+        throw error;
+      }
+    },
+
+    validateStorageReference(input) {
+      try {
+        assertChannelExists(dependencies.channelsRepository, input.channelId);
+        const result = validateStorageReferenceInternal(
+          input.channelId,
+          input.storagePath,
+          input.type,
+          storageRoot,
+        );
+        recordAudit(dependencies.auditRepository, {
+          id: `au_${idFactory()}`,
+          channelId: input.channelId,
+          actorType: "system",
+          actorName: "Aralume Core",
+          action: "media_asset.storage_validated",
+          entityType: "MediaAsset",
+          entityId: `storage:${input.channelId}:${result.normalizedStoragePath}`,
+          status: "success",
+          message: "Storage reference validated.",
+          metadata: {
+            type: input.type,
+            storagePath: result.normalizedStoragePath,
+            internalUri: result.internalUri,
+          },
+          createdAt: clock().toISOString(),
+        });
+        return result;
+      } catch (error) {
+        auditRejectedMediaAsset(dependencies.auditRepository, idFactory, clock, input.channelId, {
+          action: "media_asset.storage_rejected",
+          entityType: "MediaAsset",
+          entityId: input.storagePath,
+          error,
+          metadata: {
+            type: input.type,
+            storagePath: input.storagePath,
+          },
+        });
+        throw error;
+      }
+    },
+
+    validateAssetIntegrity(channelId, id, input) {
+      const asset = getAssetForChannel(
+        repository,
+        channelId,
+        id,
+        dependencies.auditRepository,
+        clock,
+        idFactory,
+      );
+      const observedChecksum = input?.checksum?.toLowerCase();
+      const observedSizeBytes = input?.sizeBytes;
+      const checksumMatches =
+        observedChecksum === undefined ? true : observedChecksum === asset.checksum;
+      const sizeMatches =
+        observedSizeBytes === undefined ? true : observedSizeBytes === asset.sizeBytes;
+      const valid = checksumMatches && sizeMatches && asset.status === "available";
+      const now = clock().toISOString();
+      const next: MediaAssetBase = {
+        ...asset,
+        integrity: {
+          checksumAlgorithm: asset.integrity?.checksumAlgorithm ?? "sha256",
+          checksum: asset.checksum,
+          sizeBytes: asset.sizeBytes,
+          lastValidatedAt: now,
+          observedChecksum: observedChecksum ?? asset.checksum,
+          observedSizeBytes: observedSizeBytes ?? asset.sizeBytes,
+          checksumMatches,
+          sizeMatches,
+        },
+        status: valid ? asset.status : asset.status === "missing" ? "missing" : asset.status,
+        updatedAt: now,
+      };
+
+      if (!checksumMatches || !sizeMatches) {
+        next.status = "corrupted";
+      }
+
+      repository.upsertMediaAsset(next);
+      recordAudit(dependencies.auditRepository, {
+        id: `au_${idFactory()}`,
+        channelId,
+        actorType: "system",
+        actorName: "Aralume Core",
+        action: valid ? "media_asset.integrity_validated" : "media_asset.integrity_mismatch",
+        entityType: "MediaAsset",
+        entityId: next.id,
+        status: valid ? "success" : "warning",
+        message: valid ? "Media asset integrity validated." : "Media asset integrity mismatch.",
+        metadata: {
+          checksumMatches,
+          sizeMatches,
+          observedChecksum,
+          observedSizeBytes,
+          expectedChecksum: asset.checksum,
+          expectedSizeBytes: asset.sizeBytes,
+        },
+        createdAt: now,
+      });
+
+      if (!valid) {
+        throw conflict("Media asset integrity validation failed", {
+          assetId: asset.id,
+          checksumMatches,
+          sizeMatches,
+        });
+      }
+
+      return {
+        channelId,
+        assetId: asset.id,
+        expectedChecksum: asset.checksum,
+        expectedSizeBytes: asset.sizeBytes,
+        observedChecksum,
+        observedSizeBytes,
+        checksumMatches,
+        sizeMatches,
+        valid,
+      };
+    },
+
+    listMediaAssetUsages(channelId, id) {
+      const asset = getAssetForChannel(
+        repository,
+        channelId,
+        id,
+        dependencies.auditRepository,
+        clock,
+        idFactory,
+      );
+      return buildUsages(asset);
+    },
+
+    listVideoAssets(filters) {
+      assertChannelExists(dependencies.channelsRepository, filters.channelId);
+      return repository.listVideoAssets(filters);
+    },
+
+    getVideoAsset(channelId, id) {
+      assertChannelExists(dependencies.channelsRepository, channelId);
+      const found = repository.getVideoAsset(id);
+      if (!found) {
+        recordAudit(dependencies.auditRepository, {
+          id: `au_${idFactory()}`,
+          channelId,
+          actorType: "system",
+          actorName: "Aralume Core",
+          action: "video_asset.not_found",
+          entityType: "VideoAsset",
+          entityId: id,
+          status: "failed",
+          message: "Video asset not found.",
+          metadata: { channelId, entityId: id },
+          createdAt: clock().toISOString(),
+        });
+        throw notFound("Video asset not found", { channelId, id });
+      }
+
+      if (found.channelId !== channelId) {
+        auditCrossChannelAttempt(
+          dependencies.auditRepository,
+          channelId,
+          id,
+          "video_asset.cross_channel_denied",
+          idFactory,
+          clock().toISOString(),
+        );
+        throw notFound("Video asset not found", { channelId, id });
+      }
+
+      return found;
+    },
+
+    listDerivedClips(filters) {
+      assertChannelExists(dependencies.channelsRepository, filters.channelId);
+      return repository.listDerivedClips(filters);
+    },
+
+    getDerivedClip(channelId, id) {
+      assertChannelExists(dependencies.channelsRepository, channelId);
+      const found = repository.getDerivedClip(id);
+      if (!found) {
+        recordAudit(dependencies.auditRepository, {
+          id: `au_${idFactory()}`,
+          channelId,
+          actorType: "system",
+          actorName: "Aralume Core",
+          action: "derived_clip.not_found",
+          entityType: "DerivedClip",
+          entityId: id,
+          status: "failed",
+          message: "Derived clip not found.",
+          metadata: { channelId, entityId: id },
+          createdAt: clock().toISOString(),
+        });
+        throw notFound("Derived clip not found", { channelId, id });
+      }
+
+      if (found.channelId !== channelId) {
+        auditCrossChannelAttempt(
+          dependencies.auditRepository,
+          channelId,
+          id,
+          "derived_clip.cross_channel_denied",
+          idFactory,
+          clock().toISOString(),
+        );
+        throw notFound("Derived clip not found", { channelId, id });
+      }
+
+      return found;
+    },
+  };
+}
+
+function getAssetForChannel(
+  repository: MediaAssetsRepository,
+  channelId: string,
+  id: string,
+  auditRepository: MediaAssetsDependencies["auditRepository"],
+  clock: () => Date,
+  idFactory: () => string,
+): MediaAssetBase {
+  const found = repository.getMediaAsset(id);
+  if (!found) {
+    recordAudit(auditRepository, {
+      id: `au_${idFactory()}`,
+      channelId,
+      actorType: "system",
+      actorName: "Aralume Core",
+      action: "media_asset.not_found",
+      entityType: "MediaAsset",
+      entityId: id,
+      status: "failed",
+      message: "Media asset not found.",
+      metadata: { channelId, entityId: id },
+      createdAt: clock().toISOString(),
+    });
+    throw notFound("Media asset not found", { channelId, id });
+  }
+
+  if (found.channelId !== channelId) {
+    auditCrossChannelAttempt(
+      auditRepository,
+      channelId,
+      id,
+      "media_asset.cross_channel_denied",
+      idFactory,
+      clock().toISOString(),
+    );
+    throw notFound("Media asset not found", { channelId, id });
+  }
+
+  return found;
+}
+
+function validateStorageReferenceInternal(
+  channelId: string,
+  storagePath: string,
+  type: MediaAssetType,
+  storageRoot: string,
+  assetId?: string,
+): MediaAssetStorageValidation {
+  const normalizedStoragePath = normalizeRelativeStoragePath(storagePath);
+  assertStoragePathMatchesChannel(channelId, normalizedStoragePath);
+  resolveAbsoluteStoragePath(storageRoot, normalizedStoragePath);
+  const previewId = normalizedStoragePath.replaceAll("/", "_").replaceAll(".", "_");
+  return {
+    channelId,
+    type,
+    storagePath: normalizedStoragePath,
+    normalizedStoragePath,
+    internalUri: assetId
+      ? buildInternalUri(channelId, assetId)
+      : buildInternalUri(channelId, `preview_${previewId}`),
+  };
+}
+
+function assertStoragePathMatchesChannel(channelId: string, storagePath: string): void {
+  const [pathChannelId, ...segments] = storagePath.split("/");
+  if (pathChannelId !== channelId || segments.length < 2) {
+    throw validation("Storage path must stay within the active channel namespace", {
+      channelId,
+      storagePath,
+    });
+  }
+}
+
+function buildIntegrity(
+  checksum: string,
+  sizeBytes: number,
+  now: string,
+  existing?: MediaAssetBase["integrity"],
+) {
+  return {
+    checksumAlgorithm: existing?.checksumAlgorithm ?? "sha256",
+    checksum,
+    sizeBytes,
+    lastValidatedAt: now,
+    observedChecksum: existing?.observedChecksum,
+    observedSizeBytes: existing?.observedSizeBytes,
+    checksumMatches: existing?.checksumMatches,
+    sizeMatches: existing?.sizeMatches,
+  };
+}
+
+function assertUsableState(
+  status: MediaAssetStatus,
+  origin: MediaAssetOrigin,
+  licenseStatus: MediaAssetLicenseStatus,
+  integrity?: MediaAssetBase["integrity"],
+): void {
+  if (status === "available") {
+    if (!usableOrigins.includes(origin)) {
+      throw conflict("Media asset origin is not usable", { origin, status });
+    }
+
+    if (!usableLicenseStatuses.includes(licenseStatus)) {
+      throw conflict("Media asset license is not usable", { licenseStatus, status });
+    }
+
+    if (!integrity?.checksum || integrity.sizeBytes <= 0) {
+      throw conflict("Media asset integrity metadata is incomplete", {
+        checksum: integrity?.checksum,
+        sizeBytes: integrity?.sizeBytes,
+      });
+    }
+  }
+
+  if (origin === "unknown" || origin === "prohibited") {
+    if (status === "available") {
+      throw conflict("Media asset origin cannot be marked usable", { origin });
+    }
+  }
+
+  if (
+    licenseStatus === "pending" ||
+    licenseStatus === "unconfirmed" ||
+    licenseStatus === "blocked"
+  ) {
+    if (status === "available") {
+      throw conflict("Media asset license cannot be marked usable", { licenseStatus });
+    }
+  }
+}
+
+function buildUsages(asset: MediaAssetBase): MediaAssetUsage[] {
+  const usages: MediaAssetUsage[] = [];
+  const now = asset.updatedAt;
+
+  if (asset.contentId) {
+    usages.push({
+      id: `usage_${asset.id}_content`,
+      channelId: asset.channelId,
+      assetId: asset.id,
+      usageType: "content",
+      referenceId: asset.contentId,
+      referenceLabel: "Content",
+      summary: asset.usageSummary ?? "Linked to content item.",
+      createdAt: now,
+    });
+  }
+
+  if (asset.workflowRunId) {
+    usages.push({
+      id: `usage_${asset.id}_workflow`,
+      channelId: asset.channelId,
+      assetId: asset.id,
+      usageType: "workflow_run",
+      referenceId: asset.workflowRunId,
+      referenceLabel: "Workflow",
+      summary: "Linked to workflow execution.",
+      createdAt: now,
+    });
+  }
+
+  if (asset.scriptId) {
+    usages.push({
+      id: `usage_${asset.id}_script`,
+      channelId: asset.channelId,
+      assetId: asset.id,
+      usageType: "script",
+      referenceId: asset.scriptId,
+      referenceLabel: "Script",
+      summary: "Linked to script source.",
+      createdAt: now,
+    });
+  }
+
+  if (asset.scenePlanId) {
+    usages.push({
+      id: `usage_${asset.id}_scene`,
+      channelId: asset.channelId,
+      assetId: asset.id,
+      usageType: "scene",
+      referenceId: asset.scenePlanId,
+      referenceLabel: "Scene",
+      summary: "Linked to a visual scene requirement.",
+      createdAt: now,
+    });
+  }
+
+  return usages;
+}
+
+function auditCrossChannelAttempt(
+  auditRepository: MediaAssetsDependencies["auditRepository"],
+  channelId: string,
+  entityId: string,
+  action: string,
+  idFactory: () => string,
+  now: string,
+): void {
+  recordAudit(auditRepository, {
+    id: `au_${idFactory()}`,
+    channelId,
+    actorType: "system",
+    actorName: "Aralume Core",
+    action,
+    entityType: "MediaAsset",
+    entityId,
+    status: "failed",
+    message: "Cross-channel media access rejected.",
+    metadata: { channelId, entityId },
+    createdAt: now,
+  });
+}
+
+function auditRejectedMediaAsset(
+  auditRepository: MediaAssetsDependencies["auditRepository"],
+  idFactory: () => string,
+  clock: () => Date,
+  channelId: string,
+  input: {
+    action: string;
+    entityType: string;
+    entityId: string;
+    error: unknown;
+    metadata?: Record<string, unknown>;
+  },
+): void {
+  if (!(input.error instanceof AppError)) {
+    return;
+  }
+
+  if (input.error.status !== 400 && input.error.status !== 409) {
+    return;
+  }
+
+  recordAudit(auditRepository, {
+    id: `au_${idFactory()}`,
+    channelId,
+    actorType: "system",
+    actorName: "Aralume Core",
+    action: input.action,
+    entityType: input.entityType,
+    entityId: input.entityId,
+    status: "warning",
+    message: input.error.message,
+    metadata: {
+      ...input.metadata,
+      errorStatus: input.error.status,
+      errorCode: input.error.code,
+      errorDetails: input.error.details,
+    },
+    createdAt: clock().toISOString(),
+  });
+}
+
+function recordAudit(
+  auditRepository: MediaAssetsDependencies["auditRepository"],
+  log: Parameters<MediaAssetsDependencies["auditRepository"]["appendAuditLog"]>[0],
+): void {
+  auditRepository.appendAuditLog(log);
+}
+
+function assertChannelExists(channelsRepository: ChannelsRepository, channelId: string): void {
+  if (!channelsRepository.getChannel(channelId)) {
+    throw notFound("Channel not found", { channelId });
+  }
+}
+
+function notFound(message: string, details: Record<string, unknown>): AppError {
+  return new AppError({
+    code: "NOT_FOUND",
+    status: 404,
+    message,
+    details,
+  });
+}
+
+function conflict(message: string, details: Record<string, unknown>): AppError {
+  return new AppError({
+    code: "CONFLICT",
+    status: 409,
+    message,
+    details,
+  });
+}
