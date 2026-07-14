@@ -223,7 +223,7 @@ Arquivos provaveis para uma futura implementacao, se esta sprint for executada:
 - Log de criacao e bloqueio de job.
 - Evidencia de estado de aprovacao e compliance.
 - Relatorio de testes executados: `npm run lint`, `npm run backend:check`, `npm run test`, `npm run build`, `git diff --check`.
-- Link do PR apos a publicacao da branch.
+- Link do PR: https://github.com/aralumemedia-lab/aralume-studio/pull/19
 
 ## 21. Risks
 

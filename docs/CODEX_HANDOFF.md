@@ -19,6 +19,7 @@
 ## Sprint 11 - Publicacao Assistida
 
 - Sprint 11 foi implementada na branch `codex/sprint-11-publication-assisted`.
+- PR aberto: `https://github.com/aralumemedia-lab/aralume-studio/pull/19`.
 - A rota `/publications` agora consome backend real de publicacoes, com alvos, jobs, aprovacao humana, conformidade, auditoria e bloqueio de envio externo automatico.
 - Validacoes executadas: `npm run lint`, `npm run backend:check`, `npm run test`, `npm run build`, `git diff --check`.
 - Evidencias visuais geradas: `screenshots/publications-valid-1366x768.png`, `screenshots/publications-blocked-approval-1600x900.png`, `screenshots/publications-blocked-compliance-1792x1024.png`, `screenshots/publications-empty-1920x1080.png`, `screenshots/publications-details-1600x900.png`, `screenshots/publications-channel-switch-1366x768.png`.
