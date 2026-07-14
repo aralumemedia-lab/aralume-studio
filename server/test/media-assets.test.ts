@@ -110,6 +110,16 @@ test("media assets service enforces storage safety, cross-channel isolation and 
     (error) => error instanceof AppError && error.status === 400,
   );
 
+  assert.throws(
+    () =>
+      harness.service.validateStorageReference({
+        channelId: "ch_historia",
+        type: "audio",
+        storagePath: "ch_curiosidades/audio/voice.wav",
+      }),
+    (error) => error instanceof AppError && error.status === 400,
+  );
+
   const created = harness.service.createMediaAsset({
     channelId: "ch_historia",
     type: "audio",

@@ -8,6 +8,7 @@ import {
   normalizeRelativeStoragePath,
   resolveAbsoluteStoragePath,
   resolveStorageRoot,
+  validation,
 } from "./media-assets.storage.js";
 import type {
   IntegrityValidationInput,
@@ -540,6 +541,7 @@ function validateStorageReferenceInternal(
   assetId?: string,
 ): MediaAssetStorageValidation {
   const normalizedStoragePath = normalizeRelativeStoragePath(storagePath);
+  assertStoragePathMatchesChannel(channelId, normalizedStoragePath);
   resolveAbsoluteStoragePath(storageRoot, normalizedStoragePath);
   const previewId = normalizedStoragePath.replaceAll("/", "_").replaceAll(".", "_");
   return {
@@ -551,6 +553,16 @@ function validateStorageReferenceInternal(
       ? buildInternalUri(channelId, assetId)
       : buildInternalUri(channelId, `preview_${previewId}`),
   };
+}
+
+function assertStoragePathMatchesChannel(channelId: string, storagePath: string): void {
+  const [pathChannelId, ...segments] = storagePath.split("/");
+  if (pathChannelId !== channelId || segments.length < 2) {
+    throw validation("Storage path must stay within the active channel namespace", {
+      channelId,
+      storagePath,
+    });
+  }
 }
 
 function buildIntegrity(
