@@ -1,19 +1,33 @@
 import type { AuditFilters, AuditLog, AuditRepository, AuditSeed, ID } from "./audit.types.js";
+import { readJsonFile, resolveStateFilePath, writeJsonFile } from "../shared/persistent-state.js";
 
 const clone = <T>(value: T): T => structuredClone(value);
 
 export class InMemoryAuditRepository implements AuditRepository {
   private readonly logs = new Map<ID, AuditLog>();
+  private readonly storageFilePath?: string;
 
-  constructor(seed?: Partial<AuditSeed>) {
+  constructor(seed?: Partial<AuditSeed>, storageRoot?: string) {
+    this.storageFilePath = resolveStateFilePath(storageRoot, "audit-logs.json");
+    const persisted = readJsonFile<AuditSeed>(this.storageFilePath);
+
+    if (persisted) {
+      this.replaceAll(persisted, false);
+      return;
+    }
+
     if (seed) {
-      this.replaceAll(seed);
+      this.replaceAll(seed, false);
+      this.persist();
     }
   }
 
-  replaceAll(seed: Partial<AuditSeed>): void {
+  replaceAll(seed: Partial<AuditSeed>, shouldPersist = true): void {
     this.logs.clear();
     seed.logs?.forEach((log) => this.logs.set(log.id, clone(log)));
+    if (shouldPersist) {
+      this.persist();
+    }
   }
 
   listAuditLogs(filters: AuditFilters = {}): AuditLog[] {
@@ -48,9 +62,19 @@ export class InMemoryAuditRepository implements AuditRepository {
 
   appendAuditLog(log: AuditLog): void {
     this.logs.set(log.id, clone(log));
+    this.persist();
+  }
+
+  private persist(): void {
+    writeJsonFile(this.storageFilePath, {
+      logs: Array.from(this.logs.values()),
+    });
   }
 }
 
-export function createAuditRepository(seed?: Partial<AuditSeed>): AuditRepository {
-  return new InMemoryAuditRepository(seed);
+export function createAuditRepository(
+  seed?: Partial<AuditSeed>,
+  options?: { storageRoot?: string },
+): AuditRepository {
+  return new InMemoryAuditRepository(seed, options?.storageRoot);
 }

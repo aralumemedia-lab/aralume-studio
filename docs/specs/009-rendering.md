@@ -2,7 +2,7 @@
 
 ## Status
 
-Planejada.
+Em revisao no branch `codex/sprint-9-controlled-rendering`.
 
 ## Sprint Identificada
 
@@ -33,6 +33,14 @@ Sem esta camada:
 ## Estado Atual Relevante
 
 - A Sprint 8 foi concluída com o registry de mídia e o storage root autorizado.
+- O branch da Sprint 9 já introduziu a primeira implementação de renderização controlada, com:
+  - domínio persistido de `RenderJob` em repositório controlado;
+  - validação de ativos registrados por `channelId`;
+  - resolução segura de storage;
+  - execução FFmpeg controlada;
+  - registro do vídeo resultante como `VideoAsset`;
+  - auditoria e custos ligados ao job;
+  - integração operacional da rota `/videos`.
 - O backend já possui:
   - `MediaAssetBase`, `VideoAsset` e `DerivedClip` nos contratos;
   - validação de storage segura;
@@ -41,9 +49,6 @@ Sem esta camada:
   - auditoria estruturada;
   - custos e modos operacionais;
   - envelopes HTTP e padrão de erro.
-- A rota frontend `/videos` já existe, mas hoje representa apenas a camada de listagem de vídeos.
-- Não existe ainda um domínio persistido de `RenderJob`.
-- Não existe ainda execução FFmpeg controlada no repositório.
 
 ## Fontes de Verdade
 

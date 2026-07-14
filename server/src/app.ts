@@ -73,10 +73,17 @@ export function createApp(options: CreateAppOptions = {}) {
   const mediaAssetsRepository =
     options.mediaAssetsRepository ??
     (!options.channelsRepository
-      ? createMediaAssetsRepository(mediaAssetsDemoSeed)
-      : createMediaAssetsRepository(mediaAssetsDemoSeed));
+      ? createMediaAssetsRepository(mediaAssetsDemoSeed, {
+          storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+        })
+      : createMediaAssetsRepository(mediaAssetsDemoSeed, {
+          storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+        }));
   const renderJobsRepository =
-    options.renderJobsRepository ?? createRenderJobsRepository(renderJobsDemoSeed);
+    options.renderJobsRepository ??
+    createRenderJobsRepository(renderJobsDemoSeed, {
+      storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+    });
   const governanceRepository =
     options.governanceRepository ??
     (!options.channelsRepository && !options.editorialRepository
@@ -84,10 +91,14 @@ export function createApp(options: CreateAppOptions = {}) {
       : createGovernanceRepository());
   const auditRepository =
     options.auditRepository ??
-    (!options.channelsRepository ? createAuditRepository(auditDemoSeed) : createAuditRepository());
+    (!options.channelsRepository
+      ? createAuditRepository(auditDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT })
+      : createAuditRepository(undefined, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT }));
   const costsRepository =
     options.costsRepository ??
-    (!options.channelsRepository ? createCostsRepository(costsDemoSeed) : createCostsRepository());
+    (!options.channelsRepository
+      ? createCostsRepository(costsDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT })
+      : createCostsRepository(undefined, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT }));
   const channelsService = createChannelsService(channelsRepository);
   const editorialService = createEditorialService(editorialRepository, channelsRepository);
   const mediaAssetsService = createMediaAssetsService(

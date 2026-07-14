@@ -276,6 +276,87 @@ test("render service deduplicates idempotent requests and keeps listings channel
   }
 });
 
+test("render job and output video survive a repository restart", async () => {
+  const storageRoot = mkdtempSync(path.join(os.tmpdir(), "aralume-render-restart-"));
+  seedDemoStorage(storageRoot);
+
+  const channelsRepository = createChannelsRepository(channelDemoSeed);
+  const editorialRepository = createEditorialRepository(editorialDemoSeed);
+  const mediaAssetsRepository = createMediaAssetsRepository(mediaAssetsDemoSeed, {
+    storageRoot,
+  });
+  const renderJobsRepository = createRenderJobsRepository(renderJobsDemoSeed, {
+    storageRoot,
+  });
+  const costsRepository = createCostsRepository(createAllowedCostSeed(), {
+    storageRoot,
+  });
+  const auditRepository = createAuditRepository(undefined, {
+    storageRoot,
+  });
+  const costsService = createCostsService(costsRepository, {
+    channelsRepository,
+    auditRepository,
+  });
+
+  try {
+    const service = createRendersService(
+      renderJobsRepository,
+      {
+        channelsRepository,
+        editorialRepository,
+        mediaAssetsRepository,
+        costsService,
+        auditRepository,
+      },
+      {
+        clock: createClock(),
+        idFactory: () => "persist-001",
+        storageRoot,
+        engine: createRecordingEngine(),
+      },
+    );
+
+    const created = await service.createRenderJob({
+      channelId: "ch_historia",
+      inputAssetIds: ["ma_hist_narration_01", "ma_hist_image_01"],
+      renderType: "controlled_video",
+      renderProfile: "controlled_demo_short_v1",
+      idempotencyKey: "render:persist:001",
+      contentId: "idea_02",
+      workflowRunId: "wf_idea_02",
+    });
+
+    const reloadedRenderJobsRepository = createRenderJobsRepository(undefined, {
+      storageRoot,
+    });
+    const reloadedMediaAssetsRepository = createMediaAssetsRepository(undefined, {
+      storageRoot,
+    });
+    const reloadedCostsRepository = createCostsRepository(undefined, {
+      storageRoot,
+    });
+    const reloadedAuditRepository = createAuditRepository(undefined, {
+      storageRoot,
+    });
+
+    assert.ok(reloadedRenderJobsRepository.getRenderJob(created.id));
+    assert.ok(reloadedMediaAssetsRepository.getVideoAsset(created.outputAssetId!));
+    assert.ok(
+      reloadedCostsRepository
+        .listCostEntries({ channelId: "ch_historia", costType: "render" })
+        .some((entry) => entry.description.includes(created.id)),
+    );
+    assert.ok(
+      reloadedAuditRepository
+        .listAuditLogs({ channelId: "ch_historia", entityId: created.id })
+        .some((entry) => entry.action === "render.execution_completed"),
+    );
+  } finally {
+    rmSync(storageRoot, { recursive: true, force: true });
+  }
+});
+
 test("render HTTP routes create a real job and surface the rendered video for the active channel", async () => {
   const ffmpegPath = resolveFfmpegPath();
   if (!ffmpegPath) {
@@ -372,10 +453,18 @@ function createRenderHarness(engine: RenderEngine) {
 
   const channelsRepository = createChannelsRepository(channelDemoSeed);
   const editorialRepository = createEditorialRepository(editorialDemoSeed);
-  const mediaAssetsRepository = createMediaAssetsRepository(mediaAssetsDemoSeed);
-  const renderJobsRepository = createRenderJobsRepository(renderJobsDemoSeed);
-  const costsRepository = createCostsRepository(createAllowedCostSeed());
-  const auditRepository = createAuditRepository();
+  const mediaAssetsRepository = createMediaAssetsRepository(mediaAssetsDemoSeed, {
+    storageRoot,
+  });
+  const renderJobsRepository = createRenderJobsRepository(renderJobsDemoSeed, {
+    storageRoot,
+  });
+  const costsRepository = createCostsRepository(createAllowedCostSeed(), {
+    storageRoot,
+  });
+  const auditRepository = createAuditRepository(undefined, {
+    storageRoot,
+  });
   const costsService = createCostsService(costsRepository, {
     channelsRepository,
     auditRepository,
@@ -435,7 +524,9 @@ function createRenderHarness(engine: RenderEngine) {
 function createHttpHarness(ffmpegPath: string) {
   const storageRoot = mkdtempSync(path.join(os.tmpdir(), "aralume-render-http-"));
   seedDemoStorage(storageRoot);
-  const costsRepository = createCostsRepository(createAllowedCostSeed());
+  const costsRepository = createCostsRepository(createAllowedCostSeed(), {
+    storageRoot,
+  });
   costsRepository.upsertOperationalModePolicy(
     allowedVideoPolicy(new Date(baseTime).toISOString(), "op_ch_historia"),
   );
@@ -444,10 +535,16 @@ function createHttpHarness(ffmpegPath: string) {
     storageRoot,
     channelsRepository: createChannelsRepository(channelDemoSeed),
     editorialRepository: createEditorialRepository(editorialDemoSeed),
-    mediaAssetsRepository: createMediaAssetsRepository(mediaAssetsDemoSeed),
-    renderJobsRepository: createRenderJobsRepository(renderJobsDemoSeed),
+    mediaAssetsRepository: createMediaAssetsRepository(mediaAssetsDemoSeed, {
+      storageRoot,
+    }),
+    renderJobsRepository: createRenderJobsRepository(renderJobsDemoSeed, {
+      storageRoot,
+    }),
     costsRepository,
-    auditRepository: createAuditRepository(),
+    auditRepository: createAuditRepository(undefined, {
+      storageRoot,
+    }),
     ffmpegPath,
     cleanup() {
       rmSync(storageRoot, { recursive: true, force: true });

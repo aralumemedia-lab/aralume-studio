@@ -6,20 +6,31 @@ import type {
   ID,
   OperationalModePolicy,
 } from "./costs.types.js";
+import { readJsonFile, resolveStateFilePath, writeJsonFile } from "../shared/persistent-state.js";
 
 const clone = <T>(value: T): T => structuredClone(value);
 
 export class InMemoryCostsRepository implements CostsRepository {
   private readonly costEntries = new Map<ID, CostEntry>();
   private readonly operationalModePolicies = new Map<string, OperationalModePolicy>();
+  private readonly storageFilePath?: string;
 
-  constructor(seed?: Partial<CostSeed>) {
+  constructor(seed?: Partial<CostSeed>, storageRoot?: string) {
+    this.storageFilePath = resolveStateFilePath(storageRoot, "costs.json");
+    const persisted = readJsonFile<CostSeed>(this.storageFilePath);
+
+    if (persisted) {
+      this.replaceAll(persisted, false);
+      return;
+    }
+
     if (seed) {
-      this.replaceAll(seed);
+      this.replaceAll(seed, false);
+      this.persist();
     }
   }
 
-  replaceAll(seed: Partial<CostSeed>): void {
+  replaceAll(seed: Partial<CostSeed>, shouldPersist = true): void {
     this.costEntries.clear();
     this.operationalModePolicies.clear();
 
@@ -27,6 +38,9 @@ export class InMemoryCostsRepository implements CostsRepository {
     seed.operationalModePolicies?.forEach((policy) =>
       this.operationalModePolicies.set(policyKey(policy.scope, policy.channelId), clone(policy)),
     );
+    if (shouldPersist) {
+      this.persist();
+    }
   }
 
   listCostEntries(filters: CostEntryFilters = {}): CostEntry[] {
@@ -66,6 +80,7 @@ export class InMemoryCostsRepository implements CostsRepository {
 
   upsertCostEntry(entry: CostEntry): void {
     this.costEntries.set(entry.id, clone(entry));
+    this.persist();
   }
 
   listOperationalModePolicies(): OperationalModePolicy[] {
@@ -95,6 +110,7 @@ export class InMemoryCostsRepository implements CostsRepository {
 
   upsertOperationalModePolicy(policy: OperationalModePolicy): void {
     this.operationalModePolicies.set(policyKey(policy.scope, policy.channelId), clone(policy));
+    this.persist();
   }
 
   private clonePolicy(
@@ -102,10 +118,20 @@ export class InMemoryCostsRepository implements CostsRepository {
   ): OperationalModePolicy | undefined {
     return policy ? clone(policy) : undefined;
   }
+
+  private persist(): void {
+    writeJsonFile(this.storageFilePath, {
+      costEntries: Array.from(this.costEntries.values()),
+      operationalModePolicies: Array.from(this.operationalModePolicies.values()),
+    });
+  }
 }
 
-export function createCostsRepository(seed?: Partial<CostSeed>): CostsRepository {
-  return new InMemoryCostsRepository(seed);
+export function createCostsRepository(
+  seed?: Partial<CostSeed>,
+  options?: { storageRoot?: string },
+): CostsRepository {
+  return new InMemoryCostsRepository(seed, options?.storageRoot);
 }
 
 function policyKey(scope: "global" | "channel", channelId?: ID): string {

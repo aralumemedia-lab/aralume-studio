@@ -5,21 +5,35 @@ import type {
   RenderJobsSeed,
 } from "./renders.types.js";
 import type { ID } from "../channels/channel.types.js";
+import { readJsonFile, resolveStateFilePath, writeJsonFile } from "../shared/persistent-state.js";
 
 const clone = <T>(value: T): T => structuredClone(value);
 
 export class InMemoryRenderJobsRepository implements RenderJobsRepository {
   private readonly renderJobs = new Map<ID, RenderJob>();
+  private readonly storageFilePath?: string;
 
-  constructor(seed?: Partial<RenderJobsSeed>) {
+  constructor(seed?: Partial<RenderJobsSeed>, storageRoot?: string) {
+    this.storageFilePath = resolveStateFilePath(storageRoot, "render-jobs.json");
+    const persisted = readJsonFile<RenderJobsSeed>(this.storageFilePath);
+
+    if (persisted) {
+      this.replaceAll(persisted, false);
+      return;
+    }
+
     if (seed) {
-      this.replaceAll(seed);
+      this.replaceAll(seed, false);
+      this.persist();
     }
   }
 
-  replaceAll(seed: Partial<RenderJobsSeed>): void {
+  replaceAll(seed: Partial<RenderJobsSeed>, shouldPersist = true): void {
     this.renderJobs.clear();
     seed.renderJobs?.forEach((job) => this.renderJobs.set(job.id, clone(job)));
+    if (shouldPersist) {
+      this.persist();
+    }
   }
 
   listRenderJobs(filters: Partial<RenderJobFilters> = {}): RenderJob[] {
@@ -46,6 +60,7 @@ export class InMemoryRenderJobsRepository implements RenderJobsRepository {
 
   upsertRenderJob(job: RenderJob): void {
     this.renderJobs.set(job.id, clone(job));
+    this.persist();
   }
 
   private cloneFromMap<T>(map: Map<ID, T>, id: ID): T | undefined {
@@ -69,8 +84,17 @@ export class InMemoryRenderJobsRepository implements RenderJobsRepository {
       )
       .map((item) => clone(item));
   }
+
+  private persist(): void {
+    writeJsonFile(this.storageFilePath, {
+      renderJobs: Array.from(this.renderJobs.values()),
+    });
+  }
 }
 
-export function createRenderJobsRepository(seed?: Partial<RenderJobsSeed>): RenderJobsRepository {
-  return new InMemoryRenderJobsRepository(seed);
+export function createRenderJobsRepository(
+  seed?: Partial<RenderJobsSeed>,
+  options?: { storageRoot?: string },
+): RenderJobsRepository {
+  return new InMemoryRenderJobsRepository(seed, options?.storageRoot);
 }
