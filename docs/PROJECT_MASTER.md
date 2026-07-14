@@ -1074,7 +1074,7 @@ Nota operacional atualizada:
 - A Sprint 8 foi encerrada em Media Assets and Storage.
 - A Sprint 9 foi encerrada e integrada ao `main` via PR #16.
 - O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
-- A Sprint 10 atual e Cortes Derivados Controlados.
+- A Sprint 10 foi encerrada e integrada ao `main` via PR #17.
 - As fases abaixo continuam como roadmap conceitual e nao precisam coincidir numericamente com a sequencia operacional das sprints entregues.
 
 ### Fase 0 — Documento Mestre e contexto oficial
