@@ -8,6 +8,7 @@ test("loadEnv applies safe defaults", () => {
 
   assert.equal(env.ARALUME_ENV, "development");
   assert.equal(env.ARALUME_LOG_LEVEL, "info");
+  assert.equal(env.ARALUME_ASSET_STORAGE_ROOT, undefined);
   assert.equal(env.DATABASE_URL, undefined);
   assert.equal(env.TEST_DATABASE_URL, undefined);
 });

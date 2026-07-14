@@ -1,32 +1,49 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+
 import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
-import { getVideoAssets } from "@/services/api-client";
-import { Card } from "@/components/ui/data-card";
+import { Card, EmptyState, ErrorState, LoadingState } from "@/components/ui/data-card";
 import { CompactTable, type Column } from "@/components/ui/compact-table";
 import { ComplianceStatusBadge, ContentStatusBadge, StatusBadge } from "@/components/status/badges";
 import { formatCurrencyCents, formatDuration, formatRelative } from "@/lib/format";
 import type { VideoAsset } from "@/contracts/types";
+import { describeMediaAssetsApiError, getVideoAssets } from "@/services/api-client";
 
 export const Route = createFileRoute("/videos")({
   head: () => ({
     meta: [
-      { title: "Vídeos — Aralume" },
-      { name: "description", content: "Vídeos principais em produção, renderização e publicação." },
+      { title: "Videos - Aralume" },
+      { name: "description", content: "Videos principais em producao e publicacao." },
     ],
   }),
   component: function VideosPage() {
     const { activeChannelId } = useChannelContext();
     const q = useQuery({
-      queryKey: ["vd", activeChannelId],
-      queryFn: () => getVideoAssets(activeChannelId),
+      queryKey: ["videos", activeChannelId],
+      enabled: Boolean(activeChannelId),
+      queryFn: () => getVideoAssets(activeChannelId as string),
     });
+
+    if (!activeChannelId) {
+      return (
+        <div>
+          <PageHeader eyebrow="Editorial" title="Videos" description="Selecione um canal." />
+          <div className="p-4">
+            <EmptyState
+              title="Nenhum canal ativo"
+              description="Selecione um canal para listar videos."
+            />
+          </div>
+        </div>
+      );
+    }
+
     const rows = q.data?.data ?? [];
     const cols: Column<VideoAsset>[] = [
       {
         key: "title",
-        header: "Vídeo",
+        header: "Video",
         render: (r) => <span className="font-medium truncate">{r.title}</span>,
       },
       {
@@ -40,7 +57,7 @@ export const Route = createFileRoute("/videos")({
       },
       {
         key: "dur",
-        header: "Duração",
+        header: "Duracao",
         render: (r) => <span className="tabular-nums">{formatDuration(r.durationSeconds)}</span>,
       },
       {
@@ -102,21 +119,30 @@ export const Route = createFileRoute("/videos")({
         render: (r) => <span className="text-muted-foreground">{formatRelative(r.updatedAt)}</span>,
       },
     ];
+
     return (
       <div>
         <PageHeader
           eyebrow="Editorial"
-          title="Vídeos"
-          description="Vídeos principais com status de render, qualidade e conformidade."
+          title="Videos"
+          description="Videos principais com status de render, qualidade e conformidade."
         />
         <div className="p-4">
           <Card padded={false}>
-            <CompactTable
-              rows={rows}
-              columns={cols}
-              className="border-0 rounded-none"
-              empty="Sem vídeos no canal ativo."
-            />
+            {q.isLoading ? (
+              <LoadingState label="Carregando videos" />
+            ) : q.isError ? (
+              <ErrorState message={describeMediaAssetsApiError(q.error, "videos")} />
+            ) : rows.length === 0 ? (
+              <EmptyState title="Sem videos no canal ativo." />
+            ) : (
+              <CompactTable
+                rows={rows}
+                columns={cols}
+                className="border-0 rounded-none"
+                empty="Sem videos no canal ativo."
+              />
+            )}
           </Card>
         </div>
       </div>

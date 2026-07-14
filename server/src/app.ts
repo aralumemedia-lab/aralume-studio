@@ -24,6 +24,11 @@ import { createEditorialRouter } from "./modules/editorial/editorial.routes.js";
 import { createEditorialService } from "./modules/editorial/editorial.service.js";
 import type { EditorialRepository } from "./modules/editorial/editorial.types.js";
 import { editorialDemoSeed } from "./modules/editorial/editorial.seed.js";
+import { createMediaAssetsRepository } from "./modules/media-assets/media-assets.repository.js";
+import { createMediaAssetsRouter } from "./modules/media-assets/media-assets.routes.js";
+import { createMediaAssetsService } from "./modules/media-assets/media-assets.service.js";
+import type { MediaAssetsRepository } from "./modules/media-assets/media-assets.types.js";
+import { mediaAssetsDemoSeed } from "./modules/media-assets/media-assets.seed.js";
 import { createCostsRepository } from "./modules/costs/costs.repository.js";
 import { createCostsRouter } from "./modules/costs/costs.routes.js";
 import { createCostsService } from "./modules/costs/costs.service.js";
@@ -40,6 +45,7 @@ export type CreateAppOptions = {
   logger?: Pick<Console, "info" | "warn" | "error">;
   channelsRepository?: ChannelsRepository;
   editorialRepository?: EditorialRepository;
+  mediaAssetsRepository?: MediaAssetsRepository;
   governanceRepository?: GovernanceRepository;
   costsRepository?: CostsRepository;
   auditRepository?: AuditRepository;
@@ -54,6 +60,11 @@ export function createApp(options: CreateAppOptions = {}) {
     (options.channelsRepository
       ? createEditorialRepository()
       : createEditorialRepository(editorialDemoSeed));
+  const mediaAssetsRepository =
+    options.mediaAssetsRepository ??
+    (!options.channelsRepository
+      ? createMediaAssetsRepository(mediaAssetsDemoSeed)
+      : createMediaAssetsRepository(mediaAssetsDemoSeed));
   const governanceRepository =
     options.governanceRepository ??
     (!options.channelsRepository && !options.editorialRepository
@@ -67,6 +78,16 @@ export function createApp(options: CreateAppOptions = {}) {
     (!options.channelsRepository ? createCostsRepository(costsDemoSeed) : createCostsRepository());
   const channelsService = createChannelsService(channelsRepository);
   const editorialService = createEditorialService(editorialRepository, channelsRepository);
+  const mediaAssetsService = createMediaAssetsService(
+    mediaAssetsRepository,
+    {
+      channelsRepository,
+      auditRepository,
+    },
+    {
+      storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+    },
+  );
   const governanceService = createGovernanceService(
     governanceRepository,
     editorialRepository,
@@ -86,6 +107,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.get("/health", createHealthHandler(env));
   app.use("/api/channels", createChannelsRouter(channelsService));
   app.use("/api", createEditorialRouter(editorialService));
+  app.use("/api", createMediaAssetsRouter(mediaAssetsService));
   app.use("/api", createGovernanceRouter(governanceService));
   app.use("/api", createCostsRouter(costsService));
   app.use("/api", createAuditRouter(auditService));

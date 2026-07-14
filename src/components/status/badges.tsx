@@ -6,6 +6,9 @@ import type {
   ComplianceStatus,
   ContentStatus,
   CostStatus,
+  MediaAssetLicenseStatus,
+  MediaAssetOrigin,
+  MediaAssetStatus,
   QualityCheckStatus,
   PublicationStatus,
   RiskLevel,
@@ -221,6 +224,69 @@ const contentLabel: Record<ContentStatus, { label: string; tone: Tone }> = {
 };
 export function ContentStatusBadge({ status }: { status: ContentStatus }) {
   const s = contentLabel[status];
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
+}
+
+const mediaStatusLabel: Record<MediaAssetStatus, { label: string; tone: Tone }> = {
+  available: { label: "Disponivel", tone: "ok" },
+  processing: { label: "Processando", tone: "info" },
+  failed: { label: "Falhou", tone: "critical" },
+  pending: { label: "Pendente", tone: "attention" },
+  blocked: { label: "Bloqueado", tone: "critical" },
+  invalid: { label: "Invalido", tone: "warning" },
+  corrupted: { label: "Corrompido", tone: "critical" },
+  missing: { label: "Ausente", tone: "warning" },
+  replaced: { label: "Substituido", tone: "muted" },
+  archived: { label: "Arquivado", tone: "muted" },
+};
+export function MediaAssetStatusBadge({ status }: { status: MediaAssetStatus }) {
+  const s = mediaStatusLabel[status];
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
+}
+
+const mediaOriginLabel: Record<MediaAssetOrigin, { label: string; tone: Tone }> = {
+  internal: { label: "Interna", tone: "ok" },
+  generated: { label: "Gerada", tone: "info" },
+  uploaded: { label: "Enviada", tone: "attention" },
+  licensed: { label: "Licenciada", tone: "info" },
+  demo: { label: "Demo", tone: "muted" },
+  channel_provided: { label: "Do canal", tone: "attention" },
+  public_domain: { label: "Dom. publico", tone: "ok" },
+  external_authorized: { label: "Autorizada", tone: "ok" },
+  unknown: { label: "Desconhecida", tone: "warning" },
+  prohibited: { label: "Proibida", tone: "critical" },
+};
+export function MediaAssetOriginBadge({ origin }: { origin: MediaAssetOrigin }) {
+  const s = mediaOriginLabel[origin];
+  return (
+    <StatusBadge tone={s.tone} dot>
+      {s.label}
+    </StatusBadge>
+  );
+}
+
+const mediaLicenseLabel: Record<MediaAssetLicenseStatus, { label: string; tone: Tone }> = {
+  known: { label: "Conhecida", tone: "ok" },
+  verified: { label: "Verificada", tone: "ok" },
+  not_applicable: { label: "Nao aplicavel", tone: "muted" },
+  pending: { label: "Pendente", tone: "attention" },
+  unknown: { label: "Desconhecida", tone: "warning" },
+  confirmed: { label: "Confirmada", tone: "ok" },
+  unconfirmed: { label: "Nao confirmada", tone: "warning" },
+  restricted: { label: "Restrita", tone: "warning" },
+  attribution_required: { label: "Atribuicao", tone: "attention" },
+  blocked: { label: "Bloqueada", tone: "critical" },
+};
+export function MediaAssetLicenseBadge({ status }: { status: MediaAssetLicenseStatus }) {
+  const s = mediaLicenseLabel[status];
   return (
     <StatusBadge tone={s.tone} dot>
       {s.label}

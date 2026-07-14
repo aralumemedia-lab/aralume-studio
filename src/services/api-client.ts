@@ -88,14 +88,19 @@ export {
   updateVisualPlan,
 } from "./visual-plans-api";
 
+export { getAgentDefinitions, getAgentOfficeSnapshot, getDashboardSummary } from "./mock-api";
+
 export {
-  getAgentDefinitions,
-  getAgentOfficeSnapshot,
-  getDashboardSummary,
+  createMediaAsset,
+  describeMediaAssetsApiError,
   getDerivedClips,
+  getMediaAsset,
+  getMediaAssetUsages,
   getMediaAssets,
-  getPerformanceMetrics,
-  getPublicationJobs,
   getVideoAssets,
-  getWorkflowRuns,
-} from "./mock-api";
+  updateMediaAsset,
+  validateMediaAssetIntegrity,
+  validateMediaStorageReference,
+} from "./media-assets-api";
+
+export { getPerformanceMetrics, getPublicationJobs, getWorkflowRuns } from "./mock-api";

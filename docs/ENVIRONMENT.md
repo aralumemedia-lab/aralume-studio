@@ -20,6 +20,7 @@
 
 - The frontend can operate with the default relative API base `/api`.
 - `VITE_ARALUME_API_BASE_URL` is optional and public when the frontend needs an explicit base URL.
+- `ARALUME_ASSET_STORAGE_ROOT` is optional for the media asset registry and defaults to a safe local path when not set.
 
 ## What will be used in Backend Foundation
 
@@ -37,7 +38,6 @@
 - `ARALUME_TTS_MODEL`
 - `ARALUME_TTS_PROVIDER`
 - `ARALUME_TTS_VOICE`
-- `ARALUME_ASSET_STORAGE_ROOT`
 - `ARALUME_FFMPEG_PATH`
 - `ARALUME_FFPROBE_PATH`
 - `ARALUME_VIDEO_RENDERER`
