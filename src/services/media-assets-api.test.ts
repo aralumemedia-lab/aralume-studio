@@ -3,8 +3,10 @@ import test from "node:test";
 
 import { ApiRequestError } from "./http-client";
 import {
+  createDerivedClip,
   createMediaAsset,
   describeMediaAssetsApiError,
+  getDerivedClip,
   getDerivedClips,
   getMediaAsset,
   getMediaAssetUsages,
@@ -199,6 +201,77 @@ test("media assets API calls the expected endpoints and preserves payloads", asy
         return jsonResponse({ data: [], meta: { ...baseMeta, total: 0, page: 1, pageSize: 0 } });
       }
 
+      if (url === "/api/clips/cl_1?channelId=ch_1") {
+        return jsonResponse({
+          data: {
+            id: "cl_1",
+            channelId: "ch_1",
+            parentVideoId: "vd_1",
+            renderJobId: "rj_1",
+            title: "Clip",
+            hook: "Hook",
+            description: "Description",
+            startSeconds: 10,
+            endSeconds: 25,
+            durationSeconds: 15,
+            targetPlatform: "youtube_shorts",
+            status: "completed",
+            format: "horizontal",
+            resolution: "1920x1080",
+            aspectRatio: "16:9",
+            riskLevel: "ok",
+            clipPotentialScore: 90,
+            origin: "generated",
+            licenseStatus: "confirmed",
+            internalUri: "aralume://media-assets/ch_1/cl_1",
+            storagePath: "ch_1/clip/rendered/cl_1.mp4",
+            mimeType: "video/mp4",
+            sizeBytes: 1024,
+            checksumAlgorithm: "sha256",
+            checksum: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            costActualCents: 0,
+            createdAt: "2026-07-13T03:30:00.000Z",
+            updatedAt: "2026-07-13T03:30:00.000Z",
+          },
+          meta: baseMeta,
+        });
+      }
+
+      if (url === "/api/clips" && init?.method === "POST") {
+        return jsonResponse({
+          data: {
+            id: "cl_2",
+            channelId: "ch_1",
+            parentVideoId: "vd_1",
+            renderJobId: "rj_2",
+            title: "Clip",
+            hook: "Hook",
+            description: "Description",
+            startSeconds: 10,
+            endSeconds: 25,
+            durationSeconds: 15,
+            targetPlatform: "youtube_shorts",
+            status: "queued",
+            format: "horizontal",
+            resolution: "1920x1080",
+            aspectRatio: "16:9",
+            riskLevel: "ok",
+            clipPotentialScore: 90,
+            origin: "generated",
+            licenseStatus: "confirmed",
+            internalUri: "aralume://media-assets/ch_1/cl_2",
+            storagePath: "ch_1/clip/rendered/cl_2.mp4",
+            mimeType: "video/mp4",
+            sizeBytes: 0,
+            checksumAlgorithm: "sha256",
+            costActualCents: 0,
+            createdAt: "2026-07-13T03:30:00.000Z",
+            updatedAt: "2026-07-13T03:30:00.000Z",
+          },
+          meta: baseMeta,
+        });
+      }
+
       throw new Error(`Unexpected request: ${url}`);
     },
     async (calls) => {
@@ -236,7 +309,16 @@ test("media assets API calls the expected endpoints and preserves payloads", asy
       });
       const usages = await getMediaAssetUsages("ch_1", "ma_1");
       await getVideoAssets("ch_1");
-      await getDerivedClips("ch_1");
+      const clips = await getDerivedClips({ channelId: "ch_1" });
+      const clipDetail = await getDerivedClip("ch_1", "cl_1");
+      const clipCreate = await createDerivedClip({
+        channelId: "ch_1",
+        parentVideoId: "vd_1",
+        startSeconds: 10,
+        endSeconds: 25,
+        idempotencyKey: "clip:1",
+        targetPlatform: "youtube_shorts",
+      });
 
       assert.equal(list.data.length, 0);
       assert.equal(detail.data.id, "ma_1");
@@ -245,6 +327,9 @@ test("media assets API calls the expected endpoints and preserves payloads", asy
       assert.equal(storage.data.normalizedStoragePath, "ch_1/audio/ma_1.wav");
       assert.equal(integrity.data.valid, true);
       assert.equal(usages.data.length, 1);
+      assert.equal(clips.data.length, 0);
+      assert.equal(clipDetail.data.id, "cl_1");
+      assert.equal(clipCreate.data.id, "cl_2");
 
       assert.equal(calls[0].url, "/api/media-assets?channelId=ch_1&type=audio&status=available");
       assert.equal(calls[1].url, "/api/media-assets/ma_1?channelId=ch_1");
@@ -257,6 +342,9 @@ test("media assets API calls the expected endpoints and preserves payloads", asy
       assert.equal(calls[6].url, "/api/media-assets/ma_1/usages?channelId=ch_1");
       assert.equal(calls[7].url, "/api/videos?channelId=ch_1");
       assert.equal(calls[8].url, "/api/clips?channelId=ch_1");
+      assert.equal(calls[9].url, "/api/clips/cl_1?channelId=ch_1");
+      assert.equal(calls[10].url, "/api/clips");
+      assert.equal(calls[10].init?.method, "POST");
     },
   );
 });

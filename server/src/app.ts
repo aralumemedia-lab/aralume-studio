@@ -146,7 +146,10 @@ export function createApp(options: CreateAppOptions = {}) {
   app.get("/health", createHealthHandler(env));
   app.use("/api/channels", createChannelsRouter(channelsService));
   app.use("/api", createEditorialRouter(editorialService));
-  app.use("/api", createMediaAssetsRouter(mediaAssetsService));
+  app.use(
+    "/api",
+    createMediaAssetsRouter(mediaAssetsService, rendersService, env.ARALUME_ASSET_STORAGE_ROOT),
+  );
   app.use("/api", createRendersRouter(rendersService));
   app.use("/api", createGovernanceRouter(governanceService));
   app.use("/api", createCostsRouter(costsService));

@@ -1,6 +1,7 @@
 import type { ApiListSuccess, ApiSuccess } from "@/contracts/api-contracts";
 import type {
   DerivedClip,
+  DerivedClipFilters,
   ID,
   MediaAssetBase,
   MediaAssetCategory,
@@ -89,6 +90,19 @@ export type IntegrityValidationInput = {
   channelId: ID;
   checksum?: string;
   sizeBytes?: number;
+};
+
+export type CreateDerivedClipInput = {
+  channelId: ID;
+  parentVideoId: ID;
+  startSeconds: number;
+  endSeconds: number;
+  idempotencyKey: string;
+  targetPlatform?: DerivedClip["targetPlatform"];
+  title?: string;
+  hook?: string;
+  description?: string;
+  requestedBy?: string;
 };
 
 const MEDIA_ASSETS_PATH = "/media-assets";
@@ -199,8 +213,25 @@ export async function getVideoAssets(channelId: ID): Promise<ApiListSuccess<Vide
   return requestApiEnvelope<ApiListSuccess<VideoAsset>>(withQuery(VIDEOS_PATH, { channelId }));
 }
 
-export async function getDerivedClips(channelId: ID): Promise<ApiListSuccess<DerivedClip>> {
-  return requestApiEnvelope<ApiListSuccess<DerivedClip>>(withQuery(CLIPS_PATH, { channelId }));
+export async function getDerivedClips(
+  filters: DerivedClipFilters,
+): Promise<ApiListSuccess<DerivedClip>> {
+  return requestApiEnvelope<ApiListSuccess<DerivedClip>>(withQuery(CLIPS_PATH, filters));
+}
+
+export async function getDerivedClip(channelId: ID, id: ID): Promise<ApiSuccess<DerivedClip>> {
+  return requestApiEnvelope<ApiSuccess<DerivedClip>>(
+    withQuery(`${CLIPS_PATH}/${id}`, { channelId }),
+  );
+}
+
+export async function createDerivedClip(
+  input: CreateDerivedClipInput,
+): Promise<ApiSuccess<DerivedClip>> {
+  return requestApiEnvelope<ApiSuccess<DerivedClip>>(CLIPS_PATH, {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function describeMediaAssetsApiError(

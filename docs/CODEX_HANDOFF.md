@@ -1,17 +1,17 @@
-# Codex Handoff - Sprint 9
+# Codex Handoff - Sprint 10
 
 ## Estado atual
 
-- Sprint 9 - Renderizacao Controlada esta sendo executada na branch `codex/sprint-9-controlled-rendering`.
-- A spec normativa e `docs/specs/009-rendering.md`.
-- O dominio novo cobre jobs de render controlado, validacao de ativos por canal, storage root autorizado, FFmpeg controlado, auditoria, custos, idempotencia e a rota `/videos`.
-- O frontend da rota `/videos` agora consome o backend real de renderizacao e nao depende de mocks crus.
+- Sprint 10 - Cortes Derivados Controlados esta sendo executada na branch `codex/sprint-10-controlled-derived-clips`.
+- A spec normativa e `docs/specs/010-derived-clips.md`.
+- O dominio novo cobre cortes derivados, validacao temporal, video principal de origem, storage root autorizado, FFmpeg e FFprobe controlados, auditoria, custos, idempotencia e a rota `/clips`.
+- O frontend da rota `/clips` agora consome o backend real de cortes derivados e nao depende de mocks crus.
 - A base de canais, editorial, aprovacoes, custos e assets de midia ja estava integrada antes desta sprint e foi reutilizada sem reabrir escopo anterior.
 - As validacoes locais principais ja passaram: typecheck, lint, build, testes e `git diff --check`.
-- FFmpeg esta disponivel no ambiente e a integracao real de renderizacao foi validada.
+- FFmpeg e FFprobe estao disponiveis no ambiente e a integracao real de cortes sera validada.
 - O PR ainda precisa ser aberto nesta branch; nao houve merge.
-- Sprint 8 - Media Assets and Storage foi encerrada formalmente no PR #15 e permanece como base imediata desta implementacao.
-- O merge commit oficial da Sprint 8 e `9f184e3b9f376cc63e3aaa8f9d65443319534ab1`.
+- Sprint 9 - Renderizacao Controlada foi encerrada formalmente no PR #16 e permanece como base imediata desta implementacao.
+- O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
 - `main` e `origin/main` estavam alinhados nesse SHA no preflight.
 - Historico anterior mantido abaixo para referencia operacional.
 

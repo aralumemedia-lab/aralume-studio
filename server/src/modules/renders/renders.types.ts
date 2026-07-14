@@ -1,11 +1,15 @@
 import type { ChannelsRepository, ID, ISODate } from "../channels/channel.types.js";
 import type { EditorialRepository } from "../editorial/editorial.types.js";
 import type { CostsService } from "../costs/costs.types.js";
-import type { MediaAssetBase, MediaAssetsRepository } from "../media-assets/media-assets.types.js";
+import type {
+  MediaAssetBase,
+  MediaAssetsRepository,
+  VideoAsset,
+} from "../media-assets/media-assets.types.js";
 import type { AuditRepository } from "../audit/audit.types.js";
 
-export type RenderType = "controlled_video";
-export type RenderProfile = "controlled_demo_short_v1";
+export type RenderType = "controlled_video" | "controlled_clip";
+export type RenderProfile = "controlled_demo_short_v1" | "controlled_demo_clip_segment_v1";
 export type RenderStatus = "queued" | "running" | "completed" | "failed" | "blocked";
 export type RenderLogLevel = "info" | "warn" | "error";
 
@@ -24,6 +28,10 @@ export type RenderJob = {
   status: RenderStatus;
   inputAssetIds: ID[];
   outputAssetId?: ID;
+  parentVideoId?: ID;
+  startSeconds?: number;
+  endSeconds?: number;
+  targetPlatform?: "youtube_shorts" | "tiktok" | "instagram_reels" | "linkedin" | "other";
   renderProfile: RenderProfile;
   idempotencyKey: string;
   outputStoragePath?: string;
@@ -60,6 +68,7 @@ export type RenderJobFilters = {
   renderType?: RenderType;
   contentId?: ID;
   workflowRunId?: ID;
+  parentVideoId?: ID;
   idempotencyKey?: string;
 };
 
@@ -69,6 +78,13 @@ export type CreateRenderJobInput = {
   renderType: RenderType;
   renderProfile: RenderProfile;
   idempotencyKey: string;
+  parentVideoId?: ID;
+  startSeconds?: number;
+  endSeconds?: number;
+  targetPlatform?: "youtube_shorts" | "tiktok" | "instagram_reels" | "linkedin" | "other";
+  title?: string;
+  hook?: string;
+  description?: string;
   contentId?: ID;
   workflowRunId?: ID;
   requestedBy?: string;
@@ -84,7 +100,7 @@ export type RenderJobsDependencies = {
 
 export type RenderEngineInput = {
   job: RenderJob;
-  inputAssets: MediaAssetBase[];
+  inputAssets: Array<MediaAssetBase | VideoAsset>;
   storageRoot: string;
   outputStoragePath: string;
   tempOutputPath: string;

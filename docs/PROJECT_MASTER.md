@@ -479,7 +479,13 @@ export type WorkflowStatus =
   | "retrying";
 
 export type AgentStatus =
-  "idle" | "running" | "waiting_input" | "waiting_approval" | "blocked" | "failed" | "completed";
+  | "idle"
+  | "running"
+  | "waiting_input"
+  | "waiting_approval"
+  | "blocked"
+  | "failed"
+  | "completed";
 
 export type RiskLevel = "ok" | "attention" | "warning" | "critical" | "blocked";
 
@@ -495,7 +501,11 @@ export type PublicationStatus =
   | "failed";
 
 export type ComplianceStatus =
-  "approved" | "attention" | "rejected" | "blocked" | "needs_human_review";
+  | "approved"
+  | "attention"
+  | "rejected"
+  | "blocked"
+  | "needs_human_review";
 
 export type ApprovalStatus = "pending" | "approved" | "rejected" | "changes_requested" | "blocked";
 
@@ -1062,8 +1072,10 @@ Na Sprint 0, se screenshots não forem possíveis, registrar pendência formal.
 Nota operacional atualizada:
 
 - A Sprint 8 foi encerrada em Media Assets and Storage.
-- A Sprint 9 atual e Renderizacao Controlada.
-- As fases abaixo continuam como roadmap historico e podem ter numeracao diferente da sequencia operacional das sprints entregues.
+- A Sprint 9 foi encerrada e integrada ao `main` via PR #16.
+- O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
+- A Sprint 10 atual e Cortes Derivados Controlados.
+- As fases abaixo continuam como roadmap conceitual e nao precisam coincidir numericamente com a sequencia operacional das sprints entregues.
 
 ### Fase 0 — Documento Mestre e contexto oficial
 
@@ -1253,6 +1265,8 @@ Gate:
 
 ### Fase 10 — Renderização Controlada
 
+**Status:** concluída.
+
 Objetivo:
 
 - gerar vídeo demo reproduzível.
@@ -1263,6 +1277,8 @@ Gate:
 
 ### Fase 11 — Cortes
 
+**Status:** em andamento.
+
 Objetivo:
 
 - gerar e rastrear derivados.
@@ -1272,6 +1288,8 @@ Gate:
 - gerar pelo menos um corte vinculado ao vídeo principal.
 
 ### Fase 12 — Publicação Assistida
+
+**Status:** planejada.
 
 Objetivo:
 

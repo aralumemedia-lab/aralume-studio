@@ -3,6 +3,7 @@ import type {
   ID as ChannelID,
   ISODate as ChannelISODate,
 } from "../channels/channel.types.js";
+import type { WorkflowStatus } from "../editorial/editorial.types.js";
 
 export type ID = string;
 export type ISODate = string;
@@ -191,27 +192,18 @@ export type DerivedClip = {
   id: ID;
   channelId: ID;
   parentVideoId: ID;
+  renderJobId: ID;
   title: string;
   hook: string;
   description: string;
+  startSeconds: number;
+  endSeconds: number;
   durationSeconds: number;
   targetPlatform: "youtube_shorts" | "tiktok" | "instagram_reels" | "linkedin" | "other";
-  status:
-    | "idea"
-    | "research"
-    | "script"
-    | "visual_plan"
-    | "narration"
-    | "editing"
-    | "clips"
-    | "quality_check"
-    | "compliance_check"
-    | "waiting_approval"
-    | "approved"
-    | "scheduled"
-    | "published"
-    | "failed"
-    | "blocked";
+  status: WorkflowStatus;
+  format: "horizontal" | "vertical" | "square";
+  resolution: string;
+  aspectRatio: string;
   riskLevel: MediaAssetBase["riskLevel"];
   clipPotentialScore: number;
   type?: "video" | "clip";
@@ -223,6 +215,9 @@ export type DerivedClip = {
   sizeBytes?: number;
   checksumAlgorithm?: MediaAssetChecksumAlgorithm;
   checksum?: string;
+  costActualCents?: number;
+  errorCode?: string;
+  errorMessage?: string;
   createdAt: ISODate;
   updatedAt: ISODate;
 };
@@ -263,6 +258,8 @@ export type DerivedClipFilters = {
   channelId: ID;
   status?: DerivedClip["status"];
   targetPlatform?: DerivedClip["targetPlatform"];
+  parentVideoId?: ID;
+  renderJobId?: ID;
   search?: string;
 };
 

@@ -1,15 +1,19 @@
-# Spec 010 - Assisted Publication
+# Spec 011 - Assisted Publication
 
 ## Status
+
 Planejada.
 
 ## Objetivo
+
 Definir publicacao assistida em plataformas externas, comecando por YouTube quando aprovado.
 
 ## Contexto
+
 Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao humana, conformidade e logs de auditoria.
 
 ## Pre-condicoes
+
 - Canais implementados.
 - Video/renderizacao disponivel.
 - Aprovacao humana implementada.
@@ -18,6 +22,7 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - OAuth explicitamente aprovado.
 
 ## Escopo
+
 - `PublicationTarget`.
 - `PublicationJob`.
 - Status de publicacao.
@@ -27,6 +32,7 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - OAuth apenas se houver spec especifica e aprovacao.
 
 ## Fora de escopo
+
 - Publicacao automatica sem aprovacao.
 - Credenciais reais sem autorizacao.
 - Automacao de browser para publicacao.
@@ -34,17 +40,22 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - Publicacao de conteudo bloqueado.
 
 ## Fontes de verdade
+
 - `AGENTS.md`
 - `docs/PROJECT_MASTER.md`
 - `docs/NEXT_SPRINTS.md`
 - `docs/CODEX_HANDOFF.md`
 - `docs/ENVIRONMENT.md`
+- `docs/specs/010-derived-clips.md`
 - `docs/specs/006-approvals-compliance.md`
 - `docs/specs/008-media-assets-storage.md`
 - `docs/specs/009-rendering.md`
+- `docs/specs/014-metrics-learning.md`
 
 ## Entidades minimas
+
 ### PublicationTarget
+
 - `id`
 - `channelId`
 - `platform`
@@ -54,6 +65,7 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - `updatedAt`
 
 ### PublicationJob
+
 - `id`
 - `channelId`
 - `targetId`
@@ -65,6 +77,7 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - `createdAt`
 
 ## Regras obrigatorias
+
 - Publicacao depende de aprovacao humana.
 - Publicacao depende de compliance aprovado.
 - Token expirado bloqueia publicacao.
@@ -72,6 +85,7 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - Nenhum segredo deve ser exposto.
 
 ## Endpoints esperados
+
 - `GET /api/publication-targets`
 - `POST /api/publication-targets`
 - `GET /api/publications`
@@ -79,12 +93,14 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - `POST /api/publications/:publicationJobId/reschedule`
 
 ## Validacoes
+
 - Preparar payload.
 - Bloquear sem aprovacao.
 - Bloquear sem compliance.
 - Bloquear sem credencial valida.
 
 ## Critérios de aceite
+
 - Entidades definidas.
 - Fluxo assistido documentado.
 - Sem publicacao real se nao aprovada.
@@ -92,4 +108,5 @@ Publicacao real deve ser sempre controlada por OAuth autorizado, aprovacao human
 - Validacoes passam.
 
 ## Proxima sprint recomendada
-Sprint 11 - Metrics and Editorial Learning.
+
+Sprint 14 - Metrics and Editorial Learning.

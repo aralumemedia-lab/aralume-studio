@@ -1,15 +1,19 @@
 # Spec 012 - V1 Acceptance
 
 ## Status
+
 Planejada.
 
 ## Objetivo
+
 Definir os criterios minimos para considerar a Aralume Studio V1.0 pronta.
 
 ## Contexto
+
 V1.0 nao significa plataforma totalmente autonoma. V1.0 significa uma base operacional coerente, segura, validada e demonstravel para fabrica editorial multicanal assistida por IA.
 
 ## Escopo da V1.0
+
 - Frontend premium estavel.
 - SDD institucionalizado.
 - Backend foundation.
@@ -26,6 +30,7 @@ V1.0 nao significa plataforma totalmente autonoma. V1.0 significa uma base opera
 - Validacao tecnica reproduzivel.
 
 ## Fora de escopo da V1.0
+
 - Autonomia total.
 - Multiplos provedores reais integrados.
 - Renderizacao massiva.
@@ -37,6 +42,7 @@ V1.0 nao significa plataforma totalmente autonoma. V1.0 significa uma base opera
 - IA sem controle de custo.
 
 ## Fontes de verdade
+
 - `AGENTS.md`
 - `docs/PROJECT_MASTER.md`
 - `docs/NEXT_SPRINTS.md`
@@ -54,10 +60,11 @@ V1.0 nao significa plataforma totalmente autonoma. V1.0 significa uma base opera
 - `docs/specs/007-costs-operational-modes.md`
 - `docs/specs/008-media-assets-storage.md`
 - `docs/specs/009-rendering.md`
-- `docs/specs/010-publication-assisted.md`
-- `docs/specs/011-metrics-learning.md`
+- `docs/specs/011-publication-assisted.md`
+- `docs/specs/014-metrics-learning.md`
 
 ## Criterios tecnicos
+
 - `main` limpo.
 - `main = origin/main`.
 - Lint sem warnings relevantes.
@@ -73,7 +80,9 @@ V1.0 nao significa plataforma totalmente autonoma. V1.0 significa uma base opera
 - Handoff atualizado.
 
 ## Criterios de produto
+
 A V1.0 deve permitir demonstrar:
+
 - Navegacao pelas telas principais.
 - Selecao de canal.
 - Visao operacional do dashboard.
@@ -87,6 +96,7 @@ A V1.0 deve permitir demonstrar:
 - Fluxo minimo de conteudo, mesmo que parcialmente simulado.
 
 ## Criterios de seguranca
+
 - Nenhum `.env.local` versionado.
 - Nenhum token em docs.
 - Nenhum segredo em logs.
@@ -96,7 +106,9 @@ A V1.0 deve permitir demonstrar:
 - Midia real apenas com storage root validado.
 
 ## Criterios de documentacao
+
 Devem estar atualizados:
+
 - `AGENTS.md`
 - `docs/PROJECT_MASTER.md`
 - `docs/NEXT_SPRINTS.md`
@@ -107,6 +119,7 @@ Devem estar atualizados:
 - `docs/specs/*`
 
 ## Definition of Done V1.0
+
 - Todos os criterios tecnicos passam.
 - Fluxo principal pode ser demonstrado.
 - Limitacoes documentadas.
@@ -117,5 +130,5 @@ Devem estar atualizados:
 - Projeto pode ser retomado por outro engenheiro usando docs e specs.
 
 ## Proxima sprint recomendada
-Consolidacao da fase correspondente ao estado do roadmap no momento da implementacao, com foco na execucao da proxima spec ativa.
 
+Consolidacao da fase correspondente ao estado do roadmap no momento da implementacao, com foco na execucao da proxima spec ativa.
