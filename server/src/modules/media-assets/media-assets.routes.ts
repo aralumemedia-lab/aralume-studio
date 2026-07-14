@@ -1,3 +1,4 @@
+import { existsSync, statSync } from "node:fs";
 import { Router, type Response } from "express";
 import { z } from "zod";
 
@@ -143,6 +144,14 @@ export function createMediaAssetsRouter(
     }
 
     const resolved = resolveAbsoluteStoragePath(storageRoot, clip.storagePath);
+    if (!existsSync(resolved.absolutePath) || !statSync(resolved.absolutePath).isFile()) {
+      throw new AppError({
+        code: "NOT_FOUND",
+        status: 404,
+        message: "Derived clip file not available.",
+        details: { channelId: query.channelId, clipId: clip.id },
+      });
+    }
     res.type(clip.mimeType ?? "video/mp4");
     res.sendFile(resolved.absolutePath, (error) => {
       if (error) {

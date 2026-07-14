@@ -388,6 +388,16 @@ test("derived clip HTTP routes create a real clip and survive a repository resta
     assert.equal(clipFileResponse.status, 200);
     await clipFileResponse.arrayBuffer();
 
+    const removedClipPath = path.join(harness.storageRoot, clipPayload.data.storagePath!);
+    rmSync(removedClipPath, { force: true });
+    const missingClipFileResponse = await fetch(
+      `${baseUrl}/api/clips/${clipPayload.data.id}/file?channelId=ch_historia`,
+      {
+        headers: { connection: "close" },
+      },
+    );
+    assert.equal(missingClipFileResponse.status, 404);
+
     const reloadedApp = createApp({
       env: {
         ARALUME_ENV: "test",
