@@ -1,4 +1,4 @@
-# Codex Handoff - Sprint 10
+# Codex Handoff - Sprint 11
 
 ## Estado atual
 
@@ -15,6 +15,14 @@
 - O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
 - `main` e `origin/main` estao alinhados nesse SHA no estado atual.
 - Historico anterior mantido abaixo para referencia operacional.
+
+## Sprint 11 - Publicacao Assistida
+
+- Sprint 11 foi implementada na branch `codex/sprint-11-publication-assisted`.
+- A rota `/publications` agora consome backend real de publicacoes, com alvos, jobs, aprovacao humana, conformidade, auditoria e bloqueio de envio externo automatico.
+- Validacoes executadas: `npm run lint`, `npm run backend:check`, `npm run test`, `npm run build`, `git diff --check`.
+- Evidencias visuais geradas: `screenshots/publications-valid-1366x768.png`, `screenshots/publications-blocked-approval-1600x900.png`, `screenshots/publications-blocked-compliance-1792x1024.png`, `screenshots/publications-empty-1920x1080.png`, `screenshots/publications-details-1600x900.png`, `screenshots/publications-channel-switch-1366x768.png`.
+- O isolamento por canal foi validado visualmente entre Historia, Curiosidades e Negocios.
 
 ## Sprint 5 - Editorial Pipeline
 
@@ -57,17 +65,6 @@
 - Naquele momento, o proximo passo recomendado era Backend Foundation, apenas apos a migracao segura estar mergeada e o repositorio seguir limpo.
 - Pendencias: copiar manualmente os valores reais quando necessario e rotacionar qualquer segredo que tenha sido exposto no projeto antigo.
 
-## Stack real detectada
-
-- React 19
-- TypeScript
-- Vite
-- TanStack Router
-- TanStack Query
-- TanStack Start
-- Tailwind CSS v4
-- componentes no estilo shadcn/ui
-
 ## Scripts disponiveis
 
 - `dev`
@@ -76,14 +73,20 @@
 - `preview`
 - `lint`
 - `format`
-- Nao existe script de teste dedicado no `package.json`.
+- `backend:dev`
+- `backend:build`
+- `backend:check`
+- `backend:start`
+- `test`
 
 ## Validacao executada
 
 - `npm run lint` passou sem warnings.
-- `npx tsc --noEmit` passou.
+- `npm run backend:check` passou.
+- `npm run test` passou.
 - `npm run build` passou.
-- Rotas validadas visualmente: `/dashboard`, `/channels`, `/agent-office`.
+- `git diff --check` passou.
+- Rotas validadas visualmente: `/dashboard`, `/channels`, `/agent-office`, `/publications`.
 - Smoke visual realizado em: `/production`, `/approvals`, `/costs`, `/compliance`, `/audit-logs`.
 
 ## Screenshots geradas
@@ -97,6 +100,12 @@
 - `screenshots/agent-office-1366x768.png`
 - `screenshots/agent-office-1600x900.png`
 - `screenshots/agent-office-1920x1080.png`
+- `screenshots/publications-valid-1366x768.png`
+- `screenshots/publications-blocked-approval-1600x900.png`
+- `screenshots/publications-blocked-compliance-1792x1024.png`
+- `screenshots/publications-empty-1920x1080.png`
+- `screenshots/publications-details-1600x900.png`
+- `screenshots/publications-channel-switch-1366x768.png`
 
 ## Warnings
 
@@ -104,74 +113,8 @@
 - Warnings corrigidos: 7.
 - Warnings restantes: 0.
 
-## Limitações
+## Limitacoes
 
-- Nao houve criacao de backend real.
+- A Sprint 11 nao executa publicacao externa automatica.
+- O backend de publicacoes permanece local e deterministico para o fluxo assistido.
 - Nao houve conexao com Supabase.
-- Nao houve auth, IA, video ou publicacao reais.
-- O conjunto de screenshots foi obtido com QA local ad hoc; nao foi adicionada automacao persistida de Playwright ao repositorio.
-
-## Proximos passos recomendados
-
-- Sprint 5 - Editorial Pipeline.
-- A Sprint 5 deve comecar por Spec Review e por `docs/specs/005-editorial-pipeline.md` antes de qualquer implementacao.
-- A sequencia autorizada agora segue para o pipeline editorial, sem reabrir a Sprint 4.
-- Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
-
-## Formato normativo de handoff a partir da Sprint 11
-
-Use este conjunto de campos para todo handoff novo a partir da Sprint 11:
-
-- Epico atual:
-- Sprint concluida:
-- Sprint concluida status:
-- Epico concluido:
-- Epico concluido status:
-- Historias planejadas:
-- Historias concluidas:
-- Historias parciais:
-- Historias bloqueadas:
-- Criterios nao atendidos:
-- Contratos alterados:
-- Migrations:
-- Evidencias:
-- Riscos:
-- Divida tecnica:
-- Gate liberado ou bloqueado:
-- Historias remanescentes do epico:
-- Proxima sprint recomendada:
-- Estado final do repositorio:
-
-Regras:
-
-- Distinguir claramente sprint concluida de epico concluido.
-- Nao misturar o historico da sprint anterior com o resumo da sprint atual.
-- Preservar os campos tecnicos uteis ja existentes no handoff.
-- Registrar pendencias materiais explicitamente.
-- Nao assumir que a conclusao de uma sprint encerra o epico.
-- Nao assumir que o epico mudou de status sem gate objetivo.
-
-## Sprint 0.3 - SDD Specs Roadmap Foundation
-
-- Specs `002` a `012` criadas.
-- Nenhuma implementacao de produto foi feita.
-- Nenhum backend foi criado.
-- Nenhuma alteracao funcional de frontend foi feita.
-- Nenhum contrato ou mock foi alterado.
-- A proxima etapa recomendada naquela fase foi Sprint 2 - Backend Foundation.
-
-## Sprint 2 - Backend Foundation
-
-- Branch `codex/sprint-2-backend-foundation` contem a fundacao backend criada em `server/` com Express, env validation, request ID middleware, JSON parser, not found handler, error handler, request logging e `GET /health`.
-- Envelope padrao de sucesso e envelope padrao de erro foram implementados como helpers em `server/src/http/response.ts`.
-- `server/src/env.ts` valida `ARALUME_ENV` e `ARALUME_LOG_LEVEL` com defaults seguros; `DATABASE_URL` e `TEST_DATABASE_URL` permanecem opcionais.
-- Scripts adicionados: `backend:dev`, `backend:build`, `backend:check`, `backend:start`, `test`.
-- Setup documentado em `docs/BACKEND_SETUP.md`.
-- PR #6 foi mergeado e a fundacao backend foi integrada a `main`.
-- A sequencia autorizada agora segue para a Sprint 5 - Editorial Pipeline.
-- Nenhum dominio de Canais foi implementado.
-- Nenhum CRUD real foi criado.
-- Nenhuma integracao frontend/backend foi feita.
-- Nenhum Supabase foi conectado.
-- Nenhuma IA, video ou publicacao real foi implementada.
-- Nenhum segredo foi exposto.

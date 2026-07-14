@@ -1,0 +1,73 @@
+import type { PublicationSeed } from "./publications.types.js";
+
+const now = "2026-07-13T07:15:00.000Z";
+
+export const publicationDemoSeed: PublicationSeed = {
+  publicationTargets: [
+    {
+      id: "pt_historia_youtube",
+      channelId: "ch_historia",
+      platform: "youtube",
+      accountName: "Aralume Historia",
+      status: "authenticated",
+      lastConnectedAt: "2026-07-12T16:10:00.000Z",
+      tokenExpiresAt: "2026-08-12T16:10:00.000Z",
+      latestPublicationJobId: "pj_historia_01",
+      sourceContentId: "idea_06",
+      sourceVideoAssetId: "vd_historia_01",
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: "pt_historia_tiktok",
+      channelId: "ch_historia",
+      platform: "tiktok",
+      accountName: "Aralume Historia Shorts",
+      status: "token_expired",
+      lastConnectedAt: "2026-07-01T10:00:00.000Z",
+      tokenExpiresAt: "2026-07-10T10:00:00.000Z",
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: "pt_curio_instagram",
+      channelId: "ch_curiosidades",
+      platform: "instagram",
+      accountName: "Aralume Curiosidades",
+      status: "not_connected",
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: "pt_curio_tiktok",
+      channelId: "ch_curiosidades",
+      platform: "tiktok",
+      accountName: "Aralume Curiosidades Shorts",
+      status: "authenticated",
+      lastConnectedAt: "2026-07-12T11:05:00.000Z",
+      tokenExpiresAt: "2026-08-20T11:05:00.000Z",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ],
+  publicationJobs: [
+    {
+      id: "pj_historia_01",
+      channelId: "ch_historia",
+      publicationTargetId: "pt_historia_youtube",
+      contentId: "idea_06",
+      sourceVideoAssetId: "vd_historia_01",
+      platform: "youtube",
+      title: "A logistica do Imperio Romano",
+      description:
+        "Pacote assistido preparado para revisao humana, com aprovacao e conformidade confirmadas.",
+      idempotencyKey: "publication:ch_historia:vd_historia_01:youtube:001",
+      scheduledAt: "2026-07-15T13:00:00.000Z",
+      status: "scheduled",
+      approvalId: "ap_06",
+      complianceCheckId: "cc_06",
+      createdAt: now,
+      updatedAt: now,
+    },
+  ],
+};

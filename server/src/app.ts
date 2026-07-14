@@ -19,6 +19,11 @@ import { createAuditRouter } from "./modules/audit/audit.routes.js";
 import { createAuditService } from "./modules/audit/audit.service.js";
 import type { AuditRepository } from "./modules/audit/audit.types.js";
 import { auditDemoSeed } from "./modules/audit/audit.seed.js";
+import { createPublicationsRepository } from "./modules/publications/publications.repository.js";
+import { createPublicationsRouter } from "./modules/publications/publications.routes.js";
+import { createPublicationsService } from "./modules/publications/publications.service.js";
+import type { InMemoryPublicationsRepository } from "./modules/publications/publications.repository.js";
+import { publicationDemoSeed } from "./modules/publications/publications.seed.js";
 import { createEditorialRepository } from "./modules/editorial/editorial.repository.js";
 import { createEditorialRouter } from "./modules/editorial/editorial.routes.js";
 import { createEditorialService } from "./modules/editorial/editorial.service.js";
@@ -56,6 +61,7 @@ export type CreateAppOptions = {
   governanceRepository?: GovernanceRepository;
   costsRepository?: CostsRepository;
   auditRepository?: AuditRepository;
+  publicationsRepository?: InMemoryPublicationsRepository;
   renderEngine?: RenderEngine;
   ffmpegPath?: string;
   ffprobePath?: string;
@@ -94,6 +100,15 @@ export function createApp(options: CreateAppOptions = {}) {
     (!options.channelsRepository
       ? createAuditRepository(auditDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT })
       : createAuditRepository(undefined, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT }));
+  const publicationsRepository =
+    options.publicationsRepository ??
+    (!options.channelsRepository
+      ? createPublicationsRepository(publicationDemoSeed, {
+          storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+        })
+      : createPublicationsRepository(publicationDemoSeed, {
+          storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+        }));
   const costsRepository =
     options.costsRepository ??
     (!options.channelsRepository
@@ -117,6 +132,13 @@ export function createApp(options: CreateAppOptions = {}) {
     channelsRepository,
   );
   const auditService = createAuditService(auditRepository);
+  const publicationsService = createPublicationsService(publicationsRepository, {
+    channelsRepository,
+    editorialRepository,
+    mediaAssetsRepository,
+    governanceRepository,
+    auditRepository,
+  });
   const costsService = createCostsService(costsRepository, {
     channelsRepository,
     auditRepository,
@@ -152,6 +174,7 @@ export function createApp(options: CreateAppOptions = {}) {
   );
   app.use("/api", createRendersRouter(rendersService));
   app.use("/api", createGovernanceRouter(governanceService));
+  app.use("/api", createPublicationsRouter(publicationsService));
   app.use("/api", createCostsRouter(costsService));
   app.use("/api", createAuditRouter(auditService));
   app.use(notFoundMiddleware());

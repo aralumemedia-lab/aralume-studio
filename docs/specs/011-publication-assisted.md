@@ -5,7 +5,7 @@
 - Spec ID: `011-publication-assisted.md`
 - Sprint number: 11
 - Sprint name: Publicacao Assistida
-- Spec status: planned
+- Spec status: completed
 - Date: 2026-07-14
 - Linked ADR: `docs/architecture/adrs/001-adocao-epicos-historias-fatias-verticais.md`
 
@@ -134,7 +134,7 @@ O produto ja possui conteudos que podem chegar ao estado de video pronto ou de c
 - Validar `channelId` em todas as operacoes.
 - Validar aprovacao humana e compliance antes do agendamento assistido.
 - Auditar criacao, preparacao, bloqueio, agendamento e erro.
-- Não introduzir envio externo automatico nesta sprint.
+- Nao introduzir envio externo automatico nesta sprint.
 
 ## 13. Persistence
 
@@ -219,10 +219,11 @@ Arquivos provaveis para uma futura implementacao, se esta sprint for executada:
 ## 20. Evidence
 
 - Screenshot da rota `/publications` com canal selecionado.
+- Screenshots geradas: `screenshots/publications-valid-1366x768.png`, `screenshots/publications-blocked-approval-1600x900.png`, `screenshots/publications-blocked-compliance-1792x1024.png`, `screenshots/publications-empty-1920x1080.png`, `screenshots/publications-details-1600x900.png`, `screenshots/publications-channel-switch-1366x768.png`.
 - Log de criacao e bloqueio de job.
 - Evidencia de estado de aprovacao e compliance.
-- Relatorio de testes executados.
-- Link do PR quando a sprint for implementada.
+- Relatorio de testes executados: `npm run lint`, `npm run backend:check`, `npm run test`, `npm run build`, `git diff --check`.
+- Link do PR apos a publicacao da branch.
 
 ## 21. Risks
 

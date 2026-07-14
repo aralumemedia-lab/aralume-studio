@@ -332,10 +332,9 @@ test("governance service evaluates quality and compliance deterministically", ()
 test("governance repositories keep ordering, cloning and channel isolation deterministic", () => {
   const harness = createHarness(governanceDemoSeed);
 
-  assert.deepEqual(
-    harness.service.listApprovals().map((approval) => approval.status),
-    ["pending", "blocked", "changes_requested", "rejected", "approved"],
-  );
+  const statuses = harness.service.listApprovals().map((approval) => approval.status);
+  assert.deepEqual(statuses.slice(0, 4), ["pending", "blocked", "changes_requested", "rejected"]);
+  assert.equal(statuses.filter((status) => status === "approved").length, 3);
 
   const historiaApprovals = harness.service.listApprovals({ channelId: "ch_historia" });
   assert.ok(historiaApprovals.length > 0);
