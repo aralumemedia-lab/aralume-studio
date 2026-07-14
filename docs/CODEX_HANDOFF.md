@@ -118,6 +118,39 @@
 - A sequencia autorizada agora segue para o pipeline editorial, sem reabrir a Sprint 4.
 - Se for necessario automatizar QA visual no repo, planejar uma Sprint 1B curta para Playwright e capturas reproduziveis.
 
+## Formato normativo de handoff a partir da Sprint 11
+
+Use este conjunto de campos para todo handoff novo a partir da Sprint 11:
+
+- Epico atual:
+- Sprint concluida:
+- Sprint concluida status:
+- Epico concluido:
+- Epico concluido status:
+- Historias planejadas:
+- Historias concluidas:
+- Historias parciais:
+- Historias bloqueadas:
+- Criterios nao atendidos:
+- Contratos alterados:
+- Migrations:
+- Evidencias:
+- Riscos:
+- Divida tecnica:
+- Gate liberado ou bloqueado:
+- Historias remanescentes do epico:
+- Proxima sprint recomendada:
+- Estado final do repositorio:
+
+Regras:
+
+- Distinguir claramente sprint concluida de epico concluido.
+- Nao misturar o historico da sprint anterior com o resumo da sprint atual.
+- Preservar os campos tecnicos uteis ja existentes no handoff.
+- Registrar pendencias materiais explicitamente.
+- Nao assumir que a conclusao de uma sprint encerra o epico.
+- Nao assumir que o epico mudou de status sem gate objetivo.
+
 ## Sprint 0.3 - SDD Specs Roadmap Foundation
 
 - Specs `002` a `012` criadas.

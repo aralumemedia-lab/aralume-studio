@@ -1532,3 +1532,17 @@ A decisão fundamental agora é:
 **O frontend Lovable é a base inicial, mas o Codex deve transformá-lo em fundação confiável. O backend só começa depois que contratos, mocks, rotas e documentação estiverem auditados.**
 
 Este documento passa a ser a fonte principal de informação do projeto a partir do estado pós-Lovable.
+
+## 27. Modelo de entrega a partir da Sprint 11
+
+A partir da Sprint 11, as fases amplas deste documento passam a funcionar como epicos estrategicos.
+
+Regras normativas:
+
+- um epico pode ser dividido em varias sprints;
+- uma sprint deve entregar historias integradas e verificaveis;
+- os gates existentes continuam obrigatorios;
+- frontend operacional continua sendo criterio de produto;
+- SDD continua obrigatorio;
+- o historico das Sprints 0 a 10 permanece inalterado;
+- nenhuma capacidade futura pode ser antecipada sem atualizacao documental previa.

@@ -36,6 +36,41 @@ SDD e obrigatorio em todas as sprints.
 - Prompt nao pode contradizer spec.
 - Implementacao nao pode inventar produto.
 
+## Modelo de execucao valido a partir da Sprint 11
+
+A partir da Sprint 11, o projeto passa a usar uma separacao formal entre epicos, historias, sprints, specs, tarefas, PRs e gates.
+
+### Definicoes
+
+- **Epico**: agrupador de uma capacidade ampla do produto. O epico pode atravessar varias sprints e corresponde ao nivel estrategico do roadmap.
+- **Historia funcional**: unidade verificavel de comportamento de produto, com criterio de aceite objetivo e evidencia esperada.
+- **Historia tecnica**: unidade verificavel de trabalho tecnico necessario para permitir uma capacidade futura, com motivo explicito e criterio de aceite objetivo.
+- **Sprint**: unidade pequena de execucao e integracao. Uma sprint pertence a um unico epico principal e entrega um conjunto curto de historias coesas.
+- **Tarefa**: unidade tecnica de implementacao dentro de uma historia ou sprint.
+- **Spec**: contrato normativo da sprint. A spec define o que entra, o que nao entra, os criterios de aceite, os contratos afetados, a evidenca e os gates.
+- **PR**: unidade de integracao e revisao. O PR consolida uma sprint ou fatia vertical com escopo explicitado.
+- **Gate**: condicao objetiva para avancar. Gate nao e impressao subjetiva; precisa ser verificavel.
+- **Fatia vertical**: entrega que atravessa as camadas necessarias para demonstrar valor real, por exemplo frontend, backend, persistencia, auditoria e testes, quando fizer sentido entregar tudo junto.
+
+### Regras normativas
+
+- Cada sprint deve pertencer a um unico epico principal.
+- Uma sprint deve conter preferencialmente entre duas e cinco historias coesas.
+- Cada historia deve ter criterios de aceite verificaveis.
+- Cada sprint deve declarar historias incluidas e nao incluidas.
+- O escopo nao pode ser ampliado silenciosamente.
+- Mudancas de escopo exigem atualizacao da spec antes da implementacao.
+- Frontend, backend, persistencia, auditoria e testes devem ser entregues juntos quando fizer sentido para a historia ou fatia vertical.
+- Uma sprint exclusivamente tecnica deve apresentar justificativa explicita.
+- Toda sprint funcional deve produzir comportamento demonstravel pelo frontend quando houver interface correspondente.
+- A conclusao da sprint nao implica conclusao do epico.
+- A conclusao do epico exige que seu gate final seja atendido.
+- Roadmap, backlog, spec e prompt nao podem divergir.
+- Os epicos do Documento Mestre passam a ser a unidade de agrupamento de capacidades a partir da Sprint 11.
+- As Sprints 0 a 10 permanecem historicamente validas e nao podem ser reclassificadas retroativamente.
+- A linguagem de execucao nova nao autoriza adotar Scrum completo, story points obrigatorios ou cerimonias obrigatorias adicionais.
+- SDD continua obrigatorio e prevalece sobre qualquer prompt ou plano local.
+
 ## Documentos obrigatorios de leitura
 
 Antes de qualquer alteracao, ler e confrontar a tarefa com:
