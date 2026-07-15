@@ -69,3 +69,15 @@
 - The visual language stayed intact; no broad redesign was introduced.
 - Screenshots were captured for dashboard, channels, and agent office at 1366x768, 1600x900, and 1920x1080.
 - Smoke checks were also performed on production, approvals, costs, compliance, and audit logs.
+
+## Sprint 13 metrics screen
+
+- `/metrics` keeps the dense admin layout: page header, channel context, compact
+  KPI strip, evidence panel and content table.
+- Origin badges must distinguish manual, imported, demo and fixture data.
+- Recommendation cards must show period, confidence, rule version, limitations and
+  evidence without suggesting causality or automatic execution.
+- Loading, empty, insufficient, partial, error and provider-unavailable states use
+  the existing feedback primitives and remain keyboard accessible.
+- Validate at 1366x768, 1600x900, 1792x1024 and 1920x1080 with expanded/collapsed
+  sidebar and long channel/content names; no horizontal overflow is acceptable.

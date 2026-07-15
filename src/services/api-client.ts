@@ -132,4 +132,11 @@ export {
   getRenderJobs,
 } from "./renders-api";
 
-export { getPerformanceMetrics, getWorkflowRuns } from "./mock-api";
+export { getWorkflowRuns } from "./mock-api";
+export {
+  createPerformanceMetric,
+  describeMetricsApiError,
+  getMetricsSummary,
+  getPerformanceMetric,
+  getPerformanceMetrics,
+} from "./metrics-api";
