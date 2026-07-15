@@ -164,6 +164,25 @@ em andamento, o job fica persistido como `pending`; uma nova tentativa e
 bloqueada ate a reconciliacao do resultado, evitando upload duplicado apos
 concorrencia ou reinicio do processo.
 
+### Escopos e descoberta do destino
+
+O conjunto aprovado para o fluxo real e exatamente:
+
+- `https://www.googleapis.com/auth/youtube.upload` para o efeito de upload;
+- `https://www.googleapis.com/auth/youtube.readonly` para descobrir e verificar os
+  canais da conta autenticada.
+
+O escopo amplo `https://www.googleapis.com/auth/youtube` e escopos de Analytics nao
+sao aceitos. Conexoes antigas sem `youtube.readonly` devem retornar estado de
+reautorizacao obrigatoria e nao podem chegar a readiness ou upload.
+
+`GET /api/integrations/youtube/channels` so pode retornar canais obtidos pelo
+backend com `channels.list?mine=true` e escopo `youtube.readonly`. O frontend nao
+pode fornecer ou escolher um ID que nao esteja nessa lista. Em caso de escopo
+insuficiente, conta sem canal ou destino desatualizado, o contrato retorna erro
+sanitizado (`FORBIDDEN` ou `OPERATION_BLOCKED`) e readiness `blocked`, sem upload.
+Apos troca de escopo ou conta, a selecao deve ser refeita.
+
 ## Rotas do frontend
 
 `/dashboard`, `/channels`, `/agent-office`, `/production`, `/ideas`, `/research`, `/scripts`, `/media-assets`, `/videos`, `/clips`, `/approvals`, `/publications`, `/metrics`, `/costs`, `/compliance`, `/administration`, `/audit-logs`. `/` redireciona para `/dashboard`.

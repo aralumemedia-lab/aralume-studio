@@ -17,7 +17,7 @@
 
 | Ordem | Sprint | Epico | Spec normativa | Status | Liberacao | Dependencias |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | next | ready | `main` limpo e alinhado com `origin/main`; normalizacao documental mergeada; Sprint 11 encerrada; spec 015 formalizada; lista fechada de integracoes aprovada no ADR 002; finalidade, permissoes, autorizacao, revogacao e contratos afetados documentados. |
+| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | next / correcao documental concluida | ready for corrective implementation | `main` limpo e alinhado com `origin/main`; Sprint 11 encerrada; ADR 002 emendado; spec 015, contratos, backlog e handoff alinhados; OAuth aprovado com `youtube.upload` + `youtube.readonly`; reautorizacao e validacao real ainda pendentes. |
 | 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | planned | bloqueada ate o encerramento da Sprint 12 | Sprint 12 encerrada; integracoes reais autorizadas disponiveis como base; origem de metricas e canais definidos. |
 | 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | planned | bloqueada ate o encerramento das Sprints 12 e 13 | Sprints 12 e 13 encerradas; pre-requisitos da V1.0 identificados; documento mestre, backlog e handoff sem conflito. |
 
@@ -39,13 +39,13 @@
 | Epic principal | E13 - Integracoes Reais Autorizadas |
 | Spec governante | `docs/specs/015-authorized-real-integrations.md` |
 | Objetivo | Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por canal. |
-| Estado | next |
-| Liberacao | ready |
-| Gate de inicio | `main` limpo e alinhado com `origin/main`, normalizacao documental mergeada, Sprint 11 encerrada, spec 015 formalizada, lista fechada de integracoes aprovada no ADR 002, finalidade/permissoes/autorizacao/revogacao/contratos documentados e sem conflito documental. |
+| Estado | next / correcao documental concluida |
+| Liberacao | ready for corrective implementation |
+| Gate de inicio | `main` limpo e alinhado com `origin/main`, Sprint 11 encerrada, ADR 002 emendado, spec 015 formalizada, finalidade/permissoes/autorizacao/revogacao/contratos documentados e sem conflito documental. A correção funcional deve solicitar somente `youtube.upload` + `youtube.readonly`. |
 | Historias incluidas | Autorizacao humana documentada; estado de integracao por canal; armazenamento seguro de tokens e segredos; revogacao auditavel; estados de erro operacionais; isolamento por canal; aprovacao documentada de YouTube como unica integracao aprovada. |
 | Fora de escopo | Metricas e aprendizado; V1 Acceptance; grandes modulos novos; recriacao do frontend; publicacao externa sem autorizacao; novos provedores sem spec; TikTok, Instagram e LinkedIn; segredos em codigo, docs, commits ou logs; mascarar ausencia de integracao com mocks; arquitetura generica hipotetica para contornar a falta de definicao aprovada. |
 | Dependencias | Lista fechada de integracoes aprovada no ADR 002; politica de segredos; aprovacao humana; auditoria; YouTube como unica integracao aprovada para E13. |
-| Gate de conclusao | Integracao real autorizada funcionando sem expor segredo, com aprovacao humana quando aplicavel, revogacao possivel, auditoria por canal e evidencia reproduzivel. |
+| Gate de conclusao | Integração real autorizada funcionando sem expor segredo, com descoberta/seleção server-side do canal, aprovação humana, revogação, auditoria por canal e evidência reproduzível de upload privado/não listado e idempotência. |
 
 ## Sprint 13 - Metricas e Aprendizado
 

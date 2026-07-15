@@ -2,7 +2,9 @@
 
 ## Status
 
-Em implementacao na branch `codex/sprint-12-authorized-youtube-integration`.
+Em implementacao corretiva na branch `codex/sprint-12-authorized-youtube-integration`.
+O gate E13 permanece bloqueado até a correção funcional e a validação real
+reproduzível descritas nesta emenda.
 
 ## Identification
 
@@ -25,6 +27,28 @@ Sprint 12 existe para formalizar a camada de autorizacao e governanca das integr
 A decisao documental do E13 esta fechada no ADR relacionado. A lista aprovada para esta sprint e minima e nao deve ser ampliada por analogia com mocks, seeds ou preferencias de produto.
 
 Enquanto a normalizacao documental nao estiver mergeada em `main` e a branch funcional da Sprint 12 nao existir, a implementacao continua fora de execucao. O documento define o contrato; a branch futura executa esse contrato.
+
+## Decisao arquitetural em vigor
+
+Decisão: **`ADOPT_ADDITIONAL_READ_SCOPE`**.
+
+A validação real de 2026-07-15 confirmou OAuth com `youtube.upload`, mas a chamada
+`channels.list?mine=true` falhou com `YOUTUBE_CHANNELS_UNAVAILABLE`. O escopo de
+upload não pode ser tratado como autorização de leitura da conta. Como H12.3 exige
+descoberta e seleção explícita do canal com verificação server-side, o E13 passa a
+usar o conjunto mínimo de dois escopos:
+
+- `https://www.googleapis.com/auth/youtube.upload` para upload;
+- `https://www.googleapis.com/auth/youtube.readonly` para descobrir e verificar os
+  canais da conta autenticada.
+
+O escopo amplo `https://www.googleapis.com/auth/youtube`, YouTube Analytics e
+qualquer outro escopo permanecem não autorizados. Conexões antigas que não tenham
+`youtube.readonly` ficam bloqueadas para reautorização; nenhum token antigo é
+promovido silenciosamente.
+
+Esta decisão emenda o ADR 002 e rejeita tanto o destino baseado apenas em ID manual
+quanto a remoção de seleção da Sprint 12.
 
 ## Distincao entre identificadores
 
@@ -138,15 +162,18 @@ OAuth e transportado apenas no redirect e nao e persistido em resposta operacion
 `blocked` e inclui razões determinísticas. `YouTubeUploadResult` contém somente
 IDs externos, status, timestamps, `publicationJobId` e código/mensagem normalizados.
 O único escopo autorizado nesta sprint é
-`https://www.googleapis.com/auth/youtube.upload`.
+`https://www.googleapis.com/auth/youtube.upload` e
+`https://www.googleapis.com/auth/youtube.readonly`, cada um somente para sua
+finalidade documentada. Nenhum escopo adicional é permitido.
 
 Critérios por história:
 
 - H12.1: conexão, destino selecionado e readiness são sempre filtrados por `channelId`.
 - H12.2: state é HMAC, expirável e one-shot; callback exige escopo mínimo; tokens ficam
   cifrados em repouso; refresh, revogação remota e invalidação local são auditáveis.
-- H12.3: apenas canais retornados pela API autorizada podem ser selecionados; canal
-  selecionado e token pertencem ao mesmo contexto operacional.
+- H12.3: apenas canais retornados pela API autorizada com escopo de leitura válido
+  podem ser selecionados; canal selecionado, conta Google e token pertencem ao mesmo
+  contexto operacional. Conexão sem escopo de leitura entra em reautorização obrigatória.
 - H12.4: upload exige aprovação humana aprovada, compliance aprovado, modo externo
   permitido, readiness, asset elegível do mesmo canal e idempotência sem conflito.
 
@@ -158,6 +185,26 @@ Critérios por história:
 4. O sistema grava apenas o estado necessario para operar, sem expor segredo.
 5. O estado fica disponivel para leitura operacional e auditoria.
 6. A revogacao invalida o acesso e deixa trilha auditavel.
+
+### Descoberta e seleção do canal
+
+1. Após callback válido, o backend verifica que o conjunto concedido contém exatamente
+   os dois escopos aprovados.
+2. O backend usa `channels.list?mine=true` com `youtube.readonly` e retorna somente
+   metadados não sensíveis de canais pertencentes à conta autenticada.
+3. O operador seleciona explicitamente um canal exibido; o backend revalida que o ID
+   está na lista obtida para aquela conexão e `channelId`.
+4. Nenhum ID enviado pelo frontend é aceito sem essa prova server-side.
+5. Lista vazia, escopo insuficiente, conta trocada ou canal indisponível bloqueiam
+   readiness e upload com motivo determinístico.
+
+### Reautorização e troca de conta
+
+- Mudança de escopo exige revogação/reautorização; consentimento antigo não é
+  considerado suficiente.
+- Se a conta Google ou a lista de canais mudar, a seleção anterior é invalidada e o
+  operador precisa selecionar novamente.
+- Revogação remota ou local bloqueia readiness, refresh e upload subsequentes.
 
 ## Politica para OAuth e tokens
 
@@ -217,6 +264,11 @@ Critérios por história:
 - provedor nao suportado;
 - configuracao inconsistente;
 - erro de auditoria ou persistencia.
+- escopo de leitura insuficiente;
+- reautorização obrigatória;
+- conta sem canal disponível;
+- destino YouTube não confirmado;
+- conta/canal alterado após seleção.
 
 ## Evidencias esperadas
 
@@ -235,6 +287,9 @@ Critérios por história:
 - Fluxo de erro de integracao indisponivel.
 - Verificacao de isolamento por canal.
 - Verificacao de ausencia de segredo em log, commit e resposta operacional.
+- Callback com `youtube.upload` sem `youtube.readonly` bloqueado para seleção/readiness.
+- Callback com os dois escopos aprovados permitindo listagem e seleção server-side.
+- Reautorização após mudança de escopo, troca de conta e lista vazia de canais.
 
 ## Fora de escopo
 
@@ -255,6 +310,9 @@ Critérios por história:
 - A auditoria e o isolamento por canal sao verificaveis por testes e operacao.
 - O contrato e coerente com Documento Mestre, roadmap, backlog, handoff e demais specs.
 - O gate de conclusao exige evidencia reproduzivel do fluxo autorizado; mocks comprovam apenas o comportamento controlado e nao substituem validacao real quando credenciais seguras estiverem disponiveis.
+- O gate também exige comprovação de que a lista de canais foi obtida com o escopo de
+  leitura aprovado, que o destino foi selecionado explicitamente e que o upload real
+  ocorreu no canal correto.
 
 ## Matriz de integracoes aprovadas
 
@@ -266,7 +324,7 @@ Critérios por história:
 | Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002                                                                                                                                                                                                                                                                                                            |
 | Fluxo operacional     | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao                                                                                                                                                                                                                         |
 | Tipo de autorizacao   | OAuth 2.0 oficial da Google                                                                                                                                                                                                                                                                                                                     |
-| Permissoes minimas    | `https://www.googleapis.com/auth/youtube.upload` como minimo; escopos adicionais somente se uma necessidade documental futura exigir leitura complementar                                                                                                                                                                                       |
+| Permissoes minimas    | `https://www.googleapis.com/auth/youtube.upload` para upload + `https://www.googleapis.com/auth/youtube.readonly` para descoberta/verificação de canais; nenhum escopo amplo ou adicional                                                                                                                                 |
 | Efeito externo        | Upload e publicacao assistida em canal autorizado                                                                                                                                                                                                                                                                                               |
 | Aprovacao humana      | Obrigatoria antes de qualquer efeito externo                                                                                                                                                                                                                                                                                                    |
 | Isolamento por canal  | Cada canal possui autorizacao independente                                                                                                                                                                                                                                                                                                      |

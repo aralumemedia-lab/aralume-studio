@@ -1,6 +1,6 @@
 # ADR 002 - Selecao documentada dos provedores aprovados para o E13
 
-- Status: Accepted
+- Status: Amended (2026-07-15)
 - Data: 2026-07-14
 - Contexto: Aralume Studio
 - Escopo: governanca documental, Sprint 12, E13
@@ -57,6 +57,10 @@ Decisoes complementares:
 | Instagram | deferred | Nao aprovado para E13. | Sem dependencia normativa suficiente para V1.0 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | Nao | Escopo nao aprovado. | Nao inventar fluxo nem contratos. | Falta base documental fechada para V1.0. | Nao ha fonte oficial usada para aprovacao. |
 | LinkedIn | deferred | Nao aprovado para E13. | Sem dependencia normativa suficiente para V1.0 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | Nao | Escopo nao aprovado. | Nao inventar fluxo nem contratos. | Falta base documental fechada para V1.0. | Nao ha fonte oficial usada para aprovacao. |
 
+> A célula histórica de permissões mínimas da linha YouTube é supersedida pela
+> emenda de 2026-07-15: o conjunto vigente é exatamente `youtube.upload` +
+> `youtube.readonly`, com finalidades separadas e sem escopo amplo.
+
 ## Consequencias
 
 - A lista de provedores para E13 fica fechada.
@@ -67,6 +71,120 @@ Decisoes complementares:
 ## Vigencia
 
 Esta decisao entra em vigor a partir da merge da normalizacao documental em `main`.
+
+## Emenda 2026-07-15 — descoberta segura do canal YouTube
+
+### Evidencia real
+
+Em 2026-07-15, a validação contra o projeto Google Cloud de teste confirmou:
+
+- OAuth real concluído com o escopo `https://www.googleapis.com/auth/youtube.upload`;
+- callback concluído e auditado como `youtube.oauth_completed`;
+- YouTube Data API v3 habilitada;
+- `channels.list?mine=true` falhou com o erro operacional sanitizado
+  `YOUTUBE_CHANNELS_UNAVAILABLE`;
+- nenhum upload foi executado porque o destino não pôde ser descoberto e selecionado;
+- a autorização foi revogada remotamente e localmente;
+- nenhum segredo foi encontrado no repositório ou nos logs de validação.
+
+A documentação oficial do YouTube descreve `youtube.upload` como suficiente para
+gerenciar vídeos, mas não para outros tipos de acesso, enquanto a descoberta do
+canal autenticado por `channels.list?mine=true` é uma operação de leitura da conta.
+
+### Conflito identificado
+
+A decisão anterior exigia simultaneamente o escopo único `youtube.upload` e a
+descoberta/seleção explícita via `channels.list?mine=true`. Isso não é uma combinação
+verificável no fluxo real. O conflito é material e não pode ser resolvido por
+seleção automática, confiança no frontend ou aumento silencioso de escopo.
+
+### Alternativas avaliadas
+
+| Estratégia | Resultado |
+| --- | --- |
+| A — escopo adicional mínimo | Viável: `youtube.upload` + `youtube.readonly`; mantém descoberta, seleção explícita, múltiplos canais e verificação server-side. |
+| B — somente `youtube.upload` com destino explícito | Rejeitada: um ID configurado manualmente não prova que o canal pertence à conta autorizada e não detecta troca de conta de forma confiável. |
+| C — remover seleção da Sprint 12 | Rejeitada: enfraquece H12.3, multicanalidade e o gate de destino autorizado; deve ser um novo escopo/sprint se futuramente desejado. |
+
+### Decisão
+
+**ADOPT_ADDITIONAL_READ_SCOPE**.
+
+### Matriz comparativa
+
+| Critério | Estratégia A | Estratégia B | Estratégia C | Evidência | Risco | Conclusão |
+| --- | --- | --- | --- | --- | --- | --- |
+| Menor privilégio | Dois escopos específicos | Um escopo, mas sem prova de destino | Um escopo, destino único | Docs Google + teste real | A aumenta consentimento; B/C não verificam propriedade | A |
+| Descoberta de canal | `channels.list?mine=true` | Não disponível | Removida | Falha real com upload-only | B/C dependem de dado externo/manual | A |
+| Seleção explícita | Preservada | Manual e não confiável | Removida | H12.3 | Destino incorreto | A |
+| Validação de propriedade | Server-side com escopo read-only | Não comprovável | Parcial/externa | Conta autenticada + lista da API | B/C confundem configuração com prova | A |
+| Múltiplos canais | Suportado | Operação frágil | Não suportado no sprint | Objetivo multicanal do Documento Mestre | Erro de canal | A |
+| Destino incorreto | Bloqueado antes do upload | Possível | Reduzido, mas opaco | Gate de publicação | Publicação indevida | A |
+| Experiência do operador | Consentimento + picker | Configuração administrativa | Fluxo mais simples, menos seguro | Frontend `/publications` | Confusão ou omissão | A |
+| Complexidade | Média, localizada | Média e difícil de provar | Baixa, mas desloca escopo | Código atual já possui list/selection | Retrabalho | A |
+| Segurança | Escopos separados e reautorização | ID manual vulnerável | Destino implícito | Princípio de menor privilégio | Conta trocada | A |
+| Auditoria | OAuth, escopos, seleção e revogação | Configuração manual adicional | Menos eventos, menos prova | Spec 015 | Trilha incompleta | A |
+| Revogação | Revoga ambos os acessos | Revoga upload-only | Revoga destino único | ADR 002 | Estado obsoleto | A |
+| Testes | Escopo, lista, seleção e migração | Muitos testes de configuração | Menos cobertura, menor valor | DoD SDD | Falsos positivos | A |
+| Impacto documental | Emenda ADR/spec/contracts/backlog | Novo runbook administrativo | Replanejamento de H12.3 | Conflito confirmado | Divergência | A |
+| Impacto Sprint 12 | Correção dentro do E13 | Gate enfraquecido | H12.3 removida | Objetivo E13 | Atraso | A |
+| Impacto V1.0 | Compatível com canal autorizado | Risco de destino errado | Multicanalidade incompleta | Documento Mestre | Aceite inseguro | A |
+| Esforço de correção | Médio | Médio/alto para governança | Alto por replanejamento | Implementação atual | Retrabalho | A |
+| Risco residual | Consentimento maior e reautorização | Propriedade não provada | Destino opaco | Validação real | Médio e controlável | A |
+
+O E13 passa a autorizar exatamente estes escopos, cada um com finalidade limitada:
+
+- `https://www.googleapis.com/auth/youtube.upload` — upload de vídeo autorizado;
+- `https://www.googleapis.com/auth/youtube.readonly` — descoberta e verificação dos
+  canais da conta autenticada para seleção explícita.
+
+Não são autorizados `https://www.googleapis.com/auth/youtube`, Analytics ou qualquer
+outro escopo. A reautorização é obrigatória para conexões antigas que não contenham
+`youtube.readonly`; tokens anteriores não são promovidos silenciosamente.
+
+### Consequências e mitigação
+
+Positivas:
+
+- preserva a seleção explícita e o suporte a múltiplos canais;
+- permite validar o destino no backend antes de qualquer efeito externo;
+- mantém menor privilégio relativo, pois evita o escopo amplo `youtube`;
+- torna o gate E13 reproduzível.
+
+Negativas:
+
+- aumenta o consentimento solicitado e exige nova autorização;
+- exige atualização do callback, validação de escopos, estados de insuficiência e
+  testes de migração/reautorização;
+- conexões antigas devem ser revogadas ou reautorizadas antes de readiness.
+
+Riscos não aceitos:
+
+- usar somente um `youtubeChannelId` fornecido pelo frontend;
+- assumir que o primeiro canal retornado é o destino correto;
+- fazer upload antes da validação de propriedade, seleção, aprovação e compliance.
+
+### Plano de transição e rollback
+
+1. Atualizar backend, frontend, contratos e testes para o conjunto de escopos acima.
+2. Marcar conexões sem `youtube.readonly` como `reauthorization_required` e bloquear
+   readiness/upload.
+3. Revogar tokens antigos quando a política operacional exigir e iniciar OAuth novo.
+4. Repetir validação real com canal de teste, upload privado/não listado, idempotência e
+   revogação.
+
+Rollback: retornar ao estado bloqueado de conexão e não executar upload; não reativar o
+fluxo de descoberta com `youtube.upload` sozinho. Qualquer retorno ao escopo anterior
+exige nova decisão formal e remoção da dependência de descoberta autenticada.
+
+### Critérios de validação
+
+- consentimento exibe somente os dois escopos aprovados;
+- callback rejeita conjunto insuficiente ou inesperado;
+- `channels.list?mine=true` retorna canais e a seleção é server-side;
+- troca de conta, ausência de canal, revogação e token antigo bloqueiam readiness;
+- upload privado/não listado é associado ao `PublicationJob`, sem duplicação;
+- auditoria e respostas não contêm segredos.
 
 ## Regra para futuras mudancas
 
