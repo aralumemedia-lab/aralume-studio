@@ -55,6 +55,11 @@ import { createYouTubeExternalClient } from "./modules/youtube/youtube.client.js
 import { createYouTubeRouter } from "./modules/youtube/youtube.routes.js";
 import { createYouTubeService } from "./modules/youtube/youtube.service.js";
 import type { YouTubeExternalClient, YouTubeRepository } from "./modules/youtube/youtube.types.js";
+import { createMetricsRepository } from "./modules/metrics/metrics.repository.js";
+import { createMetricsRouter } from "./modules/metrics/metrics.routes.js";
+import { createMetricsService } from "./modules/metrics/metrics.service.js";
+import type { MetricsRepository } from "./modules/metrics/metrics.types.js";
+import { metricsDemoSeed } from "./modules/metrics/metrics.seed.js";
 
 export type CreateAppOptions = {
   env?: RuntimeEnv;
@@ -72,6 +77,7 @@ export type CreateAppOptions = {
   ffprobePath?: string;
   youtubeRepository?: YouTubeRepository;
   youtubeExternalClient?: YouTubeExternalClient;
+  metricsRepository?: MetricsRepository;
 };
 
 export function createApp(options: CreateAppOptions = {}) {
@@ -140,6 +146,14 @@ export function createApp(options: CreateAppOptions = {}) {
     channelsRepository,
   );
   const auditService = createAuditService(auditRepository);
+  const metricsRepository =
+    options.metricsRepository ??
+    createMetricsRepository(metricsDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT });
+  const metricsService = createMetricsService(metricsRepository, {
+    channelsRepository,
+    editorialRepository,
+    auditService,
+  });
   const publicationsService = createPublicationsService(publicationsRepository, {
     channelsRepository,
     editorialRepository,
@@ -210,6 +224,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use("/api", createYouTubeRouter(youtubeService));
   app.use("/api", createCostsRouter(costsService));
   app.use("/api", createAuditRouter(auditService));
+  app.use("/api", createMetricsRouter(metricsService));
   app.use(notFoundMiddleware());
   app.use(errorHandlerMiddleware);
 

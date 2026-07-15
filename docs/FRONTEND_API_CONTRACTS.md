@@ -125,6 +125,9 @@ Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiLi
 | POST   | /api/publications                              | `PublicationJob`                |
 | POST   | /api/publications/:publicationJobId/reschedule | `PublicationJob`                |
 | GET    | /api/metrics                                   | `PerformanceMetric[]`           |
+| POST   | /api/metrics                                   | `PerformanceMetric`             |
+| GET    | /api/metrics/:metricId                         | `PerformanceMetric`             |
+| GET    | /api/metrics/summary                           | `MetricsSummary`                |
 | GET    | /api/costs                                     | `CostEntry[]`                   |
 | POST   | /api/costs                                     | `CostEntry`                     |
 | GET    | /api/costs/:id                                 | `CostEntry`                     |
@@ -235,3 +238,15 @@ inclui path absoluto, segredo ou comando FFprobe.
 - A importacao oficial criou um novo `VideoAsset` apto para publicacao real.
 - O upload governante concluiu, foi consultado e repetido com replay idempotente.
 - A revogacao posterior bloqueou novas operacoes do canal como esperado.
+### Sprint 13 - Metricas e aprendizado
+
+`/api/metrics` e a superficie canonica e exige `channelId` em todas as operacoes.
+`POST` recebe um snapshot controlado com `contentId`, plataforma, periodo,
+metricas aprovadas, `origin` (`manual`, `imported`, `demo` ou `fixture`) e
+`idempotencyKey`. `GET` aceita filtros de periodo, conteudo, plataforma e
+paginacao; o detalhe exige `channelId` na query. O resumo retorna agregacoes,
+estado de suficiencia e uma recomendacao deterministica com evidencias.
+
+Os envelopes sao os existentes. Respostas nao retornam segredos nem payload de
+provedor. A origem deve ser exibida na interface, e `demo`/`fixture` nunca podem
+ser rotulados como metricas reais.

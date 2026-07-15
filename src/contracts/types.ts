@@ -741,8 +741,8 @@ export type YouTubeUploadResult = { publicationJobId: ID; channelId: ID; status:
 export type PerformanceMetric = {
   id: ID;
   channelId: ID;
-  contentId?: ID;
-  platform?: string;
+  contentId: ID;
+  platform: string;
   periodStart: ISODate;
   periodEnd: ISODate;
   views: number;
@@ -753,7 +753,70 @@ export type PerformanceMetric = {
   saves: number;
   comments: number;
   followersGained: number;
-  revenueCents: number;
+  origin: "manual" | "imported" | "demo" | "fixture";
+  validationStatus: "validated" | "partial";
+  capturedAt: ISODate;
+  idempotencyKey: string;
+  createdAt: ISODate;
+  updatedAt: ISODate;
+};
+
+export type MetricEvidence = {
+  metricId: ID;
+  contentId: ID;
+  platform: string;
+  label: string;
+  value: number;
+  unit: string;
+};
+
+export type EditorialRecommendation = {
+  id: ID;
+  channelId: ID;
+  periodStart: ISODate;
+  periodEnd: ISODate;
+  status: "available" | "insufficient_data";
+  evidence: MetricEvidence[];
+  rationale: string;
+  suggestedAction: string;
+  confidence: "low" | "medium" | "high";
+  limitations: string[];
+  generatedAt: ISODate;
+  ruleVersion: "metrics-learning-v1";
+};
+
+export type MetricsSummary = {
+  channelId: ID;
+  periodStart?: ISODate;
+  periodEnd?: ISODate;
+  status: "ready" | "insufficient_data" | "partial";
+  sampleCount: number;
+  contentCount: number;
+  platforms: string[];
+  origins: PerformanceMetric["origin"][];
+  totals: Pick<
+    PerformanceMetric,
+    | "views"
+    | "reach"
+    | "averageWatchSeconds"
+    | "completionRate"
+    | "shares"
+    | "saves"
+    | "comments"
+    | "followersGained"
+  >;
+  byContent: Array<{
+    contentId: ID;
+    platforms: string[];
+    sampleCount: number;
+    views?: number;
+    completionRate?: number;
+    shares?: number;
+    followersGained?: number;
+  }>;
+  recommendation?: EditorialRecommendation;
+  missingData: string[];
+  lastCapturedAt?: ISODate;
 };
 
 export type CostEntry = {

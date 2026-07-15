@@ -1,83 +1,70 @@
 # Product Backlog
 
-This backlog is an index of planning. It does not replace sprint specs.
+Este backlog e um indice de planejamento. As specs continuam sendo os contratos
+normativos das sprints.
 
 ## Catalogo de epicos
 
-| ID  | Epico                         | Objetivo                                                                                                | Status    | Gate                                                                                      | Dependencias                                                                                                 |
-| --- | ----------------------------- | ------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| E10 | Renderizacao Controlada       | Entregar a primeira capacidade real, controlada e auditavel de renderizacao de video.                   | completed | Renderizar video curto de teste com logs, custo e validacao.                              | -                                                                                                            |
-| E11 | Cortes Derivados Controlados  | Entregar cortes derivados persistentes, rastreaveis e vinculados ao video principal.                    | completed | Gerar pelo menos um corte valido vinculado ao video principal.                            | -                                                                                                            |
-| E12 | Publicacao Assistida          | Preparar publicacao com aprovacao humana, compliance e contratos seguros, sem envio externo automatico. | completed | Pacote de publicacao pronto, sem envio externo automatico.                                | E10, E11                                                                                                     |
-| E13 | Integracoes Reais Autorizadas | Conectar provedores externos com governanca, autorizacao e seguranca documental.                        | planned   | Integracao oficial funcionando sem expor segredo, com destino server-side comprovado.     | E12 concluido; ADR 002 emendado; spec, finalidade, permissoes, autorizacao, revogacao e contratos alinhados. |
-| E14 | Metricas e Aprendizado        | Fechar o ciclo editorial com metricas por canal e recomendacoes assistidas.                             | planned   | Metricas geram recomendacao editorial por canal.                                          | E13 concluido; origem das metricas e canais definidos                                                        |
-| E15 | Hardening V1.0                | Consolidar a base operacional demonstravel para V1.0.                                                   | planned   | Demonstracao ponta a ponta pelo frontend; decisao binaria V1.0 aceita ou V1.0 nao aceita. | E13 e E14 concluidos                                                                                         |
+| ID | Epico | Objetivo | Status | Gate | Dependencias |
+| --- | --- | --- | --- | --- | --- |
+| E10 | Renderizacao Controlada | Entregar renderizacao de video controlada e auditavel. | completed | Video curto de teste com logs, custo e validacao. | - |
+| E11 | Cortes Derivados Controlados | Entregar cortes persistentes e vinculados ao video principal. | completed | Pelo menos um corte valido vinculado. | - |
+| E12 | Publicacao Assistida | Preparar publicacao com aprovacao, compliance e sem envio automatico. | completed | Pacote pronto sem envio externo automatico. | E10, E11 |
+| E13 | Integracoes Reais Autorizadas | Conectar provedores com governanca, autorizacao e seguranca. | completed | Integracao oficial sem segredo e com destino server-side comprovado. | E12; ADR 002; PR #22 |
+| E14 | Metricas e Aprendizado | Fechar o ciclo com metricas por canal e recomendacoes assistidas. | in progress | Metricas geram recomendacao editorial por canal. | E13 concluido; origem controlada definida |
+| E15 | Hardening V1.0 | Consolidar a base operacional demonstravel para V1.0. | planned | Demonstracao ponta a ponta e decisao binaria. | E13 e E14 concluidos |
 
 ## Sprints formalizadas
 
-| Numero | Nome                          | Epico | Spec                                             | Estado                        | Observacao                                                                         |
-| ------ | ----------------------------- | ----- | ------------------------------------------------ | ----------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| S11    | Publicacao Assistida          | E12   | `docs/specs/011-publication-assisted.md`         | completed                     | Capacidade materializada e encerrada.                                              |
-| S12    | Integracoes Reais Autorizadas | E13   | `docs/specs/015-authorized-real-integrations.md` | planned / correcao necessaria | PR #22                                                                             | Conflito de escopo e descoberta resolvido documentalmente; falta implementação corretiva e validação real. |
-| S13    | Metricas e Aprendizado        | E14   | `docs/specs/014-metrics-learning.md`             | planned                       | Posterior a Sprint 12; depende da integracao real autorizada aprovada e encerrada. |
-| S14    | V1 Acceptance                 | E15   | `docs/specs/012-v1-acceptance.md`                | planned                       | Posterior a Sprints 12 e 13; gate de hardening e aceite da V1.0.                   |
+| Sprint | Nome | Epico | Spec | Estado | Observacao |
+| --- | --- | --- | --- | --- | --- |
+| S11 | Publicacao Assistida | E12 | `docs/specs/011-publication-assisted.md` | completed | PR #19 mergeado. |
+| S12 | Integracoes Reais Autorizadas | E13 | `docs/specs/015-authorized-real-integrations.md` | completed | PR #22; validacao real concluida em 2026-07-15. |
+| S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | in progress | Branch `codex/sprint-13-metrics-learning`; PR draft ao final. |
+| S14 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | planned | Posterior a S13; nao iniciar nesta execucao. |
 
-## Catalogo de historias
+## Historias da Sprint 11
 
-| ID    | Epico | Historia                                                  | Prioridade | Dependencias                                                                                                                                                              | Sprint | Status    |
-| ----- | ----- | --------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | --------- |
-| H11.1 | E12   | Catalogo de alvos de publicacao e readiness da plataforma | P1         | `docs/specs/006-approvals-compliance.md`, `docs/specs/007-costs-operational-modes.md`, `docs/specs/008-media-assets-storage.md`, `docs/specs/011-publication-assisted.md` | S11    | completed |
-| H11.2 | E12   | Modelo de job de publicacao e rastreio de estados         | P1         | `docs/specs/011-publication-assisted.md`, `docs/FRONTEND_API_CONTRACTS.md`                                                                                                | S11    | completed |
-| H11.3 | E12   | Preparacao assistida de payload e agendamento             | P1         | `docs/specs/008-media-assets-storage.md`, `docs/specs/009-rendering.md`, `docs/specs/011-publication-assisted.md`                                                         | S11    | completed |
-| H11.4 | E12   | Gate de aprovacao e compliance para publicacao            | P1         | `docs/specs/006-approvals-compliance.md`, `docs/specs/011-publication-assisted.md`                                                                                        | S11    | completed |
+H11.1 catalogo de alvos e readiness; H11.2 job e estados; H11.3 payload e
+agendamento; H11.4 aprovacao e compliance. Todas completed conforme Spec 011 e PR #19.
 
-| H12.1 | E13 | Estado da integracao YouTube por canal | P1 | `docs/specs/015-authorized-real-integrations.md` | S12 | implemented — real gate pending |
-| H12.2 | E13 | Autorizacao e revogacao OAuth 2.0 Google | P1 | `docs/specs/015-authorized-real-integrations.md`, ADR 002 | S12 | corrective implementation required |
-| H12.3 | E13 | Descoberta, selecao explicita do canal YouTube e readiness | P1 | `docs/specs/015-authorized-real-integrations.md`, ADR 002, `youtube.readonly` | S12 | implemented — real upload gate pending |
-| H12.4 | E13 | Upload autorizado de publicacao aprovada | P1 | H12.1-H12.3, `docs/specs/006-approvals-compliance.md`, `docs/specs/007-costs-operational-modes.md` | S12 | blocked until real validation |
-| H12.5 | E13 | Reautorizacao e migracao segura do conjunto de escopos YouTube | P1 | ADR 002 emendado, spec 015, tokens existentes | S12 | planned — technical story |
+## Historias da Sprint 12
 
-### H12.5 — critérios de aceite
+H12.1 estado YouTube por canal; H12.2 OAuth e revogacao; H12.3 descoberta e
+selecao explicita; H12.4 upload autorizado; H12.5 reautorizacao/migracao de
+escopos; H12.6 VideoAsset oficial para validacao real. Todas encerradas no PR #22.
 
-- conexões sem `youtube.readonly` ficam bloqueadas para readiness/upload;
-- OAuth novo solicita exatamente `youtube.upload` e `youtube.readonly`;
-- token antigo não recebe escopo novo por atualização silenciosa;
-- reautorização, revogação e auditoria são channel-scoped;
-- testes cobrem escopo insuficiente, escopo inesperado, reautorização e troca de conta;
-- evidência real demonstra listagem, seleção, upload privado/não listado e revogação.
+## Historias da Sprint 13
+
+### H14.1 - Registro controlado de metricas por conteudo
+
+Registrar snapshots por canal, conteudo, plataforma e janela com origem, validade,
+timestamps e idempotencia; rejeitar canal divergente e replay conflitante.
+
+### H14.2 - Consulta e agregacao canal-scoped
+
+Consultar por canal, periodo, conteudo e plataforma e consolidar totais, medias e
+variacoes sem cruzar canais.
+
+### H14.3 - Aprendizado editorial assistido
+
+Gerar recomendacao deterministica, versionada, explicavel, evidenciada e revisavel
+por humano; dados insuficientes nao geram afirmacao positiva.
+
+### H14.4 - Dashboard operacional de metricas e recomendacoes
+
+Substituir mocks de `/metrics` por API real, mostrando origem, estado, KPIs,
+desempenho, tendencia, recomendacao e evidencias em todos os estados obrigatorios.
+
+## Historias nao incluidas em S13
+
+Analytics/OAuth novo, scraping, novos provedores, IA externa, receita/monetizacao,
+aplicacao automatica de recomendacoes, migrations SQL, hardening e V1 Acceptance.
 
 ## Observacoes
 
 - Nao usar story points.
-- Nao usar estimativa de velocidade.
-- Nao duplicar criterios completos das specs.
-- Quando uma historia nao estiver pronta para sprint, manter o status apropriado no backlog e atualizar a spec antes de implementacao.
-
-### H12.5 - resultado da implementacao corretiva (2026-07-15)
-
-H12.5 foi implementada no commit `eb9dc67`: os dois escopos sao solicitados e
-validados, tokens legados exigem reautorizacao e a descoberta/seleção server-side
-funciona. O status operacional permanece bloqueado por ausência do asset de teste
-materializado no storage autorizado; o upload real, a consulta e a idempotência
-externas ainda precisam ser repetidos com asset válido.
-
-- Sprint 12 pertence ao E13 e tem aprovacao fechada no ADR 002 para YouTube como integracao aprovada.
-- A emenda do ADR 002 aprova `youtube.upload` para upload e `youtube.readonly` somente para descoberta/verificacao de canais; nenhum escopo amplo e permitido.
-- Sprint 13 pertence ao E14.
-- Sprint 14 pertence ao E15 / V1 Acceptance.
-
-### H12.6 - Preparacao oficial de VideoAsset para publicacao real
-
-- Epico E13, Sprint S12, historia tecnica corretiva.
-- API oficial canal-scoped para registrar arquivo existente no storage.
-- Aceite: path seguro, FFprobe, SHA-256/tamanho calculados no backend, novo asset,
-  idempotencia, auditoria, preservacao de `vd_historia_01` e vinculo a `PublicationJob`.
-
-### H12.6 - validacao real concluida
-
-- Data: 2026-07-15.
-- O novo `VideoAsset` foi criado por fluxo oficial e permaneceu distinto de
-  `vd_historia_01`.
-- O upload governante concluiu, foi consultado e repetido com replay idempotente.
-- A revogacao e o bloqueio pos-revogacao foram confirmados.
-- A policy operacional foi restaurada ao estado original apos a validacao.
+- Nao renumerar historias anteriores.
+- Mudanca de escopo exige atualizar a Spec 014, o roadmap operacional e este backlog.
+- ADR 002 continua aprovando somente YouTube para E13; Analytics permanece futuro.
+- A Sprint 14 nao e iniciada nesta execucao.
