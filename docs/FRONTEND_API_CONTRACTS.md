@@ -137,6 +137,52 @@ Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiLi
 | GET    | /api/compliance                                | `ComplianceCheck[]`             |
 | GET    | /api/audit-logs                                | `AuditLog[]`                    |
 
+### Sprint 12 — YouTube autorizado
+
+Esta é a única integração externa aprovada para E13. Os endpoints são canal-scoped
+e não retornam tokens, client secrets, authorization codes ou headers do provedor.
+
+| Método | Path                                                   | Retorno                  |
+| ------ | ------------------------------------------------------ | ------------------------ |
+| GET    | `/api/integrations/youtube/oauth/start?channelId=<id>` | `OAuthStartResponse`     |
+| GET    | `/api/integrations/youtube/oauth/callback`             | redirect HTML seguro     |
+| GET    | `/api/integrations/youtube/connection?channelId=<id>`  | `YouTubeConnectionState` |
+| GET    | `/api/integrations/youtube/channels?channelId=<id>`    | `YouTubeChannel[]`       |
+| POST   | `/api/integrations/youtube/selection`                  | `YouTubeConnectionState` |
+| GET    | `/api/integrations/youtube/readiness?channelId=<id>`   | `YouTubeReadiness`       |
+| POST   | `/api/integrations/youtube/revoke`                     | `YouTubeConnectionState` |
+| POST   | `/api/publications/:publicationJobId/upload`           | `YouTubeUploadResult`    |
+| GET    | `/api/publications/:publicationJobId/upload`           | `YouTubeUploadResult`    |
+
+O início OAuth recebe `channelId` e retorna somente uma URL Google e a expiração do
+state. O callback aceita `code`, `state` ou erro OAuth, rejeita state inválido,
+expirado ou reutilizado e redireciona apenas para a origem configurada. A seleção
+recebe `channelId` e `youtubeChannelId`; o upload recebe `channelId` e identifica o
+job pela URL. O resultado expõe apenas `publicationJobId`, `youtubeVideoId`,
+`youtubeChannelId`, status, timestamps e erro normalizado. Durante uma tentativa
+em andamento, o job fica persistido como `pending`; uma nova tentativa e
+bloqueada ate a reconciliacao do resultado, evitando upload duplicado apos
+concorrencia ou reinicio do processo.
+
+### Escopos e descoberta do destino
+
+O conjunto aprovado para o fluxo real e exatamente:
+
+- `https://www.googleapis.com/auth/youtube.upload` para o efeito de upload;
+- `https://www.googleapis.com/auth/youtube.readonly` para descobrir e verificar os
+  canais da conta autenticada.
+
+O escopo amplo `https://www.googleapis.com/auth/youtube` e escopos de Analytics nao
+sao aceitos. Conexoes antigas sem `youtube.readonly` devem retornar estado de
+reautorizacao obrigatoria e nao podem chegar a readiness ou upload.
+
+`GET /api/integrations/youtube/channels` so pode retornar canais obtidos pelo
+backend com `channels.list?mine=true` e escopo `youtube.readonly`. O frontend nao
+pode fornecer ou escolher um ID que nao esteja nessa lista. Em caso de escopo
+insuficiente, conta sem canal ou destino desatualizado, o contrato retorna erro
+sanitizado (`FORBIDDEN` ou `OPERATION_BLOCKED`) e readiness `blocked`, sem upload.
+Apos troca de escopo ou conta, a selecao deve ser refeita.
+
 ## Rotas do frontend
 
 `/dashboard`, `/channels`, `/agent-office`, `/production`, `/ideas`, `/research`, `/scripts`, `/media-assets`, `/videos`, `/clips`, `/approvals`, `/publications`, `/metrics`, `/costs`, `/compliance`, `/administration`, `/audit-logs`. `/` redireciona para `/dashboard`.
@@ -171,3 +217,21 @@ O frontend da rota `/clips` usa essa superficie para listar cortes, iniciar cort
 1. Continuar migrando os endpoints restantes de `src/services/mock-api.ts` para `fetch` real preservando as assinaturas.
 2. Manter os tipos em `contracts/types.ts` e enums em `contracts/status.ts` como fonte da verdade.
 3. Nenhuma tela importa mocks diretamente — a troca não requer alterações em `src/routes/*`.
+
+### Importacao oficial de VideoAsset
+
+`POST /api/videos/import-from-storage` registra arquivo existente no storage
+autorizado. Recebe `channelId`, `storagePath` relativo, origem, licenca,
+provenance, titulo/descricao, `contentId` quando aplicavel e `idempotencyKey`. O backend
+calcula e valida tamanho, SHA-256, MIME, duracao, dimensoes, codec e existencia;
+valores tecnicos enviados pelo cliente nao sao fonte de verdade. Paths inseguros,
+canal divergente, arquivo vazio ou video invalido retornam erro sanitizado.
+Replay retorna o mesmo asset e payload divergente retorna `409`; a resposta nunca
+inclui path absoluto, segredo ou comando FFprobe.
+
+### Evidencia de validacao real
+
+- Data: 2026-07-15.
+- A importacao oficial criou um novo `VideoAsset` apto para publicacao real.
+- O upload governante concluiu, foi consultado e repetido com replay idempotente.
+- A revogacao posterior bloqueou novas operacoes do canal como esperado.

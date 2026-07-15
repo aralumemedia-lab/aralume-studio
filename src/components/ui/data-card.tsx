@@ -144,10 +144,15 @@ export function LoadingState({ label = "Carregando" }: { label?: string }) {
   );
 }
 
-export function ErrorState({ message }: { message: string }) {
+export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <div className="rounded-md border border-critical-soft bg-critical-soft/40 px-3 py-2 text-xs text-critical">
       {message}
+      {onRetry ? (
+        <button type="button" className="ml-2 underline" onClick={onRetry}>
+          Tentar novamente
+        </button>
+      ) : null}
     </div>
   );
 }

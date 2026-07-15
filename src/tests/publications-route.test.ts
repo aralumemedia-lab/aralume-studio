@@ -17,4 +17,9 @@ test("publications route uses the real API client and exposes assisted publicati
   assert.ok(routeSource.includes("Conformidade"));
   assert.ok(routeSource.includes("Evidencias"));
   assert.ok(routeSource.includes("Novo alvo"));
+  assert.ok(routeSource.includes("leitura limitada à descoberta dos canais"));
+  assert.ok(routeSource.includes("Reconectar YouTube"));
+  assert.ok(routeSource.includes("Listando canais YouTube autorizados"));
+  assert.ok(routeSource.includes("Nenhum canal YouTube foi encontrado"));
+  assert.ok(routeSource.includes("Não foi possível listar os canais autorizados"));
 });

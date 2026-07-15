@@ -2,7 +2,12 @@
 
 ## Status
 
-Planejada.
+Status vigente apos H12.5: implementacao corretiva publicada; gate E13 bloqueado por
+ausencia de asset de teste no storage autorizado e sem upload real reproduzivel.
+
+Em implementacao corretiva na branch `codex/sprint-12-authorized-youtube-integration`.
+O gate E13 permanece bloqueado até a correção funcional e a validação real
+reproduzível descritas nesta emenda.
 
 ## Identification
 
@@ -26,6 +31,28 @@ A decisao documental do E13 esta fechada no ADR relacionado. A lista aprovada pa
 
 Enquanto a normalizacao documental nao estiver mergeada em `main` e a branch funcional da Sprint 12 nao existir, a implementacao continua fora de execucao. O documento define o contrato; a branch futura executa esse contrato.
 
+## Decisao arquitetural em vigor
+
+Decisão: **`ADOPT_ADDITIONAL_READ_SCOPE`**.
+
+A validação real de 2026-07-15 confirmou OAuth com `youtube.upload`, mas a chamada
+`channels.list?mine=true` falhou com `YOUTUBE_CHANNELS_UNAVAILABLE`. O escopo de
+upload não pode ser tratado como autorização de leitura da conta. Como H12.3 exige
+descoberta e seleção explícita do canal com verificação server-side, o E13 passa a
+usar o conjunto mínimo de dois escopos:
+
+- `https://www.googleapis.com/auth/youtube.upload` para upload;
+- `https://www.googleapis.com/auth/youtube.readonly` para descobrir e verificar os
+  canais da conta autenticada.
+
+O escopo amplo `https://www.googleapis.com/auth/youtube`, YouTube Analytics e
+qualquer outro escopo permanecem não autorizados. Conexões antigas que não tenham
+`youtube.readonly` ficam bloqueadas para reautorização; nenhum token antigo é
+promovido silenciosamente.
+
+Esta decisão emenda o ADR 002 e rejeita tanto o destino baseado apenas em ID manual
+quanto a remoção de seleção da Sprint 12.
+
 ## Distincao entre identificadores
 
 - **Fase do roadmap**: linha historica de capacidade do produto no Documento Mestre.
@@ -38,6 +65,10 @@ Enquanto a normalizacao documental nao estiver mergeada em `main` e a branch fun
 
 ## Historias incluidas
 
+- H12.1 - Estado da integracao YouTube por canal.
+- H12.2 - Autorizacao e revogacao OAuth 2.0 Google.
+- H12.3 - Selecao do canal YouTube e readiness operacional.
+- H12.4 - Upload autorizado de publicacao aprovada.
 - Autorizar integracoes reais somente com aprovacao humana documentada quando houver efeito externo.
 - Registrar e recuperar o estado de autorizacao por canal.
 - Armazenar tokens ou credenciais em forma segura, sem expor segredos.
@@ -111,6 +142,44 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 - Mensagens de erro e estados vazios.
 - Interfaces de configuracao ou confirmacao ja previstas em docs oficiais.
 
+## Contratos de execucao da Sprint 12
+
+Todos os endpoints abaixo usam o envelope HTTP existente, exigem `channelId` quando
+operacionais e nunca retornam tokens, secrets ou payloads sensiveis. O `state` de
+OAuth e transportado apenas no redirect e nao e persistido em resposta operacional.
+
+| Metodo | Endpoint                                               | Entrada                         | Retorno sem segredo                                          |
+| ------ | ------------------------------------------------------ | ------------------------------- | ------------------------------------------------------------ |
+| GET    | `/api/integrations/youtube/oauth/start?channelId=<id>` | canal ativo                     | `OAuthStartResponse` com `authorizationUrl`, `expiresAt`     |
+| GET    | `/api/integrations/youtube/oauth/callback`             | `code`, `state`, `error`        | HTML/redirect seguro para a UI; estado persistido no backend |
+| GET    | `/api/integrations/youtube/connection?channelId=<id>`  | canal ativo                     | `YouTubeConnectionState`                                     |
+| GET    | `/api/integrations/youtube/channels?channelId=<id>`    | canal ativo                     | `YouTubeChannel[]`                                           |
+| POST   | `/api/integrations/youtube/selection`                  | `channelId`, `youtubeChannelId` | `YouTubeConnectionState`                                     |
+| GET    | `/api/integrations/youtube/readiness?channelId=<id>`   | canal ativo                     | `YouTubeReadiness`                                           |
+| POST   | `/api/integrations/youtube/revoke`                     | `channelId`                     | `YouTubeConnectionState`                                     |
+| POST   | `/api/publications/:publicationJobId/upload`           | `channelId`, `requestedBy`      | `YouTubeUploadResult`                                        |
+| GET    | `/api/publications/:publicationJobId/upload`           | `channelId`                     | `YouTubeUploadResult` ou estado `pending`                    |
+
+`YouTubeConnectionState.status` é fechado em `disconnected`, `pending`, `connected`,
+`expired`, `revoked` e `error`. `YouTubeReadiness.status` é `ready`, `warning` ou
+`blocked` e inclui razões determinísticas. `YouTubeUploadResult` contém somente
+IDs externos, status, timestamps, `publicationJobId` e código/mensagem normalizados.
+O único escopo autorizado nesta sprint é
+`https://www.googleapis.com/auth/youtube.upload` e
+`https://www.googleapis.com/auth/youtube.readonly`, cada um somente para sua
+finalidade documentada. Nenhum escopo adicional é permitido.
+
+Critérios por história:
+
+- H12.1: conexão, destino selecionado e readiness são sempre filtrados por `channelId`.
+- H12.2: state é HMAC, expirável e one-shot; callback exige escopo mínimo; tokens ficam
+  cifrados em repouso; refresh, revogação remota e invalidação local são auditáveis.
+- H12.3: apenas canais retornados pela API autorizada com escopo de leitura válido
+  podem ser selecionados; canal selecionado, conta Google e token pertencem ao mesmo
+  contexto operacional. Conexão sem escopo de leitura entra em reautorização obrigatória.
+- H12.4: upload exige aprovação humana aprovada, compliance aprovado, modo externo
+  permitido, readiness, asset elegível do mesmo canal e idempotência sem conflito.
+
 ## Fluxo de autorizacao
 
 1. O operador identifica o canal e a integracao real autorizada.
@@ -119,6 +188,26 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 4. O sistema grava apenas o estado necessario para operar, sem expor segredo.
 5. O estado fica disponivel para leitura operacional e auditoria.
 6. A revogacao invalida o acesso e deixa trilha auditavel.
+
+### Descoberta e seleção do canal
+
+1. Após callback válido, o backend verifica que o conjunto concedido contém exatamente
+   os dois escopos aprovados.
+2. O backend usa `channels.list?mine=true` com `youtube.readonly` e retorna somente
+   metadados não sensíveis de canais pertencentes à conta autenticada.
+3. O operador seleciona explicitamente um canal exibido; o backend revalida que o ID
+   está na lista obtida para aquela conexão e `channelId`.
+4. Nenhum ID enviado pelo frontend é aceito sem essa prova server-side.
+5. Lista vazia, escopo insuficiente, conta trocada ou canal indisponível bloqueiam
+   readiness e upload com motivo determinístico.
+
+### Reautorização e troca de conta
+
+- Mudança de escopo exige revogação/reautorização; consentimento antigo não é
+  considerado suficiente.
+- Se a conta Google ou a lista de canais mudar, a seleção anterior é invalidada e o
+  operador precisa selecionar novamente.
+- Revogação remota ou local bloqueia readiness, refresh e upload subsequentes.
 
 ## Politica para OAuth e tokens
 
@@ -178,6 +267,11 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 - provedor nao suportado;
 - configuracao inconsistente;
 - erro de auditoria ou persistencia.
+- escopo de leitura insuficiente;
+- reautorização obrigatória;
+- conta sem canal disponível;
+- destino YouTube não confirmado;
+- conta/canal alterado após seleção.
 
 ## Evidencias esperadas
 
@@ -196,6 +290,9 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 - Fluxo de erro de integracao indisponivel.
 - Verificacao de isolamento por canal.
 - Verificacao de ausencia de segredo em log, commit e resposta operacional.
+- Callback com `youtube.upload` sem `youtube.readonly` bloqueado para seleção/readiness.
+- Callback com os dois escopos aprovados permitindo listagem e seleção server-side.
+- Reautorização após mudança de escopo, troca de conta e lista vazia de canais.
 
 ## Fora de escopo
 
@@ -210,36 +307,73 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 
 ## Definition of Done
 
-- A governanca da integracao real esta documentada sem ambiguidade.
+- H12.1-H12.4 estao implementadas no frontend, backend, persistencia, auditoria e testes.
 - A decisao sobre provedores ou plataformas esta explicitada na documentacao oficial e fechada no ADR relacionado.
-- Segredos permanecem fora do repositorio e dos logs.
-- A auditoria e o isolamento por canal estao definidos.
+- Segredos permanecem fora do repositorio, bundles, respostas e logs.
+- A auditoria e o isolamento por canal sao verificaveis por testes e operacao.
 - O contrato e coerente com Documento Mestre, roadmap, backlog, handoff e demais specs.
-- Nenhum comportamento de produto foi implementado nesta execucao documental.
+- O gate de conclusao exige evidencia reproduzivel do fluxo autorizado; mocks comprovam apenas o comportamento controlado e nao substituem validacao real quando credenciais seguras estiverem disponiveis.
+- O gate também exige comprovação de que a lista de canais foi obtida com o escopo de
+  leitura aprovado, que o destino foi selecionado explicitamente e que o upload real
+  ocorreu no canal correto.
 
 ## Matriz de integracoes aprovadas
 
-| Campo | Conteudo |
-| --- | --- |
-| Provedor/plataforma | YouTube Data API com autorizacao oficial da Google |
-| Status | approved for E13 |
-| Finalidade | Publicacao assistida em canal YouTube autorizado, com estado de conexao por canal e evidencias auditaveis |
-| Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002 |
-| Fluxo operacional | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao |
-| Tipo de autorizacao | OAuth 2.0 oficial da Google |
-| Permissoes minimas | `https://www.googleapis.com/auth/youtube.upload` como minimo; escopos adicionais somente se uma necessidade documental futura exigir leitura complementar |
-| Efeito externo | Upload e publicacao assistida em canal autorizado |
-| Aprovacao humana | Obrigatoria antes de qualquer efeito externo |
-| Isolamento por canal | Cada canal possui autorizacao independente |
-| Armazenamento seguro | Access token e refresh token criptografados/armazenados fora do repositorio |
-| Revogacao | Fluxo oficial de revogacao da Google e invalidacao local do estado |
-| Auditoria | Tentativa, aprovacao, recusa, expiracao, revogacao, erro e idempotencia |
-| Contratos de frontend | `/publications`, `PublicationTarget`, `PublicationJob`, estados de readiness e aprovacoes |
-| Contratos de backend | `/api/publication-targets`, `/api/publications`, `/api/publications/:publicationJobId/reschedule`; contratos de iniciar OAuth, callback, estado de conexao, revogacao, selecao de canal e readiness devem ser formalizados na Spec Review da Sprint 12 antes da implementacao |
-| Persistencia | `PublicationTarget`, `PublicationJob`, `HumanApproval`, `AuditLog` |
-| Estados de erro | autorizacao negada, expiracao, credencial ausente, revogado, indisponivel, configuracao inconsistente, erro de auditoria ou persistencia |
-| Testes obrigatorios | Fluxo aprovado, fluxo negado, revogacao, erro de indisponibilidade, isolamento por canal, ausencia de segredo |
-| Custos e limites | Respeitar quotas e limites do provedor e registrar custo quando aplicavel |
-| Fora de escopo | TikTok, Instagram, LinkedIn, novos provedores sem nova decisao formal, automacao sem aprovacao humana |
-| Riscos | Escopo excessivo, revogacao mal tratada, token exposto, publicacao sem aprovacao |
-| Fonte oficial | `https://developers.google.com/youtube/v3/guides/authentication`, `https://developers.google.com/youtube/v3/guides/uploading_a_video`, `https://developers.google.com/youtube/v3/guides/auth/installed-apps`, `https://developers.google.com/identity/protocols/oauth2/web-server`, `https://support.google.com/accounts/answer/13533235?hl=en` |
+| Campo                 | Conteudo                                                                                                                                                                                                                                                                                                                                        |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Provedor/plataforma   | YouTube Data API com autorizacao oficial da Google                                                                                                                                                                                                                                                                                              |
+| Status                | approved for E13                                                                                                                                                                                                                                                                                                                                |
+| Finalidade            | Publicacao assistida em canal YouTube autorizado, com estado de conexao por canal e evidencias auditaveis                                                                                                                                                                                                                                       |
+| Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002                                                                                                                                                                                                                                                                                                            |
+| Fluxo operacional     | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao                                                                                                                                                                                                                         |
+| Tipo de autorizacao   | OAuth 2.0 oficial da Google                                                                                                                                                                                                                                                                                                                     |
+| Permissoes minimas    | `https://www.googleapis.com/auth/youtube.upload` para upload + `https://www.googleapis.com/auth/youtube.readonly` para descoberta/verificação de canais; nenhum escopo amplo ou adicional                                                                                                                                                       |
+| Efeito externo        | Upload e publicacao assistida em canal autorizado                                                                                                                                                                                                                                                                                               |
+| Aprovacao humana      | Obrigatoria antes de qualquer efeito externo                                                                                                                                                                                                                                                                                                    |
+| Isolamento por canal  | Cada canal possui autorizacao independente                                                                                                                                                                                                                                                                                                      |
+| Armazenamento seguro  | Access token e refresh token criptografados/armazenados fora do repositorio                                                                                                                                                                                                                                                                     |
+| Revogacao             | Fluxo oficial de revogacao da Google e invalidacao local do estado                                                                                                                                                                                                                                                                              |
+| Auditoria             | Tentativa, aprovacao, recusa, expiracao, revogacao, erro e idempotencia                                                                                                                                                                                                                                                                         |
+| Contratos de frontend | `/publications`, `PublicationTarget`, `PublicationJob`, estados de readiness e aprovacoes                                                                                                                                                                                                                                                       |
+| Contratos de backend  | `/api/publication-targets`, `/api/publications`, `/api/publications/:publicationJobId/reschedule`; contratos de iniciar OAuth, callback, estado de conexao, revogacao, selecao de canal e readiness devem ser formalizados na Spec Review da Sprint 12 antes da implementacao                                                                   |
+| Persistencia          | `PublicationTarget`, `PublicationJob`, `HumanApproval`, `AuditLog`                                                                                                                                                                                                                                                                              |
+| Estados de erro       | autorizacao negada, expiracao, credencial ausente, revogado, indisponivel, configuracao inconsistente, erro de auditoria ou persistencia                                                                                                                                                                                                        |
+| Testes obrigatorios   | Fluxo aprovado, fluxo negado, revogacao, erro de indisponibilidade, isolamento por canal, ausencia de segredo                                                                                                                                                                                                                                   |
+| Custos e limites      | Respeitar quotas e limites do provedor e registrar custo quando aplicavel                                                                                                                                                                                                                                                                       |
+| Fora de escopo        | TikTok, Instagram, LinkedIn, novos provedores sem nova decisao formal, automacao sem aprovacao humana                                                                                                                                                                                                                                           |
+| Riscos                | Escopo excessivo, revogacao mal tratada, token exposto, publicacao sem aprovacao                                                                                                                                                                                                                                                                |
+| Fonte oficial         | `https://developers.google.com/youtube/v3/guides/authentication`, `https://developers.google.com/youtube/v3/guides/uploading_a_video`, `https://developers.google.com/youtube/v3/guides/auth/installed-apps`, `https://developers.google.com/identity/protocols/oauth2/web-server`, `https://support.google.com/accounts/answer/13533235?hl=en` |
+
+## Evidencia de validacao corretiva H12.5 — 2026-07-15
+
+- OAuth real com `youtube.upload` + `youtube.readonly`: concluido.
+- Descoberta server-side por `channels.list?mine=true`: concluida com um canal.
+- Selecao explicita e readiness: concluidos.
+- Upload privado/nao listado: bloqueado pela ausencia do arquivo autorizado `vd_historia_01` no storage configurado; nenhum ID externo foi persistido.
+- Revogacao remota/local e bloqueio pos-revogacao: concluidos.
+- Segredos em respostas, logs, auditoria, Git e frontend: nao encontrados.
+- Gate E13: permanece bloqueado ate disponibilizar asset de teste rastreavel e repetir upload, consulta, idempotencia e isolamento.
+- O fixture local controlado foi removido apos divergencia de integridade com o
+  `VideoAsset`; nao existe fluxo oficial para atualizar esse registro sem ampliar o
+  escopo ou editar estado diretamente.
+
+## H12.6 - Preparacao oficial de VideoAsset para publicacao real
+
+H12.6 e uma historia tecnica corretiva do E13. O fluxo oficial
+`POST /api/videos/import-from-storage` registra um novo `VideoAsset` a partir de
+arquivo existente no storage autorizado, sem editar banco e sem sobrescrever
+asset existente. O backend calcula SHA-256, tamanho e metadados FFprobe,
+valida path relativo canal-scoped, origem/licenca, video valido e idempotencia.
+`vd_historia_01` permanece preservado; falhas nao deixam registro parcial.
+
+### Evidencia de validacao real H12.6 e E13
+
+- Data: 2026-07-15.
+- Um novo `VideoAsset` foi criado por fluxo oficial de storage e permaneceu
+  separado de `vd_historia_01`.
+- O upload governante `POST /api/publications/:publicationJobId/upload`
+  concluiu com resultado publicado e replay idempotente retornando o mesmo
+  resultado.
+- A revogacao foi aplicada e o bloqueio pos-revogacao foi confirmado.
+- A policy operacional foi restaurada para `demo` apos a validacao.
+- Nenhum segredo foi observado em respostas, logs, auditoria, Git ou frontend.

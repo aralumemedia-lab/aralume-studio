@@ -469,3 +469,19 @@ Do not add:
 - object storage migration;
 - secret-bearing asset metadata;
 - binary fixtures in Git unless already required by an approved repository pattern.
+
+## E13 corrective import flow
+
+The E13 corrective flow may register a new `VideoAsset` from an existing local
+file through `POST /api/videos/import-from-storage`. This backend-only operation
+does not accept binary upload or arbitrary paths. The caller supplies a
+channel-scoped relative path, origin, provenance, license, optional content link,
+title/description and idempotency key.
+
+The backend resolves the configured root, rejects absolute paths, traversal,
+symlink escape, channel mismatch, missing/non-regular/empty files and unsupported
+extensions. It calculates SHA-256 and size, runs FFprobe with a timeout, requires
+a valid video stream/duration/dimensions, then persists a new `VideoAsset`.
+Client-supplied integrity and technical metadata are not authoritative. Existing
+registry entries are never overwritten; replay is idempotent and failures leave
+no partial asset.

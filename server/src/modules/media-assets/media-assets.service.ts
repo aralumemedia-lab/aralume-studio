@@ -1,11 +1,15 @@
 import { randomUUID } from "node:crypto";
+import { existsSync, lstatSync } from "node:fs";
 import path from "node:path";
 
 import { AppError } from "../../http/errors.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
 import {
   buildInternalUri,
+  checksumFile,
   normalizeRelativeStoragePath,
+  probeVideoFile,
+  readFileSizeBytes,
   resolveAbsoluteStoragePath,
   resolveStorageRoot,
   validation,
@@ -27,6 +31,8 @@ import type {
   MediaAssetsService,
   StorageReferenceValidationInput,
   VideoAssetFilters,
+  VideoAssetImportInput,
+  VideoAsset,
 } from "./media-assets.types.js";
 
 export type MediaAssetsClock = () => Date;
@@ -66,6 +72,7 @@ export function createMediaAssetsService(
     options.storageRoot,
     path.resolve(process.cwd(), ".aralume", "storage", "media-assets"),
   );
+  const importsInFlight = new Map<string, Promise<import("./media-assets.types.js").VideoAsset>>();
 
   return {
     listMediaAssets(filters) {
@@ -450,6 +457,202 @@ export function createMediaAssetsService(
       return found;
     },
 
+    async importVideoAssetFromStorage(input: VideoAssetImportInput) {
+      assertChannelExists(dependencies.channelsRepository, input.channelId);
+      const content = dependencies.editorialRepository?.getContentIdea(input.contentId);
+      if (!content || content.channelId !== input.channelId) {
+        throw notFound("Content is not available for this channel", {
+          channelId: input.channelId,
+          contentId: input.contentId,
+        });
+      }
+
+      const key = `${input.channelId}:${input.idempotencyKey}`;
+      const fingerprint = JSON.stringify({
+        channelId: input.channelId,
+        storagePath: input.storagePath,
+        title: input.title,
+        description: input.description,
+        origin: input.origin,
+        provenance: input.provenance,
+        licenseStatus: input.licenseStatus,
+        licenseName: input.licenseName,
+        contentId: input.contentId,
+      });
+      const existing = findImportedVideo(repository, input.channelId, input.idempotencyKey);
+      if (existing) {
+        assertImportFingerprint(existing, fingerprint, input.channelId, input.idempotencyKey);
+        recordImportAudit(
+          dependencies.auditRepository,
+          idFactory,
+          clock,
+          input.channelId,
+          existing.id,
+          "video_asset.import_idempotent_replay",
+          {
+            storagePath: existing.storagePath,
+            idempotencyKey: input.idempotencyKey,
+          },
+        );
+        return existing;
+      }
+
+      const current = importsInFlight.get(key);
+      if (current) {
+        const result = await current;
+        assertImportFingerprint(result, fingerprint, input.channelId, input.idempotencyKey);
+        return result;
+      }
+
+      const operation = (async () => {
+        try {
+          const validation = validateStorageReferenceInternal(
+            input.channelId,
+            input.storagePath,
+            "video",
+            storageRoot,
+          );
+          const absolutePath = validationPath(storageRoot, validation.normalizedStoragePath);
+          if (!existsSync(absolutePath) || !lstatSync(absolutePath).isFile()) {
+            throw validationError("Video file is not available", {
+              reason: "VIDEO_FILE_NOT_FOUND",
+              channelId: input.channelId,
+              storagePath: validation.normalizedStoragePath,
+            });
+          }
+          if (lstatSync(absolutePath).isSymbolicLink()) {
+            throw validationError("Video file must be a regular file", {
+              reason: "VIDEO_SYMLINK_REJECTED",
+              channelId: input.channelId,
+              storagePath: validation.normalizedStoragePath,
+            });
+          }
+          if (
+            !supportedVideoExtensions.has(
+              path.extname(validation.normalizedStoragePath).toLowerCase(),
+            )
+          ) {
+            throw validationError("Video extension is not supported", {
+              reason: "VIDEO_EXTENSION_UNSUPPORTED",
+              channelId: input.channelId,
+              storagePath: validation.normalizedStoragePath,
+            });
+          }
+          const observedSizeBytes = readFileSizeBytes(absolutePath);
+          if (observedSizeBytes <= 0) {
+            throw validationError("Video file must not be empty", {
+              reason: "VIDEO_FILE_EMPTY",
+              channelId: input.channelId,
+              storagePath: validation.normalizedStoragePath,
+            });
+          }
+          recordImportAudit(
+            dependencies.auditRepository,
+            idFactory,
+            clock,
+            input.channelId,
+            `storage:${validation.normalizedStoragePath}`,
+            "video_asset.import_validation_started",
+            { storagePath: validation.normalizedStoragePath },
+          );
+          const probe = await probeVideoFile(absolutePath);
+          const checksum = checksumFile(absolutePath);
+          const finalSizeBytes = readFileSizeBytes(absolutePath);
+          if (finalSizeBytes !== observedSizeBytes) {
+            throw conflict("Video file changed during validation", {
+              reason: "VIDEO_FILE_CHANGED",
+              channelId: input.channelId,
+              storagePath: validation.normalizedStoragePath,
+            });
+          }
+          const now = clock().toISOString();
+          const assetId = `vd_${idFactory()}`;
+          const format: VideoAsset["format"] =
+            probe.width === probe.height
+              ? "square"
+              : probe.width > probe.height
+                ? "horizontal"
+                : "vertical";
+          const asset = {
+            id: assetId,
+            channelId: input.channelId,
+            contentId: input.contentId,
+            title: input.title.trim(),
+            status: "approved" as const,
+            durationSeconds: probe.durationSeconds,
+            format,
+            resolution: `${probe.width}x${probe.height}`,
+            renderStatus: "rendered" as const,
+            qualityStatus: "passed" as const,
+            complianceStatus: "approved" as const,
+            costActualCents: 0,
+            type: "video" as const,
+            origin: input.origin,
+            licenseStatus: input.licenseStatus,
+            internalUri: buildInternalUri(input.channelId, assetId),
+            storagePath: validation.normalizedStoragePath,
+            mimeType: mimeTypeForExtension(path.extname(validation.normalizedStoragePath)),
+            sizeBytes: finalSizeBytes,
+            checksumAlgorithm: "sha256" as const,
+            checksum,
+            riskLevel: "ok" as const,
+            technicalMetadata: {
+              container: probe.containerFormat,
+              codec: probe.videoCodec,
+              width: probe.width,
+              height: probe.height,
+              durationSeconds: probe.durationSeconds,
+              importedFromStorage: true,
+              importIdempotencyKey: input.idempotencyKey,
+              importRequestFingerprint: fingerprint,
+              description: input.description.trim(),
+              provenance: input.provenance.trim(),
+              licenseName: input.licenseName?.trim(),
+            },
+            createdAt: now,
+            updatedAt: now,
+          };
+          repository.upsertVideoAsset(asset);
+          recordImportAudit(
+            dependencies.auditRepository,
+            idFactory,
+            clock,
+            input.channelId,
+            asset.id,
+            "video_asset.import_completed",
+            {
+              storagePath: asset.storagePath,
+              sizeBytes: asset.sizeBytes,
+              checksum,
+              durationSeconds: asset.durationSeconds,
+              resolution: asset.resolution,
+            },
+          );
+          return asset;
+        } catch (error) {
+          recordImportAudit(
+            dependencies.auditRepository,
+            idFactory,
+            clock,
+            input.channelId,
+            `storage:${input.storagePath}`,
+            "video_asset.import_failed",
+            {
+              storagePath: input.storagePath,
+              reason: error instanceof AppError ? error.code : "IMPORT_FAILED",
+            },
+          );
+          throw error;
+        }
+      })();
+      importsInFlight.set(key, operation);
+      try {
+        return await operation;
+      } finally {
+        importsInFlight.delete(key);
+      }
+    },
+
     listDerivedClips(filters) {
       assertChannelExists(dependencies.channelsRepository, filters.channelId);
       return repository.listDerivedClips(filters);
@@ -751,6 +954,72 @@ function recordAudit(
   log: Parameters<MediaAssetsDependencies["auditRepository"]["appendAuditLog"]>[0],
 ): void {
   auditRepository.appendAuditLog(log);
+}
+
+const supportedVideoExtensions = new Set([".mp4", ".mov", ".webm", ".mkv"]);
+
+function validationPath(storageRoot: string, normalizedStoragePath: string): string {
+  return resolveAbsoluteStoragePath(storageRoot, normalizedStoragePath).absolutePath;
+}
+
+function mimeTypeForExtension(extension: string): string {
+  return extension === ".webm"
+    ? "video/webm"
+    : extension === ".mov"
+      ? "video/quicktime"
+      : "video/mp4";
+}
+
+function validationError(message: string, details: Record<string, unknown>): AppError {
+  return new AppError({ code: "VALIDATION_ERROR", status: 400, message, details });
+}
+
+function findImportedVideo(
+  repository: MediaAssetsRepository,
+  channelId: string,
+  idempotencyKey: string,
+): VideoAsset | undefined {
+  return repository
+    .listVideoAssets({ channelId })
+    .find((asset) => asset.technicalMetadata?.importIdempotencyKey === idempotencyKey);
+}
+
+function assertImportFingerprint(
+  asset: VideoAsset,
+  fingerprint: string,
+  channelId: string,
+  idempotencyKey: string,
+): void {
+  if (asset.technicalMetadata?.importRequestFingerprint !== fingerprint) {
+    throw conflict("Idempotency key already used for a different import request", {
+      channelId,
+      idempotencyKey,
+    });
+  }
+}
+
+function recordImportAudit(
+  auditRepository: MediaAssetsDependencies["auditRepository"],
+  idFactory: () => string,
+  clock: () => Date,
+  channelId: string,
+  entityId: string,
+  action: string,
+  metadata: Record<string, unknown>,
+): void {
+  recordAudit(auditRepository, {
+    id: `au_${idFactory()}`,
+    channelId,
+    actorType: "user",
+    actorName: "Aralume Operator",
+    action,
+    entityType: "VideoAsset",
+    entityId,
+    status: action.endsWith("failed") ? "failed" : "success",
+    message: "Video asset import event.",
+    metadata,
+    createdAt: clock().toISOString(),
+  });
 }
 
 function assertChannelExists(channelsRepository: ChannelsRepository, channelId: string): void {

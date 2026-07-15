@@ -36,6 +36,27 @@ Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por cana
 
 Antes de criar branch funcional ou editar codigo, confirme que a documentacao oficial define explicitamente os provedores ou plataformas do E13. A lista aprovada para esta sprint e fechada no ADR 002. Nao implemente abstracoes genericas, OAuth hipotetico ou contratos inventados.
 
+## Emenda arquitetural 2026-07-15
+
+O conflito documental entre `youtube.upload` e `channels.list?mine=true` foi resolvido
+no ADR 002 e na spec 015 com a decisão **`ADOPT_ADDITIONAL_READ_SCOPE`**:
+
+- `youtube.upload` é exclusivo para upload;
+- `youtube.readonly` é exclusivo para descoberta/verificação dos canais da conta;
+- o escopo amplo `youtube` e Analytics continuam proibidos;
+- conexões antigas sem o escopo de leitura exigem reautorização;
+- seleção por ID informado apenas pelo frontend é proibida.
+
+A decisão é documental. O código atual ainda solicita somente `youtube.upload` e,
+portanto, permanece pendente de correção antes da conclusão da Sprint 12.
+
+## Evidência real do bloqueio
+
+Em 2026-07-15, OAuth real foi concluído e auditado, mas a listagem de canais falhou
+com `YOUTUBE_CHANNELS_UNAVAILABLE`. A YouTube Data API v3 estava habilitada. Nenhum
+upload foi executado; a autorização foi revogada remotamente e localmente; o
+readiness permaneceu bloqueado; nenhum segredo apareceu no repositório ou logs.
+
 ## Historias incluidas
 
 - Autorizacao humana documentada quando houver efeito externo.
@@ -45,6 +66,7 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - Estados de erro operacionais.
 - Isolamento por canal.
 - Integracao aprovada: YouTube Data API com OAuth 2.0 Google.
+- Descoberta server-side e reautorizacao do conjunto de escopos aprovado.
 
 ## Escopo
 
@@ -67,6 +89,7 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - Publicacao externa sem autorizacao.
 - TikTok, Instagram e LinkedIn.
 - Qualquer arquitetura generica hipotetica para contornar a ausencia de definicao aprovada.
+- Destino YouTube baseado somente em identificador manual não verificado.
 - Segredos em codigo, docs, commits ou logs.
 - Aceitacao baseada apenas em CLI.
 - Mascarar ausencia de integracao com mocks.
@@ -106,11 +129,13 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 
 ## Definition of Done
 
-- A decisao final da Sprint 12 e binaria: `V1.0 aceita` ou `V1.0 nao aceita`.
-- A aceitacao exige evidencia de execucao do fluxo aplicavel pelo frontend quando houver interface correspondente.
+- A decisao final da Sprint 12 e `DONE`, `DONE_WITH_LIMITATIONS` ou `BLOCKED`, sem declarar aceite da V1.0.
+- A conclusao exige evidencia de execucao do fluxo aplicavel pelo frontend quando houver interface correspondente.
+- Mocks comprovam comportamento controlado, mas nao substituem validacao real quando credenciais seguras estiverem disponiveis.
 - Qualquer decisao negativa deve listar bloqueios, severidade, evidencia e proximo trabalho necessario.
 - A documentacao deve permanecer coerente entre Documento Mestre, roadmap, backlog, handoff e spec.
 - A lista de integracoes aprovada para E13 e fechada e deve ser mantida como YouTube apenas, salvo nova decisao formal.
+- O gate E13 só pode ser promovido após implementação corretiva de H12.5, nova autorização com os dois escopos, seleção server-side, upload privado/não listado, idempotência e revogação reais.
 
 ## Proibicoes
 
@@ -122,3 +147,37 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - Nao solicitar ou registrar segredos.
 - Nao iniciar implementacao enquanto os provedores ou plataformas do E13 nao estiverem explicitamente aprovados.
 - Nao antecipar TikTok, Instagram ou LinkedIn sem nova decisao formal.
+
+## Validacao corretiva H12.5 em 2026-07-15
+
+- Commit funcional: `eb9dc67`.
+- OAuth real concluiu com os dois escopos aprovados.
+- `channels.list?mine=true` retornou um canal; selecao server-side e readiness passaram.
+- Upload real foi tentado em modo supervisionado, mas o asset autorizado `vd_historia_01` nao possui arquivo no storage configurado.
+- O provedor retornou erro sanitizado de upload; nenhum ID externo foi persistido.
+- Revogacao remota/local passou; modo operacional foi restaurado para `demo`; readiness pos-revogacao ficou bloqueado.
+- O gate E13 permanece bloqueado ate disponibilizar um asset de teste rastreavel no storage autorizado e repetir upload privado/nao listado, consulta, idempotencia e isolamento.
+- Nenhum segredo foi encontrado em respostas, logs, auditoria, Git ou frontend.
+- Uma tentativa de preparar um fixture controlado foi interrompida: o arquivo gerado
+  passou no FFprobe, mas divergiu do checksum/tamanho declarados pelo `VideoAsset`.
+  O arquivo foi removido para impedir uso acidental. O sistema nao oferece fluxo
+  oficial para atualizar checksum/tamanho desse `VideoAsset`; nao houve alteracao manual
+  de estado nem upload externo.
+
+## H12.6 - preparacao oficial de VideoAsset
+
+H12.6 foi formalizada no E13 para resolver o bloqueio sem alterar `vd_historia_01`.
+O fluxo aprovado e `POST /api/videos/import-from-storage`: o backend valida path
+canal-scoped, calcula SHA-256/tamanho, executa FFprobe, registra origem/licenca e
+cria um novo `VideoAsset` com idempotencia e auditoria. A implementacao e a
+validacao real ainda estao pendentes; nenhum asset ou upload foi fabricado por
+edicao manual do estado.
+
+### H12.6 - validacao real concluida
+
+- Data: 2026-07-15.
+- O novo `VideoAsset` foi criado por fluxo oficial de storage e permaneceu
+  separado de `vd_historia_01`.
+- O upload governante concluiu, foi consultado e repetido com replay idempotente.
+- O isolamento multicanal e a revogacao foram confirmados.
+- A policy operacional foi restaurada ao estado original apos a validacao.

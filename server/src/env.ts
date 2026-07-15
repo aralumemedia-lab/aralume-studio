@@ -14,6 +14,10 @@ const runtimeEnvSchema = z.object({
   ARALUME_ASSET_STORAGE_ROOT: optionalText,
   DATABASE_URL: optionalText,
   TEST_DATABASE_URL: optionalText,
+  ARALUME_YOUTUBE_CLIENT_ID: optionalText,
+  ARALUME_YOUTUBE_CLIENT_SECRET: optionalText,
+  ARALUME_YOUTUBE_REDIRECT_URI: optionalText,
+  ARALUME_PUBLICATION_TOKEN_SECRET: optionalText,
 });
 
 export type RuntimeEnv = z.infer<typeof runtimeEnvSchema>;
@@ -47,6 +51,10 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): RuntimeEnv {
     ARALUME_ASSET_STORAGE_ROOT: source.ARALUME_ASSET_STORAGE_ROOT,
     DATABASE_URL: source.DATABASE_URL,
     TEST_DATABASE_URL: source.TEST_DATABASE_URL,
+    ARALUME_YOUTUBE_CLIENT_ID: source.ARALUME_YOUTUBE_CLIENT_ID,
+    ARALUME_YOUTUBE_CLIENT_SECRET: source.ARALUME_YOUTUBE_CLIENT_SECRET,
+    ARALUME_YOUTUBE_REDIRECT_URI: source.ARALUME_YOUTUBE_REDIRECT_URI,
+    ARALUME_PUBLICATION_TOKEN_SECRET: source.ARALUME_PUBLICATION_TOKEN_SECRET,
   });
 
   if (!result.success) {

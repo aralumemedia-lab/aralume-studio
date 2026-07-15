@@ -50,6 +50,14 @@ import {
   getPublicationTargets,
   getVideoAssets,
   reschedulePublicationJob,
+  getYouTubeChannels,
+  getYouTubeConnection,
+  getYouTubeOAuthStart,
+  getYouTubeReadiness,
+  getYouTubeUploadResult,
+  revokeYouTube,
+  selectYouTubeChannel,
+  uploadYouTubePublication,
 } from "@/services/api-client";
 
 const operatorName = "Ana Ribeiro";
@@ -83,6 +91,7 @@ export const Route = createFileRoute("/publications")({
     const [isCreatingTarget, setIsCreatingTarget] = useState(false);
     const [targetForm, setTargetForm] = useState<TargetFormState>(createDefaultTargetForm());
     const [jobForm, setJobForm] = useState<JobFormState>(createDefaultJobForm());
+    const [youtubeChannelId, setYoutubeChannelId] = useState("");
 
     useEffect(() => {
       setJobStatusFilter("all");
@@ -159,6 +168,21 @@ export const Route = createFileRoute("/publications")({
       enabled: Boolean(activeChannelId),
       queryFn: () => getAuditLogs(activeChannelId as string),
     });
+    const youtubeConnectionQuery = useQuery({
+      queryKey: ["youtube-connection", activeChannelId],
+      enabled: Boolean(activeChannelId),
+      queryFn: () => getYouTubeConnection(activeChannelId as string),
+    });
+    const youtubeChannelsQuery = useQuery({
+      queryKey: ["youtube-channels", activeChannelId],
+      enabled: Boolean(activeChannelId) && youtubeConnectionQuery.data?.data.status === "connected",
+      queryFn: () => getYouTubeChannels(activeChannelId as string),
+    });
+    const youtubeReadinessQuery = useQuery({
+      queryKey: ["youtube-readiness", activeChannelId],
+      enabled: Boolean(activeChannelId),
+      queryFn: () => getYouTubeReadiness(activeChannelId as string),
+    });
 
     const targets = useMemo(() => targetsQuery.data?.data ?? [], [targetsQuery.data]);
     const jobs = useMemo(() => jobsQuery.data?.data ?? [], [jobsQuery.data]);
@@ -208,6 +232,14 @@ export const Route = createFileRoute("/publications")({
       sourceCandidates.find((candidate) => candidate.canProceed) ??
       sourceCandidates[0];
     const selectedJob = jobsById.get(selectedJobId ?? "") ?? jobs[0];
+
+    const youtubeUploadResultQuery = useQuery({
+      queryKey: ["youtube-upload-result", activeChannelId, selectedJob?.id],
+      enabled:
+        Boolean(activeChannelId && selectedJob?.id) &&
+        (selectedJob?.status === "published" || selectedJob?.status === "failed"),
+      queryFn: () => getYouTubeUploadResult(selectedJob?.id as string, activeChannelId as string),
+    });
 
     useEffect(() => {
       if (isCreatingTarget) {
@@ -296,6 +328,37 @@ export const Route = createFileRoute("/publications")({
         ]);
       },
     });
+    const youtubeConnectMutation = useMutation({
+      mutationFn: () => getYouTubeOAuthStart(activeChannelId as string),
+      onSuccess: (response) => window.location.assign(response.data.authorizationUrl),
+    });
+    const youtubeSelectMutation = useMutation({
+      mutationFn: (channelId: string) =>
+        selectYouTubeChannel({ channelId: activeChannelId as string, youtubeChannelId: channelId }),
+      onSuccess: async () => {
+        await Promise.all([youtubeConnectionQuery.refetch(), youtubeReadinessQuery.refetch()]);
+      },
+    });
+    const youtubeRevokeMutation = useMutation({
+      mutationFn: () => revokeYouTube(activeChannelId as string),
+      onSuccess: async () => {
+        await Promise.all([youtubeConnectionQuery.refetch(), youtubeReadinessQuery.refetch()]);
+      },
+    });
+    const youtubeUploadMutation = useMutation({
+      mutationFn: () => {
+        if (!selectedJob) throw new Error("Nenhum job de publicação selecionado.");
+        return uploadYouTubePublication(selectedJob.id, {
+          channelId: activeChannelId as string,
+          requestedBy: operatorName,
+        });
+      },
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ["publication-jobs", activeChannelId] });
+      },
+    });
+    const youtubeUploadResult =
+      youtubeUploadMutation.data?.data ?? youtubeUploadResultQuery.data?.data;
 
     if (!activeChannelId) {
       return (
@@ -355,6 +418,159 @@ export const Route = createFileRoute("/publications")({
                 </StatusBadge>
               </div>
             </div>
+          </Card>
+
+          <Card className="border-primary/25">
+            <SectionHeader
+              eyebrow="Integração aprovada"
+              title="YouTube autorizado"
+              description="OAuth 2.0 Google com upload e leitura limitada à descoberta dos canais. Tokens permanecem no backend."
+            />
+            {youtubeConnectionQuery.isLoading || youtubeReadinessQuery.isLoading ? (
+              <LoadingState label="Consultando conexão YouTube..." />
+            ) : youtubeConnectionQuery.isError || youtubeReadinessQuery.isError ? (
+              <ErrorState
+                message="Não foi possível consultar o YouTube. Tente novamente quando o backend estiver disponível."
+                onRetry={() => {
+                  void youtubeConnectionQuery.refetch();
+                  void youtubeReadinessQuery.refetch();
+                }}
+              />
+            ) : (
+              <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="space-y-2 text-sm">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge
+                      tone={
+                        youtubeConnectionQuery.data?.data.status === "connected" ? "ok" : "critical"
+                      }
+                      dot
+                    >
+                      {youtubeConnectionQuery.data?.data.status ?? "desconectado"}
+                    </StatusBadge>
+                    <StatusBadge
+                      tone={youtubeReadinessQuery.data?.data.status === "ready" ? "ok" : "critical"}
+                    >{`readiness: ${youtubeReadinessQuery.data?.data.status ?? "blocked"}`}</StatusBadge>
+                  </div>
+                  {youtubeConnectionQuery.data?.data.reauthorizationRequired && (
+                    <p className="text-xs text-warning" role="status">
+                      Reconexão necessária: a autorização atual não possui os dois escopos
+                      aprovados.
+                    </p>
+                  )}
+                  {youtubeConnectionQuery.data?.data.grantedScopes.length ? (
+                    <p className="text-xs text-muted-foreground">
+                      Escopos válidos: {youtubeConnectionQuery.data.data.grantedScopes.join(", ")}
+                    </p>
+                  ) : null}
+                  <div className="text-muted-foreground">
+                    {youtubeConnectionQuery.data?.data.youtubeChannelTitle ??
+                      "Nenhum canal YouTube selecionado."}
+                  </div>
+                  {youtubeReadinessQuery.data?.data.reasons.map((reason) => (
+                    <div key={reason} className="text-xs text-warning">
+                      {reason}
+                    </div>
+                  ))}
+                  {youtubeConnectionQuery.data?.data.status === "connected" && (
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {youtubeChannelsQuery.isLoading && (
+                        <p className="text-xs text-muted-foreground" role="status">
+                          Listando canais YouTube autorizados...
+                        </p>
+                      )}
+                      {youtubeChannelsQuery.isError && (
+                        <p className="text-xs text-destructive" role="alert">
+                          Não foi possível listar os canais autorizados. Tente reconectar.
+                        </p>
+                      )}
+                      <select
+                        aria-label="Canal YouTube"
+                        className="h-9 rounded-md border border-border bg-background px-2 text-sm"
+                        value={
+                          youtubeChannelId ||
+                          youtubeConnectionQuery.data.data.youtubeChannelId ||
+                          ""
+                        }
+                        onChange={(event) => setYoutubeChannelId(event.target.value)}
+                      >
+                        <option value="">Selecionar canal YouTube</option>
+                        {(youtubeChannelsQuery.data?.data ?? []).map((channel) => (
+                          <option key={channel.id} value={channel.id}>
+                            {channel.title}
+                          </option>
+                        ))}
+                      </select>
+                      <Button
+                        size="sm"
+                        disabled={!youtubeChannelId || youtubeSelectMutation.isPending}
+                        onClick={() => youtubeSelectMutation.mutate(youtubeChannelId)}
+                      >
+                        Selecionar destino
+                      </Button>
+                      {!youtubeChannelsQuery.isLoading &&
+                        !youtubeChannelsQuery.isError &&
+                        youtubeChannelsQuery.data?.data.length === 0 && (
+                          <p className="w-full text-xs text-warning" role="status">
+                            Nenhum canal YouTube foi encontrado para esta conta.
+                          </p>
+                        )}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2 lg:justify-end">
+                  <Button
+                    size="sm"
+                    disabled={
+                      youtubeConnectMutation.isPending ||
+                      youtubeConnectionQuery.data?.data.status === "connected"
+                    }
+                    onClick={() => youtubeConnectMutation.mutate()}
+                  >
+                    {youtubeConnectionQuery.data?.data.reauthorizationRequired
+                      ? "Reconectar YouTube"
+                      : "Conectar YouTube"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={
+                      youtubeRevokeMutation.isPending ||
+                      youtubeConnectionQuery.data?.data.status !== "connected"
+                    }
+                    onClick={() => youtubeRevokeMutation.mutate()}
+                  >
+                    Revogar
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={
+                      youtubeUploadMutation.isPending ||
+                      !selectedJob?.id ||
+                      youtubeReadinessQuery.data?.data.status !== "ready"
+                    }
+                    onClick={() => youtubeUploadMutation.mutate()}
+                  >
+                    {youtubeUploadMutation.isPending ? "Enviando..." : "Upload autorizado"}
+                  </Button>
+                </div>
+                <div className="lg:col-span-2" aria-live="polite">
+                  {youtubeUploadMutation.isError ? (
+                    <p role="alert" className="text-xs text-destructive">
+                      O upload foi bloqueado ou falhou. Verifique aprovação, conformidade, readiness
+                      e o estado da integração.
+                    </p>
+                  ) : youtubeUploadResult ? (
+                    <p className="text-xs text-muted-foreground">
+                      Resultado do upload: {youtubeUploadResult.status}
+                      {youtubeUploadResult.youtubeVideoId
+                        ? ` · vídeo ${youtubeUploadResult.youtubeVideoId}`
+                        : ""}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            )}
           </Card>
 
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -444,7 +660,7 @@ export const Route = createFileRoute("/publications")({
                             onChange={(value) =>
                               setTargetForm((current) => ({
                                 ...current,
-                                status: value as PublicationTarget["status"],
+                                status: value as TargetFormState["status"],
                               }))
                             }
                             options={["not_connected", "authenticated", "token_expired"]}
@@ -749,7 +965,10 @@ export const Route = createFileRoute("/publications")({
                         value={selectedSource.approvalStatus ?? "ausente"}
                       />
                       <DetailRow label="Conformidade" value={selectedSource.complianceStatus} />
-                      <DetailRow label="Readiness" value={selectedTarget.readinessReason} />
+                      <DetailRow
+                        label="Readiness"
+                        value={selectedTarget.readinessReason ?? "Sem informação"}
+                      />
                     </dl>
 
                     <div className="rounded-md border border-border bg-surface-muted/25 p-3 text-[12px] text-muted-foreground">
@@ -1113,7 +1332,7 @@ function targetColumns(): Column<PublicationTarget>[] {
       key: "updated",
       header: "Atualizado",
       render: (row) => (
-        <span className="text-muted-foreground">{formatRelative(row.updatedAt)}</span>
+        <span className="text-muted-foreground">{formatRelative(row.updatedAt ?? "")}</span>
       ),
     },
   ];
