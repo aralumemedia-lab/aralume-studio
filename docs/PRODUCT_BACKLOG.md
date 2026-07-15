@@ -11,7 +11,14 @@ This backlog is an index of planning. It does not replace sprint specs.
 | E12 | Publicacao Assistida          | Preparar publicacao com aprovacao humana, compliance e contratos seguros, sem envio externo automatico. | completed | Pacote de publicacao pronto, sem envio externo automatico.     |
 | E13 | Integracoes Reais Autorizadas | Conectar provedores externos com governanca, autorizacao e seguranca documental.                        | planned   | Integracao oficial funcionando sem expor segredo.              |
 | E14 | Metricas e Aprendizado        | Fechar o ciclo editorial com metricas por canal e recomendacoes assistidas.                             | planned   | Metricas geram recomendacao editorial por canal.               |
-| E15 | Hardening V1.0                | Consolidar a base operacional demonstravel para V1.0.                                                   | planned   | Demonstracao ponta a ponta pelo frontend.                      |
+| E15 | Hardening V1.0                | Consolidar a base operacional demonstravel para V1.0.                                                   | planned   | Demonstracao ponta a ponta pelo frontend; Sprint 12 / spec 012. |
+
+## Sprints formalizadas
+
+| Numero | Nome | Epico | Spec | Estado | Observacao |
+| --- | --- | --- | --- | --- | --- |
+| S11 | Publicacao Assistida | E12 | `docs/specs/011-publication-assisted.md` | completed | Capacidade materializada e encerrada. |
+| S12 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | planned | Gate de hardening e aceite da V1.0; bloqueios atuais: E13 e E14. |
 
 ## Catalogo de historias
 
@@ -28,3 +35,4 @@ This backlog is an index of planning. It does not replace sprint specs.
 - Nao usar estimativa de velocidade.
 - Nao duplicar criterios completos das specs.
 - Quando uma historia nao estiver pronta para sprint, manter o status apropriado no backlog e atualizar a spec antes de implementacao.
+- Sprint 12 pertence ao gate de Hardening/V1 Acceptance, nao à Fase 12 historica de Publicacao Assistida.

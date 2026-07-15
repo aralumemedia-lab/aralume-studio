@@ -1289,7 +1289,7 @@ Gate:
 
 ### Fase 12 — Publicação Assistida
 
-**Status:** planejada.
+**Status:** materializada na Sprint 11 e encerrada.
 
 Objetivo:
 
@@ -1321,13 +1321,27 @@ Gate:
 
 ### Fase 15 — Hardening V1.0
 
+**Status:** planejada.
+
 Objetivo:
 
 - transformar MVP em V1.0 funcional.
 
 Gate:
 
-- demonstração ponta a ponta pelo frontend.
+- demonstração ponta a ponta pelo frontend;
+- aceite binário documentado como V1.0 aceita ou V1.0 não aceita na Sprint 12;
+- esta fase é validada pela Sprint 12 e pela spec `docs/specs/012-v1-acceptance.md`, sem reclassificar a Fase 12 histórica.
+
+### Mapa de identificadores
+
+- **Fase do roadmap do produto**: linha histórica de capacidade do produto no Documento Mestre.
+- **Sprint de execução**: unidade sequencial de entrega, integração e validação.
+- **Spec**: contrato normativo que governa a execução da sprint.
+- Os identificadores podem divergir numericamente.
+- A Fase 12 do roadmap materializou-se na Sprint 11 e permanece encerrada.
+- A Sprint 12 formaliza o gate de Hardening/V1 Acceptance da V1.0 e é regida pela spec `docs/specs/012-v1-acceptance.md`.
+- A Sprint 12 não é uma renumeração silenciosa da Fase 12.
 
 ---
 
@@ -1367,6 +1381,8 @@ Não é V1.0 se:
 - não tem fluxo ponta a ponta.
 
 ---
+
+A decisão final de V1.0 é binária: V1.0 aceita ou V1.0 não aceita.
 
 ## 22. Sprint 0 — Prompt normativo para Codex
 
@@ -1546,3 +1562,6 @@ Regras normativas:
 - SDD continua obrigatorio;
 - o historico das Sprints 0 a 10 permanece inalterado;
 - nenhuma capacidade futura pode ser antecipada sem atualizacao documental previa.
+- A Fase 12 foi materializada pela Sprint 11.
+- A Sprint 12 e a primeira execucao formal do gate de Hardening/V1 Acceptance e usa a spec `docs/specs/012-v1-acceptance.md`.
+- A relacao entre fase, sprint e spec deve permanecer explicitada nos documentos de roadmap, backlog, handoff e spec.
