@@ -158,3 +158,8 @@ readiness permaneceu bloqueado; nenhum segredo apareceu no repositório ou logs.
 - Revogacao remota/local passou; modo operacional foi restaurado para `demo`; readiness pos-revogacao ficou bloqueado.
 - O gate E13 permanece bloqueado ate disponibilizar um asset de teste rastreavel no storage autorizado e repetir upload privado/nao listado, consulta, idempotencia e isolamento.
 - Nenhum segredo foi encontrado em respostas, logs, auditoria, Git ou frontend.
+- Uma tentativa de preparar um fixture controlado foi interrompida: o arquivo gerado
+  passou no FFprobe, mas divergiu do checksum/tamanho declarados pelo `VideoAsset`.
+  O arquivo foi removido para impedir uso acidental. O sistema nao oferece fluxo
+  oficial para atualizar checksum/tamanho desse `VideoAsset`; nao houve alteracao manual
+  de estado nem upload externo.

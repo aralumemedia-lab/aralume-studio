@@ -353,3 +353,6 @@ Critérios por história:
 - Revogacao remota/local e bloqueio pos-revogacao: concluidos.
 - Segredos em respostas, logs, auditoria, Git e frontend: nao encontrados.
 - Gate E13: permanece bloqueado ate disponibilizar asset de teste rastreavel e repetir upload, consulta, idempotencia e isolamento.
+- O fixture local controlado foi removido apos divergencia de integridade com o
+  `VideoAsset`; nao existe fluxo oficial para atualizar esse registro sem ampliar o
+  escopo ou editar estado diretamente.
