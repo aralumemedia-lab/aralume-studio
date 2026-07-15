@@ -72,7 +72,7 @@ function DashboardPage() {
   });
   const pubsQ = useQuery({
     queryKey: ["pubs", activeChannelId],
-    queryFn: () => getPublicationJobs(activeChannelId),
+    queryFn: () => getPublicationJobs({ channelId: activeChannelId as string }),
   });
   const auditQ = useQuery({
     queryKey: ["audit", activeChannelId],

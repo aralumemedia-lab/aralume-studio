@@ -59,6 +59,8 @@ export type PublicationJob = {
   blockedReason?: string;
   errorCode?: string;
   errorMessage?: string;
+  externalId?: string;
+  externalPublishedAt?: ISODate;
   createdAt: ISODate;
   updatedAt: ISODate;
 };
@@ -79,6 +81,7 @@ export type PublicationTargetFilters = {
   channelId?: ID;
   platform?: PublicationPlatform;
   status?: PublicationTargetStatus;
+  readinessStatus?: PublicationTargetReadinessStatus;
 };
 
 export type PublicationJobFilters = {

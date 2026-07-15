@@ -2,7 +2,7 @@
 
 ## Status
 
-Planejada.
+Em implementacao na branch `codex/sprint-12-authorized-youtube-integration`.
 
 ## Identification
 
@@ -38,6 +38,10 @@ Enquanto a normalizacao documental nao estiver mergeada em `main` e a branch fun
 
 ## Historias incluidas
 
+- H12.1 - Estado da integracao YouTube por canal.
+- H12.2 - Autorizacao e revogacao OAuth 2.0 Google.
+- H12.3 - Selecao do canal YouTube e readiness operacional.
+- H12.4 - Upload autorizado de publicacao aprovada.
 - Autorizar integracoes reais somente com aprovacao humana documentada quando houver efeito externo.
 - Registrar e recuperar o estado de autorizacao por canal.
 - Armazenar tokens ou credenciais em forma segura, sem expor segredos.
@@ -110,6 +114,41 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 - Auditoria de tentativas, aprovacoes, recusas e revogacoes.
 - Mensagens de erro e estados vazios.
 - Interfaces de configuracao ou confirmacao ja previstas em docs oficiais.
+
+## Contratos de execucao da Sprint 12
+
+Todos os endpoints abaixo usam o envelope HTTP existente, exigem `channelId` quando
+operacionais e nunca retornam tokens, secrets ou payloads sensiveis. O `state` de
+OAuth e transportado apenas no redirect e nao e persistido em resposta operacional.
+
+| Metodo | Endpoint                                               | Entrada                         | Retorno sem segredo                                          |
+| ------ | ------------------------------------------------------ | ------------------------------- | ------------------------------------------------------------ |
+| GET    | `/api/integrations/youtube/oauth/start?channelId=<id>` | canal ativo                     | `OAuthStartResponse` com `authorizationUrl`, `expiresAt`     |
+| GET    | `/api/integrations/youtube/oauth/callback`             | `code`, `state`, `error`        | HTML/redirect seguro para a UI; estado persistido no backend |
+| GET    | `/api/integrations/youtube/connection?channelId=<id>`  | canal ativo                     | `YouTubeConnectionState`                                     |
+| GET    | `/api/integrations/youtube/channels?channelId=<id>`    | canal ativo                     | `YouTubeChannel[]`                                           |
+| POST   | `/api/integrations/youtube/selection`                  | `channelId`, `youtubeChannelId` | `YouTubeConnectionState`                                     |
+| GET    | `/api/integrations/youtube/readiness?channelId=<id>`   | canal ativo                     | `YouTubeReadiness`                                           |
+| POST   | `/api/integrations/youtube/revoke`                     | `channelId`                     | `YouTubeConnectionState`                                     |
+| POST   | `/api/publications/:publicationJobId/upload`           | `channelId`, `requestedBy`      | `YouTubeUploadResult`                                        |
+| GET    | `/api/publications/:publicationJobId/upload`           | `channelId`                     | `YouTubeUploadResult` ou estado `pending`                    |
+
+`YouTubeConnectionState.status` é fechado em `disconnected`, `pending`, `connected`,
+`expired`, `revoked` e `error`. `YouTubeReadiness.status` é `ready`, `warning` ou
+`blocked` e inclui razões determinísticas. `YouTubeUploadResult` contém somente
+IDs externos, status, timestamps, `publicationJobId` e código/mensagem normalizados.
+O único escopo autorizado nesta sprint é
+`https://www.googleapis.com/auth/youtube.upload`.
+
+Critérios por história:
+
+- H12.1: conexão, destino selecionado e readiness são sempre filtrados por `channelId`.
+- H12.2: state é HMAC, expirável e one-shot; callback exige escopo mínimo; tokens ficam
+  cifrados em repouso; refresh, revogação remota e invalidação local são auditáveis.
+- H12.3: apenas canais retornados pela API autorizada podem ser selecionados; canal
+  selecionado e token pertencem ao mesmo contexto operacional.
+- H12.4: upload exige aprovação humana aprovada, compliance aprovado, modo externo
+  permitido, readiness, asset elegível do mesmo canal e idempotência sem conflito.
 
 ## Fluxo de autorizacao
 
@@ -219,27 +258,27 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 
 ## Matriz de integracoes aprovadas
 
-| Campo | Conteudo |
-| --- | --- |
-| Provedor/plataforma | YouTube Data API com autorizacao oficial da Google |
-| Status | approved for E13 |
-| Finalidade | Publicacao assistida em canal YouTube autorizado, com estado de conexao por canal e evidencias auditaveis |
-| Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002 |
-| Fluxo operacional | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao |
-| Tipo de autorizacao | OAuth 2.0 oficial da Google |
-| Permissoes minimas | `https://www.googleapis.com/auth/youtube.upload` como minimo; escopos adicionais somente se uma necessidade documental futura exigir leitura complementar |
-| Efeito externo | Upload e publicacao assistida em canal autorizado |
-| Aprovacao humana | Obrigatoria antes de qualquer efeito externo |
-| Isolamento por canal | Cada canal possui autorizacao independente |
-| Armazenamento seguro | Access token e refresh token criptografados/armazenados fora do repositorio |
-| Revogacao | Fluxo oficial de revogacao da Google e invalidacao local do estado |
-| Auditoria | Tentativa, aprovacao, recusa, expiracao, revogacao, erro e idempotencia |
-| Contratos de frontend | `/publications`, `PublicationTarget`, `PublicationJob`, estados de readiness e aprovacoes |
-| Contratos de backend | `/api/publication-targets`, `/api/publications`, `/api/publications/:publicationJobId/reschedule`; contratos de iniciar OAuth, callback, estado de conexao, revogacao, selecao de canal e readiness devem ser formalizados na Spec Review da Sprint 12 antes da implementacao |
-| Persistencia | `PublicationTarget`, `PublicationJob`, `HumanApproval`, `AuditLog` |
-| Estados de erro | autorizacao negada, expiracao, credencial ausente, revogado, indisponivel, configuracao inconsistente, erro de auditoria ou persistencia |
-| Testes obrigatorios | Fluxo aprovado, fluxo negado, revogacao, erro de indisponibilidade, isolamento por canal, ausencia de segredo |
-| Custos e limites | Respeitar quotas e limites do provedor e registrar custo quando aplicavel |
-| Fora de escopo | TikTok, Instagram, LinkedIn, novos provedores sem nova decisao formal, automacao sem aprovacao humana |
-| Riscos | Escopo excessivo, revogacao mal tratada, token exposto, publicacao sem aprovacao |
-| Fonte oficial | `https://developers.google.com/youtube/v3/guides/authentication`, `https://developers.google.com/youtube/v3/guides/uploading_a_video`, `https://developers.google.com/youtube/v3/guides/auth/installed-apps`, `https://developers.google.com/identity/protocols/oauth2/web-server`, `https://support.google.com/accounts/answer/13533235?hl=en` |
+| Campo                 | Conteudo                                                                                                                                                                                                                                                                                                                                        |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Provedor/plataforma   | YouTube Data API com autorizacao oficial da Google                                                                                                                                                                                                                                                                                              |
+| Status                | approved for E13                                                                                                                                                                                                                                                                                                                                |
+| Finalidade            | Publicacao assistida em canal YouTube autorizado, com estado de conexao por canal e evidencias auditaveis                                                                                                                                                                                                                                       |
+| Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002                                                                                                                                                                                                                                                                                                            |
+| Fluxo operacional     | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao                                                                                                                                                                                                                         |
+| Tipo de autorizacao   | OAuth 2.0 oficial da Google                                                                                                                                                                                                                                                                                                                     |
+| Permissoes minimas    | `https://www.googleapis.com/auth/youtube.upload` como minimo; escopos adicionais somente se uma necessidade documental futura exigir leitura complementar                                                                                                                                                                                       |
+| Efeito externo        | Upload e publicacao assistida em canal autorizado                                                                                                                                                                                                                                                                                               |
+| Aprovacao humana      | Obrigatoria antes de qualquer efeito externo                                                                                                                                                                                                                                                                                                    |
+| Isolamento por canal  | Cada canal possui autorizacao independente                                                                                                                                                                                                                                                                                                      |
+| Armazenamento seguro  | Access token e refresh token criptografados/armazenados fora do repositorio                                                                                                                                                                                                                                                                     |
+| Revogacao             | Fluxo oficial de revogacao da Google e invalidacao local do estado                                                                                                                                                                                                                                                                              |
+| Auditoria             | Tentativa, aprovacao, recusa, expiracao, revogacao, erro e idempotencia                                                                                                                                                                                                                                                                         |
+| Contratos de frontend | `/publications`, `PublicationTarget`, `PublicationJob`, estados de readiness e aprovacoes                                                                                                                                                                                                                                                       |
+| Contratos de backend  | `/api/publication-targets`, `/api/publications`, `/api/publications/:publicationJobId/reschedule`; contratos de iniciar OAuth, callback, estado de conexao, revogacao, selecao de canal e readiness devem ser formalizados na Spec Review da Sprint 12 antes da implementacao                                                                   |
+| Persistencia          | `PublicationTarget`, `PublicationJob`, `HumanApproval`, `AuditLog`                                                                                                                                                                                                                                                                              |
+| Estados de erro       | autorizacao negada, expiracao, credencial ausente, revogado, indisponivel, configuracao inconsistente, erro de auditoria ou persistencia                                                                                                                                                                                                        |
+| Testes obrigatorios   | Fluxo aprovado, fluxo negado, revogacao, erro de indisponibilidade, isolamento por canal, ausencia de segredo                                                                                                                                                                                                                                   |
+| Custos e limites      | Respeitar quotas e limites do provedor e registrar custo quando aplicavel                                                                                                                                                                                                                                                                       |
+| Fora de escopo        | TikTok, Instagram, LinkedIn, novos provedores sem nova decisao formal, automacao sem aprovacao humana                                                                                                                                                                                                                                           |
+| Riscos                | Escopo excessivo, revogacao mal tratada, token exposto, publicacao sem aprovacao                                                                                                                                                                                                                                                                |
+| Fonte oficial         | `https://developers.google.com/youtube/v3/guides/authentication`, `https://developers.google.com/youtube/v3/guides/uploading_a_video`, `https://developers.google.com/youtube/v3/guides/auth/installed-apps`, `https://developers.google.com/identity/protocols/oauth2/web-server`, `https://support.google.com/accounts/answer/13533235?hl=en` |

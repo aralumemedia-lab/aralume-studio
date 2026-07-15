@@ -1,0 +1,514 @@
+import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import {
+  resolveAbsoluteStoragePath,
+  resolveStorageRoot,
+} from "../media-assets/media-assets.storage.js";
+import { AppError } from "../../http/errors.js";
+import type {
+  YouTubeRepository,
+  YouTubeExternalClient,
+  YouTubeService,
+  YouTubeServiceDependencies,
+  YouTubeStoredConnection,
+} from "./youtube.types.js";
+import type {
+  YouTubeChannel,
+  YouTubeConnectionState,
+  YouTubeReadiness,
+  YouTubeReadinessStatus,
+  YouTubeUploadResult,
+} from "./youtube.types.js";
+import { YOUTUBE_UPLOAD_SCOPE } from "./youtube.types.js";
+import {
+  createState,
+  decryptToken,
+  encryptToken,
+  hashState,
+  verifyState,
+} from "./youtube.crypto.js";
+
+const now = () => new Date();
+const externalCode = (error: unknown) =>
+  error instanceof Error && error.name === "YouTubeExternalError"
+    ? error.message
+    : "YOUTUBE_EXTERNAL_UNAVAILABLE";
+
+export function createYouTubeService(input: {
+  repository: YouTubeRepository;
+  dependencies: YouTubeServiceDependencies;
+  externalClient: YouTubeExternalClient;
+  clientId?: string;
+  clientSecret?: string;
+  redirectUri?: string;
+  tokenSecret?: string;
+  storageRoot?: string;
+  clock?: () => Date;
+  idFactory?: () => string;
+}): YouTubeService {
+  const clock = input.clock ?? now;
+  const idFactory = input.idFactory ?? randomUUID;
+  const requireConfig = () => {
+    if (
+      !input.clientId ||
+      !input.clientSecret ||
+      !input.redirectUri ||
+      !input.tokenSecret ||
+      !input.storageRoot
+    )
+      throw appError(
+        "INTEGRATION_CONFIGURATION_INVALID",
+        "YouTube integration is not configured.",
+        409,
+      );
+  };
+  const assertChannel = (channelId: string) => {
+    if (!input.dependencies.channelsRepository.getChannel(channelId))
+      throw appError("NOT_FOUND", "Channel not found.", 404, { channelId });
+  };
+  const audit = (
+    channelId: string,
+    action: string,
+    entityId: string,
+    status: "success" | "warning" | "failed",
+    message: string,
+    metadata: Record<string, unknown> = {},
+  ) =>
+    input.dependencies.auditRepository.appendAuditLog({
+      id: `au_${idFactory()}`,
+      channelId,
+      actorType: "system",
+      actorName: "Aralume Core",
+      action,
+      entityType: "YouTubeIntegration",
+      entityId,
+      status,
+      message,
+      metadata,
+      createdAt: clock().toISOString(),
+    });
+  const publicConnection = (channelId: string): YouTubeConnectionState => {
+    const stored = input.repository.getConnection(channelId);
+    if (!stored) return { channelId, provider: "youtube", status: "disconnected" };
+    const expired =
+      stored.accessTokenExpiresAt !== undefined &&
+      stored.accessTokenExpiresAt <= clock().toISOString();
+    const status = stored.status === "connected" && expired ? "expired" : stored.status;
+    return {
+      channelId,
+      provider: "youtube",
+      status,
+      youtubeChannelId: stored.selectedChannel?.id,
+      youtubeChannelTitle: stored.selectedChannel?.title,
+      connectedAt: stored.connectedAt,
+      expiresAt: stored.accessTokenExpiresAt,
+      lastErrorCode: stored.lastErrorCode,
+      lastErrorMessage: stored.lastErrorMessage,
+    };
+  };
+  const refresh = async (stored: YouTubeStoredConnection): Promise<YouTubeStoredConnection> => {
+    requireConfig();
+    if (!stored.refreshToken)
+      throw appError("UNAUTHORIZED", "YouTube authorization is unavailable.", 401);
+    try {
+      const result = await input.externalClient.refreshAccessToken(
+        decryptToken(stored.refreshToken, input.tokenSecret!),
+      );
+      const updated = {
+        ...stored,
+        status: "connected" as const,
+        token: encryptToken(result.accessToken, input.tokenSecret!),
+        accessTokenExpiresAt: new Date(clock().getTime() + result.expiresIn * 1000).toISOString(),
+        lastErrorCode: undefined,
+        lastErrorMessage: undefined,
+      };
+      input.repository.upsertConnection(updated);
+      audit(
+        stored.channelId,
+        "youtube.token_refreshed",
+        stored.channelId,
+        "success",
+        "YouTube token refreshed.",
+      );
+      return updated;
+    } catch (error) {
+      const failed = {
+        ...stored,
+        status: "expired" as const,
+        lastErrorCode: externalCode(error),
+        lastErrorMessage: "YouTube authorization expired.",
+      };
+      input.repository.upsertConnection(failed);
+      audit(
+        stored.channelId,
+        "youtube.token_refresh_failed",
+        stored.channelId,
+        "failed",
+        "YouTube token refresh failed.",
+        { errorCode: failed.lastErrorCode },
+      );
+      throw appError("UNAUTHORIZED", "YouTube authorization expired.", 401);
+    }
+  };
+  const accessToken = async (channelId: string) => {
+    let stored = input.repository.getConnection(channelId);
+    if (!stored?.token) throw appError("UNAUTHORIZED", "YouTube authorization is required.", 401);
+    if (stored.status !== "connected") stored = await refresh(stored);
+    if (stored.accessTokenExpiresAt && stored.accessTokenExpiresAt <= clock().toISOString())
+      stored = await refresh(stored);
+    try {
+      return { stored, token: decryptToken(stored.token!, input.tokenSecret!) };
+    } catch {
+      throw appError("UNAUTHORIZED", "YouTube authorization is invalid.", 401);
+    }
+  };
+
+  return {
+    startOAuth(channelId) {
+      assertChannel(channelId);
+      requireConfig();
+      const created = createState(input.tokenSecret!);
+      const expiresAt = new Date(clock().getTime() + 10 * 60 * 1000).toISOString();
+      input.repository.upsertState({ stateHash: created.hash, channelId, expiresAt });
+      audit(
+        channelId,
+        "youtube.oauth_started",
+        channelId,
+        "success",
+        "YouTube OAuth authorization started.",
+      );
+      const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+      url.search = new URLSearchParams({
+        client_id: input.clientId!,
+        redirect_uri: input.redirectUri!,
+        response_type: "code",
+        access_type: "offline",
+        prompt: "consent",
+        scope: YOUTUBE_UPLOAD_SCOPE,
+        state: created.state,
+      }).toString();
+      return { authorizationUrl: url.toString(), expiresAt };
+    },
+    async handleCallback(callback) {
+      requireConfig();
+      if (!callback.state) throw appError("UNAUTHORIZED", "OAuth state is required.", 401);
+      const stateHash = hashState(callback.state, input.tokenSecret!);
+      const record = input.repository.consumeState(stateHash, clock().toISOString());
+      if (!record || !verifyState(callback.state, record.stateHash, input.tokenSecret!))
+        throw appError("UNAUTHORIZED", "OAuth state is invalid or expired.", 401);
+      if (callback.error || !callback.code) {
+        const denied: YouTubeStoredConnection = {
+          channelId: record.channelId,
+          status: "error",
+          lastErrorCode: callback.error ?? "OAUTH_CODE_MISSING",
+          lastErrorMessage: "YouTube authorization was denied.",
+        };
+        input.repository.upsertConnection(denied);
+        audit(
+          record.channelId,
+          "youtube.oauth_denied",
+          record.channelId,
+          "warning",
+          "YouTube OAuth authorization was denied.",
+          { errorCode: denied.lastErrorCode },
+        );
+        return publicConnection(record.channelId);
+      }
+      try {
+        const token = await input.externalClient.exchangeCode(callback.code, input.redirectUri!);
+        if (!token.scope?.split(/\s+/).includes(YOUTUBE_UPLOAD_SCOPE))
+          throw appError("FORBIDDEN", "The granted YouTube scope is insufficient.", 403);
+        const stored: YouTubeStoredConnection = {
+          channelId: record.channelId,
+          status: "connected",
+          token: encryptToken(token.accessToken, input.tokenSecret!),
+          refreshToken: token.refreshToken
+            ? encryptToken(token.refreshToken, input.tokenSecret!)
+            : undefined,
+          accessTokenExpiresAt: new Date(clock().getTime() + token.expiresIn * 1000).toISOString(),
+          connectedAt: clock().toISOString(),
+        };
+        input.repository.upsertConnection(stored);
+        audit(
+          record.channelId,
+          "youtube.oauth_completed",
+          record.channelId,
+          "success",
+          "YouTube OAuth authorization completed.",
+        );
+        return publicConnection(record.channelId);
+      } catch (error) {
+        if (error instanceof AppError) throw error;
+        const code = externalCode(error);
+        input.repository.upsertConnection({
+          channelId: record.channelId,
+          status: "error",
+          lastErrorCode: code,
+          lastErrorMessage: "YouTube authorization failed.",
+        });
+        audit(
+          record.channelId,
+          "youtube.oauth_failed",
+          record.channelId,
+          "failed",
+          "YouTube OAuth authorization failed.",
+          { errorCode: code },
+        );
+        throw appError("INTERNAL_ERROR", "YouTube authorization failed.", 502);
+      }
+    },
+    getConnection(channelId) {
+      assertChannel(channelId);
+      return publicConnection(channelId);
+    },
+    async listChannels(channelId) {
+      assertChannel(channelId);
+      const auth = await accessToken(channelId);
+      try {
+        return await input.externalClient.listChannels(auth.token);
+      } catch (error) {
+        audit(
+          channelId,
+          "youtube.channels_list_failed",
+          channelId,
+          "failed",
+          "YouTube channels could not be listed.",
+          { errorCode: externalCode(error) },
+        );
+        throw appError("INTERNAL_ERROR", "YouTube channels are unavailable.", 502);
+      }
+    },
+    async selectChannel(channelId, youtubeChannelId) {
+      assertChannel(channelId);
+      const channels = await this.listChannels(channelId);
+      const selected = channels.find((channel) => channel.id === youtubeChannelId);
+      if (!selected)
+        throw appError("NOT_FOUND", "YouTube channel is not available for this connection.", 404);
+      const stored = input.repository.getConnection(channelId);
+      if (!stored) throw appError("UNAUTHORIZED", "YouTube authorization is required.", 401);
+      input.repository.upsertConnection({
+        ...stored,
+        selectedChannel: selected,
+        status: "connected",
+      });
+      audit(
+        channelId,
+        "youtube.channel_selected",
+        youtubeChannelId,
+        "success",
+        "YouTube destination selected.",
+      );
+      return publicConnection(channelId);
+    },
+    getReadiness(channelId) {
+      assertChannel(channelId);
+      const connection = publicConnection(channelId);
+      const reasons: string[] = [];
+      if (connection.status !== "connected")
+        reasons.push(`Integration status is ${connection.status}.`);
+      if (!connection.youtubeChannelId) reasons.push("A YouTube destination is not selected.");
+      const status: YouTubeReadinessStatus = reasons.length ? "blocked" : "ready";
+      return {
+        channelId,
+        status,
+        reasons,
+        connection,
+        selectedChannel: input.repository.getConnection(channelId)?.selectedChannel,
+      };
+    },
+    async revoke(channelId) {
+      assertChannel(channelId);
+      const stored = input.repository.getConnection(channelId);
+      let remoteError: unknown;
+      if (stored?.token || stored?.refreshToken) {
+        try {
+          const token = stored.refreshToken
+            ? decryptToken(stored.refreshToken, input.tokenSecret!)
+            : decryptToken(stored.token!, input.tokenSecret!);
+          await input.externalClient.revokeToken(token);
+        } catch (error) {
+          remoteError = error;
+          audit(
+            channelId,
+            "youtube.revocation_failed",
+            channelId,
+            "failed",
+            "Remote YouTube revocation failed.",
+            { errorCode: externalCode(error) },
+          );
+        }
+      }
+      input.repository.upsertConnection({ channelId, status: "revoked" });
+      audit(channelId, "youtube.revoked", channelId, "success", "YouTube authorization revoked.");
+      if (remoteError)
+        throw appError(
+          "INTERNAL_ERROR",
+          "YouTube revocation failed; local access was invalidated.",
+          502,
+        );
+      return publicConnection(channelId);
+    },
+    async uploadPublication(uploadInput) {
+      assertChannel(uploadInput.channelId);
+      const job = input.dependencies.publicationsRepository.getPublicationJob(
+        uploadInput.publicationJobId,
+      );
+      if (!job || job.channelId !== uploadInput.channelId)
+        throw appError("NOT_FOUND", "Publication job not found.", 404, {
+          publicationJobId: uploadInput.publicationJobId,
+        });
+      if (job.status === "published" && job.externalId)
+        return {
+          publicationJobId: job.id,
+          channelId: job.channelId,
+          status: "published",
+          youtubeVideoId: job.externalId,
+          youtubeChannelId: input.repository.getConnection(job.channelId)?.selectedChannel?.id,
+          completedAt: job.externalPublishedAt,
+        };
+      const readiness = this.getReadiness(job.channelId);
+      if (readiness.status !== "ready")
+        throw appError("OPERATION_BLOCKED", "YouTube integration is not ready.", 409, {
+          reasons: readiness.reasons,
+        });
+      const approval = input.dependencies.governanceRepository
+        .listApprovals({
+          channelId: job.channelId,
+          entityType: "content_idea",
+          entityId: job.contentId,
+        })
+        .at(0);
+      if (!approval || approval.status !== "approved")
+        throw appError("OPERATION_BLOCKED", "Human approval is required before upload.", 409);
+      const compliance = input.dependencies.governanceRepository
+        .listComplianceChecks({
+          channelId: job.channelId,
+          entityType: "content_idea",
+          entityId: job.contentId,
+        })
+        .at(0);
+      if (!compliance || compliance.status !== "approved" || compliance.blockingFindings.length)
+        throw appError("COMPLIANCE_BLOCKED", "Compliance blocks this upload.", 409);
+      const mode = input.dependencies.costsService.evaluateOperationalAction({
+        channelId: job.channelId,
+        action: "real_publication",
+        actor: uploadInput.requestedBy,
+      });
+      if (!mode.allowed)
+        throw appError("OPERATION_BLOCKED", mode.reason, 409, { decisionCode: mode.decisionCode });
+      const video = input.dependencies.mediaAssetsRepository.getVideoAsset(job.sourceVideoAssetId);
+      const clip = input.dependencies.mediaAssetsRepository.getDerivedClip(job.sourceVideoAssetId);
+      const asset = video ?? clip;
+      if (!asset || asset.channelId !== job.channelId || !asset.storagePath)
+        throw appError(
+          "OPERATION_BLOCKED",
+          "Video asset is missing or belongs to another channel.",
+          409,
+        );
+      const auth = await accessToken(job.channelId);
+      const startedAt = clock().toISOString();
+      try {
+        const file = await readFile(
+          resolveAbsoluteStoragePath(
+            resolveStorageRoot(input.storageRoot, "./storage"),
+            asset.storagePath,
+          ).absolutePath,
+        );
+        const result = await input.externalClient.uploadVideo({
+          accessToken: auth.token,
+          metadata: { title: job.title, description: job.description, privacyStatus: "unlisted" },
+          file,
+          contentType: "video/mp4",
+        });
+        const completedAt = clock().toISOString();
+        const updated = {
+          ...job,
+          status: "published" as const,
+          externalId: result.videoId,
+          externalPublishedAt: completedAt,
+          updatedAt: completedAt,
+          errorCode: undefined,
+          errorMessage: undefined,
+        };
+        input.dependencies.publicationsRepository.upsertPublicationJob(updated);
+        audit(
+          job.channelId,
+          "youtube.upload_completed",
+          job.id,
+          "success",
+          "Authorized YouTube upload completed.",
+          {
+            publicationJobId: job.id,
+            youtubeVideoId: result.videoId,
+            youtubeChannelId: readiness.connection.youtubeChannelId,
+          },
+        );
+        return {
+          publicationJobId: job.id,
+          channelId: job.channelId,
+          status: "published" as const,
+          youtubeVideoId: result.videoId,
+          youtubeChannelId: readiness.connection.youtubeChannelId,
+          startedAt,
+          completedAt,
+        };
+      } catch (error) {
+        const code = externalCode(error);
+        const failed = {
+          ...job,
+          status: "failed" as const,
+          errorCode: code,
+          errorMessage: "YouTube upload failed.",
+          updatedAt: clock().toISOString(),
+        };
+        input.dependencies.publicationsRepository.upsertPublicationJob(failed);
+        audit(
+          job.channelId,
+          "youtube.upload_failed",
+          job.id,
+          "failed",
+          "Authorized YouTube upload failed.",
+          { publicationJobId: job.id, errorCode: code },
+        );
+        throw appError("INTERNAL_ERROR", "YouTube upload failed.", 502, { errorCode: code });
+      }
+    },
+    getUploadResult(publicationJobId, channelId) {
+      const job = input.dependencies.publicationsRepository.getPublicationJob(publicationJobId);
+      if (!job || job.channelId !== channelId || (!job.externalId && job.status !== "failed"))
+        return undefined;
+      return {
+        publicationJobId: job.id,
+        channelId: job.channelId,
+        status: job.status === "published" ? "published" : "failed",
+        youtubeVideoId: job.externalId,
+        youtubeChannelId: input.repository.getConnection(channelId)?.selectedChannel?.id,
+        completedAt: job.externalPublishedAt,
+        errorCode: job.errorCode,
+        errorMessage: job.errorMessage,
+      };
+    },
+  };
+}
+
+function appError(
+  code:
+    | "NOT_FOUND"
+    | "UNAUTHORIZED"
+    | "FORBIDDEN"
+    | "CONFLICT"
+    | "OPERATION_BLOCKED"
+    | "COMPLIANCE_BLOCKED"
+    | "INTERNAL_ERROR"
+    | "INTEGRATION_CONFIGURATION_INVALID",
+  message: string,
+  status: number,
+  details: Record<string, unknown> = {},
+): AppError {
+  return new AppError({
+    code: code === "INTEGRATION_CONFIGURATION_INVALID" ? "CONFLICT" : code,
+    status,
+    message,
+    details,
+  });
+}

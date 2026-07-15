@@ -115,6 +115,17 @@ export {
 } from "./publications-api";
 
 export {
+  getYouTubeOAuthStart,
+  getYouTubeConnection,
+  getYouTubeChannels,
+  selectYouTubeChannel,
+  getYouTubeReadiness,
+  revokeYouTube,
+  uploadYouTubePublication,
+  getYouTubeUploadResult,
+} from "./youtube-api";
+
+export {
   createRenderJob,
   describeRendersApiError,
   getRenderJob,

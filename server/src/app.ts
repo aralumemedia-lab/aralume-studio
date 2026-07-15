@@ -50,6 +50,11 @@ import { createGovernanceService } from "./modules/governance/governance.service
 import type { GovernanceRepository } from "./modules/governance/governance.types.js";
 import { governanceDemoSeed } from "./modules/governance/governance.seed.js";
 import type { RenderEngine } from "./modules/renders/renders.types.js";
+import { createYouTubeRepository } from "./modules/youtube/youtube.repository.js";
+import { createYouTubeExternalClient } from "./modules/youtube/youtube.client.js";
+import { createYouTubeRouter } from "./modules/youtube/youtube.routes.js";
+import { createYouTubeService } from "./modules/youtube/youtube.service.js";
+import type { YouTubeExternalClient, YouTubeRepository } from "./modules/youtube/youtube.types.js";
 
 export type CreateAppOptions = {
   env?: RuntimeEnv;
@@ -65,6 +70,8 @@ export type CreateAppOptions = {
   renderEngine?: RenderEngine;
   ffmpegPath?: string;
   ffprobePath?: string;
+  youtubeRepository?: YouTubeRepository;
+  youtubeExternalClient?: YouTubeExternalClient;
 };
 
 export function createApp(options: CreateAppOptions = {}) {
@@ -143,6 +150,30 @@ export function createApp(options: CreateAppOptions = {}) {
     channelsRepository,
     auditRepository,
   });
+  const youtubeRepository =
+    options.youtubeRepository ?? createYouTubeRepository(undefined, env.ARALUME_ASSET_STORAGE_ROOT);
+  const youtubeService = createYouTubeService({
+    repository: youtubeRepository,
+    dependencies: {
+      channelsRepository,
+      publicationsRepository,
+      mediaAssetsRepository,
+      governanceRepository,
+      auditRepository,
+      costsService,
+    },
+    externalClient:
+      options.youtubeExternalClient ??
+      createYouTubeExternalClient({
+        clientId: env.ARALUME_YOUTUBE_CLIENT_ID ?? "",
+        clientSecret: env.ARALUME_YOUTUBE_CLIENT_SECRET ?? "",
+      }),
+    clientId: env.ARALUME_YOUTUBE_CLIENT_ID,
+    clientSecret: env.ARALUME_YOUTUBE_CLIENT_SECRET,
+    redirectUri: env.ARALUME_YOUTUBE_REDIRECT_URI,
+    tokenSecret: env.ARALUME_PUBLICATION_TOKEN_SECRET,
+    storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
+  });
   const rendersService = createRendersService(
     renderJobsRepository,
     {
@@ -175,6 +206,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use("/api", createRendersRouter(rendersService));
   app.use("/api", createGovernanceRouter(governanceService));
   app.use("/api", createPublicationsRouter(publicationsService));
+  app.use("/api", createYouTubeRouter(youtubeService));
   app.use("/api", createCostsRouter(costsService));
   app.use("/api", createAuditRouter(auditService));
   app.use(notFoundMiddleware());

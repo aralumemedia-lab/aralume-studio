@@ -706,9 +706,27 @@ export type PublicationJob = {
   blockedReason?: string;
   errorCode?: string;
   errorMessage?: string;
+  externalId?: ID;
+  externalPublishedAt?: ISODate;
   createdAt: ISODate;
   updatedAt: ISODate;
 };
+
+export type YouTubeConnectionState = {
+  channelId: ID;
+  provider: "youtube";
+  status: "disconnected" | "pending" | "connected" | "expired" | "revoked" | "error";
+  youtubeChannelId?: ID;
+  youtubeChannelTitle?: string;
+  connectedAt?: ISODate;
+  expiresAt?: ISODate;
+  lastErrorCode?: string;
+  lastErrorMessage?: string;
+};
+
+export type YouTubeChannel = { id: ID; title: string; description?: string; thumbnailUrl?: string };
+export type YouTubeReadiness = { channelId: ID; status: "ready" | "warning" | "blocked"; reasons: string[]; connection: YouTubeConnectionState; selectedChannel?: YouTubeChannel };
+export type YouTubeUploadResult = { publicationJobId: ID; channelId: ID; status: "pending" | "uploading" | "published" | "failed"; youtubeVideoId?: ID; youtubeChannelId?: ID; startedAt?: ISODate; completedAt?: ISODate; errorCode?: string; errorMessage?: string };
 
 export type PerformanceMetric = {
   id: ID;

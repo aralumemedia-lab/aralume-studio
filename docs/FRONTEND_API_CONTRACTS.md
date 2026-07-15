@@ -137,6 +137,30 @@ Todos aceitam `?channelId=<id>` quando aplicável e retornam `ApiSuccess`/`ApiLi
 | GET    | /api/compliance                                | `ComplianceCheck[]`             |
 | GET    | /api/audit-logs                                | `AuditLog[]`                    |
 
+### Sprint 12 — YouTube autorizado
+
+Esta é a única integração externa aprovada para E13. Os endpoints são canal-scoped
+e não retornam tokens, client secrets, authorization codes ou headers do provedor.
+
+| Método | Path                                                   | Retorno                  |
+| ------ | ------------------------------------------------------ | ------------------------ |
+| GET    | `/api/integrations/youtube/oauth/start?channelId=<id>` | `OAuthStartResponse`     |
+| GET    | `/api/integrations/youtube/oauth/callback`             | redirect HTML seguro     |
+| GET    | `/api/integrations/youtube/connection?channelId=<id>`  | `YouTubeConnectionState` |
+| GET    | `/api/integrations/youtube/channels?channelId=<id>`    | `YouTubeChannel[]`       |
+| POST   | `/api/integrations/youtube/selection`                  | `YouTubeConnectionState` |
+| GET    | `/api/integrations/youtube/readiness?channelId=<id>`   | `YouTubeReadiness`       |
+| POST   | `/api/integrations/youtube/revoke`                     | `YouTubeConnectionState` |
+| POST   | `/api/publications/:publicationJobId/upload`           | `YouTubeUploadResult`    |
+| GET    | `/api/publications/:publicationJobId/upload`           | `YouTubeUploadResult`    |
+
+O início OAuth recebe `channelId` e retorna somente uma URL Google e a expiração do
+state. O callback aceita `code`, `state` ou erro OAuth, rejeita state inválido,
+expirado ou reutilizado e redireciona apenas para a origem configurada. A seleção
+recebe `channelId` e `youtubeChannelId`; o upload recebe `channelId` e identifica o
+job pela URL. O resultado expõe apenas `publicationJobId`, `youtubeVideoId`,
+`youtubeChannelId`, status, timestamps e erro normalizado.
+
 ## Rotas do frontend
 
 `/dashboard`, `/channels`, `/agent-office`, `/production`, `/ideas`, `/research`, `/scripts`, `/media-assets`, `/videos`, `/clips`, `/approvals`, `/publications`, `/metrics`, `/costs`, `/compliance`, `/administration`, `/audit-logs`. `/` redireciona para `/dashboard`.
