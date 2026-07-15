@@ -37,6 +37,7 @@ Esta sprint depende da existencia de uma base de integracao real autorizada. Sem
 - Sprint 11 - Publicacao Assistida deve estar encerrada.
 - Sprint 12 - Integracoes Reais Autorizadas deve estar encerrada.
 - A definicao de origem de metricas e de canais integrados deve estar formalizada.
+- A origem documental aprovada para a futura leitura automatizada de metricas e o YouTube Analytics API, sem obrigar sua implementacao nesta sprint.
 - A documentacao de V1 Acceptance permanece downstream e nao substitui esta spec.
 
 ## Histórias incluidas
@@ -52,6 +53,7 @@ Esta sprint depende da existencia de uma base de integracao real autorizada. Sem
 
 - Scraping sem autorizacao.
 - APIs externas sem spec.
+- Integracoes novas que nao estejam aprovadas na documentacao oficial.
 - Decisoes editoriais irreversiveis automaticas.
 - IA real sem custos e gates.
 - Hardening ou aceite da V1.0.

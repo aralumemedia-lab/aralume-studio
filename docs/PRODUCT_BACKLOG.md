@@ -9,7 +9,7 @@ This backlog is an index of planning. It does not replace sprint specs.
 | E10 | Renderizacao Controlada      | Entregar a primeira capacidade real, controlada e auditavel de renderizacao de video.                  | completed | Renderizar video curto de teste com logs, custo e validacao. | - |
 | E11 | Cortes Derivados Controlados | Entregar cortes derivados persistentes, rastreaveis e vinculados ao video principal.                   | completed | Gerar pelo menos um corte valido vinculado ao video principal. | - |
 | E12 | Publicacao Assistida         | Preparar publicacao com aprovacao humana, compliance e contratos seguros, sem envio externo automatico. | completed | Pacote de publicacao pronto, sem envio externo automatico. | E10, E11 |
-| E13 | Integracoes Reais Autorizadas | Conectar provedores externos com governanca, autorizacao e seguranca documental.                        | planned | Integracao oficial funcionando sem expor segredo. | E12 concluido; provedores ou plataformas explicitamente aprovados; finalidade, permissoes, autorizacao, revogacao e contratos afetados documentados. |
+| E13 | Integracoes Reais Autorizadas | Conectar provedores externos com governanca, autorizacao e seguranca documental.                        | planned | Integracao oficial funcionando sem expor segredo. | E12 concluido; lista fechada de integracoes aprovada no ADR 002; finalidade, permissoes, autorizacao, revogacao e contratos afetados documentados. |
 | E14 | Metricas e Aprendizado       | Fechar o ciclo editorial com metricas por canal e recomendacoes assistidas.                             | planned | Metricas geram recomendacao editorial por canal. | E13 concluido; origem das metricas e canais definidos |
 | E15 | Hardening V1.0               | Consolidar a base operacional demonstravel para V1.0.                                                   | planned | Demonstracao ponta a ponta pelo frontend; decisao binaria V1.0 aceita ou V1.0 nao aceita. | E13 e E14 concluidos |
 
@@ -18,8 +18,8 @@ This backlog is an index of planning. It does not replace sprint specs.
 | Numero | Nome | Epico | Spec | Estado | Observacao |
 | --- | --- | --- | --- | --- | --- |
 | S11 | Publicacao Assistida | E12 | `docs/specs/011-publication-assisted.md` | completed | Capacidade materializada e encerrada. |
-| S12 | Integracoes Reais Autorizadas | E13 | `docs/specs/015-authorized-real-integrations.md` | planned | Proxima sprint na fila, mas bloqueada ate haver aprovacao documental explicita dos provedores ou plataformas abrangidos. |
-| S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | planned | Posterior a Sprint 12; depende da integracao real autorizada estar liberada por decisao documental aprovada. |
+| S12 | Integracoes Reais Autorizadas | E13 | `docs/specs/015-authorized-real-integrations.md` | planned | Proxima sprint na fila e pronta para implementacao documental; a lista fechada de integracoes foi aprovada no ADR 002. |
+| S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | planned | Posterior a Sprint 12; depende da integracao real autorizada aprovada e encerrada. |
 | S14 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | planned | Posterior a Sprints 12 e 13; gate de hardening e aceite da V1.0. |
 
 ## Catalogo de historias
@@ -37,6 +37,6 @@ This backlog is an index of planning. It does not replace sprint specs.
 - Nao usar estimativa de velocidade.
 - Nao duplicar criterios completos das specs.
 - Quando uma historia nao estiver pronta para sprint, manter o status apropriado no backlog e atualizar a spec antes de implementacao.
-- Sprint 12 pertence ao E13 e esta bloqueada ate aprovacao documental explicita dos provedores ou plataformas.
+- Sprint 12 pertence ao E13 e tem aprovacao fechada no ADR 002 para YouTube como integracao aprovada.
 - Sprint 13 pertence ao E14.
 - Sprint 14 pertence ao E15 / V1 Acceptance.

@@ -22,6 +22,12 @@
 - `VITE_ARALUME_API_BASE_URL` is optional and public when the frontend needs an explicit base URL.
 - `ARALUME_ASSET_STORAGE_ROOT` is optional for the media asset registry and defaults to a safe local path when not set.
 
+## E13 approved provider inventory
+
+- Approved for E13: YouTube Data API with Google OAuth 2.0.
+- Deferred for later documentation: YouTube Analytics API for Sprint 13 metrics.
+- Not approved for E13: TikTok, Instagram, LinkedIn.
+
 ## What will be used in Backend Foundation
 
 - `DATABASE_URL`
@@ -80,12 +86,12 @@
 | ARALUME_FFMPEG_PATH                   | Imagem / video               | Caminho do encoder futuro                        | Futura           |
 | ARALUME_FFPROBE_PATH                  | Imagem / video               | Caminho do probe futuro                          | Futura           |
 | ARALUME_VIDEO_RENDERER                | Imagem / video               | Motor de renderizacao futuro                     | Futura           |
-| ARALUME_PUBLICATION_OFFICIAL_ADAPTERS | YouTube / OAuth / publicacao | Adaptadores oficiais de publicacao               | Legado / revisar |
+| ARALUME_PUBLICATION_OFFICIAL_ADAPTERS | YouTube / OAuth / publicacao | Adaptadores oficiais de publicacao aprovados para E13 | E13 aprovado |
 | ARALUME_PUBLICATION_TOKEN_SECRET      | YouTube / OAuth / publicacao | Segredo de token para publicacao futura          | Futura           |
 | ARALUME_TIKTOK_ACCOUNT                | YouTube / OAuth / publicacao | Conta de publicacao antiga                       | Legado / revisar |
-| ARALUME_YOUTUBE_CLIENT_ID             | YouTube / OAuth / publicacao | OAuth de publicacao futura                       | Futura           |
-| ARALUME_YOUTUBE_CLIENT_SECRET         | YouTube / OAuth / publicacao | OAuth de publicacao futura                       | Futura           |
-| ARALUME_YOUTUBE_REDIRECT_URI          | YouTube / OAuth / publicacao | Fluxo de OAuth futuro                            | Futura           |
+| ARALUME_YOUTUBE_CLIENT_ID             | YouTube / OAuth / publicacao | OAuth de publicacao aprovado para E13            | E13 aprovado     |
+| ARALUME_YOUTUBE_CLIENT_SECRET         | YouTube / OAuth / publicacao | OAuth de publicacao aprovado para E13            | E13 aprovado     |
+| ARALUME_YOUTUBE_REDIRECT_URI          | YouTube / OAuth / publicacao | Fluxo de OAuth aprovado para E13                 | E13 aprovado     |
 
 ## Notes
 

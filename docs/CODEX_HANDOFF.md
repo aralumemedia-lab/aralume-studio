@@ -6,7 +6,7 @@
 - O merge commit oficial da Sprint 11 e `966e5bef50446f81701cedd861689b3e07b14a7d`.
 - A Fase 12 do roadmap materializou-se na Sprint 11 e esta encerrada.
 - A proxima sprint formal e a Sprint 12 - Integracoes Reais Autorizadas.
-- A Sprint 12 governa o E13, mas esta bloqueada ate haver aprovacao documental explicita dos provedores ou plataformas abrangidos.
+- A Sprint 12 governa o E13 e a lista fechada de integracoes aprovadas consta do ADR 002.
 - A spec normativa da Sprint 12 e `docs/specs/015-authorized-real-integrations.md`.
 - A V1.0 ainda nao pode ser declarada aceita porque as Sprints 13 e 14 ainda nao foram executadas.
 
@@ -34,7 +34,7 @@ Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por cana
 
 ## Bloqueio critico
 
-Antes de criar branch funcional ou editar codigo, confirme que a documentacao oficial define explicitamente os provedores ou plataformas do E13. Se essa definicao nao existir, pare e reporte bloqueio documental. Nao implemente abstracoes genericas, OAuth hipotetico ou contratos inventados.
+Antes de criar branch funcional ou editar codigo, confirme que a documentacao oficial define explicitamente os provedores ou plataformas do E13. A lista aprovada para esta sprint e fechada no ADR 002. Nao implemente abstracoes genericas, OAuth hipotetico ou contratos inventados.
 
 ## Historias incluidas
 
@@ -44,6 +44,7 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - Revogacao auditavel.
 - Estados de erro operacionais.
 - Isolamento por canal.
+- Integracao aprovada: YouTube Data API com OAuth 2.0 Google.
 
 ## Escopo
 
@@ -64,7 +65,7 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - Substituicao do design system.
 - Funcionalidades de sprints posteriores.
 - Publicacao externa sem autorizacao.
-- Novos provedores sem spec.
+- TikTok, Instagram e LinkedIn.
 - Qualquer arquitetura generica hipotetica para contornar a ausencia de definicao aprovada.
 - Segredos em codigo, docs, commits ou logs.
 - Aceitacao baseada apenas em CLI.
@@ -83,6 +84,7 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - `docs/specs/012-v1-acceptance.md`
 - `docs/specs/014-metrics-learning.md`
 - `docs/specs/015-authorized-real-integrations.md`
+- `docs/architecture/adrs/002-e13-approved-providers.md`
 
 ## Validacoes exigidas
 
@@ -108,6 +110,7 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - A aceitacao exige evidencia de execucao do fluxo aplicavel pelo frontend quando houver interface correspondente.
 - Qualquer decisao negativa deve listar bloqueios, severidade, evidencia e proximo trabalho necessario.
 - A documentacao deve permanecer coerente entre Documento Mestre, roadmap, backlog, handoff e spec.
+- A lista de integracoes aprovada para E13 e fechada e deve ser mantida como YouTube apenas, salvo nova decisao formal.
 
 ## Proibicoes
 
@@ -118,3 +121,4 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 - Nao publicar externamente sem autorizacao.
 - Nao solicitar ou registrar segredos.
 - Nao iniciar implementacao enquanto os provedores ou plataformas do E13 nao estiverem explicitamente aprovados.
+- Nao antecipar TikTok, Instagram ou LinkedIn sem nova decisao formal.

@@ -1581,3 +1581,5 @@ Regras normativas:
 - A Sprint 13 corresponde ao E14 e usa a spec `docs/specs/014-metrics-learning.md`.
 - A Sprint 14 corresponde ao E15 / V1 Acceptance e usa a spec `docs/specs/012-v1-acceptance.md`.
 - A relacao entre fase, sprint e spec deve permanecer explicitada nos documentos de roadmap, backlog, handoff e spec.
+- A decisao documental fechada do E13 aprova apenas YouTube como integracao externa da Sprint 12, com OAuth 2.0 oficial da Google para autorizacao.
+- TikTok, Instagram e LinkedIn permanecem fora da aprovacao do E13 ate nova decisao formal.
