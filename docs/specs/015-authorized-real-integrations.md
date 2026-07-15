@@ -249,12 +249,12 @@ Critérios por história:
 
 ## Definition of Done
 
-- A governanca da integracao real esta documentada sem ambiguidade.
+- H12.1-H12.4 estao implementadas no frontend, backend, persistencia, auditoria e testes.
 - A decisao sobre provedores ou plataformas esta explicitada na documentacao oficial e fechada no ADR relacionado.
-- Segredos permanecem fora do repositorio e dos logs.
-- A auditoria e o isolamento por canal estao definidos.
+- Segredos permanecem fora do repositorio, bundles, respostas e logs.
+- A auditoria e o isolamento por canal sao verificaveis por testes e operacao.
 - O contrato e coerente com Documento Mestre, roadmap, backlog, handoff e demais specs.
-- Nenhum comportamento de produto foi implementado nesta execucao documental.
+- O gate de conclusao exige evidencia reproduzivel do fluxo autorizado; mocks comprovam apenas o comportamento controlado e nao substituem validacao real quando credenciais seguras estiverem disponiveis.
 
 ## Matriz de integracoes aprovadas
 

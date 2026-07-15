@@ -159,7 +159,10 @@ state. O callback aceita `code`, `state` ou erro OAuth, rejeita state inválido,
 expirado ou reutilizado e redireciona apenas para a origem configurada. A seleção
 recebe `channelId` e `youtubeChannelId`; o upload recebe `channelId` e identifica o
 job pela URL. O resultado expõe apenas `publicationJobId`, `youtubeVideoId`,
-`youtubeChannelId`, status, timestamps e erro normalizado.
+`youtubeChannelId`, status, timestamps e erro normalizado. Durante uma tentativa
+em andamento, o job fica persistido como `pending`; uma nova tentativa e
+bloqueada ate a reconciliacao do resultado, evitando upload duplicado apos
+concorrencia ou reinicio do processo.
 
 ## Rotas do frontend
 

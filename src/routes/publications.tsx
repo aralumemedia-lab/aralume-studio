@@ -54,6 +54,7 @@ import {
   getYouTubeConnection,
   getYouTubeOAuthStart,
   getYouTubeReadiness,
+  getYouTubeUploadResult,
   revokeYouTube,
   selectYouTubeChannel,
   uploadYouTubePublication,
@@ -232,6 +233,14 @@ export const Route = createFileRoute("/publications")({
       sourceCandidates[0];
     const selectedJob = jobsById.get(selectedJobId ?? "") ?? jobs[0];
 
+    const youtubeUploadResultQuery = useQuery({
+      queryKey: ["youtube-upload-result", activeChannelId, selectedJob?.id],
+      enabled:
+        Boolean(activeChannelId && selectedJob?.id) &&
+        (selectedJob?.status === "published" || selectedJob?.status === "failed"),
+      queryFn: () => getYouTubeUploadResult(selectedJob?.id as string, activeChannelId as string),
+    });
+
     useEffect(() => {
       if (isCreatingTarget) {
         return;
@@ -348,6 +357,8 @@ export const Route = createFileRoute("/publications")({
         await queryClient.invalidateQueries({ queryKey: ["publication-jobs", activeChannelId] });
       },
     });
+    const youtubeUploadResult =
+      youtubeUploadMutation.data?.data ?? youtubeUploadResultQuery.data?.data;
 
     if (!activeChannelId) {
       return (
@@ -512,6 +523,21 @@ export const Route = createFileRoute("/publications")({
                   >
                     {youtubeUploadMutation.isPending ? "Enviando..." : "Upload autorizado"}
                   </Button>
+                </div>
+                <div className="lg:col-span-2" aria-live="polite">
+                  {youtubeUploadMutation.isError ? (
+                    <p role="alert" className="text-xs text-destructive">
+                      O upload foi bloqueado ou falhou. Verifique aprovação, conformidade, readiness
+                      e o estado da integração.
+                    </p>
+                  ) : youtubeUploadResult ? (
+                    <p className="text-xs text-muted-foreground">
+                      Resultado do upload: {youtubeUploadResult.status}
+                      {youtubeUploadResult.youtubeVideoId
+                        ? ` · vídeo ${youtubeUploadResult.youtubeVideoId}`
+                        : ""}
+                    </p>
+                  ) : null}
                 </div>
               </div>
             )}

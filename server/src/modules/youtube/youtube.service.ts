@@ -162,6 +162,20 @@ export function createYouTubeService(input: {
       throw appError("UNAUTHORIZED", "YouTube authorization is invalid.", 401);
     }
   };
+  const blockUpload = (
+    channelId: string,
+    publicationJobId: string,
+    code: "OPERATION_BLOCKED" | "COMPLIANCE_BLOCKED" | "CONFLICT",
+    message: string,
+    details: Record<string, unknown> = {},
+  ): never => {
+    audit(channelId, "youtube.upload_blocked", publicationJobId, "warning", message, {
+      publicationJobId,
+      blockCode: code,
+      ...details,
+    });
+    throw appError(code, message, 409, details);
+  };
 
   return {
     startOAuth(channelId) {
@@ -197,10 +211,11 @@ export function createYouTubeService(input: {
       if (!record || !verifyState(callback.state, record.stateHash, input.tokenSecret!))
         throw appError("UNAUTHORIZED", "OAuth state is invalid or expired.", 401);
       if (callback.error || !callback.code) {
+        const errorCode = callback.error ? "OAUTH_PROVIDER_DENIED" : "OAUTH_CODE_MISSING";
         const denied: YouTubeStoredConnection = {
           channelId: record.channelId,
           status: "error",
-          lastErrorCode: callback.error ?? "OAUTH_CODE_MISSING",
+          lastErrorCode: errorCode,
           lastErrorMessage: "YouTube authorization was denied.",
         };
         input.repository.upsertConnection(denied);
@@ -210,7 +225,7 @@ export function createYouTubeService(input: {
           record.channelId,
           "warning",
           "YouTube OAuth authorization was denied.",
-          { errorCode: denied.lastErrorCode },
+          { errorCode },
         );
         return publicConnection(record.channelId);
       }
@@ -357,7 +372,15 @@ export function createYouTubeService(input: {
         throw appError("NOT_FOUND", "Publication job not found.", 404, {
           publicationJobId: uploadInput.publicationJobId,
         });
-      if (job.status === "published" && job.externalId)
+      if (job.status === "published" && job.externalId) {
+        audit(
+          job.channelId,
+          "youtube.upload_idempotent_replay",
+          job.id,
+          "success",
+          "Completed YouTube upload returned by idempotent replay.",
+          { publicationJobId: job.id, youtubeVideoId: job.externalId },
+        );
         return {
           publicationJobId: job.id,
           channelId: job.channelId,
@@ -366,20 +389,43 @@ export function createYouTubeService(input: {
           youtubeChannelId: input.repository.getConnection(job.channelId)?.selectedChannel?.id,
           completedAt: job.externalPublishedAt,
         };
+      }
+      if (job.uploadStatus === "in_progress")
+        return blockUpload(
+          job.channelId,
+          job.id,
+          "CONFLICT",
+          "A YouTube upload is already in progress for this publication.",
+          { uploadStartedAt: job.uploadStartedAt },
+        );
       const readiness = this.getReadiness(job.channelId);
       if (readiness.status !== "ready")
-        throw appError("OPERATION_BLOCKED", "YouTube integration is not ready.", 409, {
-          reasons: readiness.reasons,
-        });
+        return blockUpload(
+          job.channelId,
+          job.id,
+          "OPERATION_BLOCKED",
+          "YouTube integration is not ready.",
+          { reasons: readiness.reasons },
+        );
       const approval = input.dependencies.governanceRepository
         .listApprovals({
           channelId: job.channelId,
           entityType: "content_idea",
           entityId: job.contentId,
         })
+        .slice()
+        .sort(
+          (left, right) =>
+            right.updatedAt.localeCompare(left.updatedAt) || right.id.localeCompare(left.id),
+        )
         .at(0);
       if (!approval || approval.status !== "approved")
-        throw appError("OPERATION_BLOCKED", "Human approval is required before upload.", 409);
+        return blockUpload(
+          job.channelId,
+          job.id,
+          "OPERATION_BLOCKED",
+          "Human approval is required before upload.",
+        );
       const compliance = input.dependencies.governanceRepository
         .listComplianceChecks({
           channelId: job.channelId,
@@ -388,25 +434,92 @@ export function createYouTubeService(input: {
         })
         .at(0);
       if (!compliance || compliance.status !== "approved" || compliance.blockingFindings.length)
-        throw appError("COMPLIANCE_BLOCKED", "Compliance blocks this upload.", 409);
+        return blockUpload(
+          job.channelId,
+          job.id,
+          "COMPLIANCE_BLOCKED",
+          "Compliance blocks this upload.",
+        );
       const mode = input.dependencies.costsService.evaluateOperationalAction({
         channelId: job.channelId,
         action: "real_publication",
         actor: uploadInput.requestedBy,
       });
       if (!mode.allowed)
-        throw appError("OPERATION_BLOCKED", mode.reason, 409, { decisionCode: mode.decisionCode });
+        return blockUpload(job.channelId, job.id, "OPERATION_BLOCKED", mode.reason, {
+          decisionCode: mode.decisionCode,
+        });
       const video = input.dependencies.mediaAssetsRepository.getVideoAsset(job.sourceVideoAssetId);
       const clip = input.dependencies.mediaAssetsRepository.getDerivedClip(job.sourceVideoAssetId);
       const asset = video ?? clip;
       if (!asset || asset.channelId !== job.channelId || !asset.storagePath)
-        throw appError(
+        return blockUpload(
+          job.channelId,
+          job.id,
           "OPERATION_BLOCKED",
           "Video asset is missing or belongs to another channel.",
-          409,
+          { sourceVideoAssetId: job.sourceVideoAssetId },
         );
-      const auth = await accessToken(job.channelId);
+      if (
+        video &&
+        (video.renderStatus !== "rendered" ||
+          !["approved", "published", "scheduled"].includes(video.status) ||
+          video.complianceStatus !== "approved")
+      )
+        return blockUpload(
+          job.channelId,
+          job.id,
+          "OPERATION_BLOCKED",
+          "Video asset is not eligible for authorized upload.",
+          { sourceVideoAssetId: job.sourceVideoAssetId },
+        );
+      if (clip) {
+        const parent = input.dependencies.mediaAssetsRepository.getVideoAsset(clip.parentVideoId);
+        if (
+          clip.status !== "completed" ||
+          !parent ||
+          parent.channelId !== job.channelId ||
+          parent.renderStatus !== "rendered" ||
+          !["approved", "published", "scheduled"].includes(parent.status) ||
+          parent.complianceStatus !== "approved"
+        )
+          return blockUpload(
+            job.channelId,
+            job.id,
+            "OPERATION_BLOCKED",
+            "Clip asset is not eligible for authorized upload.",
+            { sourceVideoAssetId: job.sourceVideoAssetId },
+          );
+      }
+      let auth;
+      try {
+        auth = await accessToken(job.channelId);
+      } catch (error) {
+        audit(
+          job.channelId,
+          "youtube.upload_blocked",
+          job.id,
+          "warning",
+          "YouTube authorization is not usable for upload.",
+          { publicationJobId: job.id, blockCode: "UNAUTHORIZED" },
+        );
+        throw error;
+      }
       const startedAt = clock().toISOString();
+      input.dependencies.publicationsRepository.upsertPublicationJob({
+        ...job,
+        uploadStatus: "in_progress",
+        uploadStartedAt: startedAt,
+        updatedAt: startedAt,
+      });
+      audit(
+        job.channelId,
+        "youtube.upload_started",
+        job.id,
+        "success",
+        "Authorized YouTube upload started.",
+        { publicationJobId: job.id, youtubeChannelId: readiness.connection.youtubeChannelId },
+      );
       try {
         const file = await readFile(
           resolveAbsoluteStoragePath(
@@ -429,6 +542,8 @@ export function createYouTubeService(input: {
           updatedAt: completedAt,
           errorCode: undefined,
           errorMessage: undefined,
+          uploadStatus: undefined,
+          uploadStartedAt: undefined,
         };
         input.dependencies.publicationsRepository.upsertPublicationJob(updated);
         audit(
@@ -459,6 +574,8 @@ export function createYouTubeService(input: {
           status: "failed" as const,
           errorCode: code,
           errorMessage: "YouTube upload failed.",
+          uploadStatus: undefined,
+          uploadStartedAt: undefined,
           updatedAt: clock().toISOString(),
         };
         input.dependencies.publicationsRepository.upsertPublicationJob(failed);
@@ -475,14 +592,24 @@ export function createYouTubeService(input: {
     },
     getUploadResult(publicationJobId, channelId) {
       const job = input.dependencies.publicationsRepository.getPublicationJob(publicationJobId);
-      if (!job || job.channelId !== channelId || (!job.externalId && job.status !== "failed"))
+      if (
+        !job ||
+        job.channelId !== channelId ||
+        (!job.externalId && job.status !== "failed" && job.uploadStatus !== "in_progress")
+      )
         return undefined;
       return {
         publicationJobId: job.id,
         channelId: job.channelId,
-        status: job.status === "published" ? "published" : "failed",
+        status:
+          job.status === "published"
+            ? "published"
+            : job.uploadStatus === "in_progress"
+              ? "pending"
+              : "failed",
         youtubeVideoId: job.externalId,
         youtubeChannelId: input.repository.getConnection(channelId)?.selectedChannel?.id,
+        startedAt: job.uploadStartedAt,
         completedAt: job.externalPublishedAt,
         errorCode: job.errorCode,
         errorMessage: job.errorMessage,

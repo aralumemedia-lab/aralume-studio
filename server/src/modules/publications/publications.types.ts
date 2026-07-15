@@ -61,6 +61,8 @@ export type PublicationJob = {
   errorMessage?: string;
   externalId?: string;
   externalPublishedAt?: ISODate;
+  uploadStatus?: "in_progress";
+  uploadStartedAt?: ISODate;
   createdAt: ISODate;
   updatedAt: ISODate;
 };

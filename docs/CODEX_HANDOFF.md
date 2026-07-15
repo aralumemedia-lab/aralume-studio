@@ -106,8 +106,9 @@ Antes de criar branch funcional ou editar codigo, confirme que a documentacao of
 
 ## Definition of Done
 
-- A decisao final da Sprint 12 e binaria: `V1.0 aceita` ou `V1.0 nao aceita`.
-- A aceitacao exige evidencia de execucao do fluxo aplicavel pelo frontend quando houver interface correspondente.
+- A decisao final da Sprint 12 e `DONE`, `DONE_WITH_LIMITATIONS` ou `BLOCKED`, sem declarar aceite da V1.0.
+- A conclusao exige evidencia de execucao do fluxo aplicavel pelo frontend quando houver interface correspondente.
+- Mocks comprovam comportamento controlado, mas nao substituem validacao real quando credenciais seguras estiverem disponiveis.
 - Qualquer decisao negativa deve listar bloqueios, severidade, evidencia e proximo trabalho necessario.
 - A documentacao deve permanecer coerente entre Documento Mestre, roadmap, backlog, handoff e spec.
 - A lista de integracoes aprovada para E13 e fechada e deve ser mantida como YouTube apenas, salvo nova decisao formal.

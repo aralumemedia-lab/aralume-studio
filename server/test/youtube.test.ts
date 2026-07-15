@@ -56,6 +56,15 @@ test("YouTube connection, selection, upload, isolation and revocation are channe
   const governanceRepository = createGovernanceRepository(governanceDemoSeed);
   const auditRepository = createAuditRepository(undefined, { storageRoot });
   const calls: string[] = [];
+  let uploadCalls = 0;
+  let releaseUpload!: () => void;
+  let uploadStartedResolve!: () => void;
+  const uploadStarted = new Promise<void>((resolve) => {
+    uploadStartedResolve = resolve;
+  });
+  const uploadRelease = new Promise<void>((resolve) => {
+    releaseUpload = resolve;
+  });
   const externalClient: YouTubeExternalClient = {
     async exchangeCode() {
       calls.push("exchange");
@@ -86,6 +95,9 @@ test("YouTube connection, selection, upload, isolation and revocation are channe
     },
     async uploadVideo() {
       calls.push("upload");
+      uploadCalls += 1;
+      uploadStartedResolve();
+      await uploadRelease;
       return { videoId: "yt-video-1" };
     },
   };
@@ -115,17 +127,34 @@ test("YouTube connection, selection, upload, isolation and revocation are channe
     clock: () => new Date("2026-07-14T00:00:00.000Z"),
     idFactory: () => "test",
   });
+  const deniedStart = service.startOAuth("ch_historia");
+  const deniedState = new URL(deniedStart.authorizationUrl).searchParams.get("state")!;
+  const denied = await service.handleCallback({ state: deniedState, error: "refresh-token-value" });
+  assert.equal(denied.lastErrorCode, "OAUTH_PROVIDER_DENIED");
+  assert.equal(JSON.stringify(denied).includes("refresh-token-value"), false);
   const started = service.startOAuth("ch_historia");
   const state = new URL(started.authorizationUrl).searchParams.get("state")!;
   assert.equal((await service.handleCallback({ code: "code", state })).status, "connected");
   assert.equal((await service.listChannels("ch_historia")).length, 2);
   assert.equal((await service.selectChannel("ch_historia", "yt-a")).youtubeChannelId, "yt-a");
   assert.equal(service.getConnection("ch_curiosidades").status, "disconnected");
-  const result = await service.uploadPublication({
+  const firstUpload = service.uploadPublication({
     publicationJobId: "pj_historia_01",
     channelId: "ch_historia",
     requestedBy: "Ana Ribeiro",
   });
+  await uploadStarted;
+  await assert.rejects(
+    service.uploadPublication({
+      publicationJobId: "pj_historia_01",
+      channelId: "ch_historia",
+      requestedBy: "Ana Ribeiro",
+    }),
+    (error: { code?: string }) => error.code === "CONFLICT",
+  );
+  releaseUpload();
+  const result = await firstUpload;
+  assert.equal(uploadCalls, 1);
   assert.equal(result.youtubeVideoId, "yt-video-1");
   assert.equal(
     publicationsRepository.getPublicationJob("pj_historia_01")?.externalId,
