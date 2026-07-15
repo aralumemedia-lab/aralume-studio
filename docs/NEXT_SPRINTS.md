@@ -16,7 +16,7 @@
 | Ordem | Sprint | Epico | Spec normativa | Estado | Liberacao | Dependencias |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | completed | released | PR #22 mergeado; OAuth com dois escopos, descoberta, selecao, upload privado/nao listado, consulta, replay idempotente, isolamento e revogacao validados. |
-| 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | in progress | released | Sprint 12 encerrada; origem controlada e recomendacao deterministica formalizadas na Spec 014 e ADR 003. |
+| 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | completed | released | PR #23 mergeada em `9b89d1be04e7a6e319efb9a957282097c4854f31`; gate E14 atendido. |
 | 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | planned | blocked until S12/S13 | As Sprints 12 e 13 precisam estar encerradas com evidencia; V1 Acceptance nao faz parte desta execucao. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
@@ -37,11 +37,11 @@
 | Epic principal | E14 - Metricas e Aprendizado |
 | Spec governante | `docs/specs/014-metrics-learning.md` |
 | Objetivo | Registrar metricas por canal e gerar aprendizado editorial assistido sem antecipar V1 Acceptance. |
-| Estado | in progress |
+| Estado | completed |
 | Gate de inicio | Atendido: S12 encerrada; metricas controladas, contratos, canais, isolamento e regra de recomendacao formalizados. |
 | Historias | H14.1 registro; H14.2 consulta/agregacao; H14.3 aprendizado assistido; H14.4 dashboard real. |
 | Fora de escopo | Analytics/OAuth novo, scraping, novos provedores, IA externa, aplicacao automatica, hardening e V1 Acceptance. |
-| Gate de conclusao | Metricas persistidas geram recomendacao editorial por canal, com procedencia, auditoria, evidencias e frontend real. |
+| Gate de conclusao | Atendido: metricas persistidas geram recomendacao editorial por canal, com procedencia, auditoria, evidencias e frontend real; PR #23 mergeada. |
 
 ## Sprint 14 - V1 Acceptance
 

@@ -9,6 +9,8 @@
   server-side, upload privado/nao listado, consulta, replay idempotente,
   isolamento e revogacao; a policy foi restaurada.
 - A Sprint 13 pertence ao E14 e e governada por `docs/specs/014-metrics-learning.md`.
+- A Sprint 13 foi encerrada no PR #23, merge commit
+  `9b89d1be04e7a6e319efb9a957282097c4854f31`.
 - A Sprint 14/V1 Acceptance permanece planejada e nao pode ser iniciada aqui.
 
 ## Baseline e branch
@@ -17,7 +19,8 @@
 - SHA inicial: `6690008aa92749415838f97f10a4b407301f2233`.
 - `main` e `origin/main` alinhadas, divergencia `0 0`.
 - Working tree limpo e sem worktrees adicionais.
-- Branch de trabalho: `codex/sprint-13-metrics-learning`.
+- Branch de trabalho: `codex/sprint-13-metrics-learning` (PR #23 mergeada e branch
+  removida no encerramento).
 
 ## Objetivo e gate
 
@@ -73,7 +76,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - Validacao de reload, auditoria sanitizada e ausencia de segredos.
 - QA visual em 1366x768, 1600x900, 1792x1024 e 1920x1080, incluindo sidebar,
   estados vazios, parciais, erro e recomendacao.
-- Quality gates do package.json, `git diff --check` e PR draft sem merge.
+- Quality gates do package.json, `git diff --check` e PR #23 mergeada.
 
 ## Riscos
 
@@ -86,4 +89,4 @@ recriacao do frontend e limpeza administrativa da S12.
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
 reduzir os 56 existentes, persistencia e isolamento demonstrados, QA visual feito,
-branch publicada e PR draft aberta. Nao fazer merge e nao iniciar Sprint 14.
+PR #23 revisada e mergeada por merge commit. Sprint 14 nao foi iniciada.

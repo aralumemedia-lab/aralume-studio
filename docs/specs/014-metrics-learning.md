@@ -2,7 +2,8 @@
 
 ## Status
 
-Em implementacao na Sprint 13, com escopo normalizado antes do codigo.
+Concluida na Sprint 13; PR #23 mergeada por merge commit. A conclusao desta spec
+nao equivale ao aceite da V1.0.
 
 ## Identificacao
 
@@ -231,5 +232,5 @@ handoff e ADR 003.
 
 Implementacao completa das H14.1-H14.4, testes e QA visual executados, persistencia
 verificada apos reload, isolamento e auditoria demonstrados, documentacao atualizada,
-PR draft aberto e sem merge. Sprint 14 nao e iniciada e V1 Acceptance nao e
-implementada.
+PR #23 revisada e mergeada por merge commit. Sprint 14 nao foi iniciada e V1
+Acceptance nao foi implementada.

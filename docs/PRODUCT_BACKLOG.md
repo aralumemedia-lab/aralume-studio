@@ -11,7 +11,7 @@ normativos das sprints.
 | E11 | Cortes Derivados Controlados | Entregar cortes persistentes e vinculados ao video principal. | completed | Pelo menos um corte valido vinculado. | - |
 | E12 | Publicacao Assistida | Preparar publicacao com aprovacao, compliance e sem envio automatico. | completed | Pacote pronto sem envio externo automatico. | E10, E11 |
 | E13 | Integracoes Reais Autorizadas | Conectar provedores com governanca, autorizacao e seguranca. | completed | Integracao oficial sem segredo e com destino server-side comprovado. | E12; ADR 002; PR #22 |
-| E14 | Metricas e Aprendizado | Fechar o ciclo com metricas por canal e recomendacoes assistidas. | in progress | Metricas geram recomendacao editorial por canal. | E13 concluido; origem controlada definida |
+| E14 | Metricas e Aprendizado | Fechar o ciclo com metricas por canal e recomendacoes assistidas. | completed | Metricas geram recomendacao editorial por canal. | E13 concluido; PR #23 mergeada |
 | E15 | Hardening V1.0 | Consolidar a base operacional demonstravel para V1.0. | planned | Demonstracao ponta a ponta e decisao binaria. | E13 e E14 concluidos |
 
 ## Sprints formalizadas
@@ -20,7 +20,7 @@ normativos das sprints.
 | --- | --- | --- | --- | --- | --- |
 | S11 | Publicacao Assistida | E12 | `docs/specs/011-publication-assisted.md` | completed | PR #19 mergeado. |
 | S12 | Integracoes Reais Autorizadas | E13 | `docs/specs/015-authorized-real-integrations.md` | completed | PR #22; validacao real concluida em 2026-07-15. |
-| S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | in progress | Branch `codex/sprint-13-metrics-learning`; PR draft ao final. |
+| S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | completed | PR #23 mergeada por merge commit `9b89d1be04e7a6e319efb9a957282097c4854f31`. |
 | S14 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | planned | Posterior a S13; nao iniciar nesta execucao. |
 
 ## Historias da Sprint 11
