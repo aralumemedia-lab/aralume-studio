@@ -678,18 +678,34 @@ export type PublicationTarget = {
   status: PublicationStatus;
   lastConnectedAt?: ISODate;
   tokenExpiresAt?: ISODate;
+  readinessStatus?: "ready" | "warning" | "blocked";
+  readinessReason?: string;
+  readinessReasons?: string[];
+  latestApprovalId?: ID;
+  latestComplianceCheckId?: ID;
+  latestPublicationJobId?: ID;
+  sourceContentId?: ID;
+  sourceVideoAssetId?: ID;
+  updatedAt?: ISODate;
 };
 
 export type PublicationJob = {
   id: ID;
   channelId: ID;
+  publicationTargetId: ID;
   contentId: ID;
+  sourceVideoAssetId: ID;
   platform: PublicationTarget["platform"];
   title: string;
   description: string;
+  idempotencyKey: string;
   scheduledAt?: ISODate;
   status: PublicationStatus;
   approvalId?: ID;
+  complianceCheckId?: ID;
+  blockedReason?: string;
+  errorCode?: string;
+  errorMessage?: string;
   createdAt: ISODate;
   updatedAt: ISODate;
 };

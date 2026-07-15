@@ -106,10 +106,19 @@ export {
 } from "./media-assets-api";
 
 export {
+  createPublicationJob,
+  createPublicationTarget,
+  describePublicationsApiError,
+  getPublicationJobs,
+  getPublicationTargets,
+  reschedulePublicationJob,
+} from "./publications-api";
+
+export {
   createRenderJob,
   describeRendersApiError,
   getRenderJob,
   getRenderJobs,
 } from "./renders-api";
 
-export { getPerformanceMetrics, getPublicationJobs, getWorkflowRuns } from "./mock-api";
+export { getPerformanceMetrics, getWorkflowRuns } from "./mock-api";
