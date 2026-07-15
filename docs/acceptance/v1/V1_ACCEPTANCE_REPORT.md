@@ -6,19 +6,21 @@
 
 O candidato não atingiu a exigência de aprovação dos 18 critérios obrigatórios. A decisão é válida e reproduzível: os gates técnicos passaram, mas a demonstração frontend revelou fluxos ausentes, telas somente de consulta e dependências mockadas.
 
-## Revisão e encerramento da PR
+## Identificadores e estado da PR
 
 - PR revisada: #24.
-- Head remoto revisado nesta rodada: `22388e7bf8f47e291648b2b7c853f89e06234ebb`.
 - Base da PR: `main` em `d78959a47a2bafbb343408d703eafafec8c6df59`.
+- Commit-base da execução do V1 Acceptance e das evidências: `22388e7`.
+- Head vigente da PR: consultar diretamente a PR #24 antes de cada revisão ou merge; este documento não fixa o head corrente.
+- Correções documentais posteriores permanecem na mesma PR e não alteram os resultados funcionais.
 - Diff: somente documentação de aceite, rastreabilidade, roadmap/backlog/handoff e evidências; nenhum arquivo frontend/backend/configuração foi alterado.
 - Reviews/comentários/checks remotos no preflight: nenhum review, nenhum comentário e nenhum check reportado; mergeability `MERGEABLE`, `mergeStateStatus=CLEAN`.
-- Veredito de revisão documental: `APPROVE_WITH_NOTES`, sem alterar o veredito de produto. A aprovação GitHub objetiva ainda deve ser feita por um revisor que não seja o autor da PR.
+- Veredito de produto: `V1.0 NÃO ACEITA`.
 - A Sprint 14 é considerada concluída como gate documental; a V1.0 permanece não aceita e não liberada.
 
 ## Escopo executado
 
-- Preflight Git: `main` e `origin/main` alinhados no SHA `d78959a47a2bafbb343408d703eafafec8c6df59`; HEAD candidato em `22388e7bf8f47e291648b2b7c853f89e06234ebb`; working tree limpo; sem worktrees adicionais.
+- Preflight Git: `main` e `origin/main` alinhados no SHA `d78959a47a2bafbb343408d703eafafec8c6df59`; commit-base da execução em `22388e7`; working tree limpo; sem worktrees adicionais.
 - Branch criada: `codex/sprint-14-v1-acceptance`.
 - Documentação governante, Documento Mestre, contratos frontend, design system, processo SDD, specs dos domínios, ADRs e artefatos de aceite lidos antes da validação.
 - Backend iniciado localmente em `127.0.0.1:3001` e frontend em `127.0.0.1:4173`.

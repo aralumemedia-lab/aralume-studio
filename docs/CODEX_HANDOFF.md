@@ -83,7 +83,9 @@ recriacao do frontend e limpeza administrativa da S12.
 
 - Branch: `codex/sprint-14-v1-acceptance`.
 - Base: `d78959a47a2bafbb343408d703eafafec8c6df59`.
-- PR: #24, com commit inicial revisado `22388e7bf8f47e291648b2b7c853f89e06234ebb`.
+- PR: #24; commit-base do aceite e das evidências: `22388e7`.
+- O head vigente da PR deve ser consultado diretamente no GitHub; correções documentais posteriores foram feitas na mesma PR.
+- Merge ainda pendente de nova revisão; release permanece bloqueada e remediações não foram iniciadas.
 - Gates tecnicos: lint, typecheck, 64 testes, build e `git diff --check` aprovados.
 - Veredito de revisão documental: `APPROVE_WITH_NOTES`, condicionado à revisão/aprovação objetiva no GitHub.
 - Bloqueio principal: o frontend ainda possui fluxos obrigatorios ausentes ou mockados.

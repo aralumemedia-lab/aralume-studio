@@ -6,10 +6,13 @@
 - PR: #24 — `https://github.com/aralumemedia-lab/aralume-studio/pull/24`.
 - Branch: `codex/sprint-14-v1-acceptance`.
 - Base normativa: `main`/`origin/main` em `d78959a47a2bafbb343408d703eafafec8c6df59`.
-- Head revisado: `22388e7bf8f47e291648b2b7c853f89e06234ebb`.
+- Commit-base das evidências: `22388e7`.
+- Head vigente da PR: deve ser confirmado diretamente no GitHub no momento da revisão; não é fixado nesta matriz.
 - Spec: [`docs/specs/012-v1-acceptance.md`](../../specs/012-v1-acceptance.md).
 - Critérios oficiais: [`docs/PROJECT_MASTER.md`](../../PROJECT_MASTER.md), V1-01 a V1-18.
 - Regra: todos os 18 critérios obrigatórios precisam estar `PASS` para aceitar a V1.0.
+
+Os resultados desta matriz foram produzidos no commit-base `22388e7`. Correções documentais posteriores não alteram os resultados funcionais, salvo quando explicitamente registrado.
 
 ## Resultado
 
