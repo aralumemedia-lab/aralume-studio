@@ -2,7 +2,7 @@
 
 ## Status
 
-Em execucao na Sprint 14; candidato atual com veredito `V1.0 NÃO ACEITA`.
+Concluida como gate de aceite da Sprint 14; veredito `V1.0 NÃO ACEITA`.
 
 ## Identification
 
@@ -170,7 +170,8 @@ Uma decisao negativa e valida. Nesse caso, a spec exige uma lista objetiva de bl
 - A documentacao necessaria permanece coerente com Documento Mestre, roadmap, backlog e handoff.
 - Nenhum segredo foi exposto.
 - Nenhum comportamento de produto foi implementado nesta execucao documental.
-- O primeiro candidato foi registrado em `docs/acceptance/v1/` e nao foi aceito.
+- O resultado final foi registrado em `docs/acceptance/v1/`, com 13 criterios pendentes e remediacao proposta no backlog.
+- A Sprint 14 foi concluida sem implementar remediacao funcional e sem liberar a V1.0.
 
 ## Sprint alvo
 
