@@ -276,6 +276,24 @@ test("publication service prepares packages, enforces gates and keeps channel is
       },
     );
 
+    assert.throws(
+      () =>
+        harness.service.createPublicationTarget({
+          id: "pt_cross_channel",
+          channelId: "ch_historia",
+          platform: "youtube",
+          accountName: "Canal com referencia cruzada",
+          status: "authenticated",
+          sourceContentId: "idea_04",
+          sourceVideoAssetId: "vd_curio_02",
+          requestedBy: "Ana Ribeiro",
+        }),
+      (error) => {
+        expectAppError(error, 404, "NOT_FOUND");
+        return true;
+      },
+    );
+
     const auditActions = harness.auditRepository
       .listAuditLogs({ channelId: "ch_historia" })
       .map((entry) => entry.action);
@@ -382,6 +400,9 @@ test("publication HTTP routes expose channel-scoped targets, jobs and rescheduli
       meta: { requestId: string };
     };
     assert.equal(blockedPayload.error.code, "OPERATION_BLOCKED");
+
+    const missingChannelResponse = await fetch(`${baseUrl}/api/publications`);
+    assert.equal(missingChannelResponse.status, 400);
   } finally {
     await stopServer(server);
     harness.cleanup();

@@ -58,6 +58,7 @@ Definidos em `src/contracts/types.ts`. Não renomear campos.
 - `Content` (idea) 1:N `HumanApproval, ComplianceCheck, QualityCheck`.
 - `PublicationTarget` inclui `readinessStatus`, `readinessReason`, `readinessReasons`, `latestPublicationJobId`, `sourceContentId` e `sourceVideoAssetId`.
 - `PublicationJob` inclui `publicationTargetId`, `sourceVideoAssetId`, `idempotencyKey`, `approvalId`, `complianceCheckId`, `blockedReason`, `errorCode` e `errorMessage`.
+- As listagens de `PublicationTarget` e `PublicationJob` sao sempre canal-scoped e exigem `channelId`.
 
 ## Endpoints
 

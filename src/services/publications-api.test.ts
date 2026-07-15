@@ -52,6 +52,57 @@ test("publication API clients call the expected endpoints and preserve payloads"
   await withFetchStub(
     async (url, init) => {
       if (
+        url === "/api/publication-targets?channelId=ch_historia" ||
+        url === "/api/publications?channelId=ch_historia"
+      ) {
+        return jsonResponse({
+          data:
+            url === "/api/publication-targets?channelId=ch_historia"
+              ? [
+                  {
+                    id: "pt_1",
+                    channelId: "ch_historia",
+                    platform: "youtube",
+                    accountName: "Aralume Historia",
+                    status: "authenticated",
+                    lastConnectedAt: "2026-07-13T03:30:00.000Z",
+                    tokenExpiresAt: "2026-08-13T03:30:00.000Z",
+                    sourceContentId: "idea_06",
+                    sourceVideoAssetId: "vd_historia_01",
+                    latestPublicationJobId: "pj_1",
+                    latestApprovalId: "ap_1",
+                    latestComplianceCheckId: "cc_1",
+                    readinessStatus: "ready",
+                    readinessReason: "Target is ready for assisted publication.",
+                    readinessReasons: ["Target is ready for assisted publication."],
+                    createdAt: "2026-07-13T03:30:00.000Z",
+                    updatedAt: "2026-07-13T03:30:00.000Z",
+                  },
+                ]
+              : [
+                  {
+                    id: "pj_1",
+                    channelId: "ch_historia",
+                    publicationTargetId: "pt_1",
+                    contentId: "idea_06",
+                    sourceVideoAssetId: "vd_historia_01",
+                    platform: "youtube",
+                    title: "A logistica do Imperio Romano",
+                    description: "Pacote assistido.",
+                    idempotencyKey: "publication:ch_historia:vd_historia_01:youtube:001",
+                    scheduledAt: "2026-07-15T13:00:00.000Z",
+                    status: "scheduled",
+                    approvalId: "ap_1",
+                    complianceCheckId: "cc_1",
+                    createdAt: "2026-07-13T03:30:00.000Z",
+                    updatedAt: "2026-07-13T03:30:00.000Z",
+                  },
+                ],
+          meta: { ...baseMeta, total: 1, page: 1, pageSize: 1 },
+        });
+      }
+
+      if (
         url ===
         "/api/publication-targets?channelId=ch_historia&platform=youtube&status=authenticated&readinessStatus=ready"
       ) {
@@ -213,6 +264,12 @@ test("publication API clients call the expected endpoints and preserve payloads"
       throw new Error(`Unexpected request: ${url}`);
     },
     async (calls) => {
+      const stringTargets = await getPublicationTargets("ch_historia");
+      assert.equal(stringTargets.data[0].id, "pt_1");
+
+      const stringJobs = await getPublicationJobs("ch_historia");
+      assert.equal(stringJobs.data[0].id, "pj_1");
+
       const targets = await getPublicationTargets({
         channelId: "ch_historia",
         platform: "youtube",
@@ -266,21 +323,23 @@ test("publication API clients call the expected endpoints and preserve payloads"
       });
       assert.equal(rescheduledJob.data.status, "draft");
 
-      assert.equal(calls.length, 5);
-      assert.equal(
-        calls[0].url,
-        "/api/publication-targets?channelId=ch_historia&platform=youtube&status=authenticated&readinessStatus=ready",
-      );
-      assert.equal(calls[1].url, "/api/publication-targets");
-      assert.equal(calls[1].init?.method, "POST");
+      assert.equal(calls.length, 7);
+      assert.equal(calls[0].url, "/api/publication-targets?channelId=ch_historia");
+      assert.equal(calls[1].url, "/api/publications?channelId=ch_historia");
       assert.equal(
         calls[2].url,
+        "/api/publication-targets?channelId=ch_historia&platform=youtube&status=authenticated&readinessStatus=ready",
+      );
+      assert.equal(calls[3].url, "/api/publication-targets");
+      assert.equal(calls[3].init?.method, "POST");
+      assert.equal(
+        calls[4].url,
         "/api/publications?channelId=ch_historia&platform=youtube&status=scheduled&publicationTargetId=pt_1&contentId=idea_06&sourceVideoAssetId=vd_historia_01&idempotencyKey=publication%3Ach_historia%3Avd_historia_01%3Ayoutube%3A001",
       );
-      assert.equal(calls[3].url, "/api/publications");
-      assert.equal(calls[3].init?.method, "POST");
-      assert.equal(calls[4].url, "/api/publications/pj_1/reschedule");
-      assert.equal(calls[4].init?.method, "POST");
+      assert.equal(calls[5].url, "/api/publications");
+      assert.equal(calls[5].init?.method, "POST");
+      assert.equal(calls[6].url, "/api/publications/pj_1/reschedule");
+      assert.equal(calls[6].init?.method, "POST");
     },
   );
 });

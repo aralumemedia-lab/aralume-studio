@@ -89,7 +89,7 @@ export function createPublicationsService(
   return {
     listPublicationTargets(filters = {}) {
       const normalized = publicationTargetListQuerySchema.parse(filters);
-      validateOptionalChannel(dependencies.channelsRepository, normalized.channelId);
+      validateChannelExists(dependencies.channelsRepository, normalized.channelId);
       const { readinessStatus: _readinessStatus, ...repositoryFilters } = normalized;
 
       const targets = repository
@@ -119,6 +119,28 @@ export function createPublicationsService(
 
       const now = clock().toISOString();
       const existing = parsed.id ? repository.getPublicationTarget(parsed.id) : undefined;
+      const validatedSourceContentId = validateTargetContentReference({
+        editorialRepository: dependencies.editorialRepository,
+        channelId: parsed.channelId,
+        sourceContentId: parsed.sourceContentId,
+      });
+      const validatedSourceVideoAsset = validateTargetVideoReference({
+        mediaAssetsRepository: dependencies.mediaAssetsRepository,
+        channelId: parsed.channelId,
+        sourceVideoAssetId: parsed.sourceVideoAssetId,
+      });
+
+      if (
+        validatedSourceContentId &&
+        validatedSourceVideoAsset &&
+        validatedSourceVideoAsset.contentId !== validatedSourceContentId
+      ) {
+        throw conflict("Publication target references mismatched source content and video", {
+          channelId: parsed.channelId,
+          sourceContentId: validatedSourceContentId,
+          sourceVideoAssetId: validatedSourceVideoAsset.id,
+        });
+      }
 
       if (existing && existing.channelId !== parsed.channelId) {
         throw notFound("Publication target not found", {
@@ -135,8 +157,14 @@ export function createPublicationsService(
         status: parsed.status,
         lastConnectedAt: parsed.lastConnectedAt,
         tokenExpiresAt: parsed.tokenExpiresAt,
-        sourceContentId: parsed.sourceContentId ?? existing?.sourceContentId,
-        sourceVideoAssetId: parsed.sourceVideoAssetId ?? existing?.sourceVideoAssetId,
+        sourceContentId:
+          validatedSourceContentId ??
+          validatedSourceVideoAsset?.contentId ??
+          existing?.sourceContentId,
+        sourceVideoAssetId:
+          validatedSourceVideoAsset?.id ??
+          parsed.sourceVideoAssetId ??
+          existing?.sourceVideoAssetId,
         latestApprovalId: existing?.latestApprovalId,
         latestComplianceCheckId: existing?.latestComplianceCheckId,
         latestPublicationJobId: existing?.latestPublicationJobId,
@@ -169,7 +197,7 @@ export function createPublicationsService(
 
     listPublicationJobs(filters = {}) {
       const normalized = publicationJobListQuerySchema.parse(filters);
-      validateOptionalChannel(dependencies.channelsRepository, normalized.channelId);
+      validateChannelExists(dependencies.channelsRepository, normalized.channelId);
       return repository.listPublicationJobs(normalized);
     },
 
@@ -897,12 +925,45 @@ function validateChannelExists(channelsRepository: ChannelsRepository, channelId
   }
 }
 
-function validateOptionalChannel(channelsRepository: ChannelsRepository, channelId?: string): void {
-  if (!channelId) {
-    return;
+function validateTargetContentReference(input: {
+  editorialRepository: EditorialRepository;
+  channelId: string;
+  sourceContentId?: string;
+}): string | undefined {
+  if (!input.sourceContentId) {
+    return undefined;
   }
 
-  validateChannelExists(channelsRepository, channelId);
+  const contentIdea = input.editorialRepository.getContentIdea(input.sourceContentId);
+  if (!contentIdea || contentIdea.channelId !== input.channelId) {
+    throw notFound("Content idea not found", {
+      channelId: input.channelId,
+      contentId: input.sourceContentId,
+    });
+  }
+
+  return contentIdea.id;
+}
+
+function validateTargetVideoReference(input: {
+  mediaAssetsRepository: MediaAssetsRepository;
+  channelId: string;
+  sourceVideoAssetId?: string;
+}): { id: string; contentId: string } | undefined {
+  if (!input.sourceVideoAssetId) {
+    return undefined;
+  }
+
+  const source = resolvePublicationSource(
+    input.mediaAssetsRepository,
+    input.channelId,
+    input.sourceVideoAssetId,
+  );
+
+  return {
+    id: source.id,
+    contentId: source.contentId,
+  };
 }
 
 function fingerprintFor(

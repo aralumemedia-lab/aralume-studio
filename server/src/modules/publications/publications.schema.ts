@@ -62,7 +62,7 @@ export const publicationTargetCreateSchema = z
 
 export const publicationTargetListQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
     platform: publicationPlatformSchema.optional(),
     status: publicationTargetStatusSchema.optional(),
     readinessStatus: publicationTargetReadinessSchema.optional(),
@@ -93,7 +93,7 @@ export const publicationJobRescheduleSchema = z
 
 export const publicationJobListQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
     platform: publicationPlatformSchema.optional(),
     status: publicationJobStatusSchema.optional(),
     publicationTargetId: idSchema.optional(),

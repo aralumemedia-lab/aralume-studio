@@ -55,10 +55,17 @@ export type ReschedulePublicationJobInput = {
 };
 
 export async function getPublicationTargets(
-  filters: PublicationTargetFilters = {},
+  channelId: ID,
+): Promise<ApiListSuccess<PublicationTarget>>;
+export async function getPublicationTargets(
+  filters?: PublicationTargetFilters,
+): Promise<ApiListSuccess<PublicationTarget>>;
+export async function getPublicationTargets(
+  filters: ID | PublicationTargetFilters = {},
 ): Promise<ApiListSuccess<PublicationTarget>> {
+  const normalized = typeof filters === "string" ? { channelId: filters } : filters;
   return requestApiEnvelope<ApiListSuccess<PublicationTarget>>(
-    withQuery(PUBLICATION_TARGETS_PATH, filters),
+    withQuery(PUBLICATION_TARGETS_PATH, normalized),
   );
 }
 
@@ -71,10 +78,17 @@ export async function createPublicationTarget(
   });
 }
 
+export async function getPublicationJobs(channelId: ID): Promise<ApiListSuccess<PublicationJob>>;
 export async function getPublicationJobs(
-  filters: PublicationJobFilters = {},
+  filters?: PublicationJobFilters,
+): Promise<ApiListSuccess<PublicationJob>>;
+export async function getPublicationJobs(
+  filters: ID | PublicationJobFilters = {},
 ): Promise<ApiListSuccess<PublicationJob>> {
-  return requestApiEnvelope<ApiListSuccess<PublicationJob>>(withQuery(PUBLICATIONS_PATH, filters));
+  const normalized = typeof filters === "string" ? { channelId: filters } : filters;
+  return requestApiEnvelope<ApiListSuccess<PublicationJob>>(
+    withQuery(PUBLICATIONS_PATH, normalized),
+  );
 }
 
 export async function createPublicationJob(
