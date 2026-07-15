@@ -19,7 +19,7 @@ import type {
   YouTubeReadinessStatus,
   YouTubeUploadResult,
 } from "./youtube.types.js";
-import { YOUTUBE_UPLOAD_SCOPE } from "./youtube.types.js";
+import { YOUTUBE_REQUIRED_SCOPES } from "./youtube.types.js";
 import {
   createState,
   decryptToken,
@@ -33,6 +33,16 @@ const externalCode = (error: unknown) =>
   error instanceof Error && error.name === "YouTubeExternalError"
     ? error.message
     : "YOUTUBE_EXTERNAL_UNAVAILABLE";
+const normalizeScopes = (scope?: string | string[]) =>
+  [...new Set((Array.isArray(scope) ? scope : (scope?.split(/\s+/) ?? [])).filter(Boolean))].sort();
+const hasRequiredScopes = (scopes: string[]) =>
+  YOUTUBE_REQUIRED_SCOPES.every((required) => scopes.includes(required));
+const hasOnlyApprovedScopes = (scopes: string[]) =>
+  scopes.every((scope) =>
+    YOUTUBE_REQUIRED_SCOPES.includes(scope as (typeof YOUTUBE_REQUIRED_SCOPES)[number]),
+  );
+const scopesAreSufficient = (scope?: string[]) =>
+  Boolean(scope && hasRequiredScopes(scope) && hasOnlyApprovedScopes(scope));
 
 export function createYouTubeService(input: {
   repository: YouTubeRepository;
@@ -89,11 +99,26 @@ export function createYouTubeService(input: {
     });
   const publicConnection = (channelId: string): YouTubeConnectionState => {
     const stored = input.repository.getConnection(channelId);
-    if (!stored) return { channelId, provider: "youtube", status: "disconnected" };
+    if (!stored)
+      return {
+        channelId,
+        provider: "youtube",
+        status: "disconnected",
+        grantedScopes: [],
+        scopesSufficient: false,
+        reauthorizationRequired: false,
+      };
+    const grantedScopes = normalizeScopes(stored.grantedScopes);
+    const scopesSufficient = scopesAreSufficient(grantedScopes);
     const expired =
       stored.accessTokenExpiresAt !== undefined &&
       stored.accessTokenExpiresAt <= clock().toISOString();
-    const status = stored.status === "connected" && expired ? "expired" : stored.status;
+    const status =
+      stored.status === "connected" && !scopesSufficient
+        ? "reauthorization_required"
+        : stored.status === "connected" && expired
+          ? "expired"
+          : stored.status;
     return {
       channelId,
       provider: "youtube",
@@ -104,6 +129,9 @@ export function createYouTubeService(input: {
       expiresAt: stored.accessTokenExpiresAt,
       lastErrorCode: stored.lastErrorCode,
       lastErrorMessage: stored.lastErrorMessage,
+      grantedScopes,
+      scopesSufficient,
+      reauthorizationRequired: status === "reauthorization_required",
     };
   };
   const refresh = async (stored: YouTubeStoredConnection): Promise<YouTubeStoredConnection> => {
@@ -114,11 +142,32 @@ export function createYouTubeService(input: {
       const result = await input.externalClient.refreshAccessToken(
         decryptToken(stored.refreshToken, input.tokenSecret!),
       );
+      const grantedScopes = normalizeScopes(result.scope ?? stored.grantedScopes);
+      if (!scopesAreSufficient(grantedScopes)) {
+        const reauthorization = {
+          channelId: stored.channelId,
+          status: "reauthorization_required" as const,
+          grantedScopes,
+          lastErrorCode: "YOUTUBE_INSUFFICIENT_SCOPE",
+          lastErrorMessage: "YouTube reauthorization is required.",
+        };
+        input.repository.upsertConnection(reauthorization);
+        audit(
+          stored.channelId,
+          "youtube.scope_insufficient",
+          stored.channelId,
+          "warning",
+          "YouTube reauthorization is required.",
+          { grantedScopes },
+        );
+        throw appError("FORBIDDEN", "YouTube reauthorization is required.", 403);
+      }
       const updated = {
         ...stored,
         status: "connected" as const,
         token: encryptToken(result.accessToken, input.tokenSecret!),
         accessTokenExpiresAt: new Date(clock().getTime() + result.expiresIn * 1000).toISOString(),
+        grantedScopes,
         lastErrorCode: undefined,
         lastErrorMessage: undefined,
       };
@@ -132,6 +181,7 @@ export function createYouTubeService(input: {
       );
       return updated;
     } catch (error) {
+      if (error instanceof AppError && error.code === "FORBIDDEN") throw error;
       const failed = {
         ...stored,
         status: "expired" as const,
@@ -153,6 +203,17 @@ export function createYouTubeService(input: {
   const accessToken = async (channelId: string) => {
     let stored = input.repository.getConnection(channelId);
     if (!stored?.token) throw appError("UNAUTHORIZED", "YouTube authorization is required.", 401);
+    if (!scopesAreSufficient(normalizeScopes(stored.grantedScopes))) {
+      audit(
+        channelId,
+        "youtube.scope_insufficient",
+        channelId,
+        "warning",
+        "YouTube reauthorization is required.",
+        { grantedScopes: normalizeScopes(stored.grantedScopes) },
+      );
+      throw appError("FORBIDDEN", "YouTube reauthorization is required.", 403);
+    }
     if (stored.status !== "connected") stored = await refresh(stored);
     if (stored.accessTokenExpiresAt && stored.accessTokenExpiresAt <= clock().toISOString())
       stored = await refresh(stored);
@@ -198,7 +259,7 @@ export function createYouTubeService(input: {
         response_type: "code",
         access_type: "offline",
         prompt: "consent",
-        scope: YOUTUBE_UPLOAD_SCOPE,
+        scope: YOUTUBE_REQUIRED_SCOPES.join(" "),
         state: created.state,
       }).toString();
       return { authorizationUrl: url.toString(), expiresAt };
@@ -231,8 +292,38 @@ export function createYouTubeService(input: {
       }
       try {
         const token = await input.externalClient.exchangeCode(callback.code, input.redirectUri!);
-        if (!token.scope?.split(/\s+/).includes(YOUTUBE_UPLOAD_SCOPE))
-          throw appError("FORBIDDEN", "The granted YouTube scope is insufficient.", 403);
+        const grantedScopes = normalizeScopes(token.scope);
+        if (!scopesAreSufficient(grantedScopes)) {
+          try {
+            await input.externalClient.revokeToken(token.accessToken);
+          } catch (error) {
+            audit(
+              record.channelId,
+              "youtube.revocation_failed",
+              record.channelId,
+              "failed",
+              "Remote YouTube revocation failed after insufficient scope.",
+              { errorCode: externalCode(error) },
+            );
+          }
+          const reauthorization: YouTubeStoredConnection = {
+            channelId: record.channelId,
+            status: "reauthorization_required",
+            grantedScopes,
+            lastErrorCode: "YOUTUBE_INSUFFICIENT_SCOPE",
+            lastErrorMessage: "YouTube reauthorization is required.",
+          };
+          input.repository.upsertConnection(reauthorization);
+          audit(
+            record.channelId,
+            "youtube.scope_insufficient",
+            record.channelId,
+            "warning",
+            "YouTube reauthorization is required.",
+            { grantedScopes },
+          );
+          return publicConnection(record.channelId);
+        }
         const stored: YouTubeStoredConnection = {
           channelId: record.channelId,
           status: "connected",
@@ -242,6 +333,7 @@ export function createYouTubeService(input: {
             : undefined,
           accessTokenExpiresAt: new Date(clock().getTime() + token.expiresIn * 1000).toISOString(),
           connectedAt: clock().toISOString(),
+          grantedScopes,
         };
         input.repository.upsertConnection(stored);
         audit(
@@ -278,9 +370,27 @@ export function createYouTubeService(input: {
     },
     async listChannels(channelId) {
       assertChannel(channelId);
+      audit(
+        channelId,
+        "youtube.channels_list_started",
+        channelId,
+        "success",
+        "YouTube channel discovery started.",
+      );
       const auth = await accessToken(channelId);
       try {
-        return await input.externalClient.listChannels(auth.token);
+        const channels = await input.externalClient.listChannels(auth.token);
+        audit(
+          channelId,
+          channels.length ? "youtube.channels_list_completed" : "youtube.channels_empty",
+          channelId,
+          channels.length ? "success" : "warning",
+          channels.length
+            ? "YouTube channels discovered."
+            : "No YouTube channels are available for this connection.",
+          { count: channels.length },
+        );
+        return channels;
       } catch (error) {
         audit(
           channelId,
@@ -304,6 +414,7 @@ export function createYouTubeService(input: {
       input.repository.upsertConnection({
         ...stored,
         selectedChannel: selected,
+        selectionValidatedAt: clock().toISOString(),
         status: "connected",
       });
       audit(
@@ -319,9 +430,17 @@ export function createYouTubeService(input: {
       assertChannel(channelId);
       const connection = publicConnection(channelId);
       const reasons: string[] = [];
-      if (connection.status !== "connected")
-        reasons.push(`Integration status is ${connection.status}.`);
-      if (!connection.youtubeChannelId) reasons.push("A YouTube destination is not selected.");
+      if (!connection.scopesSufficient) reasons.push("youtube_insufficient_scope");
+      if (connection.reauthorizationRequired) reasons.push("youtube_reauthorization_required");
+      if (connection.status === "disconnected") reasons.push("youtube_not_connected");
+      if (connection.status === "expired") reasons.push("youtube_token_expired");
+      if (connection.status === "revoked") reasons.push("youtube_revoked");
+      if (connection.status === "error") reasons.push("youtube_connection_error");
+      if (connection.status === "pending") reasons.push("youtube_connection_pending");
+      if (connection.status === "connected" && !connection.youtubeChannelId)
+        reasons.push("youtube_channel_not_selected");
+      if (connection.status !== "connected" && connection.youtubeChannelId)
+        reasons.push("youtube_selected_channel_invalid");
       const status: YouTubeReadinessStatus = reasons.length ? "blocked" : "ready";
       return {
         channelId,

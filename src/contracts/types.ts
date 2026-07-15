@@ -715,13 +715,23 @@ export type PublicationJob = {
 export type YouTubeConnectionState = {
   channelId: ID;
   provider: "youtube";
-  status: "disconnected" | "pending" | "connected" | "expired" | "revoked" | "error";
+  status:
+    | "disconnected"
+    | "pending"
+    | "connected"
+    | "expired"
+    | "revoked"
+    | "reauthorization_required"
+    | "error";
   youtubeChannelId?: ID;
   youtubeChannelTitle?: string;
   connectedAt?: ISODate;
   expiresAt?: ISODate;
   lastErrorCode?: string;
   lastErrorMessage?: string;
+  grantedScopes: string[];
+  scopesSufficient: boolean;
+  reauthorizationRequired: boolean;
 };
 
 export type YouTubeChannel = { id: ID; title: string; description?: string; thumbnailUrl?: string };

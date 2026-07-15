@@ -424,7 +424,7 @@ export const Route = createFileRoute("/publications")({
             <SectionHeader
               eyebrow="Integração aprovada"
               title="YouTube autorizado"
-              description="OAuth 2.0 Google com o único escopo aprovado para upload. Tokens permanecem no backend."
+              description="OAuth 2.0 Google com upload e leitura limitada à descoberta dos canais. Tokens permanecem no backend."
             />
             {youtubeConnectionQuery.isLoading || youtubeReadinessQuery.isLoading ? (
               <LoadingState label="Consultando conexão YouTube..." />
@@ -452,6 +452,17 @@ export const Route = createFileRoute("/publications")({
                       tone={youtubeReadinessQuery.data?.data.status === "ready" ? "ok" : "critical"}
                     >{`readiness: ${youtubeReadinessQuery.data?.data.status ?? "blocked"}`}</StatusBadge>
                   </div>
+                  {youtubeConnectionQuery.data?.data.reauthorizationRequired && (
+                    <p className="text-xs text-warning" role="status">
+                      Reconexão necessária: a autorização atual não possui os dois escopos
+                      aprovados.
+                    </p>
+                  )}
+                  {youtubeConnectionQuery.data?.data.grantedScopes.length ? (
+                    <p className="text-xs text-muted-foreground">
+                      Escopos válidos: {youtubeConnectionQuery.data.data.grantedScopes.join(", ")}
+                    </p>
+                  ) : null}
                   <div className="text-muted-foreground">
                     {youtubeConnectionQuery.data?.data.youtubeChannelTitle ??
                       "Nenhum canal YouTube selecionado."}
@@ -463,6 +474,16 @@ export const Route = createFileRoute("/publications")({
                   ))}
                   {youtubeConnectionQuery.data?.data.status === "connected" && (
                     <div className="flex flex-wrap gap-2 pt-1">
+                      {youtubeChannelsQuery.isLoading && (
+                        <p className="text-xs text-muted-foreground" role="status">
+                          Listando canais YouTube autorizados...
+                        </p>
+                      )}
+                      {youtubeChannelsQuery.isError && (
+                        <p className="text-xs text-destructive" role="alert">
+                          Não foi possível listar os canais autorizados. Tente reconectar.
+                        </p>
+                      )}
                       <select
                         aria-label="Canal YouTube"
                         className="h-9 rounded-md border border-border bg-background px-2 text-sm"
@@ -487,6 +508,13 @@ export const Route = createFileRoute("/publications")({
                       >
                         Selecionar destino
                       </Button>
+                      {!youtubeChannelsQuery.isLoading &&
+                        !youtubeChannelsQuery.isError &&
+                        youtubeChannelsQuery.data?.data.length === 0 && (
+                          <p className="w-full text-xs text-warning" role="status">
+                            Nenhum canal YouTube foi encontrado para esta conta.
+                          </p>
+                        )}
                     </div>
                   )}
                 </div>
@@ -499,7 +527,9 @@ export const Route = createFileRoute("/publications")({
                     }
                     onClick={() => youtubeConnectMutation.mutate()}
                   >
-                    Conectar YouTube
+                    {youtubeConnectionQuery.data?.data.reauthorizationRequired
+                      ? "Reconectar YouTube"
+                      : "Conectar YouTube"}
                   </Button>
                   <Button
                     variant="outline"

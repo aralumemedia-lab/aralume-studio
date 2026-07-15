@@ -6,6 +6,8 @@ import type { InMemoryPublicationsRepository } from "../publications/publication
 import type { PublicationJob, PublicationTarget } from "../publications/publications.types.js";
 
 export const YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload" as const;
+export const YOUTUBE_READONLY_SCOPE = "https://www.googleapis.com/auth/youtube.readonly" as const;
+export const YOUTUBE_REQUIRED_SCOPES = [YOUTUBE_UPLOAD_SCOPE, YOUTUBE_READONLY_SCOPE] as const;
 
 export type YouTubeConnectionStatus =
   | "disconnected"
@@ -13,6 +15,7 @@ export type YouTubeConnectionStatus =
   | "connected"
   | "expired"
   | "revoked"
+  | "reauthorization_required"
   | "error";
 export type YouTubeReadinessStatus = "ready" | "warning" | "blocked";
 export type YouTubeUploadStatus = "pending" | "uploading" | "published" | "failed";
@@ -35,6 +38,9 @@ export type YouTubeConnectionState = {
   expiresAt?: string;
   lastErrorCode?: string;
   lastErrorMessage?: string;
+  grantedScopes: string[];
+  scopesSufficient: boolean;
+  reauthorizationRequired: boolean;
 };
 export type YouTubeReadiness = {
   channelId: string;
@@ -71,6 +77,8 @@ export type YouTubeStoredConnection = {
   connectedAt?: string;
   lastErrorCode?: string;
   lastErrorMessage?: string;
+  grantedScopes?: string[];
+  selectionValidatedAt?: string;
 };
 export type OAuthStateRecord = {
   stateHash: string;
