@@ -51,6 +51,17 @@
 - A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementação.
 - E15 foi executado como gate documental; V1.0 não está liberada para release.
 
+## Proposta de remediacao apos Sprint 14
+
+- Epic selecionado: E16 - Pipeline Editorial Operavel pelo Frontend.
+- Iniciativa: Remediacao da Operabilidade da V1.
+- Critérios V1 mapeados: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia de perfil editorial.
+- Itens R14 mapeados: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
+- Historias propostas: H16.1 a H16.4.
+- Sequencia sugerida: Sprint proposta A para pauta/pesquisa/fontes/claims; Sprint proposta B para roteiro/versoes/plano visual/cenas/E2E.
+- Estado: planejamento documental concluido, sem inicio de remediacao, sem sprint iniciada e sem novo V1 Acceptance.
+- Reaceite futuro: somente apos evidencias front-end reais, persistencia, auditoria e isolamento por canal.
+
 ## Observacoes
 
 - Esta pagina nao substitui specs.

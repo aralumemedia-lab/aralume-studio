@@ -234,6 +234,31 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Dependencias: contrato backend aprovado e integração com workflows/handoffs.
 - Aceite: nenhum fixture/mock é exibido como estado real; agentes e workflows vêm de APIs persistentes e auditáveis.
 
+## Epico E16 - Pipeline Editorial Operavel pelo Frontend
+
+- Status: proposta documental, nao iniciada.
+- Iniciativa: Remediacao da Operabilidade da V1.
+- Objetivo: tornar operaveis pelo frontend os fluxos editoriais de pauta, pesquisa, fontes, claims, roteiro, versao, plano visual e cenas com persistencia, auditoria e isolamento por canal.
+- Critérios V1 relacionados: V1-03 Pauta, V1-04 Pesquisa e fontes, V1-05 Roteiro versionado, V1-06 Planejamento visual.
+- Dependencia upstream: V1-02 Perfil editorial, somente como precondicao de contexto.
+- Itens R14 incluidos: R14-03, R14-04, R14-05, R14-06.
+- Itens R14 dependentes: R14-02 como dependencia de identidade/perfil editorial.
+- Historias previstas: H16.1 Pautas operaveis pelo frontend; H16.2 Pesquisa, fontes e claims; H16.3 Roteiro versionado; H16.4 Planejamento visual e cenas.
+- Fora de escopo: IA externa, scraping, geracao automatica, midia, renderizacao, cortes, publicacao, autenticao nova, redesign geral, release e novo V1 Acceptance.
+- Gate: apenas planejamento documental ate a conclusao das dependencias e validacoes.
+
+### E16 - Sequencia proposta
+
+1. Sprint proposta A: pautas, pesquisa, fontes e claims.
+2. Sprint proposta B: roteiro, versoes, plano visual, cenas e integracao E2E do fluxo.
+3. Reaceite futuro: V1 Acceptance somente apos fechamento das historias e evidencias do E16.
+
+### E16 - Observacoes de backlog
+
+- Nao renumerar epicos historicos.
+- Nao tratar esta proposta como inicio de sprint.
+- Nao registrar remediacao como concluida.
+
 ### R14-REACCEPT — Reexecucao da V1 Acceptance
 
 - Ator/valor: revisor independente decide novamente o aceite binário.

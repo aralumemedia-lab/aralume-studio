@@ -99,6 +99,18 @@ recriacao do frontend e limpeza administrativa da S12.
 - Dados insuficientes nao podem resultar em recomendacao falsa.
 - A regra nao demonstra causalidade; deve comunicar sinal e limitacoes.
 
+## Handoff - E16
+
+- Estado: definicao documental do primeiro epico de remediacao da V1 concluida.
+- Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
+- Iniciativa: Remediacao da Operabilidade da V1.
+- Critérios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
+- Itens R14: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
+- Historias: H16.1, H16.2, H16.3, H16.4.
+- Sequencia proposta: Sprint proposta A e Sprint proposta B.
+- Gate futuro: reaceite da V1 somente apos evidencias, contratos e testes E2E do E16.
+- Nao iniciado: nenhuma historia foi implementada, nenhuma sprint foi iniciada, nenhum release foi preparado.
+
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
