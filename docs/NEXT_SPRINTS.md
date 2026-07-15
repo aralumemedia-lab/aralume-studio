@@ -15,11 +15,11 @@
 
 ## Fila operacional
 
-| Ordem | Sprint | Epico | Spec normativa | Status | Dependencias |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | next | `main` limpo e alinhado com `origin/main`; normalizacao documental mergeada; Sprint 11 encerrada; spec 015 formalizada; decisao documental sobre os provedores ou plataformas abrangidos registrada. |
-| 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | planned | Sprint 12 encerrada; integracoes reais autorizadas disponiveis como base; origem de metricas e canais definidos. |
-| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | planned | Sprints 12 e 13 encerradas; pre-requisitos da V1.0 identificados; documento mestre, backlog e handoff sem conflito. |
+| Ordem | Sprint | Epico | Spec normativa | Status | Liberacao | Dependencias |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | next | blocked | `main` limpo e alinhado com `origin/main`; normalizacao documental mergeada; Sprint 11 encerrada; spec 015 formalizada; provedores ou plataformas aprovados na documentacao oficial; finalidade, permissoes, autorizacao, revogacao e contratos afetados documentados. |
+| 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | planned | bloqueada ate o encerramento da Sprint 12 | Sprint 12 encerrada; integracoes reais autorizadas disponiveis como base; origem de metricas e canais definidos. |
+| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | planned | bloqueada ate o encerramento das Sprints 12 e 13 | Sprints 12 e 13 encerradas; pre-requisitos da V1.0 identificados; documento mestre, backlog e handoff sem conflito. |
 
 ## Sprint 11 encerrada
 
@@ -40,10 +40,11 @@
 | Spec governante | `docs/specs/015-authorized-real-integrations.md` |
 | Objetivo | Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por canal. |
 | Estado | next |
-| Gate de inicio | `main` limpo e alinhado com `origin/main`, normalizacao documental mergeada, Sprint 11 encerrada, spec 015 formalizada, decisao documental sobre provedores ou plataformas abrangidos registrada e sem conflito documental. |
+| Liberação | bloqueada ate a aprovacao documental explicita dos provedores ou plataformas abrangidos. |
+| Gate de inicio | `main` limpo e alinhado com `origin/main`, normalizacao documental mergeada, Sprint 11 encerrada, spec 015 formalizada, provedores ou plataformas aprovados na documentacao oficial, finalidade/permissoes/autorizacao/revogacao/contratos documentados e sem conflito documental. |
 | Historias incluidas | Autorizacao humana documentada; estado de integracao por canal; armazenamento seguro de tokens e segredos; revogacao auditavel; estados de erro operacionais; isolamento por canal. |
-| Fora de escopo | Metricas e aprendizado; V1 Acceptance; grandes modulos novos; recriacao do frontend; publicacao externa sem autorizacao; novos provedores sem spec; segredos em codigo, docs, commits ou logs; mascarar ausencia de integracao com mocks. |
-| Dependencias | Gate documental que define os provedores ou plataformas do E13; politica de segredos; aprovacao humana; auditoria. |
+| Fora de escopo | Metricas e aprendizado; V1 Acceptance; grandes modulos novos; recriacao do frontend; publicacao externa sem autorizacao; novos provedores sem spec; segredos em codigo, docs, commits ou logs; mascarar ausencia de integracao com mocks; arquitetura generica hipotetica para contornar a falta de definicao aprovada. |
+| Dependencias | Definicao oficial aprovada dos provedores ou plataformas do E13; politica de segredos; aprovacao humana; auditoria. |
 | Gate de conclusao | Integracao real autorizada funcionando sem expor segredo, com aprovacao humana quando aplicavel, revogacao possivel, auditoria por canal e evidencia reproduzivel. |
 
 ## Sprint 13 - Metricas e Aprendizado
@@ -56,10 +57,10 @@
 | Spec governante | `docs/specs/014-metrics-learning.md` |
 | Objetivo | Registrar metricas por canal e consolidar aprendizado editorial assistido sem antecipar V1 Acceptance. |
 | Estado | planned |
-| Gate de inicio | Sprint 12 encerrada; integracoes reais autorizadas disponiveis; origem de metricas e canais definidos; sem conflito documental. |
+| Gate de inicio | Sprint 12 encerrada; integracoes reais autorizadas aprovadas e disponiveis; origem de metricas e canais definidos; sem conflito documental. |
 | Historias incluidas | Registro de metricas; agregacao por canal; distinicao entre metricas manuais e importadas; dashboards; documentacao de origem e auditoria. |
 | Fora de escopo | Scraping sem autorizacao; APIs externas sem spec; decisoes editoriais irreversiveis automaticas; IA real sem custos e gates; Hardening/V1 Acceptance; novas integracoes reais. |
-| Dependencias | Sprint 12 encerrada; base de integracao real autorizada; publicacao assistida ja definida. |
+| Dependencias | Sprint 12 encerrada e liberada por decisao documental aprovada; base de integracao real autorizada; publicacao assistida ja definida. |
 | Gate de conclusao | Metricas e aprendizado operacionais por canal, com procedencia clara, auditoria e recomendacoes assistidas coerentes com a base existente. |
 
 ## Sprint 14 - V1 Acceptance

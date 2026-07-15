@@ -6,7 +6,7 @@
 - O merge commit oficial da Sprint 11 e `966e5bef50446f81701cedd861689b3e07b14a7d`.
 - A Fase 12 do roadmap materializou-se na Sprint 11 e esta encerrada.
 - A proxima sprint formal e a Sprint 12 - Integracoes Reais Autorizadas.
-- A Sprint 12 governa o E13, nao o gate de V1 Acceptance.
+- A Sprint 12 governa o E13, mas esta bloqueada ate haver aprovacao documental explicita dos provedores ou plataformas abrangidos.
 - A spec normativa da Sprint 12 e `docs/specs/015-authorized-real-integrations.md`.
 - A V1.0 ainda nao pode ser declarada aceita porque as Sprints 13 e 14 ainda nao foram executadas.
 
@@ -31,6 +31,10 @@
 ## Objetivo
 
 Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por canal, sem antecipar metricas, aprendizado ou V1 Acceptance.
+
+## Bloqueio critico
+
+Antes de criar branch funcional ou editar codigo, confirme que a documentacao oficial define explicitamente os provedores ou plataformas do E13. Se essa definicao nao existir, pare e reporte bloqueio documental. Nao implemente abstracoes genericas, OAuth hipotetico ou contratos inventados.
 
 ## Historias incluidas
 
@@ -61,6 +65,7 @@ Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por cana
 - Funcionalidades de sprints posteriores.
 - Publicacao externa sem autorizacao.
 - Novos provedores sem spec.
+- Qualquer arquitetura generica hipotetica para contornar a ausencia de definicao aprovada.
 - Segredos em codigo, docs, commits ou logs.
 - Aceitacao baseada apenas em CLI.
 - Mascarar ausencia de integracao com mocks.
@@ -112,3 +117,4 @@ Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por cana
 - Nao declarar aceite sem evidencia.
 - Nao publicar externamente sem autorizacao.
 - Nao solicitar ou registrar segredos.
+- Nao iniciar implementacao enquanto os provedores ou plataformas do E13 nao estiverem explicitamente aprovados.

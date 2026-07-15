@@ -21,7 +21,9 @@ Definir o contrato normativo da Sprint 12 para habilitar integracoes reais autor
 
 Sprint 12 existe para formalizar a camada de autorizacao e governanca das integracoes reais que o produto precisar utilizar. Esta sprint nao incorpora metricas, aprendizado editorial nem hardening da V1.0.
 
-O repositorio ainda nao definiu oficialmente quais provedores ou plataformas entram no E13. Essa decisao permanece pendente e deve ser formalizada antes da implementacao; esta spec nao inventa essa lista.
+O repositorio ainda nao definiu oficialmente quais provedores ou plataformas entram no E13. Essa decisao precisa ser aprovada em documentacao oficial antes da implementacao; esta spec nao inventa essa lista.
+
+Enquanto essa aprovacao nao existir, a Sprint 12 permanece bloqueada e nao pode começar.
 
 ## Distincao entre identificadores
 
@@ -58,6 +60,23 @@ O repositorio ainda nao definiu oficialmente quais provedores ou plataformas ent
 - Politica de segredos, auditoria e aprovacao humana alinhada com os docs oficiais.
 - Nenhum segredo exposto em codigo, commit, log ou documento.
 
+## Decisao documental obrigatoria
+
+Antes de qualquer implementacao da Sprint 12, a documentacao oficial deve aprovar explicitamente cada integracao selecionada com:
+
+- plataforma ou provedor;
+- finalidade;
+- canal ou contexto operacional;
+- fluxo de autorizacao;
+- permissoes minimas;
+- efeito externo permitido;
+- necessidade de aprovacao humana;
+- politica de revogacao;
+- contratos afetados;
+- evidencias exigidas.
+
+Se qualquer um desses pontos permanecer pendente, o gate de inicio continua bloqueado. Registrar a pendencia nao satisfaz o gate.
+
 ## Gate de inicio
 
 A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo forem verdadeiros:
@@ -66,7 +85,10 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 - `main` estiver limpa e alinhada com `origin/main`;
 - a Sprint 11 estiver comprovadamente encerrada;
 - esta spec estiver formalizada como governante da Sprint 12;
-- os provedores ou plataformas abrangidos tiverem decisao documental explicita, ou a pendencia tiver sido registrada como gate aberto;
+- os provedores ou plataformas abrangidos estiverem explicitamente definidos e aprovados na documentacao oficial;
+- finalidade, permissoes, autorizacao, revogacao e contratos afetados estiverem documentados;
+- o escopo estiver suficientemente definido para produzir testes e evidencias reproduziveis;
+- nao existir pendencia aberta sobre a escolha dos provedores ou plataformas;
 - nao houver conflito entre Documento Mestre, roadmap, backlog e handoff.
 
 ## Escopo
