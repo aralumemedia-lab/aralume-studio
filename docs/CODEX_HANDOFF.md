@@ -11,7 +11,8 @@
 - A Sprint 13 pertence ao E14 e e governada por `docs/specs/014-metrics-learning.md`.
 - A Sprint 13 foi encerrada no PR #23, merge commit
   `9b89d1be04e7a6e319efb9a957282097c4854f31`.
-- A Sprint 14/V1 Acceptance permanece planejada e nao pode ser iniciada aqui.
+- A Sprint 14/V1 Acceptance foi concluida em branch isolada para validacao, sem release ou deploy.
+- O resultado foi `V1.0 NÃO ACEITA`: 5 `PASS`, 5 `FAIL` e 8 `NOT PROVEN`; matriz, relatório, evidências, limitações e remediação estão documentados.
 
 ## Baseline e branch
 
@@ -78,6 +79,19 @@ recriacao do frontend e limpeza administrativa da S12.
   estados vazios, parciais, erro e recomendacao.
 - Quality gates do package.json, `git diff --check` e PR #23 mergeada.
 
+## Sprint 14 - encerramento documental
+
+- Branch: `codex/sprint-14-v1-acceptance`.
+- Base: `d78959a47a2bafbb343408d703eafafec8c6df59`.
+- PR: #24; commit-base do aceite e das evidências: `22388e7`.
+- O head vigente da PR deve ser consultado diretamente no GitHub; correções documentais posteriores foram feitas na mesma PR.
+- Merge ainda pendente de nova revisão; release permanece bloqueada e remediações não foram iniciadas.
+- Gates tecnicos: lint, typecheck, 64 testes, build e `git diff --check` aprovados.
+- Veredito de revisão documental: `APPROVE_WITH_NOTES`, condicionado à revisão/aprovação objetiva no GitHub.
+- Bloqueio principal: o frontend ainda possui fluxos obrigatorios ausentes ou mockados.
+- Backlog de remediação: seção "Remediacao pos-Sprint 14 (PROPOSTA — nao iniciada)" em `docs/PRODUCT_BACKLOG.md`.
+- Nenhuma release, tag, deploy, publicação externa ou implementação de remediação foi iniciada.
+
 ## Riscos
 
 - Dados controlados nao podem parecer producao: origem deve ser exibida.
@@ -89,4 +103,4 @@ recriacao do frontend e limpeza administrativa da S12.
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
 reduzir os 56 existentes, persistencia e isolamento demonstrados, QA visual feito,
-PR #23 revisada e mergeada por merge commit. Sprint 14 nao foi iniciada.
+PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance será necessário após a remediação.

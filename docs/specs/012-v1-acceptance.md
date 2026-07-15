@@ -2,7 +2,7 @@
 
 ## Status
 
-Planejada.
+Concluida como gate de aceite da Sprint 14; veredito `V1.0 NÃO ACEITA`.
 
 ## Identification
 
@@ -160,7 +160,7 @@ Uma decisao negativa e valida. Nesse caso, a spec exige uma lista objetiva de bl
 
 - `E13` - Integracoes Reais Autorizadas - precisa estar comprovadamente encerrado antes do inicio da Sprint 14.
 - `E14` - Metricas e Aprendizado - precisa estar comprovadamente encerrado antes do inicio da Sprint 14.
-- Enquanto esses gates obrigatorios nao tiverem evidencia suficiente, a Sprint 14 nao pode ser iniciada nem a V1.0 pode ser declarada aceita.
+- Os gates upstream foram confirmados no preflight desta execucao. A V1.0 somente pode ser declarada aceita quando os 18 criterios obrigatorios tiverem evidencia suficiente.
 
 ## Definition of Done
 
@@ -170,6 +170,8 @@ Uma decisao negativa e valida. Nesse caso, a spec exige uma lista objetiva de bl
 - A documentacao necessaria permanece coerente com Documento Mestre, roadmap, backlog e handoff.
 - Nenhum segredo foi exposto.
 - Nenhum comportamento de produto foi implementado nesta execucao documental.
+- O resultado final foi registrado em `docs/acceptance/v1/`, com 13 criterios pendentes e remediacao proposta no backlog.
+- A Sprint 14 foi concluida sem implementar remediacao funcional e sem liberar a V1.0.
 
 ## Sprint alvo
 

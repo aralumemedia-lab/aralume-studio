@@ -17,7 +17,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | completed | released | PR #22 mergeado; OAuth com dois escopos, descoberta, selecao, upload privado/nao listado, consulta, replay idempotente, isolamento e revogacao validados. |
 | 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | completed | released | PR #23 mergeada em `9b89d1be04e7a6e319efb9a957282097c4854f31`; gate E14 atendido. |
-| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | planned | blocked until S12/S13 | As Sprints 12 e 13 precisam estar encerradas com evidencia; V1 Acceptance nao faz parte desta execucao. |
+| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃO ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
 
@@ -45,9 +45,11 @@
 
 ## Sprint 14 - V1 Acceptance
 
-- Permanece planejada e nao foi iniciada.
-- Depende do encerramento comprovado das Sprints 12 e 13.
-- A spec 012 continua downstream e nao autoriza implementar hardening nesta Sprint.
+- Sprint 14 executada em 2026-07-15 na branch `codex/sprint-14-v1-acceptance`, a partir de `d78959a47a2bafbb343408d703eafafec8c6df59`.
+- S12 e S13 foram confirmadas como encerradas no preflight.
+- O gate concluiu com veredito `V1.0 NÃO ACEITA`; 5 criterios passaram, 5 falharam e 8 ficaram sem prova suficiente.
+- A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementação.
+- E15 foi executado como gate documental; V1.0 não está liberada para release.
 
 ## Observacoes
 
