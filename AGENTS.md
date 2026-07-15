@@ -180,6 +180,7 @@ docs/specs/
   012-v1-acceptance.md
   013-channels-frontend-integration.md
   014-metrics-learning.md
+  015-authorized-real-integrations.md
 ```
 
 ## Relatorio final obrigatorio

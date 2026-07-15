@@ -1,121 +1,120 @@
-# Codex Handoff - Sprint 11
+# Codex Handoff - Sprint 12
 
 ## Estado atual
 
-- Sprint 10 - Cortes Derivados Controlados foi concluida e integrada ao `main` via PR #17.
-- A spec normativa e `docs/specs/010-derived-clips.md`.
-- O dominio novo cobre cortes derivados, validacao temporal, video principal de origem, storage root autorizado, FFmpeg e FFprobe controlados, auditoria, custos, idempotencia e a rota `/clips`.
-- O frontend da rota `/clips` agora consome o backend real de cortes derivados e nao depende de mocks crus.
-- A base de canais, editorial, aprovacoes, custos e assets de midia ja estava integrada antes desta sprint e foi reutilizada sem reabrir escopo anterior.
-- As validacoes locais principais ja passaram: typecheck, lint, build, testes e `git diff --check`.
-- FFmpeg e FFprobe estao disponiveis no ambiente e a integracao real de cortes sera validada.
-- O PR #17 foi mergeado.
-- Merge commit: `dffd197449176fffab6ad6b93b6dfb0904cca513`.
-- Sprint 9 - Renderizacao Controlada foi encerrada formalmente no PR #16 e permanece como base imediata desta implementacao.
-- O merge commit oficial da Sprint 9 e `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
-- `main` e `origin/main` estao alinhados nesse SHA no estado atual.
-- Historico anterior mantido abaixo para referencia operacional.
+- Sprint 11 - Publicacao Assistida foi concluida e integrada ao `main` via PR #19.
+- O merge commit oficial da Sprint 11 e `966e5bef50446f81701cedd861689b3e07b14a7d`.
+- A Fase 12 do roadmap materializou-se na Sprint 11 e esta encerrada.
+- A proxima sprint formal e a Sprint 12 - Integracoes Reais Autorizadas.
+- A Sprint 12 governa o E13, mas esta bloqueada ate haver aprovacao documental explicita dos provedores ou plataformas abrangidos.
+- A spec normativa da Sprint 12 e `docs/specs/015-authorized-real-integrations.md`.
+- A V1.0 ainda nao pode ser declarada aceita porque as Sprints 13 e 14 ainda nao foram executadas.
 
-## Sprint 11 - Publicacao Assistida
+## Baseline esperada
 
-- Sprint 11 foi implementada na branch `codex/sprint-11-publication-assisted`.
-- PR aberto: `https://github.com/aralumemedia-lab/aralume-studio/pull/19`.
-- A rota `/publications` agora consome backend real de publicacoes, com alvos, jobs, aprovacao humana, conformidade, auditoria e bloqueio de envio externo automatico.
-- Validacoes executadas: `npm run lint`, `npm run backend:check`, `npm run test`, `npm run build`, `git diff --check`.
-- Evidencias visuais geradas: `screenshots/publications-valid-1366x768.png`, `screenshots/publications-blocked-approval-1600x900.png`, `screenshots/publications-blocked-compliance-1792x1024.png`, `screenshots/publications-empty-1920x1080.png`, `screenshots/publications-details-1600x900.png`, `screenshots/publications-channel-switch-1366x768.png`.
-- O isolamento por canal foi validado visualmente entre Historia, Curiosidades e Negocios.
+- `main` limpo.
+- `main` alinhado com `origin/main`.
+- Nenhum outro worktree ativo.
+- Nenhum arquivo staged, modified, deleted, renamed ou untracked.
+- Normalizacao documental mergeada antes de iniciar a implementacao.
 
-## Sprint 5 - Editorial Pipeline
+## Branch sugerida
 
-- A Sprint 5 foi concluida formalmente e integrada ao `main`.
-- PR #12 foi mergeado.
-- Merge commit: `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
-- A camada editorial adicionou ideias, pesquisas, fontes, evidencias, roteiros, versoes de roteiro, planos visuais, cenas e testes deterministas.
-- As rotas `/ideas`, `/research`, `/scripts` e `/production` ja usam a API real do dominio editorial.
-- O proximo passo operacional e a Sprint 6 - Approvals, Quality and Compliance.
+- `codex/sprint-12-integracoes-reais-autorizadas`
 
-## Sprint 3 - Channels Domain Foundation
+## Sprint formal
 
-- Spec normativa: `docs/specs/003-channels.md`.
-- Escopo implementado: dominio de Canais no backend com listagem, criacao, consulta, atualizacao e settings.
-- Endpoints reais disponiveis: `GET /api/channels`, `POST /api/channels`, `GET /api/channels/:id`, `PATCH /api/channels/:id`, `GET /api/channels/:id/settings`.
-- Persistencia adotada: repositorio substituivel em memoria, sem banco real nesta sprint.
-- Integracao frontend: concluida na Sprint 4 via PR #10.
-- Exclusao fisica: nao implementada.
-- PR de Sprint 3: `#8` MERGED.
+- Sprint 12 - Integracoes Reais Autorizadas.
+- Epic principal: E13 - Integracoes Reais Autorizadas.
+- Spec governante: `docs/specs/015-authorized-real-integrations.md`.
 
-## Sprint 4 - Channels Frontend Integration
+## Objetivo
 
-- Spec normativa: `docs/specs/013-channels-frontend-integration.md`.
-- Escopo implementado: `src/services/http-client.ts`, `src/services/channels-api.ts`, `src/components/aralume/channel-selection.ts`, `src/components/aralume/channel-context.tsx`, `src/components/layout/AppShell.tsx` e `src/routes/channels.tsx`.
-- Endpoints consumidos: `GET /api/channels`, `GET /api/channels/:id/settings`, `PATCH /api/channels/:id`.
-- Proxy local: `vite.config.ts` aponta `/api` para `http://127.0.0.1:3001`.
-- Estados validados: loading, empty, error, canal ativo, canal pausado, selecao de canal, mutacao de status e reload com backend em memoria.
-- Areas demo permanecem explicitamente marcadas como demo e nao foram promovidas a persistencia real.
-- Validacoes executadas: `bun install --frozen-lockfile`, `bun run lint`, `bun x tsc --noEmit`, `bun run build`, `bun run backend:check`, `bun run test`, testes especificos da integracao de Canais, smoke backend, smoke frontend e QA visual nas resolucoes definidas.
-- Limitacao residual: foi observado um warning de hydration mismatch no console de desenvolvimento, sem page error e sem bloqueio de fluxo; nao foi corrigido nesta branch documental.
-- PR de Sprint 4: `#10` MERGED.
-- Merge commit: `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
+Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por canal, sem antecipar metricas, aprendizado ou V1 Acceptance.
 
-## Sprint 0.2 - Preparacao segura de variaveis de ambiente
+## Bloqueio critico
 
-- O `.env.local` legado foi usado somente para extrair nomes de variaveis.
-- Nenhum valor real foi copiado, impresso, versionado ou validado.
-- `.env.example`, `.gitignore`, `docs/ENVIRONMENT.md` e as specs de SDD/ambiente foram preparados para a migracao segura.
-- O inventario distingue variaveis de backend foundation, futuro de IA/video/publicacao e itens de legado/revisao manual.
-- Naquele momento, o proximo passo recomendado era Backend Foundation, apenas apos a migracao segura estar mergeada e o repositorio seguir limpo.
-- Pendencias: copiar manualmente os valores reais quando necessario e rotacionar qualquer segredo que tenha sido exposto no projeto antigo.
+Antes de criar branch funcional ou editar codigo, confirme que a documentacao oficial define explicitamente os provedores ou plataformas do E13. Se essa definicao nao existir, pare e reporte bloqueio documental. Nao implemente abstracoes genericas, OAuth hipotetico ou contratos inventados.
 
-## Scripts disponiveis
+## Historias incluidas
 
-- `dev`
-- `build`
-- `build:dev`
-- `preview`
-- `lint`
-- `format`
-- `backend:dev`
-- `backend:build`
-- `backend:check`
-- `backend:start`
-- `test`
+- Autorizacao humana documentada quando houver efeito externo.
+- Estado de integracao por canal.
+- Armazenamento seguro de tokens e segredos.
+- Revogacao auditavel.
+- Estados de erro operacionais.
+- Isolamento por canal.
 
-## Validacao executada
+## Escopo
 
-- `npm run lint` passou sem warnings.
-- `npm run backend:check` passou.
-- `npm run test` passou.
-- `npm run build` passou.
-- `git diff --check` passou.
-- Rotas validadas visualmente: `/dashboard`, `/channels`, `/agent-office`, `/publications`.
-- Smoke visual realizado em: `/production`, `/approvals`, `/costs`, `/compliance`, `/audit-logs`.
+- Fluxo de autorizacao para integracoes reais.
+- Estados de conexao, autorizacao, expiracao, revogacao e erro.
+- Armazenamento seguro de segredos e tokens.
+- Auditoria das decisoes relevantes.
+- Conformidade e aprovacao humana quando houver efeito externo.
+- Contratos afetados no frontend e no backend futuro apenas na extensao necessaria para a integracao autorizada.
 
-## Screenshots geradas
+## Fora de escopo
 
-- `screenshots/dashboard-1366x768.png`
-- `screenshots/dashboard-1600x900.png`
-- `screenshots/dashboard-1920x1080.png`
-- `screenshots/channels-1366x768.png`
-- `screenshots/channels-1600x900.png`
-- `screenshots/channels-1920x1080.png`
-- `screenshots/agent-office-1366x768.png`
-- `screenshots/agent-office-1600x900.png`
-- `screenshots/agent-office-1920x1080.png`
-- `screenshots/publications-valid-1366x768.png`
-- `screenshots/publications-blocked-approval-1600x900.png`
-- `screenshots/publications-blocked-compliance-1792x1024.png`
-- `screenshots/publications-empty-1920x1080.png`
-- `screenshots/publications-details-1600x900.png`
-- `screenshots/publications-channel-switch-1366x768.png`
+- Metricas e aprendizado.
+- V1 Acceptance.
+- Grandes modulos novos.
+- Redefinicao de arquitetura.
+- Recriacao do frontend.
+- Substituicao do design system.
+- Funcionalidades de sprints posteriores.
+- Publicacao externa sem autorizacao.
+- Novos provedores sem spec.
+- Qualquer arquitetura generica hipotetica para contornar a ausencia de definicao aprovada.
+- Segredos em codigo, docs, commits ou logs.
+- Aceitacao baseada apenas em CLI.
+- Mascarar ausencia de integracao com mocks.
 
-## Warnings
+## Documentos obrigatorios
 
-- Warnings iniciais: 7 `react-refresh/only-export-components`.
-- Warnings corrigidos: 7.
-- Warnings restantes: 0.
+- `AGENTS.md`
+- `docs/PROJECT_MASTER.md`
+- `docs/NEXT_SPRINTS.md`
+- `docs/PRODUCT_BACKLOG.md`
+- `docs/FRONTEND_API_CONTRACTS.md`
+- `docs/FRONTEND_DESIGN_SYSTEM.md`
+- `docs/specs/000-sdd-process.md`
+- `docs/specs/011-publication-assisted.md`
+- `docs/specs/012-v1-acceptance.md`
+- `docs/specs/014-metrics-learning.md`
+- `docs/specs/015-authorized-real-integrations.md`
 
-## Limitacoes
+## Validacoes exigidas
 
-- A Sprint 11 nao executa publicacao externa automatica.
-- O backend de publicacoes permanece local e deterministico para o fluxo assistido.
-- Nao houve conexao com Supabase.
+- Confirmar que `main` esta limpa e alinhada com `origin/main`.
+- Confirmar que a normalizacao documental foi mergeada antes de qualquer implementacao.
+- Executar `git diff --check`.
+- Executar `git status --short`.
+- Executar os comandos normais do repositorio que sejam aplicaveis ao escopo documental.
+- Se houver alteracao de frontend, incluir validacao visual pertinente.
+- Se a conclusao da sprint for negativa, registrar bloqueios com evidencia reproduzivel.
+
+## Riscos conhecidos
+
+- Confundir Fase 12 historica com Sprint 12 de execucao.
+- Tratar Publicacao Assistida como trabalho ainda aberto quando ela ja foi encerrada.
+- Aceitar V1.0 sem evidencias operacionais integradas.
+- Mascarar integracoes ausentes com mocks ou fluxo apenas por CLI.
+- Antecipar Sprint 13 ou Sprint 14.
+
+## Definition of Done
+
+- A decisao final da Sprint 12 e binaria: `V1.0 aceita` ou `V1.0 nao aceita`.
+- A aceitacao exige evidencia de execucao do fluxo aplicavel pelo frontend quando houver interface correspondente.
+- Qualquer decisao negativa deve listar bloqueios, severidade, evidencia e proximo trabalho necessario.
+- A documentacao deve permanecer coerente entre Documento Mestre, roadmap, backlog, handoff e spec.
+
+## Proibicoes
+
+- Nao reiniciar esta correcao documental.
+- Nao antecipar Sprints 13 ou 14.
+- Nao implementar produto fora da spec.
+- Nao declarar aceite sem evidencia.
+- Nao publicar externamente sem autorizacao.
+- Nao solicitar ou registrar segredos.
+- Nao iniciar implementacao enquanto os provedores ou plataformas do E13 nao estiverem explicitamente aprovados.
