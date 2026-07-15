@@ -163,3 +163,21 @@ readiness permaneceu bloqueado; nenhum segredo apareceu no repositório ou logs.
   O arquivo foi removido para impedir uso acidental. O sistema nao oferece fluxo
   oficial para atualizar checksum/tamanho desse `VideoAsset`; nao houve alteracao manual
   de estado nem upload externo.
+
+## H12.6 - preparacao oficial de VideoAsset
+
+H12.6 foi formalizada no E13 para resolver o bloqueio sem alterar `vd_historia_01`.
+O fluxo aprovado e `POST /api/videos/import-from-storage`: o backend valida path
+canal-scoped, calcula SHA-256/tamanho, executa FFprobe, registra origem/licenca e
+cria um novo `VideoAsset` com idempotencia e auditoria. A implementacao e a
+validacao real ainda estao pendentes; nenhum asset ou upload foi fabricado por
+edicao manual do estado.
+
+### H12.6 - validacao real concluida
+
+- Data: 2026-07-15.
+- O novo `VideoAsset` foi criado por fluxo oficial de storage e permaneceu
+  separado de `vd_historia_01`.
+- O upload governante concluiu, foi consultado e repetido com replay idempotente.
+- O isolamento multicanal e a revogacao foram confirmados.
+- A policy operacional foi restaurada ao estado original apos a validacao.

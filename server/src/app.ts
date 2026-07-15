@@ -127,6 +127,7 @@ export function createApp(options: CreateAppOptions = {}) {
     mediaAssetsRepository,
     {
       channelsRepository,
+      editorialRepository,
       auditRepository,
     },
     {

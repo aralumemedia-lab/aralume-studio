@@ -254,6 +254,19 @@ export type VideoAssetFilters = {
   search?: string;
 };
 
+export type VideoAssetImportInput = {
+  channelId: ID;
+  storagePath: string;
+  title: string;
+  description: string;
+  origin: MediaAssetOrigin;
+  provenance: string;
+  licenseStatus: MediaAssetLicenseStatus;
+  licenseName?: string;
+  contentId: ID;
+  idempotencyKey: string;
+};
+
 export type DerivedClipFilters = {
   channelId: ID;
   status?: DerivedClip["status"];
@@ -358,6 +371,9 @@ export type MediaAssetsRepository = {
 
 export type MediaAssetsDependencies = {
   channelsRepository: ChannelsRepository;
+  editorialRepository?: {
+    getContentIdea(id: ID): { id: ID; channelId: ID; title: string; summary: string } | undefined;
+  };
   auditRepository: {
     appendAuditLog(log: {
       id: ID;
@@ -395,6 +411,7 @@ export type MediaAssetsService = {
   listMediaAssetUsages(channelId: ID, id: ID): MediaAssetUsage[];
   listVideoAssets(filters: VideoAssetFilters): VideoAsset[];
   getVideoAsset(channelId: ID, id: ID): VideoAsset;
+  importVideoAssetFromStorage(input: VideoAssetImportInput): Promise<VideoAsset>;
   listDerivedClips(filters: DerivedClipFilters): DerivedClip[];
   getDerivedClip(channelId: ID, id: ID): DerivedClip;
 };

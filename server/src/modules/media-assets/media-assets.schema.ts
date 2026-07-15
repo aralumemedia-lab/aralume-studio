@@ -274,6 +274,36 @@ export const videoAssetFiltersSchema = z
   })
   .strict();
 
+export const videoAssetImportSchema = z
+  .object({
+    channelId: channelIdSchema,
+    storagePath: relativeStoragePathSchema,
+    title: nameSchema,
+    description: textSchema,
+    origin: z.enum([
+      "internal",
+      "generated",
+      "uploaded",
+      "licensed",
+      "channel_provided",
+      "public_domain",
+      "external_authorized",
+    ]),
+    provenance: textSchema,
+    licenseStatus: z.enum([
+      "known",
+      "verified",
+      "not_applicable",
+      "confirmed",
+      "restricted",
+      "attribution_required",
+    ]),
+    licenseName: nameSchema.optional(),
+    contentId: idSchema,
+    idempotencyKey: z.string().trim().min(8).max(200),
+  })
+  .strict();
+
 export const derivedClipFiltersSchema = z
   .object({
     channelId: channelIdSchema,

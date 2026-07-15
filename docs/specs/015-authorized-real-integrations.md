@@ -327,7 +327,7 @@ Critérios por história:
 | Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002                                                                                                                                                                                                                                                                                                            |
 | Fluxo operacional     | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao                                                                                                                                                                                                                         |
 | Tipo de autorizacao   | OAuth 2.0 oficial da Google                                                                                                                                                                                                                                                                                                                     |
-| Permissoes minimas    | `https://www.googleapis.com/auth/youtube.upload` para upload + `https://www.googleapis.com/auth/youtube.readonly` para descoberta/verificação de canais; nenhum escopo amplo ou adicional                                                                                                                                 |
+| Permissoes minimas    | `https://www.googleapis.com/auth/youtube.upload` para upload + `https://www.googleapis.com/auth/youtube.readonly` para descoberta/verificação de canais; nenhum escopo amplo ou adicional                                                                                                                                                       |
 | Efeito externo        | Upload e publicacao assistida em canal autorizado                                                                                                                                                                                                                                                                                               |
 | Aprovacao humana      | Obrigatoria antes de qualquer efeito externo                                                                                                                                                                                                                                                                                                    |
 | Isolamento por canal  | Cada canal possui autorizacao independente                                                                                                                                                                                                                                                                                                      |
@@ -356,3 +356,24 @@ Critérios por história:
 - O fixture local controlado foi removido apos divergencia de integridade com o
   `VideoAsset`; nao existe fluxo oficial para atualizar esse registro sem ampliar o
   escopo ou editar estado diretamente.
+
+## H12.6 - Preparacao oficial de VideoAsset para publicacao real
+
+H12.6 e uma historia tecnica corretiva do E13. O fluxo oficial
+`POST /api/videos/import-from-storage` registra um novo `VideoAsset` a partir de
+arquivo existente no storage autorizado, sem editar banco e sem sobrescrever
+asset existente. O backend calcula SHA-256, tamanho e metadados FFprobe,
+valida path relativo canal-scoped, origem/licenca, video valido e idempotencia.
+`vd_historia_01` permanece preservado; falhas nao deixam registro parcial.
+
+### Evidencia de validacao real H12.6 e E13
+
+- Data: 2026-07-15.
+- Um novo `VideoAsset` foi criado por fluxo oficial de storage e permaneceu
+  separado de `vd_historia_01`.
+- O upload governante `POST /api/publications/:publicationJobId/upload`
+  concluiu com resultado publicado e replay idempotente retornando o mesmo
+  resultado.
+- A revogacao foi aplicada e o bloqueio pos-revogacao foi confirmado.
+- A policy operacional foi restaurada para `demo` apos a validacao.
+- Nenhum segredo foi observado em respostas, logs, auditoria, Git ou frontend.

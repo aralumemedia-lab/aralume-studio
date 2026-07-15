@@ -217,3 +217,21 @@ O frontend da rota `/clips` usa essa superficie para listar cortes, iniciar cort
 1. Continuar migrando os endpoints restantes de `src/services/mock-api.ts` para `fetch` real preservando as assinaturas.
 2. Manter os tipos em `contracts/types.ts` e enums em `contracts/status.ts` como fonte da verdade.
 3. Nenhuma tela importa mocks diretamente — a troca não requer alterações em `src/routes/*`.
+
+### Importacao oficial de VideoAsset
+
+`POST /api/videos/import-from-storage` registra arquivo existente no storage
+autorizado. Recebe `channelId`, `storagePath` relativo, origem, licenca,
+provenance, titulo/descricao, `contentId` quando aplicavel e `idempotencyKey`. O backend
+calcula e valida tamanho, SHA-256, MIME, duracao, dimensoes, codec e existencia;
+valores tecnicos enviados pelo cliente nao sao fonte de verdade. Paths inseguros,
+canal divergente, arquivo vazio ou video invalido retornam erro sanitizado.
+Replay retorna o mesmo asset e payload divergente retorna `409`; a resposta nunca
+inclui path absoluto, segredo ou comando FFprobe.
+
+### Evidencia de validacao real
+
+- Data: 2026-07-15.
+- A importacao oficial criou um novo `VideoAsset` apto para publicacao real.
+- O upload governante concluiu, foi consultado e repetido com replay idempotente.
+- A revogacao posterior bloqueou novas operacoes do canal como esperado.

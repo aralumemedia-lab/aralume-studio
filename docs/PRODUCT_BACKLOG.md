@@ -4,23 +4,23 @@ This backlog is an index of planning. It does not replace sprint specs.
 
 ## Catalogo de epicos
 
-| ID  | Epico                        | Objetivo                                                                                                | Status  | Gate | Dependencias |
-| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------- | ------- | ---- | ------------ |
-| E10 | Renderizacao Controlada      | Entregar a primeira capacidade real, controlada e auditavel de renderizacao de video.                  | completed | Renderizar video curto de teste com logs, custo e validacao. | - |
-| E11 | Cortes Derivados Controlados | Entregar cortes derivados persistentes, rastreaveis e vinculados ao video principal.                   | completed | Gerar pelo menos um corte valido vinculado ao video principal. | - |
-| E12 | Publicacao Assistida         | Preparar publicacao com aprovacao humana, compliance e contratos seguros, sem envio externo automatico. | completed | Pacote de publicacao pronto, sem envio externo automatico. | E10, E11 |
-| E13 | Integracoes Reais Autorizadas | Conectar provedores externos com governanca, autorizacao e seguranca documental.                        | planned | Integracao oficial funcionando sem expor segredo, com destino server-side comprovado. | E12 concluido; ADR 002 emendado; spec, finalidade, permissoes, autorizacao, revogacao e contratos alinhados. |
-| E14 | Metricas e Aprendizado       | Fechar o ciclo editorial com metricas por canal e recomendacoes assistidas.                             | planned | Metricas geram recomendacao editorial por canal. | E13 concluido; origem das metricas e canais definidos |
-| E15 | Hardening V1.0               | Consolidar a base operacional demonstravel para V1.0.                                                   | planned | Demonstracao ponta a ponta pelo frontend; decisao binaria V1.0 aceita ou V1.0 nao aceita. | E13 e E14 concluidos |
+| ID  | Epico                         | Objetivo                                                                                                | Status    | Gate                                                                                      | Dependencias                                                                                                 |
+| --- | ----------------------------- | ------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| E10 | Renderizacao Controlada       | Entregar a primeira capacidade real, controlada e auditavel de renderizacao de video.                   | completed | Renderizar video curto de teste com logs, custo e validacao.                              | -                                                                                                            |
+| E11 | Cortes Derivados Controlados  | Entregar cortes derivados persistentes, rastreaveis e vinculados ao video principal.                    | completed | Gerar pelo menos um corte valido vinculado ao video principal.                            | -                                                                                                            |
+| E12 | Publicacao Assistida          | Preparar publicacao com aprovacao humana, compliance e contratos seguros, sem envio externo automatico. | completed | Pacote de publicacao pronto, sem envio externo automatico.                                | E10, E11                                                                                                     |
+| E13 | Integracoes Reais Autorizadas | Conectar provedores externos com governanca, autorizacao e seguranca documental.                        | planned   | Integracao oficial funcionando sem expor segredo, com destino server-side comprovado.     | E12 concluido; ADR 002 emendado; spec, finalidade, permissoes, autorizacao, revogacao e contratos alinhados. |
+| E14 | Metricas e Aprendizado        | Fechar o ciclo editorial com metricas por canal e recomendacoes assistidas.                             | planned   | Metricas geram recomendacao editorial por canal.                                          | E13 concluido; origem das metricas e canais definidos                                                        |
+| E15 | Hardening V1.0                | Consolidar a base operacional demonstravel para V1.0.                                                   | planned   | Demonstracao ponta a ponta pelo frontend; decisao binaria V1.0 aceita ou V1.0 nao aceita. | E13 e E14 concluidos                                                                                         |
 
 ## Sprints formalizadas
 
-| Numero | Nome | Epico | Spec | Estado | Observacao |
-| --- | --- | --- | --- | --- | --- |
-| S11 | Publicacao Assistida | E12 | `docs/specs/011-publication-assisted.md` | completed | Capacidade materializada e encerrada. |
-| S12 | Integracoes Reais Autorizadas | E13 | `docs/specs/015-authorized-real-integrations.md` | planned / correcao necessaria | PR #22 | Conflito de escopo e descoberta resolvido documentalmente; falta implementação corretiva e validação real. |
-| S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | planned | Posterior a Sprint 12; depende da integracao real autorizada aprovada e encerrada. |
-| S14 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | planned | Posterior a Sprints 12 e 13; gate de hardening e aceite da V1.0. |
+| Numero | Nome                          | Epico | Spec                                             | Estado                        | Observacao                                                                         |
+| ------ | ----------------------------- | ----- | ------------------------------------------------ | ----------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| S11    | Publicacao Assistida          | E12   | `docs/specs/011-publication-assisted.md`         | completed                     | Capacidade materializada e encerrada.                                              |
+| S12    | Integracoes Reais Autorizadas | E13   | `docs/specs/015-authorized-real-integrations.md` | planned / correcao necessaria | PR #22                                                                             | Conflito de escopo e descoberta resolvido documentalmente; falta implementação corretiva e validação real. |
+| S13    | Metricas e Aprendizado        | E14   | `docs/specs/014-metrics-learning.md`             | planned                       | Posterior a Sprint 12; depende da integracao real autorizada aprovada e encerrada. |
+| S14    | V1 Acceptance                 | E15   | `docs/specs/012-v1-acceptance.md`                | planned                       | Posterior a Sprints 12 e 13; gate de hardening e aceite da V1.0.                   |
 
 ## Catalogo de historias
 
@@ -60,7 +60,24 @@ validados, tokens legados exigem reautorizacao e a descoberta/seleção server-s
 funciona. O status operacional permanece bloqueado por ausência do asset de teste
 materializado no storage autorizado; o upload real, a consulta e a idempotência
 externas ainda precisam ser repetidos com asset válido.
+
 - Sprint 12 pertence ao E13 e tem aprovacao fechada no ADR 002 para YouTube como integracao aprovada.
 - A emenda do ADR 002 aprova `youtube.upload` para upload e `youtube.readonly` somente para descoberta/verificacao de canais; nenhum escopo amplo e permitido.
 - Sprint 13 pertence ao E14.
 - Sprint 14 pertence ao E15 / V1 Acceptance.
+
+### H12.6 - Preparacao oficial de VideoAsset para publicacao real
+
+- Epico E13, Sprint S12, historia tecnica corretiva.
+- API oficial canal-scoped para registrar arquivo existente no storage.
+- Aceite: path seguro, FFprobe, SHA-256/tamanho calculados no backend, novo asset,
+  idempotencia, auditoria, preservacao de `vd_historia_01` e vinculo a `PublicationJob`.
+
+### H12.6 - validacao real concluida
+
+- Data: 2026-07-15.
+- O novo `VideoAsset` foi criado por fluxo oficial e permaneceu distinto de
+  `vd_historia_01`.
+- O upload governante concluiu, foi consultado e repetido com replay idempotente.
+- A revogacao e o bloqueio pos-revogacao foram confirmados.
+- A policy operacional foi restaurada ao estado original apos a validacao.

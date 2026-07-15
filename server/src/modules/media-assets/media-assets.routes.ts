@@ -17,6 +17,7 @@ import {
   mediaAssetStorageValidationSchema,
   mediaAssetUsagesParamsSchema,
   videoAssetFiltersSchema,
+  videoAssetImportSchema,
 } from "./media-assets.schema.js";
 import type { MediaAssetsService } from "./media-assets.types.js";
 import type { RendersService } from "../renders/renders.types.js";
@@ -79,6 +80,16 @@ export function createMediaAssetsRouter(
     const query = parseQuery(videoAssetFiltersSchema, req.query);
     const items = service.listVideoAssets(query);
     res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
+  });
+
+  router.post("/videos/import-from-storage", async (req, res, next) => {
+    try {
+      const body = parseBody(videoAssetImportSchema, req.body);
+      const created = await service.importVideoAssetFromStorage(body);
+      res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
+    } catch (error) {
+      next(error);
+    }
   });
 
   router.get("/clips", (req, res) => {
