@@ -227,7 +227,7 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 | Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002 |
 | Fluxo operacional | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao |
 | Tipo de autorizacao | OAuth 2.0 oficial da Google |
-| Permissoes minimas | `youtube.upload` como minimo; escopos adicionais somente se uma necessidade documental futura exigir leitura complementar |
+| Permissoes minimas | `https://www.googleapis.com/auth/youtube.upload` como minimo; escopos adicionais somente se uma necessidade documental futura exigir leitura complementar |
 | Efeito externo | Upload e publicacao assistida em canal autorizado |
 | Aprovacao humana | Obrigatoria antes de qualquer efeito externo |
 | Isolamento por canal | Cada canal possui autorizacao independente |
@@ -235,7 +235,7 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 | Revogacao | Fluxo oficial de revogacao da Google e invalidacao local do estado |
 | Auditoria | Tentativa, aprovacao, recusa, expiracao, revogacao, erro e idempotencia |
 | Contratos de frontend | `/publications`, `PublicationTarget`, `PublicationJob`, estados de readiness e aprovacoes |
-| Contratos de backend | `/api/publication-targets`, `/api/publications`, `/api/publications/:publicationJobId/reschedule` |
+| Contratos de backend | `/api/publication-targets`, `/api/publications`, `/api/publications/:publicationJobId/reschedule`; contratos de iniciar OAuth, callback, estado de conexao, revogacao, selecao de canal e readiness devem ser formalizados na Spec Review da Sprint 12 antes da implementacao |
 | Persistencia | `PublicationTarget`, `PublicationJob`, `HumanApproval`, `AuditLog` |
 | Estados de erro | autorizacao negada, expiracao, credencial ausente, revogado, indisponivel, configuracao inconsistente, erro de auditoria ou persistencia |
 | Testes obrigatorios | Fluxo aprovado, fluxo negado, revogacao, erro de indisponibilidade, isolamento por canal, ausencia de segredo |
