@@ -147,3 +147,14 @@ readiness permaneceu bloqueado; nenhum segredo apareceu no repositório ou logs.
 - Nao solicitar ou registrar segredos.
 - Nao iniciar implementacao enquanto os provedores ou plataformas do E13 nao estiverem explicitamente aprovados.
 - Nao antecipar TikTok, Instagram ou LinkedIn sem nova decisao formal.
+
+## Validacao corretiva H12.5 em 2026-07-15
+
+- Commit funcional: `eb9dc67`.
+- OAuth real concluiu com os dois escopos aprovados.
+- `channels.list?mine=true` retornou um canal; selecao server-side e readiness passaram.
+- Upload real foi tentado em modo supervisionado, mas o asset autorizado `vd_historia_01` nao possui arquivo no storage configurado.
+- O provedor retornou erro sanitizado de upload; nenhum ID externo foi persistido.
+- Revogacao remota/local passou; modo operacional foi restaurado para `demo`; readiness pos-revogacao ficou bloqueado.
+- O gate E13 permanece bloqueado ate disponibilizar um asset de teste rastreavel no storage autorizado e repetir upload privado/nao listado, consulta, idempotencia e isolamento.
+- Nenhum segredo foi encontrado em respostas, logs, auditoria, Git ou frontend.

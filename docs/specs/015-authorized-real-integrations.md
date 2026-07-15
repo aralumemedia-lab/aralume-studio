@@ -2,6 +2,9 @@
 
 ## Status
 
+Status vigente apos H12.5: implementacao corretiva publicada; gate E13 bloqueado por
+ausencia de asset de teste no storage autorizado e sem upload real reproduzivel.
+
 Em implementacao corretiva na branch `codex/sprint-12-authorized-youtube-integration`.
 O gate E13 permanece bloqueado até a correção funcional e a validação real
 reproduzível descritas nesta emenda.
@@ -340,3 +343,13 @@ Critérios por história:
 | Fora de escopo        | TikTok, Instagram, LinkedIn, novos provedores sem nova decisao formal, automacao sem aprovacao humana                                                                                                                                                                                                                                           |
 | Riscos                | Escopo excessivo, revogacao mal tratada, token exposto, publicacao sem aprovacao                                                                                                                                                                                                                                                                |
 | Fonte oficial         | `https://developers.google.com/youtube/v3/guides/authentication`, `https://developers.google.com/youtube/v3/guides/uploading_a_video`, `https://developers.google.com/youtube/v3/guides/auth/installed-apps`, `https://developers.google.com/identity/protocols/oauth2/web-server`, `https://support.google.com/accounts/answer/13533235?hl=en` |
+
+## Evidencia de validacao corretiva H12.5 — 2026-07-15
+
+- OAuth real com `youtube.upload` + `youtube.readonly`: concluido.
+- Descoberta server-side por `channels.list?mine=true`: concluida com um canal.
+- Selecao explicita e readiness: concluidos.
+- Upload privado/nao listado: bloqueado pela ausencia do arquivo autorizado `vd_historia_01` no storage configurado; nenhum ID externo foi persistido.
+- Revogacao remota/local e bloqueio pos-revogacao: concluidos.
+- Segredos em respostas, logs, auditoria, Git e frontend: nao encontrados.
+- Gate E13: permanece bloqueado ate disponibilizar asset de teste rastreavel e repetir upload, consulta, idempotencia e isolamento.

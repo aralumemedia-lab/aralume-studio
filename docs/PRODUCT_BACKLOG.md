@@ -31,9 +31,9 @@ This backlog is an index of planning. It does not replace sprint specs.
 | H11.3 | E12   | Preparacao assistida de payload e agendamento             | P1         | `docs/specs/008-media-assets-storage.md`, `docs/specs/009-rendering.md`, `docs/specs/011-publication-assisted.md`                                                         | S11    | completed |
 | H11.4 | E12   | Gate de aprovacao e compliance para publicacao            | P1         | `docs/specs/006-approvals-compliance.md`, `docs/specs/011-publication-assisted.md`                                                                                        | S11    | completed |
 
-| H12.1 | E13 | Estado da integracao YouTube por canal | P1 | `docs/specs/015-authorized-real-integrations.md` | S12 | in progress |
+| H12.1 | E13 | Estado da integracao YouTube por canal | P1 | `docs/specs/015-authorized-real-integrations.md` | S12 | implemented — real gate pending |
 | H12.2 | E13 | Autorizacao e revogacao OAuth 2.0 Google | P1 | `docs/specs/015-authorized-real-integrations.md`, ADR 002 | S12 | corrective implementation required |
-| H12.3 | E13 | Descoberta, selecao explicita do canal YouTube e readiness | P1 | `docs/specs/015-authorized-real-integrations.md`, ADR 002, `youtube.readonly` | S12 | blocked until corrective implementation |
+| H12.3 | E13 | Descoberta, selecao explicita do canal YouTube e readiness | P1 | `docs/specs/015-authorized-real-integrations.md`, ADR 002, `youtube.readonly` | S12 | implemented — real upload gate pending |
 | H12.4 | E13 | Upload autorizado de publicacao aprovada | P1 | H12.1-H12.3, `docs/specs/006-approvals-compliance.md`, `docs/specs/007-costs-operational-modes.md` | S12 | blocked until real validation |
 | H12.5 | E13 | Reautorizacao e migracao segura do conjunto de escopos YouTube | P1 | ADR 002 emendado, spec 015, tokens existentes | S12 | planned — technical story |
 
@@ -52,6 +52,14 @@ This backlog is an index of planning. It does not replace sprint specs.
 - Nao usar estimativa de velocidade.
 - Nao duplicar criterios completos das specs.
 - Quando uma historia nao estiver pronta para sprint, manter o status apropriado no backlog e atualizar a spec antes de implementacao.
+
+### H12.5 - resultado da implementacao corretiva (2026-07-15)
+
+H12.5 foi implementada no commit `eb9dc67`: os dois escopos sao solicitados e
+validados, tokens legados exigem reautorizacao e a descoberta/seleção server-side
+funciona. O status operacional permanece bloqueado por ausência do asset de teste
+materializado no storage autorizado; o upload real, a consulta e a idempotência
+externas ainda precisam ser repetidos com asset válido.
 - Sprint 12 pertence ao E13 e tem aprovacao fechada no ADR 002 para YouTube como integracao aprovada.
 - A emenda do ADR 002 aprova `youtube.upload` para upload e `youtube.readonly` somente para descoberta/verificacao de canais; nenhum escopo amplo e permitido.
 - Sprint 13 pertence ao E14.
