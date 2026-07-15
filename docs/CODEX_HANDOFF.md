@@ -11,7 +11,8 @@
 - A Sprint 13 pertence ao E14 e e governada por `docs/specs/014-metrics-learning.md`.
 - A Sprint 13 foi encerrada no PR #23, merge commit
   `9b89d1be04e7a6e319efb9a957282097c4854f31`.
-- A Sprint 14/V1 Acceptance permanece planejada e nao pode ser iniciada aqui.
+- A Sprint 14/V1 Acceptance foi aberta em branch isolada para validacao, sem merge, release ou deploy.
+- O candidato atual recebeu `V1.0 NÃO ACEITA`; a matriz, o relatorio e as limitacoes estao em `docs/acceptance/v1/`.
 
 ## Baseline e branch
 
@@ -78,6 +79,13 @@ recriacao do frontend e limpeza administrativa da S12.
   estados vazios, parciais, erro e recomendacao.
 - Quality gates do package.json, `git diff --check` e PR #23 mergeada.
 
+## Sprint 14 - execucao de aceite
+
+- Branch: `codex/sprint-14-v1-acceptance`.
+- Base: `d78959a47a2bafbb343408d703eafafec8c6df59`.
+- Gates tecnicos iniciais: lint, typecheck, 64 testes e build aprovados.
+- Bloqueio principal: o frontend ainda possui fluxos obrigatorios ausentes ou mockados.
+
 ## Riscos
 
 - Dados controlados nao podem parecer producao: origem deve ser exibida.
@@ -89,4 +97,4 @@ recriacao do frontend e limpeza administrativa da S12.
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
 reduzir os 56 existentes, persistencia e isolamento demonstrados, QA visual feito,
-PR #23 revisada e mergeada por merge commit. Sprint 14 nao foi iniciada.
+PR #23 revisada e mergeada por merge commit. Sprint 14 foi aberta para aceite, com veredito negativo documentado.
