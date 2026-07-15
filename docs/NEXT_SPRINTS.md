@@ -17,7 +17,7 @@
 
 | Ordem | Sprint | Epico | Spec normativa | Status | Liberacao | Dependencias |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | next | blocked | `main` limpo e alinhado com `origin/main`; normalizacao documental mergeada; Sprint 11 encerrada; spec 015 formalizada; provedores ou plataformas aprovados na documentacao oficial; finalidade, permissoes, autorizacao, revogacao e contratos afetados documentados. |
+| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | next | ready | `main` limpo e alinhado com `origin/main`; normalizacao documental mergeada; Sprint 11 encerrada; spec 015 formalizada; lista fechada de integracoes aprovada no ADR 002; finalidade, permissoes, autorizacao, revogacao e contratos afetados documentados. |
 | 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | planned | bloqueada ate o encerramento da Sprint 12 | Sprint 12 encerrada; integracoes reais autorizadas disponiveis como base; origem de metricas e canais definidos. |
 | 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | planned | bloqueada ate o encerramento das Sprints 12 e 13 | Sprints 12 e 13 encerradas; pre-requisitos da V1.0 identificados; documento mestre, backlog e handoff sem conflito. |
 
@@ -40,11 +40,11 @@
 | Spec governante | `docs/specs/015-authorized-real-integrations.md` |
 | Objetivo | Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por canal. |
 | Estado | next |
-| Liberação | bloqueada ate a aprovacao documental explicita dos provedores ou plataformas abrangidos. |
-| Gate de inicio | `main` limpo e alinhado com `origin/main`, normalizacao documental mergeada, Sprint 11 encerrada, spec 015 formalizada, provedores ou plataformas aprovados na documentacao oficial, finalidade/permissoes/autorizacao/revogacao/contratos documentados e sem conflito documental. |
-| Historias incluidas | Autorizacao humana documentada; estado de integracao por canal; armazenamento seguro de tokens e segredos; revogacao auditavel; estados de erro operacionais; isolamento por canal. |
-| Fora de escopo | Metricas e aprendizado; V1 Acceptance; grandes modulos novos; recriacao do frontend; publicacao externa sem autorizacao; novos provedores sem spec; segredos em codigo, docs, commits ou logs; mascarar ausencia de integracao com mocks; arquitetura generica hipotetica para contornar a falta de definicao aprovada. |
-| Dependencias | Definicao oficial aprovada dos provedores ou plataformas do E13; politica de segredos; aprovacao humana; auditoria. |
+| Liberacao | ready |
+| Gate de inicio | `main` limpo e alinhado com `origin/main`, normalizacao documental mergeada, Sprint 11 encerrada, spec 015 formalizada, lista fechada de integracoes aprovada no ADR 002, finalidade/permissoes/autorizacao/revogacao/contratos documentados e sem conflito documental. |
+| Historias incluidas | Autorizacao humana documentada; estado de integracao por canal; armazenamento seguro de tokens e segredos; revogacao auditavel; estados de erro operacionais; isolamento por canal; aprovacao documentada de YouTube como unica integracao aprovada. |
+| Fora de escopo | Metricas e aprendizado; V1 Acceptance; grandes modulos novos; recriacao do frontend; publicacao externa sem autorizacao; novos provedores sem spec; TikTok, Instagram e LinkedIn; segredos em codigo, docs, commits ou logs; mascarar ausencia de integracao com mocks; arquitetura generica hipotetica para contornar a falta de definicao aprovada. |
+| Dependencias | Lista fechada de integracoes aprovada no ADR 002; politica de segredos; aprovacao humana; auditoria; YouTube como unica integracao aprovada para E13. |
 | Gate de conclusao | Integracao real autorizada funcionando sem expor segredo, com aprovacao humana quando aplicavel, revogacao possivel, auditoria por canal e evidencia reproduzivel. |
 
 ## Sprint 13 - Metricas e Aprendizado
@@ -75,7 +75,7 @@
 | Estado | planned |
 | Gate de inicio | Sprints 12 e 13 encerradas; spec 012 formalizada; pre-requisitos da V1.0 identificados; sem conflito documental. |
 | Historias incluidas | Verificacao do fluxo ponta a ponta pelo frontend; integracao entre frontend, backend e persistencia; isolamento por canal; rastreabilidade; auditoria e custos; renderizacao e cortes; qualidade, conformidade e aprovacao humana; preparacao de publicacao assistida; metricas e recomendacoes quando ja implementadas; correcao de defeitos comprovados. |
-| Fora de escopo | Grandes modulos novos; redefinicao de arquitetura; recriacao do frontend; substituicao do design system; funcionalidades de sprints posteriores; publicacao externa sem autorizacao; novos provedores sem spec; segredos em codigo, docs, commits ou logs; aceitação baseada so em CLI; aceitação mascarada por mocks. |
+| Fora de escopo | Grandes modulos novos; redefinicao de arquitetura; recriacao do frontend; substituicao do design system; funcionalidades de sprints posteriores; publicacao externa sem autorizacao; novos provedores sem spec; segredos em codigo, docs, commits ou logs; aceitacao baseada so em CLI; aceitacao mascarada por mocks. |
 | Dependencias | Sprints 12 e 13 encerradas; V1.0 nao pode ser declarada aceita sem evidencia operacional integrada. |
 | Gate de conclusao | Decisao binaria: `V1.0 aceita` ou `V1.0 nao aceita`; um operador deve conseguir executar, pelo frontend, o fluxo aplicavel definido no Documento Mestre. |
 

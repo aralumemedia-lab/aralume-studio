@@ -12,6 +12,7 @@ Planejada.
 - Epic principal: E13 - Integracoes Reais Autorizadas
 - Roadmap relation: esta spec governa a Sprint 12 e materializa E13; o numero da spec nao precisa coincidir com o numero da sprint.
 - Relacao historica: a Fase 12 do roadmap e Publicacao Assistida e foi materializada na Sprint 11.
+- ADR relacionado: `docs/architecture/adrs/002-e13-approved-providers.md`
 
 ## Objective
 
@@ -19,11 +20,11 @@ Definir o contrato normativo da Sprint 12 para habilitar integracoes reais autor
 
 ## Context
 
-Sprint 12 existe para formalizar a camada de autorizacao e governanca das integracoes reais que o produto precisar utilizar. Esta sprint nao incorpora metricas, aprendizado editorial nem hardening da V1.0.
+Sprint 12 existe para formalizar a camada de autorizacao e governanca das integracoes reais que o produto precisa utilizar. Esta sprint nao incorpora metricas, aprendizado editorial nem hardening da V1.0.
 
-O repositorio ainda nao definiu oficialmente quais provedores ou plataformas entram no E13. Essa decisao precisa ser aprovada em documentacao oficial antes da implementacao; esta spec nao inventa essa lista.
+A decisao documental do E13 esta fechada no ADR relacionado. A lista aprovada para esta sprint e minima e nao deve ser ampliada por analogia com mocks, seeds ou preferencias de produto.
 
-Enquanto essa aprovacao nao existir, a Sprint 12 permanece bloqueada e nao pode começar.
+Enquanto a normalizacao documental nao estiver mergeada em `main` e a branch funcional da Sprint 12 nao existir, a implementacao continua fora de execucao. O documento define o contrato; a branch futura executa esse contrato.
 
 ## Distincao entre identificadores
 
@@ -33,6 +34,7 @@ Enquanto essa aprovacao nao existir, a Sprint 12 permanece bloqueada e nao pode 
 - Os numeros podem divergir.
 - A Fase 12 do roadmap nao e a Sprint 12.
 - A Sprint 12 pertence ao E13 e usa esta spec como contrato normativo.
+- A lista aprovada de provedores/plataformas e fechada e consta no ADR relacionado.
 
 ## Historias incluidas
 
@@ -48,7 +50,7 @@ Enquanto essa aprovacao nao existir, a Sprint 12 permanece bloqueada e nao pode 
 - Metricas e aprendizado editorial.
 - Hardening ou aceite da V1.0.
 - Publicacao externa sem autorizacao humana.
-- Novos provedores nao citados em documentacao oficial.
+- Novos provedores nao aprovados no ADR relacionado.
 - Recriacao do frontend.
 - Mudanca de arquitetura fora do contrato desta sprint.
 
@@ -56,7 +58,7 @@ Enquanto essa aprovacao nao existir, a Sprint 12 permanece bloqueada e nao pode 
 
 - Sprint 11 encerrada e integrada ao `main`.
 - Documento Mestre, roadmap, backlog e handoff sem conflito de sequenciamento.
-- Gate documental para definir quais integracoes reais entram no E13.
+- Lista fechada de provedores/plataformas aprovada no ADR relacionado.
 - Politica de segredos, auditoria e aprovacao humana alinhada com os docs oficiais.
 - Nenhum segredo exposto em codigo, commit, log ou documento.
 
@@ -75,7 +77,7 @@ Antes de qualquer implementacao da Sprint 12, a documentacao oficial deve aprova
 - contratos afetados;
 - evidencias exigidas.
 
-Se qualquer um desses pontos permanecer pendente, o gate de inicio continua bloqueado. Registrar a pendencia nao satisfaz o gate.
+Esses pontos ja estao fechados para a integracao aprovada no ADR relacionado. Qualquer integracao adicional continua fora da aprovacao da Sprint 12 e exige nova decisao formal.
 
 ## Gate de inicio
 
@@ -88,7 +90,6 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 - os provedores ou plataformas abrangidos estiverem explicitamente definidos e aprovados na documentacao oficial;
 - finalidade, permissoes, autorizacao, revogacao e contratos afetados estiverem documentados;
 - o escopo estiver suficientemente definido para produzir testes e evidencias reproduziveis;
-- nao existir pendencia aberta sobre a escolha dos provedores ou plataformas;
 - nao houver conflito entre Documento Mestre, roadmap, backlog e handoff.
 
 ## Escopo
@@ -203,15 +204,42 @@ A implementacao da Sprint 12 somente pode comecar quando todos os itens abaixo f
 - Grandes modulos novos nao previstos no contrato.
 - Recriacao do frontend.
 - Publicacao externa sem autorizacao.
-- Novos provedores sem documento oficial.
+- Novos provedores nao aprovados no ADR relacionado.
 - Mascarar ausencia de integracao com mocks.
 - Aceitar o fluxo sem evidencia reproduzivel.
 
 ## Definition of Done
 
 - A governanca da integracao real esta documentada sem ambiguidade.
-- A decisao sobre provedores ou plataformas esta explicitada na documentacao oficial.
+- A decisao sobre provedores ou plataformas esta explicitada na documentacao oficial e fechada no ADR relacionado.
 - Segredos permanecem fora do repositorio e dos logs.
 - A auditoria e o isolamento por canal estao definidos.
 - O contrato e coerente com Documento Mestre, roadmap, backlog, handoff e demais specs.
 - Nenhum comportamento de produto foi implementado nesta execucao documental.
+
+## Matriz de integracoes aprovadas
+
+| Campo | Conteudo |
+| --- | --- |
+| Provedor/plataforma | YouTube Data API com autorizacao oficial da Google |
+| Status | approved for E13 |
+| Finalidade | Publicacao assistida em canal YouTube autorizado, com estado de conexao por canal e evidencias auditaveis |
+| Dependencia normativa | E13 / Sprint 12 / spec 015 / ADR 002 |
+| Fluxo operacional | Operador seleciona canal, escolhe alvo autorizado, prepara pacote assistido e conclui o fluxo documental de autorizacao |
+| Tipo de autorizacao | OAuth 2.0 oficial da Google |
+| Permissoes minimas | `youtube.upload` como minimo; escopos adicionais somente se uma necessidade documental futura exigir leitura complementar |
+| Efeito externo | Upload e publicacao assistida em canal autorizado |
+| Aprovacao humana | Obrigatoria antes de qualquer efeito externo |
+| Isolamento por canal | Cada canal possui autorizacao independente |
+| Armazenamento seguro | Access token e refresh token criptografados/armazenados fora do repositorio |
+| Revogacao | Fluxo oficial de revogacao da Google e invalidacao local do estado |
+| Auditoria | Tentativa, aprovacao, recusa, expiracao, revogacao, erro e idempotencia |
+| Contratos de frontend | `/publications`, `PublicationTarget`, `PublicationJob`, estados de readiness e aprovacoes |
+| Contratos de backend | `/api/publication-targets`, `/api/publications`, `/api/publications/:publicationJobId/reschedule` |
+| Persistencia | `PublicationTarget`, `PublicationJob`, `HumanApproval`, `AuditLog` |
+| Estados de erro | autorizacao negada, expiracao, credencial ausente, revogado, indisponivel, configuracao inconsistente, erro de auditoria ou persistencia |
+| Testes obrigatorios | Fluxo aprovado, fluxo negado, revogacao, erro de indisponibilidade, isolamento por canal, ausencia de segredo |
+| Custos e limites | Respeitar quotas e limites do provedor e registrar custo quando aplicavel |
+| Fora de escopo | TikTok, Instagram, LinkedIn, novos provedores sem nova decisao formal, automacao sem aprovacao humana |
+| Riscos | Escopo excessivo, revogacao mal tratada, token exposto, publicacao sem aprovacao |
+| Fonte oficial | `https://developers.google.com/youtube/v3/guides/authentication`, `https://developers.google.com/youtube/v3/guides/uploading_a_video`, `https://developers.google.com/youtube/v3/guides/auth/installed-apps`, `https://developers.google.com/identity/protocols/oauth2/web-server`, `https://support.google.com/accounts/answer/13533235?hl=en` |
