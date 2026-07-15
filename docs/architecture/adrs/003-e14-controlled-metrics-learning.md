@@ -28,6 +28,10 @@ idempotencia ou recomendacao.
 5. A analise e local, deterministica e versionada como `metrics-learning-v1`.
    Recomendacoes sao evidenciadas, explicaveis, canal-scoped e somente informativas.
    Nao ha IA externa nem mutacao automatica de regras editoriais.
+6. A recomendacao usa o periodo corrente mais recente selecionado e compara a
+   media ponderada de `completionRate` com snapshots anteriores da mesma
+   plataforma. Cada plataforma comparavel exige pelo menos dois snapshots
+   correntes e dois de baseline; a UI exibe a variacao como tendencia.
 
 ## Alternativas consideradas
 

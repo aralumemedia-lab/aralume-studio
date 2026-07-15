@@ -358,8 +358,11 @@ function DashboardPage() {
                     <div className="min-w-0">
                       <div className="truncate font-medium">{m.platform.toUpperCase()}</div>
                       <div className="text-[10.5px] text-muted-foreground">
-                        Retenção {(m.completionRate * 100).toFixed(0)}% · {formatNumber(m.views)}{" "}
-                        views
+                        Retenção{" "}
+                        {m.completionRate === undefined
+                          ? "—"
+                          : `${(m.completionRate * 100).toFixed(0)}%`}{" "}
+                        · {formatNumber(m.views ?? 0)} views
                       </div>
                     </div>
                     <span className="tabular-nums text-muted-foreground">

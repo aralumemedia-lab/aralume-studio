@@ -40,6 +40,7 @@ const baseInput = {
 
 function createHarness(seed: PerformanceMetric[] = []) {
   const storageRoot = mkdtempSync(path.join(os.tmpdir(), "aralume-metrics-"));
+  let nextMetricId = 0;
   const channelsRepository = createChannelsRepository(channelDemoSeed);
   const editorialRepository = createEditorialRepository(editorialDemoSeed);
   const auditRepository = createAuditRepository(undefined, { storageRoot });
@@ -51,7 +52,10 @@ function createHarness(seed: PerformanceMetric[] = []) {
       editorialRepository,
       auditService: createAuditService(auditRepository),
     },
-    { clock: () => new Date("2026-07-12T19:00:00.000Z"), idFactory: () => "0001" },
+    {
+      clock: () => new Date("2026-07-12T19:00:00.000Z"),
+      idFactory: () => String(++nextMetricId).padStart(4, "0"),
+    },
   );
   return {
     storageRoot,
@@ -74,6 +78,18 @@ test("metrics registration validates content ownership and is idempotent", () =>
     const created = harness.service.createMetric(baseInput, "req_metric_1");
     assert.equal(created.replay, false);
     assert.equal(created.metric.channelId, "ch_historia");
+    const offsetMetric = harness.service.createMetric(
+      {
+        ...baseInput,
+        periodStart: "2026-07-01T00:00:00-03:00",
+        periodEnd: "2026-07-12T00:00:00-03:00",
+        capturedAt: "2026-07-12T15:00:00-03:00",
+        idempotencyKey: "manual:ch_historia:offset",
+      },
+      "req_metric_offset",
+    );
+    assert.equal(offsetMetric.metric.periodStart, "2026-07-01T03:00:00.000Z");
+    assert.equal(offsetMetric.metric.capturedAt, "2026-07-12T18:00:00.000Z");
     assert.equal(harness.service.createMetric(baseInput, "req_metric_2").replay, true);
     assert.throws(
       () => harness.service.createMetric({ ...baseInput, views: 999 }, "req_metric_3"),
@@ -150,6 +166,27 @@ test("metrics summary generates a reproducible recommendation and keeps channels
       updatedAt: baseInput.capturedAt,
       validationStatus: "validated",
     },
+    ...(
+      [
+        ["baseline-youtube-1", "youtube", "idea_01", 0.4],
+        ["baseline-youtube-2", "youtube", "idea_02", 0.45],
+        ["baseline-tiktok-1", "tiktok", "idea_01", 0.24],
+        ["baseline-tiktok-2", "tiktok", "idea_02", 0.21],
+      ] as const
+    ).map(([id, platform, contentId, completionRate], index) => ({
+      ...baseInput,
+      id,
+      platform,
+      contentId,
+      completionRate: Number(completionRate),
+      periodStart: "2026-06-15T00:00:00.000Z",
+      periodEnd: "2026-06-30T00:00:00.000Z",
+      capturedAt: `2026-06-30T18:0${index}:00.000Z`,
+      idempotencyKey: `seed:baseline:${id}`,
+      createdAt: "2026-06-30T18:00:00.000Z",
+      updatedAt: "2026-06-30T18:00:00.000Z",
+      validationStatus: "validated" as const,
+    })),
   ];
   const harness = createHarness(seed);
   try {
@@ -157,10 +194,13 @@ test("metrics summary generates a reproducible recommendation and keeps channels
     assert.equal(summary.status, "ready");
     assert.equal(summary.recommendation?.ruleVersion, "metrics-learning-v1");
     assert.equal(summary.recommendation?.channelId, "ch_historia");
+    assert.ok(summary.recommendation?.evidence.some((evidence) => evidence.metricId === "m1"));
+    assert.ok(summary.recommendation?.evidence.some((evidence) => evidence.metricId === "m3"));
     assert.ok(
-      summary.recommendation?.evidence.every((evidence) =>
-        ["m1", "m2"].includes(evidence.metricId),
-      ),
+      summary.recommendation?.evidence.some((evidence) => evidence.label.includes("Baseline")),
+    );
+    assert.ok(
+      summary.trends.some((trend) => trend.platform === "youtube" && trend.delta !== undefined),
     );
     assert.equal(harness.service.listMetrics({ channelId: "ch_curiosidades" }).length, 0);
     assert.ok(
@@ -168,8 +208,47 @@ test("metrics summary generates a reproducible recommendation and keeps channels
         .listAuditLogs({ channelId: "ch_historia" })
         .some((entry) => entry.action === "metrics.recommendation_generated"),
     );
+    assert.ok(
+      harness.auditRepository
+        .listAuditLogs({ channelId: "ch_historia" })
+        .some((entry) => entry.action === "metrics.analysis_executed"),
+    );
+    const analysisAudit = harness.auditRepository
+      .listAuditLogs({ channelId: "ch_historia" })
+      .find((entry) => entry.action === "metrics.analysis_executed");
+    assert.deepEqual(analysisAudit?.metadata?.origins, ["manual"]);
+    assert.deepEqual(analysisAudit?.metadata?.platforms, ["tiktok", "youtube"]);
     const restarted = createMetricsRepository(undefined, { storageRoot: harness.storageRoot });
-    assert.equal(restarted.listMetrics({ channelId: "ch_historia" }).length, 4);
+    assert.equal(restarted.listMetrics({ channelId: "ch_historia" }).length, 8);
+  } finally {
+    harness.cleanup();
+  }
+});
+
+test("metrics summary does not recommend without a comparable baseline", () => {
+  const seed: PerformanceMetric[] = [
+    ["current-youtube-1", "youtube", "idea_06", 0.65],
+    ["current-youtube-2", "youtube", "idea_02", 0.62],
+    ["current-tiktok-1", "tiktok", "idea_06", 0.3],
+    ["current-tiktok-2", "tiktok", "idea_02", 0.25],
+  ].map(([id, platform, contentId, completionRate]) => ({
+    ...baseInput,
+    id,
+    platform,
+    contentId,
+    completionRate: Number(completionRate),
+    idempotencyKey: `seed:${id}`,
+    createdAt: baseInput.capturedAt,
+    updatedAt: baseInput.capturedAt,
+    validationStatus: "validated",
+  }));
+  const harness = createHarness(seed);
+  try {
+    const summary = harness.service.summarize({ channelId: "ch_historia" }, "req_no_baseline");
+    assert.equal(summary.status, "insufficient_data");
+    assert.equal(summary.recommendation, undefined);
+    assert.ok(summary.missingData.includes("baseline_or_comparable_samples"));
+    assert.ok(summary.trends.every((trend) => trend.direction === "insufficient_data"));
   } finally {
     harness.cleanup();
   }
@@ -252,6 +331,19 @@ test("metrics HTTP routes require channel scope, expose envelopes and persist re
     };
     assert.equal(listedPayload.data.length, 1);
     assert.equal(listedPayload.meta.total, 1);
+
+    const secondPage = await fetch(
+      `${baseUrl}/api/metrics?channelId=ch_historia&page=2&pageSize=1`,
+    );
+    assert.equal(secondPage.status, 200);
+    const secondPagePayload = (await secondPage.json()) as {
+      data: PerformanceMetric[];
+      meta: { page: number; pageSize: number; total: number };
+    };
+    assert.equal(secondPagePayload.data.length, 0);
+    assert.equal(secondPagePayload.meta.page, 2);
+    assert.equal(secondPagePayload.meta.pageSize, 1);
+    assert.equal(secondPagePayload.meta.total, 1);
 
     const cross = await fetch(`${baseUrl}/api/metrics?channelId=ch_curiosidades`);
     assert.equal(cross.status, 200);

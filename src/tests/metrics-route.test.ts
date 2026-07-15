@@ -12,4 +12,7 @@ test("metrics route uses the real API and exposes recommendation evidence", () =
   assert.ok(routeSource.includes("ErrorState"));
   assert.ok(routeSource.includes("Recomendacao disponivel"));
   assert.ok(routeSource.includes("Evidencias"));
+  assert.ok(routeSource.includes("Tendencias"));
+  assert.ok(routeSource.includes("formatOptionalPercent"));
+  assert.equal(routeSource.includes("m.completionRate * 100).toFixed"), false);
 });

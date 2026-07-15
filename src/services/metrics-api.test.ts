@@ -21,6 +21,7 @@ test("metrics API client calls real list and summary endpoints with channel scop
               origins: [],
               totals: {},
               byContent: [],
+              trends: [],
               missingData: [],
             }
           : [],

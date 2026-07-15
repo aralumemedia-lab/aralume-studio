@@ -53,6 +53,16 @@ export type MetricEvidence = {
   unit: string;
 };
 
+export type MetricTrend = {
+  platform: string;
+  currentCompletionRate?: number;
+  baselineCompletionRate?: number;
+  delta?: number;
+  direction: "up" | "down" | "flat" | "insufficient_data";
+  currentSampleCount: number;
+  baselineSampleCount: number;
+};
+
 export type EditorialRecommendation = {
   id: ID;
   channelId: ID;
@@ -98,6 +108,7 @@ export type MetricsSummary = {
     followersGained?: number;
   };
   byContent: MetricContentSummary[];
+  trends: MetricTrend[];
   recommendation?: EditorialRecommendation;
   missingData: string[];
   lastCapturedAt?: ISODate;

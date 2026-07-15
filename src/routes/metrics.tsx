@@ -20,7 +20,7 @@ import {
   getMetricsSummary,
   getPerformanceMetrics,
 } from "@/services/metrics-api";
-import type { MetricsSummary, PerformanceMetric } from "@/contracts/types";
+import type { MetricTrend, MetricsSummary, PerformanceMetric } from "@/contracts/types";
 
 export const Route = createFileRoute("/metrics")({
   head: () => ({
@@ -119,6 +119,8 @@ function MetricsPage() {
           </div>
         )}
 
+        {summary.trends.length > 0 && <MetricsTrends trends={summary.trends} />}
+
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <KpiCard
             label="Views"
@@ -134,7 +136,7 @@ function MetricsPage() {
         </div>
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(300px,0.6fr)]">
-          <Card padded={false}>
+          <Card className="min-w-0 overflow-hidden" padded={false}>
             <div className="p-4 pb-0">
               <SectionHeader
                 title="Desempenho por conteudo"
@@ -178,24 +180,28 @@ function MetricsTable({ rows }: { rows: PerformanceMetric[] }) {
     {
       key: "views",
       header: "Views",
-      render: (row) => <span className="tabular-nums">{formatNumber(row.views)}</span>,
+      render: (row) => <span className="tabular-nums">{formatOptionalNumber(row.views)}</span>,
     },
     {
       key: "watch",
       header: "Watch time",
       render: (row) => (
-        <span className="tabular-nums">{formatDuration(row.averageWatchSeconds)}</span>
+        <span className="tabular-nums">{formatOptionalDuration(row.averageWatchSeconds)}</span>
       ),
     },
     {
       key: "retention",
       header: "Retencao",
-      render: (row) => <span className="tabular-nums">{formatPercent(row.completionRate)}</span>,
+      render: (row) => (
+        <span className="tabular-nums">{formatOptionalPercent(row.completionRate)}</span>
+      ),
     },
     {
       key: "followers",
       header: "Seguidores",
-      render: (row) => <span className="tabular-nums">{formatNumber(row.followersGained)}</span>,
+      render: (row) => (
+        <span className="tabular-nums">{formatOptionalNumber(row.followersGained)}</span>
+      ),
     },
     {
       key: "origin",
@@ -220,7 +226,7 @@ function MetricsTable({ rows }: { rows: PerformanceMetric[] }) {
 function RecommendationCard({ summary }: { summary: MetricsSummary }) {
   const recommendation = summary.recommendation;
   return (
-    <Card>
+    <Card className="min-w-0 overflow-hidden">
       <SectionHeader
         title="Aprendizado editorial"
         description="Regra deterministica metrics-learning-v1"
@@ -245,7 +251,8 @@ function RecommendationCard({ summary }: { summary: MetricsSummary }) {
             <ul className="mt-1 space-y-1 text-muted-foreground">
               {recommendation.evidence.map((evidence) => (
                 <li key={evidence.metricId}>
-                  #{evidence.metricId} - {evidence.platform} - {formatPercent(evidence.value)}
+                  #{evidence.metricId} - {evidence.label} - {evidence.platform} -{" "}
+                  {formatPercent(evidence.value)}
                 </li>
               ))}
             </ul>
@@ -269,4 +276,35 @@ function RecommendationCard({ summary }: { summary: MetricsSummary }) {
 
 function originLabel(origin: PerformanceMetric["origin"]): string {
   return { manual: "Manual", imported: "Importado", demo: "Demo", fixture: "Fixture" }[origin];
+}
+
+function MetricsTrends({ trends }: { trends: MetricTrend[] }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs">
+      <span className="font-medium">Tendencias:</span>
+      {trends.map((trend) => (
+        <span key={trend.platform} className="rounded bg-muted px-2 py-1">
+          {trend.platform}:{" "}
+          {trend.delta === undefined ? "dados insuficientes" : formatSignedPercent(trend.delta)}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function formatOptionalNumber(value?: number): string {
+  return value === undefined ? "—" : formatNumber(value);
+}
+
+function formatOptionalPercent(value?: number): string {
+  return value === undefined ? "—" : formatPercent(value);
+}
+
+function formatOptionalDuration(value?: number): string {
+  return value === undefined ? "—" : formatDuration(value);
+}
+
+function formatSignedPercent(value: number): string {
+  const percentage = Math.round(value * 100);
+  return `${percentage >= 0 ? "+" : ""}${percentage}%`;
 }

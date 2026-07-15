@@ -745,14 +745,14 @@ export type PerformanceMetric = {
   platform: string;
   periodStart: ISODate;
   periodEnd: ISODate;
-  views: number;
-  reach: number;
-  averageWatchSeconds: number;
-  completionRate: number;
-  shares: number;
-  saves: number;
-  comments: number;
-  followersGained: number;
+  views?: number;
+  reach?: number;
+  averageWatchSeconds?: number;
+  completionRate?: number;
+  shares?: number;
+  saves?: number;
+  comments?: number;
+  followersGained?: number;
   origin: "manual" | "imported" | "demo" | "fixture";
   validationStatus: "validated" | "partial";
   capturedAt: ISODate;
@@ -785,6 +785,16 @@ export type EditorialRecommendation = {
   ruleVersion: "metrics-learning-v1";
 };
 
+export type MetricTrend = {
+  platform: string;
+  currentCompletionRate?: number;
+  baselineCompletionRate?: number;
+  delta?: number;
+  direction: "up" | "down" | "flat" | "insufficient_data";
+  currentSampleCount: number;
+  baselineSampleCount: number;
+};
+
 export type MetricsSummary = {
   channelId: ID;
   periodStart?: ISODate;
@@ -794,7 +804,7 @@ export type MetricsSummary = {
   contentCount: number;
   platforms: string[];
   origins: PerformanceMetric["origin"][];
-  totals: Pick<
+  totals: Partial<Pick<
     PerformanceMetric,
     | "views"
     | "reach"
@@ -804,7 +814,7 @@ export type MetricsSummary = {
     | "saves"
     | "comments"
     | "followersGained"
-  >;
+  >>;
   byContent: Array<{
     contentId: ID;
     platforms: string[];
@@ -814,6 +824,7 @@ export type MetricsSummary = {
     shares?: number;
     followersGained?: number;
   }>;
+  trends: MetricTrend[];
   recommendation?: EditorialRecommendation;
   missingData: string[];
   lastCapturedAt?: ISODate;

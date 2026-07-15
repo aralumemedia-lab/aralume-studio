@@ -12,6 +12,7 @@ import type {
   MetricFilters,
   MetricsRepository,
   MetricsSummary,
+  MetricTrend,
   PerformanceMetric,
 } from "./metrics.types.js";
 
@@ -45,19 +46,20 @@ export function createMetricsService(
 
   return {
     listMetrics(filters, requestId) {
-      validateChannel(dependencies.channelsRepository, filters.channelId);
-      validatePeriod(filters.from, filters.to);
-      const { page: _page, pageSize: _pageSize, ...repositoryFilters } = filters;
+      const normalizedFilters = normalizeMetricFilters(filters);
+      validateChannel(dependencies.channelsRepository, normalizedFilters.channelId);
+      validatePeriod(normalizedFilters.from, normalizedFilters.to);
+      const { page: _page, pageSize: _pageSize, ...repositoryFilters } = normalizedFilters;
       const items = repository.listMetrics(repositoryFilters);
       recordAudit(dependencies.auditService, {
-        channelId: filters.channelId,
+        channelId: normalizedFilters.channelId,
         action: "metrics.queried",
         entityType: "metrics",
-        entityId: filters.channelId,
+        entityId: normalizedFilters.channelId,
         message: "Metricas consultadas.",
         status: "success",
         requestId,
-        metadata: { count: items.length, from: filters.from, to: filters.to },
+        metadata: { count: items.length, from: normalizedFilters.from, to: normalizedFilters.to },
       });
       return items;
     },
@@ -83,21 +85,27 @@ export function createMetricsService(
       const parsed = createMetricBodySchema.parse(input);
       validateChannel(dependencies.channelsRepository, parsed.channelId);
       validatePeriod(parsed.periodStart, parsed.periodEnd);
-      const content = dependencies.editorialRepository.getContentIdea(parsed.contentId);
+      const normalized = normalizeMetricInput({
+        ...parsed,
+        validationStatus: parsed.validationStatus ?? "validated",
+      });
+      const content = dependencies.editorialRepository.getContentIdea(normalized.contentId);
       if (!content) throw notFound("Content not found", { contentId: parsed.contentId });
-      if (content.channelId !== parsed.channelId) {
+      if (content.channelId !== normalized.channelId) {
         throw conflict("Content belongs to a different channel", {
-          contentId: parsed.contentId,
-          channelId: parsed.channelId,
+          contentId: normalized.contentId,
+          channelId: normalized.channelId,
         });
       }
 
-      const existing = repository.findByIdempotency(parsed.channelId, parsed.idempotencyKey);
-      const normalized = { ...parsed, validationStatus: parsed.validationStatus ?? "validated" };
+      const existing = repository.findByIdempotency(
+        normalized.channelId,
+        normalized.idempotencyKey,
+      );
       if (existing) {
         if (!samePayload(existing, normalized)) {
           recordAudit(dependencies.auditService, {
-            channelId: parsed.channelId,
+            channelId: normalized.channelId,
             action: "metrics.rejected",
             entityType: "performance_metric",
             entityId: existing.id,
@@ -107,12 +115,12 @@ export function createMetricsService(
             metadata: { reason: "idempotency_conflict" },
           });
           throw conflict("Metric idempotency key already exists with a different payload", {
-            channelId: parsed.channelId,
-            idempotencyKey: parsed.idempotencyKey,
+            channelId: normalized.channelId,
+            idempotencyKey: normalized.idempotencyKey,
           });
         }
         recordAudit(dependencies.auditService, {
-          channelId: parsed.channelId,
+          channelId: normalized.channelId,
           action: "metrics.idempotent_replay",
           entityType: "performance_metric",
           entityId: existing.id,
@@ -151,17 +159,45 @@ export function createMetricsService(
     },
 
     summarize(filters, requestId) {
-      validateChannel(dependencies.channelsRepository, filters.channelId);
-      validatePeriod(filters.from, filters.to);
-      const items = repository.listMetrics(filters);
-      const summary = buildSummary(items, filters.channelId, clock().toISOString(), filters);
+      const normalizedFilters = normalizeMetricFilters(filters);
+      validateChannel(dependencies.channelsRepository, normalizedFilters.channelId);
+      validatePeriod(normalizedFilters.from, normalizedFilters.to);
+      const items = repository.listMetrics(normalizedFilters);
+      const allChannelItems = repository.listMetrics({ channelId: normalizedFilters.channelId });
+      const summary = buildSummary(
+        items,
+        allChannelItems,
+        normalizedFilters.channelId,
+        clock().toISOString(),
+        normalizedFilters,
+      );
       recordAudit(dependencies.auditService, {
-        channelId: filters.channelId,
+        channelId: normalizedFilters.channelId,
+        action: "metrics.analysis_executed",
+        entityType: "metrics_analysis",
+        entityId: normalizedFilters.channelId,
+        message: "Analise de metricas executada.",
+        status: "success",
+        requestId,
+        metadata: {
+          status: summary.status,
+          sampleCount: summary.sampleCount,
+          periodStart: summary.periodStart,
+          periodEnd: summary.periodEnd,
+          origins: summary.origins,
+          platforms: summary.platforms,
+          metricTypes: Object.entries(summary.totals)
+            .filter(([, value]) => value !== undefined)
+            .map(([key]) => key),
+        },
+      });
+      recordAudit(dependencies.auditService, {
+        channelId: normalizedFilters.channelId,
         action: summary.recommendation
           ? "metrics.recommendation_generated"
           : "metrics.insufficient_data",
         entityType: "metrics_analysis",
-        entityId: filters.channelId,
+        entityId: normalizedFilters.channelId,
         message: summary.recommendation
           ? "Recomendacao editorial gerada."
           : "Dados insuficientes para recomendacao.",
@@ -173,6 +209,9 @@ export function createMetricsService(
           originCount: summary.origins.length,
           periodStart: summary.periodStart,
           periodEnd: summary.periodEnd,
+          origins: summary.origins,
+          platforms: summary.platforms,
+          reason: summary.recommendation ? undefined : summary.missingData,
         },
       });
       return summary;
@@ -182,6 +221,7 @@ export function createMetricsService(
 
 function buildSummary(
   items: PerformanceMetric[],
+  allChannelItems: PerformanceMetric[],
   channelId: string,
   generatedAt: string,
   filters: Pick<MetricFilters, "from" | "to">,
@@ -235,7 +275,15 @@ function buildSummary(
       followersGained: sum(contentItems, "followersGained"),
     };
   });
-  const recommendation = buildRecommendation(items, channelId, periodStart, periodEnd, generatedAt);
+  const trends = buildTrends(items, allChannelItems);
+  const recommendation = buildRecommendation(items, allChannelItems, channelId, generatedAt);
+  if (
+    items.length > 0 &&
+    !recommendation &&
+    trends.every((trend) => trend.direction === "insufficient_data")
+  ) {
+    missingData.add("baseline_or_comparable_samples");
+  }
   const status =
     items.length === 0 || !recommendation
       ? "insufficient_data"
@@ -253,6 +301,7 @@ function buildSummary(
     origins: Array.from(new Set(items.map((item) => item.origin))).sort(),
     totals,
     byContent,
+    trends,
     recommendation,
     missingData: Array.from(missingData).sort(),
     lastCapturedAt: items.reduce<string | undefined>(
@@ -264,51 +313,141 @@ function buildSummary(
 
 function buildRecommendation(
   items: PerformanceMetric[],
+  allChannelItems: PerformanceMetric[],
   channelId: string,
-  periodStart: string | undefined,
-  periodEnd: string | undefined,
   generatedAt: string,
 ): EditorialRecommendation | undefined {
-  if (!periodStart || !periodEnd) return undefined;
-  const groups = Array.from(new Set(items.map((item) => item.platform)))
-    .map((platform) =>
-      items.filter((item) => item.platform === platform && item.completionRate !== undefined),
-    )
-    .filter((group) => group.length >= 2)
+  const currentPeriodEnd = latestPeriodEnd(items);
+  if (!currentPeriodEnd) return undefined;
+  const currentItems = items.filter((item) => item.periodEnd === currentPeriodEnd);
+  const currentPeriodStart = currentItems.reduce<string | undefined>(
+    (min, item) => (min && min < item.periodStart ? min : item.periodStart),
+    undefined,
+  );
+  if (!currentPeriodStart) return undefined;
+  const groups = Array.from(new Set(currentItems.map((item) => item.platform)))
+    .map((platform) => {
+      const current = currentItems.filter(
+        (item) => item.platform === platform && item.completionRate !== undefined,
+      );
+      const baseline = allChannelItems.filter(
+        (item) =>
+          item.platform === platform &&
+          item.periodEnd <= currentPeriodStart &&
+          item.completionRate !== undefined,
+      );
+      return { platform, current, baseline };
+    })
+    .filter((group) => group.current.length >= 2 && group.baseline.length >= 2)
     .map((group) => ({
-      platform: group[0].platform,
-      average: group.reduce((total, item) => total + (item.completionRate ?? 0), 0) / group.length,
-      group,
+      platform: group.platform,
+      average: weightedCompletion(group.current),
+      baselineAverage: weightedCompletion(group.baseline),
+      current: group.current,
+      baseline: group.baseline,
     }))
+    .filter(
+      (group): group is typeof group & { average: number; baselineAverage: number } =>
+        group.average !== undefined && group.baselineAverage !== undefined,
+    )
     .sort((left, right) => right.average - left.average);
   if (groups.length < 2 || groups[0].average - groups[1].average < 0.1) return undefined;
   const winner = groups[0];
   const runnerUp = groups[1];
-  const evidence = winner.group.slice(0, 2).map((item) => ({
-    metricId: item.id,
-    contentId: item.contentId,
-    platform: item.platform,
-    label: "Taxa de conclusao",
-    value: item.completionRate ?? 0,
-    unit: "fracao",
-  }));
+  const evidence = [
+    ...winner.current.slice(0, 2).map((item) => metricEvidence(item, "Taxa de conclusao corrente")),
+    ...runnerUp.current
+      .slice(0, 2)
+      .map((item) => metricEvidence(item, "Taxa de conclusao corrente")),
+    ...winner.baseline.slice(0, 2).map((item) => metricEvidence(item, "Baseline de conclusao")),
+    ...runnerUp.baseline.slice(0, 2).map((item) => metricEvidence(item, "Baseline de conclusao")),
+  ];
+  const winnerDelta = winner.average - winner.baselineAverage;
+  const runnerDelta = runnerUp.average - runnerUp.baselineAverage;
   return {
-    id: `rec_${channelId}_${periodEnd.slice(0, 10)}`,
+    id: `rec_${channelId}_${currentPeriodEnd.slice(0, 10)}`,
     channelId,
-    periodStart,
-    periodEnd,
+    periodStart: currentPeriodStart,
+    periodEnd: currentPeriodEnd,
     status: "available",
     evidence,
-    rationale: `Os snapshots persistidos indicam completion rate medio de ${formatPercent(winner.average)} em ${winner.platform}, acima de ${formatPercent(runnerUp.average)} em ${runnerUp.platform}. Isto e um sinal de desempenho, nao uma relacao causal.`,
+    rationale: `No periodo corrente, ${winner.platform} teve completion rate medio de ${formatPercent(winner.average)}, acima de ${formatPercent(runnerUp.average)} em ${runnerUp.platform}. Frente ao baseline anterior, a variacao foi de ${formatSignedPercent(winnerDelta)} em ${winner.platform} e ${formatSignedPercent(runnerDelta)} em ${runnerUp.platform}. Isto e um sinal de desempenho, nao uma relacao causal.`,
     suggestedAction: `Revisar com prioridade o formato ${winner.platform} nos proximos conteudos e comparar novamente apos nova coleta.`,
-    confidence: winner.group.length >= 3 ? "high" : "medium",
+    confidence: winner.current.length >= 3 && winner.baseline.length >= 3 ? "high" : "medium",
     limitations: [
       "Analise deterministica sem controle de variaveis externas.",
-      "Amostras pertencem ao periodo selecionado.",
+      "Amostras correntes sao comparadas com o baseline anterior da mesma plataforma.",
       "Recomendacao exige revisao humana.",
     ],
     generatedAt,
     ruleVersion: "metrics-learning-v1",
+  };
+}
+
+function buildTrends(
+  items: PerformanceMetric[],
+  allChannelItems: PerformanceMetric[],
+): MetricTrend[] {
+  const currentPeriodEnd = latestPeriodEnd(items);
+  if (!currentPeriodEnd) return [];
+  const currentItems = items.filter((item) => item.periodEnd === currentPeriodEnd);
+  const currentPeriodStart = currentItems.reduce<string | undefined>(
+    (min, item) => (min && min < item.periodStart ? min : item.periodStart),
+    undefined,
+  );
+  if (!currentPeriodStart) return [];
+  return Array.from(new Set(items.map((item) => item.platform)))
+    .sort()
+    .map((platform) => {
+      const current = currentItems.filter(
+        (item) => item.platform === platform && item.completionRate !== undefined,
+      );
+      const baseline = allChannelItems.filter(
+        (item) =>
+          item.platform === platform &&
+          item.periodEnd <= currentPeriodStart &&
+          item.completionRate !== undefined,
+      );
+      const currentCompletionRate = weightedCompletion(current);
+      const baselineCompletionRate = weightedCompletion(baseline);
+      const delta =
+        currentCompletionRate !== undefined && baselineCompletionRate !== undefined
+          ? currentCompletionRate - baselineCompletionRate
+          : undefined;
+      return {
+        platform,
+        currentCompletionRate,
+        baselineCompletionRate,
+        delta,
+        direction:
+          current.length < 2 || baseline.length < 2 || delta === undefined
+            ? "insufficient_data"
+            : delta > 0.01
+              ? "up"
+              : delta < -0.01
+                ? "down"
+                : "flat",
+        currentSampleCount: current.length,
+        baselineSampleCount: baseline.length,
+      } satisfies MetricTrend;
+    });
+}
+
+function latestPeriodEnd(items: PerformanceMetric[]): string | undefined {
+  return items.reduce<string | undefined>(
+    (latest, item) => (latest && latest > item.periodEnd ? latest : item.periodEnd),
+    undefined,
+  );
+}
+
+function metricEvidence(item: PerformanceMetric, label: string) {
+  return {
+    metricId: item.id,
+    contentId: item.contentId,
+    platform: item.platform,
+    label,
+    value: item.completionRate ?? 0,
+    unit: "fracao",
   };
 }
 
@@ -344,6 +483,34 @@ function weightedCompletion(items: PerformanceMetric[]): number | undefined {
 
 function formatPercent(value: number): string {
   return `${Math.round(value * 100)}%`;
+}
+
+function formatSignedPercent(value: number): string {
+  const percent = Math.round(value * 100);
+  return `${percent >= 0 ? "+" : ""}${percent}%`;
+}
+
+function normalizeMetricFilters(filters: MetricFilters): MetricFilters {
+  return {
+    ...filters,
+    from: filters.from ? normalizeISODate(filters.from) : undefined,
+    to: filters.to ? normalizeISODate(filters.to) : undefined,
+  };
+}
+
+function normalizeMetricInput(
+  input: CreateMetricInput & { validationStatus: PerformanceMetric["validationStatus"] },
+): CreateMetricInput & { validationStatus: PerformanceMetric["validationStatus"] } {
+  return {
+    ...input,
+    periodStart: normalizeISODate(input.periodStart),
+    periodEnd: normalizeISODate(input.periodEnd),
+    capturedAt: normalizeISODate(input.capturedAt),
+  };
+}
+
+function normalizeISODate(value: string): string {
+  return new Date(value).toISOString();
 }
 
 function samePayload(

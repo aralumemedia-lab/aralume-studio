@@ -94,16 +94,16 @@ implicita documentada, periodo, `capturedAt`, origem, `validationStatus`,
 
 Metricas aprovadas nesta fatia:
 
-| Campo | Definicao | Unidade | Regra |
-| --- | --- | --- | --- |
-| `views` | reproducoes contabilizadas | inteiro | >= 0 |
-| `reach` | contas/pessoas alcancadas | inteiro | >= 0 |
-| `averageWatchSeconds` | duracao media assistida | segundos inteiros | >= 0 |
-| `completionRate` | fracao concluida | decimal normalizado 0..1 | sem percentual 0..100 |
-| `shares` | compartilhamentos | inteiro | >= 0 |
-| `saves` | salvamentos | inteiro | >= 0 |
-| `comments` | comentarios | inteiro | >= 0 |
-| `followersGained` | seguidores/inscritos ganhos | inteiro | >= 0 |
+| Campo                 | Definicao                   | Unidade                  | Regra                 |
+| --------------------- | --------------------------- | ------------------------ | --------------------- |
+| `views`               | reproducoes contabilizadas  | inteiro                  | >= 0                  |
+| `reach`               | contas/pessoas alcancadas   | inteiro                  | >= 0                  |
+| `averageWatchSeconds` | duracao media assistida     | segundos inteiros        | >= 0                  |
+| `completionRate`      | fracao concluida            | decimal normalizado 0..1 | sem percentual 0..100 |
+| `shares`              | compartilhamentos           | inteiro                  | >= 0                  |
+| `saves`               | salvamentos                 | inteiro                  | >= 0                  |
+| `comments`            | comentarios                 | inteiro                  | >= 0                  |
+| `followersGained`     | seguidores/inscritos ganhos | inteiro                  | >= 0                  |
 
 Zero e valido. Valores ausentes entram como dados parciais e nao sao convertidos
 em zero no backend. Timestamps persistem em ISO UTC; `America/Sao_Paulo` e usado
@@ -150,11 +150,18 @@ superficie de analise/recomendacao; nao ha endpoint duplicado de recomendacao.
 - Agregacao por soma para contagens e media ponderada por views para
   `completionRate` quando houver views; sem views, retorna dado parcial.
 - Baseline: media dos snapshots anteriores do mesmo canal e plataforma na janela
-  disponivel. Sem dois snapshots comparaveis, o estado e `insufficient_data`.
+  disponivel. Para a recomendacao, o periodo corrente e o periodo mais recente
+  selecionado; o baseline e formado pelos snapshots anteriores da mesma
+  plataforma. Sem pelo menos dois snapshots correntes e dois snapshots de
+  baseline por plataforma comparavel, o estado e `insufficient_data`.
 - Regra `metrics-learning-v1`: recomendar priorizar o formato/plataforma com maior
   completion rate e pelo menos duas amostras comparaveis, desde que a variacao
-  minima seja de 10 pontos percentuais. A recomendacao cita os IDs das metricas
-  que sustentam a regra.
+  minima entre as plataformas correntes seja de 10 pontos percentuais. A
+  recomendacao cita os IDs das metricas correntes e de baseline que sustentam a
+  regra.
+- Tendencia e a variacao da media ponderada de `completionRate` entre o periodo
+  corrente e o baseline anterior por plataforma. A UI exibe a tendencia junto
+  da recomendacao; sem baseline, exibe estado insuficiente.
 - Outliers nao sao removidos nesta fatia; o racional registra a limitacao.
 - Dados atrasados, incompletos ou contraditorios permanecem marcados e reduzem a
   confianca; nao geram causalidade.
