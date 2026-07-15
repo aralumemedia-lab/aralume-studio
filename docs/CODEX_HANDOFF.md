@@ -5,10 +5,10 @@
 - Sprint 11 - Publicacao Assistida foi concluida e integrada ao `main` via PR #19.
 - O merge commit oficial da Sprint 11 e `966e5bef50446f81701cedd861689b3e07b14a7d`.
 - A Fase 12 do roadmap materializou-se na Sprint 11 e esta encerrada.
-- A Sprint 12 e a proxima sprint formal de execucao.
-- A Sprint 12 governa o gate de Hardening/V1 Acceptance da V1.0.
-- A spec normativa da Sprint 12 e `docs/specs/012-v1-acceptance.md`.
-- A V1.0 ainda nao pode ser declarada aceita porque os gates de Integracoes Reais Autorizadas e Metricas e Aprendizado permanecem planejados.
+- A proxima sprint formal e a Sprint 12 - Integracoes Reais Autorizadas.
+- A Sprint 12 governa o E13, nao o gate de V1 Acceptance.
+- A spec normativa da Sprint 12 e `docs/specs/015-authorized-real-integrations.md`.
+- A V1.0 ainda nao pode ser declarada aceita porque as Sprints 13 e 14 ainda nao foram executadas.
 
 ## Baseline esperada
 
@@ -18,31 +18,42 @@
 - Nenhum arquivo staged, modified, deleted, renamed ou untracked.
 - Normalizacao documental mergeada antes de iniciar a implementacao.
 
+## Branch sugerida
+
+- `codex/sprint-12-integracoes-reais-autorizadas`
+
 ## Sprint formal
 
-- Sprint 12 - V1 Acceptance.
-- Epic principal: E15 - Hardening V1.0.
-- Spec governante: `docs/specs/012-v1-acceptance.md`.
+- Sprint 12 - Integracoes Reais Autorizadas.
+- Epic principal: E13 - Integracoes Reais Autorizadas.
+- Spec governante: `docs/specs/015-authorized-real-integrations.md`.
 
 ## Objetivo
 
-Integrar, verificar, endurecer e decidir o aceite da V1.0 com evidência operacional pelo frontend.
+Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por canal, sem antecipar metricas, aprendizado ou V1 Acceptance.
+
+## Historias incluidas
+
+- Autorizacao humana documentada quando houver efeito externo.
+- Estado de integracao por canal.
+- Armazenamento seguro de tokens e segredos.
+- Revogacao auditavel.
+- Estados de erro operacionais.
+- Isolamento por canal.
 
 ## Escopo
 
-- Verificar o fluxo ponta a ponta pelo frontend.
-- Validar integracao entre frontend, backend e persistencia.
-- Validar isolamento por canal.
-- Validar rastreabilidade, auditoria e custos.
-- Validar renderizacao e cortes.
-- Validar qualidade, conformidade e aprovacao humana.
-- Validar preparacao de publicacao assistida.
-- Validar metricas e recomendacoes quando esses requisitos ja estiverem implementados.
-- Corrigir defeitos que bloqueiem o aceite.
-- Produzir evidencias de aceite ou rejeicao.
+- Fluxo de autorizacao para integracoes reais.
+- Estados de conexao, autorizacao, expiracao, revogacao e erro.
+- Armazenamento seguro de segredos e tokens.
+- Auditoria das decisoes relevantes.
+- Conformidade e aprovacao humana quando houver efeito externo.
+- Contratos afetados no frontend e no backend futuro apenas na extensao necessaria para a integracao autorizada.
 
 ## Fora de escopo
 
+- Metricas e aprendizado.
+- V1 Acceptance.
 - Grandes modulos novos.
 - Redefinicao de arquitetura.
 - Recriacao do frontend.
@@ -52,8 +63,7 @@ Integrar, verificar, endurecer e decidir o aceite da V1.0 com evidência operaci
 - Novos provedores sem spec.
 - Segredos em codigo, docs, commits ou logs.
 - Aceitacao baseada apenas em CLI.
-- Aceitacao mascarada por mocks.
-- Declaracao de aceite sem evidencia reproduzivel.
+- Mascarar ausencia de integracao com mocks.
 
 ## Documentos obrigatorios
 
@@ -64,12 +74,10 @@ Integrar, verificar, endurecer e decidir o aceite da V1.0 com evidência operaci
 - `docs/FRONTEND_API_CONTRACTS.md`
 - `docs/FRONTEND_DESIGN_SYSTEM.md`
 - `docs/specs/000-sdd-process.md`
-- `docs/specs/009-rendering.md`
-- `docs/specs/010-derived-clips.md`
 - `docs/specs/011-publication-assisted.md`
 - `docs/specs/012-v1-acceptance.md`
-- `docs/specs/013-channels-frontend-integration.md`
 - `docs/specs/014-metrics-learning.md`
+- `docs/specs/015-authorized-real-integrations.md`
 
 ## Validacoes exigidas
 
@@ -77,30 +85,30 @@ Integrar, verificar, endurecer e decidir o aceite da V1.0 com evidência operaci
 - Confirmar que a normalizacao documental foi mergeada antes de qualquer implementacao.
 - Executar `git diff --check`.
 - Executar `git status --short`.
-- Executar os comandos normais do repositorio que sejam aplicaveis ao escopo.
-- Se houver alteracao de frontend, incluir a validacao visual pertinente.
-- Se a conclusao da sprint for negativa, registrar os bloqueios com evidencia reproduzivel.
+- Executar os comandos normais do repositorio que sejam aplicaveis ao escopo documental.
+- Se houver alteracao de frontend, incluir validacao visual pertinente.
+- Se a conclusao da sprint for negativa, registrar bloqueios com evidencia reproduzivel.
 
 ## Riscos conhecidos
 
 - Confundir Fase 12 historica com Sprint 12 de execucao.
 - Tratar Publicacao Assistida como trabalho ainda aberto quando ela ja foi encerrada.
 - Aceitar V1.0 sem evidencias operacionais integradas.
-- Mascarar integrações ausentes com mocks ou fluxo apenas por CLI.
-- Antecipar Sprint 13 ou posteriores.
+- Mascarar integracoes ausentes com mocks ou fluxo apenas por CLI.
+- Antecipar Sprint 13 ou Sprint 14.
 
 ## Definition of Done
 
-- A decisão final da Sprint 12 e binaria: `V1.0 aceita` ou `V1.0 nao aceita`.
-- A aceitacao exige evidencia de execucao do fluxo aplicavel pelo frontend.
+- A decisao final da Sprint 12 e binaria: `V1.0 aceita` ou `V1.0 nao aceita`.
+- A aceitacao exige evidencia de execucao do fluxo aplicavel pelo frontend quando houver interface correspondente.
 - Qualquer decisao negativa deve listar bloqueios, severidade, evidencia e proximo trabalho necessario.
-- A documentação deve permanecer coerente entre Documento Mestre, roadmap, backlog, handoff e spec.
+- A documentacao deve permanecer coerente entre Documento Mestre, roadmap, backlog, handoff e spec.
 
-## Proibições
+## Proibicoes
 
-- Não reiniciar esta correção documental.
-- Não antecipar sprints posteriores.
-- Não implementar produto fora da spec.
-- Não declarar aceite sem evidência.
-- Não publicar externamente sem autorização.
-- Não solicitar ou registrar segredos.
+- Nao reiniciar esta correcao documental.
+- Nao antecipar Sprints 13 ou 14.
+- Nao implementar produto fora da spec.
+- Nao declarar aceite sem evidencia.
+- Nao publicar externamente sem autorizacao.
+- Nao solicitar ou registrar segredos.

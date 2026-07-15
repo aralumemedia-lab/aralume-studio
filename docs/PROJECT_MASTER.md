@@ -1305,6 +1305,10 @@ Objetivo:
 
 - conectar provedores com governança.
 
+Sprint alvo:
+
+- Sprint 12.
+
 Gate:
 
 - integração oficial funcionando sem expor segredo.
@@ -1314,6 +1318,10 @@ Gate:
 Objetivo:
 
 - fechar ciclo editorial.
+
+Sprint alvo:
+
+- Sprint 13.
 
 Gate:
 
@@ -1327,11 +1335,15 @@ Objetivo:
 
 - transformar MVP em V1.0 funcional.
 
+Sprint alvo:
+
+- Sprint 14.
+
 Gate:
 
 - demonstração ponta a ponta pelo frontend;
-- aceite binário documentado como V1.0 aceita ou V1.0 não aceita na Sprint 12;
-- esta fase é validada pela Sprint 12 e pela spec `docs/specs/012-v1-acceptance.md`, sem reclassificar a Fase 12 histórica.
+- aceite binário documentado como V1.0 aceita ou V1.0 não aceita na Sprint 14;
+- esta fase é validada pela Sprint 14 e pela spec `docs/specs/012-v1-acceptance.md`, sem reclassificar a Fase 12 historica.
 
 ### Mapa de identificadores
 
@@ -1340,8 +1352,10 @@ Gate:
 - **Spec**: contrato normativo que governa a execução da sprint.
 - Os identificadores podem divergir numericamente.
 - A Fase 12 do roadmap materializou-se na Sprint 11 e permanece encerrada.
-- A Sprint 12 formaliza o gate de Hardening/V1 Acceptance da V1.0 e é regida pela spec `docs/specs/012-v1-acceptance.md`.
-- A Sprint 12 não é uma renumeração silenciosa da Fase 12.
+- A Sprint 12 materializa o E13 - Integracoes Reais Autorizadas e e regida pela spec `docs/specs/015-authorized-real-integrations.md`.
+- A Sprint 13 materializa o E14 - Metricas e Aprendizado e e regida pela spec `docs/specs/014-metrics-learning.md`.
+- A Sprint 14 formaliza o gate de Hardening/V1 Acceptance da V1.0 e e regida pela spec `docs/specs/012-v1-acceptance.md`.
+- A relacao entre fase, sprint e spec deve permanecer explicitada.
 
 ---
 
@@ -1563,5 +1577,7 @@ Regras normativas:
 - o historico das Sprints 0 a 10 permanece inalterado;
 - nenhuma capacidade futura pode ser antecipada sem atualizacao documental previa.
 - A Fase 12 foi materializada pela Sprint 11.
-- A Sprint 12 e a primeira execucao formal do gate de Hardening/V1 Acceptance e usa a spec `docs/specs/012-v1-acceptance.md`.
+- A Sprint 12 corresponde ao E13 e usa a spec `docs/specs/015-authorized-real-integrations.md`.
+- A Sprint 13 corresponde ao E14 e usa a spec `docs/specs/014-metrics-learning.md`.
+- A Sprint 14 corresponde ao E15 / V1 Acceptance e usa a spec `docs/specs/012-v1-acceptance.md`.
 - A relacao entre fase, sprint e spec deve permanecer explicitada nos documentos de roadmap, backlog, handoff e spec.

@@ -1,81 +1,87 @@
 # Next Sprints
 
-## Modelo de planejamento a partir da Sprint 11
+## Regras de sequenciamento
 
-- O Documento Mestre passa a ser lido por épicos, não por sprints.
-- Epico, sprint, fase e spec são identificadores diferentes.
-- Não assumir que o número de sprint corresponde ao número da spec.
-- Não assumir que a fase do Documento Mestre corresponde ao número da sprint.
-- A Fase 12 do roadmap materializou-se na Sprint 11 e está encerrada.
-- A Sprint 12 é a próxima sprint formal de execução.
-- A Sprint 12 não é uma renumeração silenciosa da Fase 12.
-- `docs/specs/011-publication-assisted.md` é o identificador correto da Sprint 11.
-- `docs/specs/012-v1-acceptance.md` é o identificador correto da Sprint 12.
+- O Documento Mestre passa a ser lido por epicos, nao por sprints.
+- Epico, sprint, fase e spec sao identificadores diferentes.
+- Nao assumir que o numero de sprint corresponde ao numero da spec.
+- Nao assumir que a fase do Documento Mestre corresponde ao numero da sprint.
+- A Fase 12 do roadmap materializou-se na Sprint 11 e esta encerrada.
+- A Sprint 12 e a proxima sprint executavel.
+- A Sprint 12 corresponde ao E13 e e governada por `docs/specs/015-authorized-real-integrations.md`.
+- A Sprint 13 corresponde ao E14 e e governada por `docs/specs/014-metrics-learning.md`.
+- A Sprint 14 corresponde ao E15 - Hardening V1.0 e e governada por `docs/specs/012-v1-acceptance.md`.
+- `docs/specs/012-v1-acceptance.md` nao governa a Sprint 12.
 
-## Resolução do conflito de numeração
+## Fila operacional
 
-| Roadmap phase | Sprint de execução | Spec normativa | Estado | Observação |
-| --- | --- | --- | --- | --- |
-| Fase 12 - Publicação Assistida | Sprint 11 | `docs/specs/011-publication-assisted.md` | completed | Capacidade materializada e encerrada via PR #19. |
-| Fase 15 - Hardening V1.0 | Sprint 12 | `docs/specs/012-v1-acceptance.md` | planned | Gate de hardening e aceite da V1.0, não a antiga Fase 12. |
+| Ordem | Sprint | Epico | Spec normativa | Status | Dependencias |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | next | `main` limpo e alinhado com `origin/main`; normalizacao documental mergeada; Sprint 11 encerrada; spec 015 formalizada; decisao documental sobre os provedores ou plataformas abrangidos registrada. |
+| 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | planned | Sprint 12 encerrada; integracoes reais autorizadas disponiveis como base; origem de metricas e canais definidos. |
+| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | planned | Sprints 12 e 13 encerradas; pre-requisitos da V1.0 identificados; documento mestre, backlog e handoff sem conflito. |
 
 ## Sprint 11 encerrada
 
 - Sprint 11 foi implementada na branch `codex/sprint-11-publication-assisted`.
 - PR: `https://github.com/aralumemedia-lab/aralume-studio/pull/19`.
 - Merge commit: `966e5bef50446f81701cedd861689b3e07b14a7d`.
-- A rota `/publications` consome backend real de publicações, com alvos, jobs, aprovação humana, conformidade, auditoria e bloqueio de envio externo automático.
-- A capa normativa desta sprint é `docs/specs/011-publication-assisted.md`.
-- A sprint 11 encerra a materialização da Fase 12 do roadmap.
+- A rota `/publications` consome backend real de publicacoes, com alvos, jobs, aprovacao humana, conformidade, auditoria e bloqueio de envio externo automatico.
+- A capa normativa desta sprint e `docs/specs/011-publication-assisted.md`.
+- A sprint 11 encerra a materializacao da Fase 12 do roadmap.
 
-## Sprint 12 formalizada
+## Sprint 12 - Integracoes Reais Autorizadas
 
 | Campo | Valor |
 | --- | --- |
-| Número | Sprint 12 |
+| Numero | Sprint 12 |
+| Nome | Integracoes Reais Autorizadas |
+| Epic principal | E13 - Integracoes Reais Autorizadas |
+| Spec governante | `docs/specs/015-authorized-real-integrations.md` |
+| Objetivo | Habilitar integracoes reais autorizadas, seguras, auditaveis e isoladas por canal. |
+| Estado | next |
+| Gate de inicio | `main` limpo e alinhado com `origin/main`, normalizacao documental mergeada, Sprint 11 encerrada, spec 015 formalizada, decisao documental sobre provedores ou plataformas abrangidos registrada e sem conflito documental. |
+| Historias incluidas | Autorizacao humana documentada; estado de integracao por canal; armazenamento seguro de tokens e segredos; revogacao auditavel; estados de erro operacionais; isolamento por canal. |
+| Fora de escopo | Metricas e aprendizado; V1 Acceptance; grandes modulos novos; recriacao do frontend; publicacao externa sem autorizacao; novos provedores sem spec; segredos em codigo, docs, commits ou logs; mascarar ausencia de integracao com mocks. |
+| Dependencias | Gate documental que define os provedores ou plataformas do E13; politica de segredos; aprovacao humana; auditoria. |
+| Gate de conclusao | Integracao real autorizada funcionando sem expor segredo, com aprovacao humana quando aplicavel, revogacao possivel, auditoria por canal e evidencia reproduzivel. |
+
+## Sprint 13 - Metricas e Aprendizado
+
+| Campo | Valor |
+| --- | --- |
+| Numero | Sprint 13 |
+| Nome | Metricas e Aprendizado |
+| Epic principal | E14 - Metricas e Aprendizado |
+| Spec governante | `docs/specs/014-metrics-learning.md` |
+| Objetivo | Registrar metricas por canal e consolidar aprendizado editorial assistido sem antecipar V1 Acceptance. |
+| Estado | planned |
+| Gate de inicio | Sprint 12 encerrada; integracoes reais autorizadas disponiveis; origem de metricas e canais definidos; sem conflito documental. |
+| Historias incluidas | Registro de metricas; agregacao por canal; distinicao entre metricas manuais e importadas; dashboards; documentacao de origem e auditoria. |
+| Fora de escopo | Scraping sem autorizacao; APIs externas sem spec; decisoes editoriais irreversiveis automaticas; IA real sem custos e gates; Hardening/V1 Acceptance; novas integracoes reais. |
+| Dependencias | Sprint 12 encerrada; base de integracao real autorizada; publicacao assistida ja definida. |
+| Gate de conclusao | Metricas e aprendizado operacionais por canal, com procedencia clara, auditoria e recomendacoes assistidas coerentes com a base existente. |
+
+## Sprint 14 - V1 Acceptance
+
+| Campo | Valor |
+| --- | --- |
+| Numero | Sprint 14 |
 | Nome | V1 Acceptance |
 | Epic principal | E15 - Hardening V1.0 |
 | Spec governante | `docs/specs/012-v1-acceptance.md` |
-| Objetivo | Integrar, verificar, endurecer e decidir o aceite da V1.0 com evidência operacional pelo frontend. |
+| Objetivo | Integrar, verificar, endurecer e decidir o aceite da V1.0 com evidencia operacional pelo frontend. |
 | Estado | planned |
-| Gate de início | `main` limpo e alinhado com `origin/main`, normalização documental mergeada, Sprint 11 encerrada, spec 012 formalizada, pré-requisitos da V1.0 identificados e sem conflito documental. |
-| Escopo | Verificar o fluxo ponta a ponta pelo frontend; validar integração entre frontend, backend e persistência; validar isolamento por canal; validar rastreabilidade, auditoria e custos; validar renderização e cortes; validar qualidade, conformidade e aprovação humana; validar preparação de publicação assistida; validar métricas e recomendações quando já implementadas; corrigir defeitos que bloqueiem o aceite; produzir evidências de aceite ou rejeição. |
-| Fora de escopo | Grandes módulos novos; redefinição de arquitetura; recriação do frontend; substituição do design system; funcionalidades de sprints posteriores; publicação externa sem autorização; novos provedores sem spec; segredos em código, docs, commits ou logs; aceitação baseada só em CLI; aceitação mascarada por mocks; declaração de aceite sem evidência reproduzível. |
-| Bloqueios remanescentes | Integrações Reais Autorizadas (E13) e Métricas e Aprendizado (E14) permanecem planejadas; a V1.0 não pode ser declarada aceita enquanto esses gates obrigatórios não forem evidenciados ou formalmente reclassificados pela documentação. |
-| Gate de conclusão | A decisão final é binária: `V1.0 aceita` ou `V1.0 não aceita`. A aceitação só pode ocorrer se um operador conseguir executar, pelo frontend, o fluxo aplicável definido no Documento Mestre. |
+| Gate de inicio | Sprints 12 e 13 encerradas; spec 012 formalizada; pre-requisitos da V1.0 identificados; sem conflito documental. |
+| Historias incluidas | Verificacao do fluxo ponta a ponta pelo frontend; integracao entre frontend, backend e persistencia; isolamento por canal; rastreabilidade; auditoria e custos; renderizacao e cortes; qualidade, conformidade e aprovacao humana; preparacao de publicacao assistida; metricas e recomendacoes quando ja implementadas; correcao de defeitos comprovados. |
+| Fora de escopo | Grandes modulos novos; redefinicao de arquitetura; recriacao do frontend; substituicao do design system; funcionalidades de sprints posteriores; publicacao externa sem autorizacao; novos provedores sem spec; segredos em codigo, docs, commits ou logs; aceitação baseada so em CLI; aceitação mascarada por mocks. |
+| Dependencias | Sprints 12 e 13 encerradas; V1.0 nao pode ser declarada aceita sem evidencia operacional integrada. |
+| Gate de conclusao | Decisao binaria: `V1.0 aceita` ou `V1.0 nao aceita`; um operador deve conseguir executar, pelo frontend, o fluxo aplicavel definido no Documento Mestre. |
 
-## Epicos e dependências
+## Observacoes
 
-| ID | Epico | Status | Gate final | Relação com a Sprint 12 |
-| --- | --- | --- | --- | --- |
-| E10 | Renderizacao Controlada | completed | Renderizar vídeo curto de teste com logs, custos e validação. | Base histórica concluída. |
-| E11 | Cortes Derivados Controlados | completed | Gerar pelo menos um corte válido vinculado ao vídeo principal. | Base histórica concluída. |
-| E12 | Publicacao Assistida | completed | Pacote de publicação pronto, sem envio externo automático. | Materializado na Sprint 11. |
-| E13 | Integracoes Reais Autorizadas | planned | Integração oficial funcionando sem expor segredo. | Bloqueio remanescente para aceitação da V1.0. |
-| E14 | Metricas e Aprendizado | planned | Métricas geram recomendação editorial por canal. | Bloqueio remanescente para aceitação da V1.0. |
-| E15 | Hardening V1.0 | planned | Demonstração ponta a ponta pelo frontend. | Gate principal da Sprint 12. |
-
-## Histórico preservado
-
-- Sprint 10 - Cortes Derivados Controlados foi concluída e integrada ao `main` via PR #17.
-- O merge commit oficial da Sprint 10 é `dffd197449176fffab6ad6b93b6dfb0904cca513`.
-- Sprint 9 - Renderização Controlada foi concluída e integrada ao `main` via PR #16.
-- O merge commit oficial da Sprint 9 é `26e28c2f7ada057b0901e81b16e1bc0eb420a31c`.
-- Sprint 5 - Editorial Pipeline foi concluída formalmente e integrada ao `main`.
-- O merge commit oficial é `9d6393738cb26264b876fe6b9e43f1435fc3a229`.
-- Sprint 4 - Channels Frontend Integration foi concluída e integrada ao `main` via PR #10.
-- O merge commit oficial é `3ee439ca7e0ae414a68a459ab9fcba650e076148`.
-- Sprint 3 - Channels Domain Foundation foi concluída e integrada ao `main` via PR #8.
-- O merge commit oficial é `6bf1bfec40cafaa7d2228f040745127e7ede9041`.
-- Sprint 2 - Backend Foundation foi concluída e integrada ao `main` via PR #6.
-- O merge commit oficial é `20b7c503761840910d78ceec604d9f8de55c3e84`.
-- Sprint 0.3 foi documental e não introduziu backend ou alteração funcional de frontend.
-- Sprint 0.2 consolidou a preparação segura de variáveis de ambiente.
-
-## Observações
-
-- Esta página de planejamento não substitui specs.
-- Mudança de escopo exige atualização documental antes de implementação.
-- Não registrar conclusão de sprint sem evidência concreta.
-- Não antecipar histórias futuras fora da Sprint 12 sem atualizar a spec e o backlog.
-- Referências a fases posteriores permanecem downstream e não alteram a formalização da Sprint 12.
+- Esta pagina de planejamento nao substitui specs.
+- Mudanca de escopo exige atualizacao documental antes de implementacao.
+- Nao registrar conclusao de sprint sem evidencia concreta.
+- Nao antecipar historias futuras fora da Sprint 12 sem atualizar a spec e o backlog.
+- Referencias a fases posteriores permanecem downstream e nao alteram a formalizacao da Sprint 12.
