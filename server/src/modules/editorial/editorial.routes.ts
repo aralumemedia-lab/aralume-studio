@@ -25,6 +25,7 @@ import {
   visualPlanIdParamsSchema,
   visualPlanListQuerySchema,
   visualPlanPatchSchema,
+  scenePlanListQuerySchema,
   scenePlanCreateSchema,
 } from "./editorial.schema.js";
 import type { EditorialService } from "./editorial.service.js";
@@ -174,6 +175,23 @@ export function createEditorialRouter(service: EditorialService): Router {
     const body = parseBody(visualPlanPatchSchema, req.body);
     const updated = service.updateVisualPlan(params.id, body);
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
+  });
+
+  router.get("/visual-plans/:id/scenes", (req, res) => {
+    const params = parseParams(visualPlanIdParamsSchema, req.params);
+    const query = parseQuery(scenePlanListQuerySchema, req.query);
+    const plan = service.getVisualPlan(params.id);
+    if (plan.channelId !== query.channelId) {
+      throw new AppError({
+        code: "NOT_FOUND",
+        status: 404,
+        message: "Visual plan not found",
+        details: { id: params.id },
+      });
+    }
+
+    const items = service.listScenePlans({ channelId: query.channelId, visualPlanId: params.id });
+    res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
   });
 
   router.post("/visual-plans/:id/scenes", (req, res) => {

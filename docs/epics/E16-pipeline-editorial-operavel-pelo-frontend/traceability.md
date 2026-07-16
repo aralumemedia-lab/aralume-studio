@@ -16,5 +16,5 @@
 ## Sprint 15 note
 
 - Covered now: V1-02, V1-03 and V1-04.
-- Pending later: V1-05 and V1-06.
-- H16.3 and H16.4 remain outside this sprint slice.
+- Covered now: V1-05 and V1-06.
+- H16.3 and H16.4 are delivered in the Sprint 16 slice.

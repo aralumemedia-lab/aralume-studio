@@ -1,6 +1,6 @@
 # E16 - Pipeline Editorial Operavel pelo Frontend
 
-- Status: partial / in progress
+- Status: completed
 - Epic name: Pipeline Editorial Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P1
@@ -14,10 +14,10 @@ The first remediation epic must make the editorial pipeline operable by the fron
 
 ## Sprint 15 slice
 
-- Included now: H16.0, H16.1 and H16.2.
-- Still pending: H16.3 and H16.4.
-- Sprint 15 is the first functional slice of E16 and does not close the epic.
-- Sprint 15 is delivered on the current head; E16 stays open until H16.3 and H16.4 land.
+- Included now: H16.0, H16.1, H16.2, H16.3 and H16.4.
+- Sprint 15 delivered the upstream slice of E16.
+- Sprint 16 delivered the remaining slice of E16 and closes the epic.
+- E16 is complete on the current head.
 
 ## Problem
 

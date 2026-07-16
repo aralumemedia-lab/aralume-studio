@@ -3,8 +3,9 @@
 ## Sprint 15 scope delivered
 
 - This acceptance section is read as the first slice of E16.
-- H16.0, H16.1 and H16.2 are the delivered stories for Sprint 15.
-- H16.3 and H16.4 remain pending and are not part of this sprint gate.
+- H16.0, H16.1 and H16.2 were delivered in Sprint 15.
+- H16.3 and H16.4 were delivered in Sprint 16.
+- E16 is complete on the current head.
 
 ## Positive scenarios
 

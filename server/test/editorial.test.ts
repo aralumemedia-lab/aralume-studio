@@ -208,6 +208,7 @@ test("editorial service creates linked content and preserves version history", (
   assert.equal(editorialService.getContentIdea(idea.id).status, "visual_plan");
 
   const sceneOne = editorialService.createScenePlan(visualPlan.id, {
+    channelId: channelA.id,
     order: 1,
     title: "Cena 1",
     narrationExcerpt: "Inicio",
@@ -216,10 +217,13 @@ test("editorial service creates linked content and preserves version history", (
     assetRequirements: ["asset-a"],
   });
   assert.equal(sceneOne.visualPlanId, visualPlan.id);
+  assert.equal(editorialService.listScenePlans({ visualPlanId: visualPlan.id }).length, 1);
+  assert.equal(editorialService.listScenePlans({ channelId: channelB.id }).length, 0);
 
   assert.throws(
     () =>
       editorialService.createScenePlan(visualPlan.id, {
+        channelId: channelA.id,
         order: 2,
         title: "Cena invalida",
         narrationExcerpt: "Invalida",
@@ -233,11 +237,26 @@ test("editorial service creates linked content and preserves version history", (
   assert.throws(
     () =>
       editorialService.createScenePlan(visualPlan.id, {
+        channelId: channelA.id,
         order: 1,
         title: "Cena duplicada",
         narrationExcerpt: "Duplicada",
         durationSeconds: 30,
         visualDescription: "Visual 2",
+        assetRequirements: [],
+      }),
+    (error) => error instanceof AppError && error.code === "CONFLICT",
+  );
+
+  assert.throws(
+    () =>
+      editorialService.createScenePlan(visualPlan.id, {
+        channelId: channelB.id,
+        order: 3,
+        title: "Cena cross-channel",
+        narrationExcerpt: "Cross-channel",
+        durationSeconds: 30,
+        visualDescription: "Visual cross-channel",
         assetRequirements: [],
       }),
     (error) => error instanceof AppError && error.code === "CONFLICT",
@@ -660,6 +679,7 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          channelId: channelAJson.data.id,
           order: 1,
           title: "Cena HTTP",
           narrationExcerpt: "Cena 1",
@@ -671,12 +691,26 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     );
     assert.equal(sceneResponse.status, 201);
 
+    const sceneListResponse = await fetch(
+      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
+    );
+    const sceneList = (await sceneListResponse.json()) as {
+      data: Array<{ id: string; visualPlanId: string; order: number }>;
+    };
+    assert.equal(sceneListResponse.status, 200);
+    assert.equal(sceneList.data.length, 1);
+    assert.equal(sceneList.data[0].visualPlanId, visualPlanJson.data.id);
+    assert.equal(sceneList.data[0].order, 1);
+
     const duplicateSceneResponse = await fetch(
       `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          channelId: channelAJson.data.id,
           order: 1,
           title: "Cena duplicada",
           narrationExcerpt: "Duplicada",
@@ -687,6 +721,31 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
       },
     );
     assert.equal(duplicateSceneResponse.status, 409);
+
+    const crossChannelSceneResponse = await fetch(
+      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          channelId: channelBJson.data.id,
+          order: 3,
+          title: "Cena cross-channel",
+          narrationExcerpt: "Cross-channel",
+          durationSeconds: 35,
+          visualDescription: "Visual cross-channel",
+          assetRequirements: [],
+        }),
+      },
+    );
+    assert.equal(crossChannelSceneResponse.status, 409);
+
+    const crossChannelSceneListResponse = await fetch(
+      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes?channelId=${encodeURIComponent(
+        channelBJson.data.id,
+      )}`,
+    );
+    assert.equal(crossChannelSceneListResponse.status, 404);
 
     const productionListResponse = await fetch(
       `${baseUrl}/api/production-items?channelId=${encodeURIComponent(channelAJson.data.id)}`,

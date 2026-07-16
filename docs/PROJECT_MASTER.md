@@ -1591,12 +1591,12 @@ Regras normativas:
 | Ordem | Epic | Escopo principal | Resultado |
 | --- | --- | --- | --- |
 | Sprint 15 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
-| Sprint 16 (planejada) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05 a V1-06 | roteiro versionado e plano visual com cenas operaveis no frontend |
+| Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05 a V1-06 | roteiro versionado e plano visual com cenas operaveis no frontend |
 | Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-10 | narracao, ativos, render e cortes operaveis no frontend |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-14 | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | novo V1 Acceptance com prova nova no mesmo head |
-- Sprint 15 foi executada na PR #26; E16 permanece aberto para H16.3 e H16.4.
+- Sprint 15 foi executada na PR #26 e a Sprint 16 concluiu H16.3 e H16.4; E16 esta fechado.
 
 ### Mapa de remediacao
 

@@ -417,6 +417,8 @@ export type ScenePlan = {
   durationSeconds: number;
   visualDescription: string;
   assetRequirements: string[];
+  createdAt: ISODate;
+  updatedAt: ISODate;
 };
 
 export type MediaAssetType =
