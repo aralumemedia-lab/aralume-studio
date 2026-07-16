@@ -6,6 +6,9 @@
   - Wire the create/update path for content ideas.
   - Keep list, detail and error states channel-scoped.
   - Remove mock toasts from the primary editorial actions.
+- `/channels`
+  - Wire the editorial profile update path for the selected channel.
+  - Keep settings and validation states channel-scoped.
 - `/research`
   - Wire session creation, source creation and claim creation.
   - Keep the current list/detail pattern and validation feedback.

@@ -62,6 +62,26 @@
 - Estado: planejamento documental concluido, sem inicio de remediacao, sem sprint iniciada e sem novo V1 Acceptance.
 - Reaceite futuro: somente apos evidencias front-end reais, persistencia, auditoria e isolamento por canal.
 
+## Proposta de remediacao consolidada
+
+| Ordem | Epic | Escopo principal | Tipo | Dependencias | Resultado esperado |
+| --- | --- | --- | --- | --- | --- |
+| Sprint proposta A | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-06 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes, claims, roteiro e plano visual operaveis |
+| Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-10 | funcional + frontend + backend + integracao | E16 concluida | narracao, ativos, render e cortes operaveis |
+| Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-14 | funcional + frontend + backend + governance | E17 concluida | qualidade, compliance, aprovacao e publicacao assistida operaveis |
+| Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
+| Gate final | R14-REACCEPT | V1-01..V1-18 | evidence / reaccept | E16, E17, E18, E19 concluidos | novo V1 Acceptance com prova nova no mesmo head |
+
+## Condicoes para iniciar R14-REACCEPT
+
+- E16 concluido e evidenciado.
+- E17 concluido e evidenciado.
+- E18 concluido e evidenciado.
+- E19 concluido e evidenciado.
+- Mapa de criterio e rastreabilidade fechados para V1-01..V1-18.
+- QA visual e browser E2E repetiveis no mesmo head.
+- Nenhum segredo novo, nenhum mock residual nas superfices de cockpit e nenhum conflito de escopo aberto.
+
 ## Observacoes
 
 - Esta pagina nao substitui specs.

@@ -1,28 +1,23 @@
-# E16 - Acceptance
+# E19 - Acceptance
 
 ## Positive scenarios
 
-- Create a content idea from `/ideas` and see it again after reload.
-- Configure the channel editorial profile from `/channels` and see it again after reload.
-- Create a research session from `/research` and register sources and claims.
-- Create a script from `/scripts` and add a second version without losing the first.
-- Create a visual plan and order scenes from the editorial flow.
-- Filter each surface by channel and keep the records isolated.
+- Open `/dashboard` and see real operational data for the active channel.
+- Open `/agent-office` and see real workflow and handoff data for the active channel.
+- Rerun the browser sweep with the same bootstrap data.
+- Rerun the screenshot matrix at the required viewports.
+- Filter each cockpit by channel and keep the records isolated.
 
 ## Negative scenarios
 
 - Missing required fields return a validation error.
-- Invalid profile values are rejected.
-- Invalid URLs in research sources are rejected.
 - Cross-channel references are rejected.
-- Duplicate script version numbers are rejected.
-- Duplicate scene order numbers are rejected.
 - Unknown IDs return not found.
+- Transport and timeout failures are recoverable.
 
 ## Channel isolation
 
 - A record created in one channel is not visible in another channel filter.
-- A profile update in one channel does not alter another channel.
 - A cross-channel mutation fails and does not create a partial record.
 - Reload preserves the active channel-scoped view.
 
@@ -42,9 +37,8 @@
 
 ## Success
 
-- The UI must show the created or updated artifact.
-- The UI must show the current version for a script.
-- The UI must show the ordered scene list for a visual plan.
+- The UI must show the cockpit data with the active channel context.
+- The UI must show the reusable evidence bundle is ready for replay.
 
 ## Persistence
 
@@ -53,7 +47,7 @@
 
 ## Audit
 
-- Every mutating editorial action must leave a queryable audit record.
+- Any cockpit mutation must leave a queryable audit record.
 - The audit record must include channelId, entity type, entity ID and request metadata.
 
 ## Accessibility
@@ -73,16 +67,15 @@
 - Browser screenshots for the required viewports.
 - Route-level test output.
 - Server test output.
-- Audit log output.
-- Reload proof in the browser.
+- Audit log output when applicable.
+- Reusable replay evidence for R14-REACCEPT.
 
 ## Epic gate
 
 READY FOR SPRINT PLANNING only when:
 
-1. The five stories are individually accepted.
-2. The frontend no longer masks the primary editorial actions behind mocks.
-3. The backend returns persisted and queryable artifacts for the same channel.
-4. Audit evidence is present for the mutating actions.
-5. The visual-plan placement is explicit and proven.
-6. The traceability matrix covers each criterion and dependency.
+1. The three stories are individually accepted.
+2. Dashboard and agent-office no longer mask the main flow behind mocks.
+3. The reusable evidence harness exists for the final reaccept.
+4. The cockpit surfaces are persisted and queryable for the same channel.
+5. The traceability matrix covers each technical item and dependency.

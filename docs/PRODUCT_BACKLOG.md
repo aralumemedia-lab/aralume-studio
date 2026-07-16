@@ -61,6 +61,39 @@ desempenho, tendencia, recomendacao e evidencias em todos os estados obrigatorio
 Analytics/OAuth novo, scraping, novos provedores, IA externa, receita/monetizacao,
 aplicacao automatica de recomendacoes, migrations SQL, hardening e V1 Acceptance.
 
+## Remediacao V1 - roadmap consolidado
+
+Esta secao consolida a sequencia apos a Sprint 14 e supera a proposta inicial restrita ao E16.
+
+| Sequencia | Epic | Criterios V1 | Itens R14 | Tipo principal | Saida esperada |
+| --- | --- | --- | --- | --- | --- |
+| Sprint proposta A | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02, V1-03, V1-04, V1-05, V1-06 | R14-02, R14-03, R14-04, R14-05, R14-06 | funcional + frontend + UX | perfil editorial, pauta, pesquisa, fontes, claims, roteiro e plano visual operaveis no frontend |
+| Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08, V1-09, V1-10 | R14-07, R14-08, R14-09, R14-10 | funcional + frontend + backend + integracao | narracao, ativos, render e cortes operaveis no frontend |
+| Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13, V1-14 | R14-11, R14-12, R14-13, R14-14 | funcional + frontend + backend + governance | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
+| Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | R14-T01, R14-T02 | technical + evidence + QA | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
+| Final gate | R14-REACCEPT | V1-01..V1-18 | R14-02..R14-14, R14-T01, R14-T02 | evidence / reaccept | novo V1 Acceptance com prova nova no mesmo head |
+
+## Mapa de criterio para remediacao
+
+| Criterio V1 | R14 | Epic | Sprint sugerida |
+| --- | --- | --- | --- |
+| V1-02 | R14-02 | E16 | Sprint proposta A |
+| V1-03 | R14-03 | E16 | Sprint proposta A |
+| V1-04 | R14-04 | E16 | Sprint proposta A |
+| V1-05 | R14-05 | E16 | Sprint proposta A |
+| V1-06 | R14-06 | E16 | Sprint proposta A |
+| V1-07 | R14-07 | E17 | Sprint proposta B |
+| V1-08 | R14-08 | E17 | Sprint proposta B |
+| V1-09 | R14-09 | E17 | Sprint proposta B |
+| V1-10 | R14-10 | E17 | Sprint proposta B |
+| V1-11 | R14-11 | E18 | Sprint proposta C |
+| V1-12 | R14-12 | E18 | Sprint proposta C |
+| V1-13 | R14-13 | E18 | Sprint proposta C |
+| V1-14 | R14-14 | E18 | Sprint proposta C |
+| Dashboard real | R14-T01 | E19 | Sprint proposta D |
+| Escritorio de Agentes real | R14-T02 | E19 | Sprint proposta D |
+| Reaccept final | R14-REACCEPT | final gate | after Sprint D |
+
 ## Observacoes
 
 - Nao usar story points.

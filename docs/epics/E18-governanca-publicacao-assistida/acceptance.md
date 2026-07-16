@@ -1,28 +1,24 @@
-# E16 - Acceptance
+# E18 - Acceptance
 
 ## Positive scenarios
 
-- Create a content idea from `/ideas` and see it again after reload.
-- Configure the channel editorial profile from `/channels` and see it again after reload.
-- Create a research session from `/research` and register sources and claims.
-- Create a script from `/scripts` and add a second version without losing the first.
-- Create a visual plan and order scenes from the editorial flow.
+- Review a quality result and see it again after reload.
+- Review a compliance result and see it again after reload.
+- Make or inspect an approval decision and see the history again after reload.
+- Prepare a publication draft or readiness package and see it again after reload.
 - Filter each surface by channel and keep the records isolated.
 
 ## Negative scenarios
 
 - Missing required fields return a validation error.
-- Invalid profile values are rejected.
-- Invalid URLs in research sources are rejected.
+- Invalid decisions or blocked-state transitions are rejected.
 - Cross-channel references are rejected.
-- Duplicate script version numbers are rejected.
-- Duplicate scene order numbers are rejected.
+- Duplicate decisions or publication targets are rejected.
 - Unknown IDs return not found.
 
 ## Channel isolation
 
 - A record created in one channel is not visible in another channel filter.
-- A profile update in one channel does not alter another channel.
 - A cross-channel mutation fails and does not create a partial record.
 - Reload preserves the active channel-scoped view.
 
@@ -43,8 +39,7 @@
 ## Success
 
 - The UI must show the created or updated artifact.
-- The UI must show the current version for a script.
-- The UI must show the ordered scene list for a visual plan.
+- The UI must show the current decision or readiness state.
 
 ## Persistence
 
@@ -53,7 +48,7 @@
 
 ## Audit
 
-- Every mutating editorial action must leave a queryable audit record.
+- Every mutating governance action must leave a queryable audit record.
 - The audit record must include channelId, entity type, entity ID and request metadata.
 
 ## Accessibility
@@ -80,9 +75,9 @@
 
 READY FOR SPRINT PLANNING only when:
 
-1. The five stories are individually accepted.
-2. The frontend no longer masks the primary editorial actions behind mocks.
+1. The four stories are individually accepted.
+2. The frontend no longer masks the primary governance actions behind mocks.
 3. The backend returns persisted and queryable artifacts for the same channel.
 4. Audit evidence is present for the mutating actions.
-5. The visual-plan placement is explicit and proven.
+5. The publication readiness flow is explicit and proven.
 6. The traceability matrix covers each criterion and dependency.

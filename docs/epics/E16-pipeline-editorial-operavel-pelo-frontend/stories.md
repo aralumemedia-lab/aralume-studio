@@ -1,12 +1,42 @@
 # E16 - Stories
 
+## H16.0 - Perfil editorial operavel pelo frontend
+
+- Actor: editor / operador
+- Objective: configure the channel editorial profile from the frontend and keep the settings after reload.
+- V1 criterion: V1-02
+- R14 item: R14-02
+- Dependencies: active channel selection; channel settings contracts; upstream shell context
+- Priority: P1
+- Acceptance criteria:
+  - The operator can open the channel profile surface from `/channels`.
+  - The operator can update tone, language, format, audience and editorial rules.
+  - The saved profile appears again after reload.
+  - Invalid or cross-channel updates are rejected.
+  - The action creates an audit entry.
+- Tests:
+  - Server HTTP tests for channel settings update and cross-channel rejection.
+  - Frontend route tests for loading, empty, error and success states.
+  - Browser E2E on the required viewports.
+- Evidence:
+  - Acceptance matrix row for V1-02.
+  - Updated profile visible after reload.
+  - Audit log entry for the mutation.
+- DoR:
+  - The channel route and settings contract are already mapped.
+  - The acceptance criteria are explicit.
+  - The reload behavior is understood.
+- DoD:
+  - The saved channel profile persists through reload.
+  - The same-channel rule and audit evidence are visible.
+
 ## H16.1 - Pautas operaveis pelo frontend
 
 - Actor: editor / operador
 - Objective: create and review content ideas from the frontend and keep them channel-scoped after reload.
 - V1 criterion: V1-03
 - R14 item: R14-03
-- Dependencies: V1-02 as upstream channel context dependency; editorial API contracts; active channel selection
+- Dependencies: H16.0; editorial API contracts; active channel selection
 - Priority: P1
 - Acceptance criteria:
   - The operator can create a content idea from `/ideas`.
