@@ -102,6 +102,7 @@ recriacao do frontend e limpeza administrativa da S12.
 ## Handoff - E16
 
 - Estado: definicao documental do primeiro epico de remediacao da V1 concluida.
+- Nota: bloco historico da proposta inicial do E16; a sequencia consolidada e vigente esta mais abaixo e inclui V1-02 no mesmo epico.
 - Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
 - Critérios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.

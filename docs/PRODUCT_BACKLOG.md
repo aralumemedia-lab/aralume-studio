@@ -270,6 +270,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
 - Status: proposta documental, nao iniciada.
+- Nota: esta e a proposta inicial do E16, preservada como historico; a sequencia consolidada e vigente aparece mais abaixo e inclui V1-02 no mesmo epico.
 - Iniciativa: Remediacao da Operabilidade da V1.
 - Objetivo: tornar operaveis pelo frontend os fluxos editoriais de pauta, pesquisa, fontes, claims, roteiro, versao, plano visual e cenas com persistencia, auditoria e isolamento por canal.
 - Critérios V1 relacionados: V1-03 Pauta, V1-04 Pesquisa e fontes, V1-05 Roteiro versionado, V1-06 Planejamento visual.
