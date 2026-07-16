@@ -48,6 +48,12 @@ export async function getVisualPlan(id: ID): Promise<ApiSuccess<VisualPlan>> {
   return requestApiEnvelope<ApiSuccess<VisualPlan>>(`${VISUAL_PLANS_PATH}/${id}`);
 }
 
+export async function getScenePlans(visualPlanId: ID): Promise<ApiListSuccess<ScenePlan>> {
+  return requestApiEnvelope<ApiListSuccess<ScenePlan>>(
+    `${VISUAL_PLANS_PATH}/${visualPlanId}/scenes`,
+  );
+}
+
 export async function createVisualPlan(
   input: CreateVisualPlanInput,
 ): Promise<ApiSuccess<VisualPlan>> {

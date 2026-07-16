@@ -176,6 +176,12 @@ export function createEditorialRouter(service: EditorialService): Router {
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
+  router.get("/visual-plans/:id/scenes", (req, res) => {
+    const params = parseParams(visualPlanIdParamsSchema, req.params);
+    const items = service.listScenePlans({ visualPlanId: params.id });
+    res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
+  });
+
   router.post("/visual-plans/:id/scenes", (req, res) => {
     const params = parseParams(visualPlanIdParamsSchema, req.params);
     const body = parseBody(scenePlanCreateSchema, req.body);

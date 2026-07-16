@@ -102,15 +102,15 @@ recriacao do frontend e limpeza administrativa da S12.
 ## Handoff - E16
 
 - Estado: definicao documental do primeiro epico de remediacao da V1 concluida.
-- Nota: bloco historico da proposta inicial do E16; a entrega atual da Sprint 15 inclui H16.0-H16.2, e a sequencia consolidada vigente esta mais abaixo.
+- Nota: bloco historico da proposta inicial do E16; a remediacao funcional do E16 foi concluida nas Sprints 15 e 16 e o epic ficou fechado.
 - Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
 - CritÃƒÂ©rios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
 - Itens R14: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
 - Historias: H16.0, H16.1, H16.2, H16.3, H16.4.
-- Sequencia proposta: Sprint 15 e Sprint 16.
-- Gate futuro: reaceite da V1 somente apos evidencias, contratos e testes E2E do E16.
-- Nao iniciado: nenhuma historia foi implementada, nenhuma sprint foi iniciada, nenhum release foi preparado.
+- Sequencia proposta: Sprint 15 e Sprint 16, ambas concluídas.
+- Gate futuro: reaceite da V1 somente apos evidencias, contratos e testes E2E dos epicos remanescentes.
+- Nao iniciado: nenhuma historia fora de E16 foi implementada, nenhuma sprint nova foi iniciada, nenhum release foi preparado.
 
 ## Handoff - Remediacao V1
 
@@ -121,8 +121,8 @@ recriacao do frontend e limpeza administrativa da S12.
 - Epic 4: E19 - Cockpits Reais e Evidencias Transversais.
 - CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
-- Sequencia recomendada: Sprint proposta A, B, C, D, e depois R14-REACCEPT.
-- Primeira sprint recomendada: Sprint proposta A, focada em E16 com o perfil editorial como prerequisito inseparavel.
+- Sequencia recomendada: Sprint 15, Sprint 16, Sprint proposta B, Sprint proposta C, Sprint proposta D, e depois R14-REACCEPT.
+- Primeira sprint recomendada: Sprint 15, focada em E16 com o perfil editorial como prerequisito inseparavel.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
 - Nao iniciado: nenhuma remediacao funcional comecou nesta execucao.
 
@@ -132,11 +132,11 @@ recriacao do frontend e limpeza administrativa da S12.
 - Spec normativa: `docs/specs/016-sprint-15-editorial-profile-ideas-research.md`.
 - Estado: completed.
 - Historias: H16.0, H16.1 e H16.2.
-- Resultado: H16.0, H16.1 e H16.2 entregues no head da PR #26; H16.3 e H16.4 continuam pendentes.
+- Resultado: H16.0, H16.1 e H16.2 entregues no head da PR #26; H16.3 e H16.4 foram concluídas na Sprint 16.
 - Itens R14: R14-02, R14-03 e R14-04.
-- Sequencia: primeira fatia funcional do E16 entregue; H16.3 e H16.4 permanecem para a fatia seguinte do mesmo epic.
+- Sequencia: primeira fatia funcional do E16 entregue; H16.3 e H16.4 foram concluídas na fatia seguinte do mesmo epic.
 - Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Pendente: H16.3 e H16.4 nao iniciadas nesta execucao.
+- Pendente: nenhuma historia de E16 permanece pendente.
 
 ## Definition of Done
 

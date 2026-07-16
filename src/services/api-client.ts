@@ -87,6 +87,7 @@ export {
   createScenePlan,
   createVisualPlan,
   describeVisualPlanApiError,
+  getScenePlans,
   getVisualPlan,
   getVisualPlans,
   updateVisualPlan,

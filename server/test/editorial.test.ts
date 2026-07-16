@@ -216,6 +216,8 @@ test("editorial service creates linked content and preserves version history", (
     assetRequirements: ["asset-a"],
   });
   assert.equal(sceneOne.visualPlanId, visualPlan.id);
+  assert.equal(editorialService.listScenePlans({ visualPlanId: visualPlan.id }).length, 1);
+  assert.equal(editorialService.listScenePlans({ channelId: channelB.id }).length, 0);
 
   assert.throws(
     () =>
@@ -670,6 +672,17 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
       },
     );
     assert.equal(sceneResponse.status, 201);
+
+    const sceneListResponse = await fetch(
+      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes`,
+    );
+    const sceneList = (await sceneListResponse.json()) as {
+      data: Array<{ id: string; visualPlanId: string; order: number }>;
+    };
+    assert.equal(sceneListResponse.status, 200);
+    assert.equal(sceneList.data.length, 1);
+    assert.equal(sceneList.data[0].visualPlanId, visualPlanJson.data.id);
+    assert.equal(sceneList.data[0].order, 1);
 
     const duplicateSceneResponse = await fetch(
       `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes`,

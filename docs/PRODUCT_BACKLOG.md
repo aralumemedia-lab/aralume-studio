@@ -63,13 +63,13 @@ aplicacao automatica de recomendacoes, migrations SQL, hardening e V1 Acceptance
 
 ## Remediacao V1 - roadmap consolidado
 
-Esta secao consolida a sequencia apos a Sprint 14 e formaliza a primeira fatia funcional do E16 como Sprint 15.
-Sprint 15 foi executada na PR #26; Sprint 16 permanece planejada para H16.3 e H16.4.
+Esta secao consolida a sequencia apos a Sprint 14 e formaliza a remediacao completa do E16.
+Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 
 | Sequencia | Epic | Criterios V1 | Itens R14 | Tipo principal | Saida esperada |
 | --- | --- | --- | --- | --- | --- |
 | Sprint 15 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04 | funcional + frontend + UX | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
-| Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05, V1-06 | R14-05, R14-06 | funcional + frontend + UX | roteiro versionado, versoes e plano visual com cenas operaveis no frontend |
+| Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05, V1-06 | R14-05, R14-06 | funcional + frontend + UX | roteiro versionado, versoes e plano visual com cenas operaveis no frontend |
 | Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08, V1-09, V1-10 | R14-07, R14-08, R14-09, R14-10 | funcional + frontend + backend + integracao | narracao, ativos, render e cortes operaveis no frontend |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13, V1-14 | R14-11, R14-12, R14-13, R14-14 | funcional + frontend + backend + governance | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | R14-T01, R14-T02 | technical + evidence + QA | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
@@ -107,7 +107,7 @@ Sprint 15 foi executada na PR #26; Sprint 16 permanece planejada para H16.3 e H1
 
 ## Remediacao pos-Sprint 14 (atualizada apos Sprint 15)
 
-Esta secao transforma os 13 criterios `FAIL`/`NOT PROVEN` e os dois cockpits mockados em trabalho planejavel. Ela nao inicia sprint, nao autoriza implementacao e nao altera o veredito da V1.0. A Sprint 15 foi executada e a Sprint 16 fica reservada para H16.3-H16.4.
+Esta secao transforma os 13 criterios `FAIL`/`NOT PROVEN` e os dois cockpits mockados em trabalho planejavel. Ela nao inicia sprint, nao autoriza implementacao e nao altera o veredito da V1.0. A Sprint 15 e a Sprint 16 foram executadas e E16 esta concluido.
 
 | ID | Tipo | Criterio / superficie | Grupo | Prioridade | Dependencias |
 | --- | --- | --- | --- | --- | --- |
@@ -271,8 +271,8 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
-- Status: parcial, com Sprint 15 entregue.
-- Nota: esta e a proposta inicial do E16, preservada como historico; a sequencia consolidada e vigente aparece mais abaixo e inclui V1-02 no mesmo epico.
+- Status: completed, com Sprint 15 e Sprint 16 entregues.
+- Nota: esta e a proposta inicial do E16, preservada como historico; a sequencia consolidada e vigente aparece mais abaixo e inclui V1-02 no mesmo epico e E16 concluido.
 - Iniciativa: Remediacao da Operabilidade da V1.
 - Objetivo: tornar operaveis pelo frontend os fluxos editoriais de pauta, pesquisa, fontes, claims, roteiro, versao, plano visual e cenas com persistencia, auditoria e isolamento por canal.
 - CritÃƒÂ©rios V1 relacionados: V1-03 Pauta, V1-04 Pesquisa e fontes, V1-05 Roteiro versionado, V1-06 Planejamento visual.
@@ -281,19 +281,19 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Itens R14 dependentes: R14-02 como dependencia de identidade/perfil editorial.
 - Historias previstas: H16.0 Perfil editorial operavel pelo frontend; H16.1 Pautas operaveis pelo frontend; H16.2 Pesquisa, fontes e claims; H16.3 Roteiro versionado; H16.4 Planejamento visual e cenas.
 - Fora de escopo: IA externa, scraping, geracao automatica, midia, renderizacao, cortes, publicacao, autenticao nova, redesign geral, release e novo V1 Acceptance.
-- Gate: apenas planejamento documental ate a conclusao das dependencias e validacoes.
+- Gate: planejamento concluido; E16 fechado nas Sprints 15 e 16.
 
 ### E16 - Sequencia proposta
 
-1. Sprint proposta A: pautas, pesquisa, fontes e claims.
-2. Sprint proposta B: roteiro, versoes, plano visual, cenas e integracao E2E do fluxo.
-3. Reaceite futuro: V1 Acceptance somente apos fechamento das historias e evidencias do E16.
+1. Sprint 15: pautas, pesquisa, fontes e claims.
+2. Sprint 16: roteiro, versoes, plano visual, cenas e integracao E2E do fluxo.
+3. Reaceite futuro: V1 Acceptance somente apos fechamento das historias e evidencias do E16, E17, E18 e E19.
 
 ### E16 - Observacoes de backlog
 
 - Nao renumerar epicos historicos.
 - Nao tratar esta proposta como inicio de sprint.
-- Nao registrar remediacao como concluida.
+- Nao registrar remediacao como concluida em histórico anterior, mas manter o estado atual de E16 como concluido.
 
 ### R14-REACCEPT Ã¢â‚¬â€ Reexecucao da V1 Acceptance
 

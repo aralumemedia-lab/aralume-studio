@@ -1,9 +1,9 @@
 # E16 - Stories
 
-## Sprint 15
+## Sprint 15 and 16
 
-- Included now: H16.0, H16.1 and H16.2.
-- Pending later: H16.3 and H16.4.
+- Sprint 15 delivered H16.0, H16.1 and H16.2.
+- Sprint 16 delivered H16.3 and H16.4.
 
 ## H16.0 - Perfil editorial operavel pelo frontend
 
