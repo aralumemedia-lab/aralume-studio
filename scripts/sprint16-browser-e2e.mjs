@@ -71,10 +71,10 @@ async function main() {
       await capture(page, "production-1600-collapsed.png");
       await toggleSidebar(page, true);
 
-      const planFlow = await createPlanAndScenes(page, uniqueSuffix);
+      const planFlow = await createPlanAndScenes(page, uniqueSuffix, channelA.id);
 
       await duplicateVersionConflict(scriptFlow.scriptId, uniqueSuffix);
-      await duplicateSceneConflict(planFlow.visualPlanId);
+      await duplicateSceneConflict(planFlow.visualPlanId, channelA.id);
       await capture(page, "production-1600-conflict.png");
 
       await setViewport(page, 1792, 1024);
@@ -90,6 +90,27 @@ async function main() {
       await setViewport(page, 1920, 1080);
       await expectText(page, "Selecione um roteiro");
       await capture(page, "production-1920-isolation.png");
+
+      assert.equal(
+        await apiGetStatus(
+          `/visual-plans/${planFlow.visualPlanId}/scenes?channelId=${encodeURIComponent(
+            channelB.id,
+          )}`,
+        ),
+        404,
+      );
+      assert.equal(
+        await apiPostStatus(`/visual-plans/${planFlow.visualPlanId}/scenes`, {
+          channelId: channelB.id,
+          order: 3,
+          title: `Cross-channel ${uniqueSuffix}`,
+          narrationExcerpt: "Narracao cross-channel.",
+          durationSeconds: 30,
+          visualDescription: "Visual cross-channel.",
+          assetRequirements: ["asset-x"],
+        }),
+        409,
+      );
 
       await page.locator("aside").getByRole("link", { name: "Roteiros", exact: true }).click();
       await page.waitForLoadState("networkidle");
@@ -172,6 +193,11 @@ async function apiPostStatus(pathname, body) {
     body: JSON.stringify(body),
   });
 
+  return response.status;
+}
+
+async function apiGetStatus(pathname) {
+  const response = await fetchWithRetry(`${BACKEND_BASE_URL}/api${pathname}`);
   return response.status;
 }
 
@@ -277,7 +303,7 @@ async function createScriptVersionedFlow(page, ideaId, uniqueSuffix) {
   };
 }
 
-async function createPlanAndScenes(page, uniqueSuffix) {
+async function createPlanAndScenes(page, uniqueSuffix, channelId) {
   const planForm = page.getByTestId("production-plan-form");
   await planForm.locator("input").nth(0).fill(`Sprint 16 Visual Plan ${uniqueSuffix}`);
   await planForm.locator("select").nth(0).selectOption("visual_plan");
@@ -300,6 +326,7 @@ async function createPlanAndScenes(page, uniqueSuffix) {
 
   const sceneStatuses = [
     await apiPostStatus(`/visual-plans/${createPlanPayload.data.id}/scenes`, {
+      channelId,
       order: 1,
       title: `Scene 1 ${uniqueSuffix}`,
       narrationExcerpt: "Narracao da cena 1.",
@@ -308,6 +335,7 @@ async function createPlanAndScenes(page, uniqueSuffix) {
       assetRequirements: ["asset-a", "asset-b"],
     }),
     await apiPostStatus(`/visual-plans/${createPlanPayload.data.id}/scenes`, {
+      channelId,
       order: 2,
       title: `Scene 2 ${uniqueSuffix}`,
       narrationExcerpt: "Narracao da cena 2.",
@@ -341,8 +369,9 @@ async function duplicateVersionConflict(scriptId, uniqueSuffix) {
   assert.equal(status, 409);
 }
 
-async function duplicateSceneConflict(visualPlanId) {
+async function duplicateSceneConflict(visualPlanId, channelId) {
   const status = await apiPostStatus(`/visual-plans/${visualPlanId}/scenes`, {
+    channelId,
     order: 1,
     title: "Scene duplicate",
     narrationExcerpt: "Narracao duplicada.",

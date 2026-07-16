@@ -30,6 +30,7 @@ export type UpdateVisualPlanInput = Partial<
 
 export type CreateScenePlanInput = Pick<
   ScenePlan,
+  | "channelId"
   | "order"
   | "title"
   | "narrationExcerpt"
@@ -48,9 +49,12 @@ export async function getVisualPlan(id: ID): Promise<ApiSuccess<VisualPlan>> {
   return requestApiEnvelope<ApiSuccess<VisualPlan>>(`${VISUAL_PLANS_PATH}/${id}`);
 }
 
-export async function getScenePlans(visualPlanId: ID): Promise<ApiListSuccess<ScenePlan>> {
+export async function getScenePlans(
+  visualPlanId: ID,
+  channelId: ID,
+): Promise<ApiListSuccess<ScenePlan>> {
   return requestApiEnvelope<ApiListSuccess<ScenePlan>>(
-    `${VISUAL_PLANS_PATH}/${visualPlanId}/scenes`,
+    withQuery(`${VISUAL_PLANS_PATH}/${visualPlanId}/scenes`, { channelId }),
   );
 }
 

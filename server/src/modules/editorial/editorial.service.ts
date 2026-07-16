@@ -588,6 +588,8 @@ export function createEditorialService(
     createScenePlan(visualPlanId, input) {
       const plan = getRequiredVisualPlan(repository, visualPlanId);
       const parsed = scenePlanCreateSchema.parse(input);
+      const { channelId: sceneChannelId, ...sceneData } = parsed;
+      assertSameChannel(plan.channelId, sceneChannelId, "Visual plan");
       if (parsed.order !== Math.trunc(parsed.order) || parsed.order <= 0) {
         throw validation("Scene order must be a positive integer", { order: parsed.order });
       }
@@ -607,8 +609,8 @@ export function createEditorialService(
         id: `scn_${idFactory()}`,
         channelId: plan.channelId,
         visualPlanId: plan.id,
-        ...parsed,
-        assetRequirements: parsed.assetRequirements ?? [],
+        ...sceneData,
+        assetRequirements: sceneData.assetRequirements ?? [],
         createdAt: now,
         updatedAt: now,
       };

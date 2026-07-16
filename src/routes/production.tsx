@@ -196,7 +196,7 @@ export const Route = createFileRoute("/production")({
     const scenePlansQuery = useQuery({
       queryKey: ["scene-plans", activeChannelId, selectedVisualPlanId],
       enabled: Boolean(activeChannelId && selectedVisualPlanId),
-      queryFn: () => getScenePlans(selectedVisualPlanId as string),
+      queryFn: () => getScenePlans(selectedVisualPlanId as string, activeChannelId as string),
     });
 
     const scenePlans = useMemo(
@@ -267,6 +267,7 @@ export const Route = createFileRoute("/production")({
         }
 
         return createScenePlan(selectedVisualPlan.id, {
+          channelId: activeChannelId,
           order: Number.parseInt(sceneForm.order, 10) || 0,
           title: sceneForm.title.trim(),
           narrationExcerpt: sceneForm.narrationExcerpt.trim(),

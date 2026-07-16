@@ -337,7 +337,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/visual-plans/vp_1/scenes" && !init?.method) {
+      if (url === "/api/visual-plans/vp_1/scenes?channelId=ch_1" && !init?.method) {
         return jsonResponse({
           data: [
             {
@@ -484,8 +484,9 @@ test("editorial frontend services hit the expected API endpoints", async () => {
       });
       await getVisualPlan("vp_1");
       await updateVisualPlan("vp_1", { title: "Plano editado" });
-      await getScenePlans("vp_1");
+      await getScenePlans("vp_1", "ch_1");
       await createScenePlan("vp_1", {
+        channelId: "ch_1",
         order: 1,
         title: "Cena",
         narrationExcerpt: "Texto",
@@ -522,11 +523,25 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         true,
       );
       assert.equal(
-        calls.some((call) => call.url === "/api/visual-plans/vp_1/scenes"),
+        calls.some((call) => call.url === "/api/visual-plans/vp_1/scenes?channelId=ch_1"),
         true,
       );
       assert.equal(
-        calls.some((call) => call.url === "/api/visual-plans/vp_1/scenes" && !call.init?.method),
+        calls.some(
+          (call) =>
+            call.url === "/api/visual-plans/vp_1/scenes?channelId=ch_1" && !call.init?.method,
+        ),
+        true,
+      );
+      assert.equal(
+        calls.some((call) => {
+          if (call.url !== "/api/visual-plans/vp_1/scenes" || call.init?.method !== "POST") {
+            return false;
+          }
+
+          const body = call.init?.body ? JSON.parse(String(call.init.body)) : undefined;
+          return body?.channelId === "ch_1";
+        }),
         true,
       );
 

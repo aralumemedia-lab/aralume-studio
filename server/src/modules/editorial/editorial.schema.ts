@@ -285,8 +285,15 @@ export const visualPlanIdParamsSchema = z
   })
   .strict();
 
+export const scenePlanListQuerySchema = z
+  .object({
+    channelId: channelIdSchema,
+  })
+  .strict();
+
 export const scenePlanCreateSchema = z
   .object({
+    channelId: channelIdSchema,
     order: positiveIntSchema,
     title: z.string().trim().min(1).max(160),
     narrationExcerpt: z.string().trim().min(1).max(4000),
