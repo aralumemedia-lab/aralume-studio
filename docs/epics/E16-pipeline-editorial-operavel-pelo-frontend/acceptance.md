@@ -1,5 +1,11 @@
 # E16 - Acceptance
 
+## Sprint 15 scope
+
+- This acceptance section is read as the first slice of E16.
+- H16.0, H16.1 and H16.2 are the included stories for Sprint 15.
+- H16.3 and H16.4 remain pending and are not part of this sprint gate.
+
 ## Positive scenarios
 
 - Create a content idea from `/ideas` and see it again after reload.
@@ -71,6 +77,14 @@
 ## Evidence
 
 - Browser screenshots for the required viewports.
+- Current Sprint 15 browser evidence:
+  - `screenshots/sprint-15/channels-1366-expanded.png`
+  - `screenshots/sprint-15/channels-1366-collapsed.png`
+  - `screenshots/sprint-15/ideas-1600-success.png`
+  - `screenshots/sprint-15/ideas-1366-invalid.png`
+  - `screenshots/sprint-15/research-1792-success.png`
+  - `screenshots/sprint-15/research-1920-reload.png`
+  - `screenshots/sprint-15/research-1600-empty-channel-b.png`
 - Route-level test output.
 - Server test output.
 - Audit log output.

@@ -4,6 +4,7 @@ import type { ApiListSuccess, ApiSuccess } from "@/contracts/api-contracts";
 import { ApiRequestError, requestApiEnvelope } from "@/services/http-client";
 
 const RESEARCH_SESSIONS_PATH = "/research-sessions";
+const DEFAULT_REQUESTED_BY = "Ana Ribeiro";
 
 export type ResearchSessionFilters = {
   channelId?: ID;
@@ -23,6 +24,7 @@ export type CreateResearchSessionInput = Pick<
   | "riskLevel"
 > & {
   summary?: string;
+  requestedBy?: string;
 };
 
 export type CreateResearchSourceInput = Pick<
@@ -35,12 +37,16 @@ export type CreateResearchSourceInput = Pick<
   | "confidenceLevel"
   | "freshnessRisk"
   | "usageNotes"
->;
+> & {
+  requestedBy?: string;
+};
 
 export type CreateClaimEvidenceInput = Pick<
   ClaimEvidence,
   "sourceId" | "claim" | "evidenceSummary" | "informationType" | "confidenceLevel" | "riskLevel"
->;
+> & {
+  requestedBy?: string;
+};
 
 export async function getResearchSessions(
   filters: ResearchSessionFilters = {},
@@ -54,12 +60,27 @@ export async function getResearchSession(id: ID): Promise<ApiSuccess<ResearchSes
   return requestApiEnvelope<ApiSuccess<ResearchSession>>(`${RESEARCH_SESSIONS_PATH}/${id}`);
 }
 
+export async function getResearchSources(sessionId: ID): Promise<ApiListSuccess<ResearchSource>> {
+  return requestApiEnvelope<ApiListSuccess<ResearchSource>>(
+    `${RESEARCH_SESSIONS_PATH}/${sessionId}/sources`,
+  );
+}
+
+export async function getClaimEvidenceList(sessionId: ID): Promise<ApiListSuccess<ClaimEvidence>> {
+  return requestApiEnvelope<ApiListSuccess<ClaimEvidence>>(
+    `${RESEARCH_SESSIONS_PATH}/${sessionId}/claims`,
+  );
+}
+
 export async function createResearchSession(
   input: CreateResearchSessionInput,
 ): Promise<ApiSuccess<ResearchSession>> {
   return requestApiEnvelope<ApiSuccess<ResearchSession>>(RESEARCH_SESSIONS_PATH, {
     method: "POST",
-    body: JSON.stringify(input),
+    body: JSON.stringify({
+      ...input,
+      requestedBy: input.requestedBy ?? DEFAULT_REQUESTED_BY,
+    }),
   });
 }
 
@@ -71,7 +92,10 @@ export async function createResearchSource(
     `${RESEARCH_SESSIONS_PATH}/${sessionId}/sources`,
     {
       method: "POST",
-      body: JSON.stringify(input),
+      body: JSON.stringify({
+        ...input,
+        requestedBy: input.requestedBy ?? DEFAULT_REQUESTED_BY,
+      }),
     },
   );
 }
@@ -84,7 +108,10 @@ export async function createClaimEvidence(
     `${RESEARCH_SESSIONS_PATH}/${sessionId}/claims`,
     {
       method: "POST",
-      body: JSON.stringify(input),
+      body: JSON.stringify({
+        ...input,
+        requestedBy: input.requestedBy ?? DEFAULT_REQUESTED_BY,
+      }),
     },
   );
 }

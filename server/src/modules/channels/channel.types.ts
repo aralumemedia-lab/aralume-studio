@@ -92,6 +92,7 @@ export type ChannelBundle = {
 export type ChannelsRepository = {
   listChannels(): Channel[];
   getChannel(id: ID): Channel | undefined;
+  getChannelBundle(id: ID): ChannelBundle | undefined;
   getChannelSettings(id: ID): ChannelSettings | undefined;
   getChannelBySlug(slug: string, excludeId?: ID): Channel | undefined;
   upsertChannel(bundle: ChannelBundle): void;

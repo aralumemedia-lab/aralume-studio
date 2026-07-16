@@ -12,6 +12,12 @@ Sprint 14 closed with `V1.0 NAO ACEITA`. The matrix still shows the editorial pi
 
 The first remediation epic must make the editorial pipeline operable by the frontend without expanding into media, render, clips, approvals, publication, metrics, costs, dashboard or agent-office work.
 
+## Sprint 15 slice
+
+- Included now: H16.0, H16.1 and H16.2.
+- Still pending: H16.3 and H16.4.
+- Sprint 15 is the first functional slice of E16 and does not close the epic.
+
 ## Problem
 
 An operator can browse the editorial pipeline today, but the repository does not yet prove the whole flow as a frontend-operated, channel-scoped, auditable path with reload verification and traceability across artifacts.

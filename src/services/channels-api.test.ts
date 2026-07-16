@@ -4,9 +4,11 @@ import test from "node:test";
 import {
   createChannel,
   describeChannelsApiError,
+  getChannelProfile,
   getChannelSettings,
   getChannels,
   updateChannel,
+  updateChannelProfile,
 } from "./channels-api";
 import { ApiRequestError, requestApiEnvelope } from "./http-client";
 
@@ -193,10 +195,157 @@ test("channels API calls real endpoints with typed envelopes", async () => {
         });
       }
 
+      if (url === "/api/channels/ch_1/profile" && !init?.method) {
+        return jsonResponse({
+          data: {
+            channel: {
+              id: "ch_1",
+              name: "Canal Operacional",
+              slug: "canal-operacional",
+              description: "",
+              status: "active",
+              niche: "",
+              audience: "Publico A",
+              language: "pt-BR",
+              region: "",
+              timezone: "America/Sao_Paulo",
+              editorialTone: "Didatico",
+              publishingFrequency: "Diario",
+              monthlyBudgetCents: 0,
+              monthlyCostUsedCents: 0,
+              costStatus: "healthy",
+              riskLevel: "ok",
+              healthScore: 92,
+              activeWorkflowsCount: 0,
+              pendingApprovalsCount: 0,
+              connectedPlatformsCount: 0,
+              lastActivityAt: "2026-07-13T03:30:00.000Z",
+              createdAt: "2026-07-13T03:30:00.000Z",
+              updatedAt: "2026-07-13T03:30:00.000Z",
+            },
+            settings: {
+              id: "cs_ch_1",
+              channelId: "ch_1",
+              averageVideoDurationSeconds: 600,
+              allowedFormats: ["horizontal", "vertical"],
+              allowedSubniches: [],
+              blockedThemes: [],
+              preferredSources: [],
+              visualIdentity: {
+                primaryColor: "#1B3A5C",
+                secondaryColor: "#E8D9B4",
+                typography: "Inter",
+                subtitleStyle: "A configurar",
+                openingStyle: "A configurar",
+                thumbnailStyle: "A configurar",
+              },
+              narration: {
+                voiceName: "A configurar",
+                voiceProvider: "A configurar",
+                speed: 1,
+                tone: "A configurar",
+                pronunciationNotes: [],
+              },
+              createdAt: "2026-07-13T03:30:00.000Z",
+              updatedAt: "2026-07-13T03:30:00.000Z",
+            },
+            editorialRules: {
+              id: "er_ch_1",
+              channelId: "ch_1",
+              factualContentRequiresSources: true,
+              minimumSources: 3,
+              allowFictionalNarratives: false,
+              allowThirdPartyAssets: true,
+              requiresHumanApprovalBeforePublication: true,
+              highRiskAutoBlock: true,
+              prohibitedClaims: [],
+              complianceNotes: [],
+              createdAt: "2026-07-13T03:30:00.000Z",
+              updatedAt: "2026-07-13T03:30:00.000Z",
+            },
+          },
+          meta: baseMeta,
+        });
+      }
+
+      if (url === "/api/channels/ch_1/profile" && init?.method === "PATCH") {
+        return jsonResponse({
+          data: {
+            channel: {
+              id: "ch_1",
+              name: "Canal Operacional",
+              slug: "canal-operacional",
+              description: "",
+              status: "active",
+              niche: "",
+              audience: "Publico B",
+              language: "en-US",
+              region: "",
+              timezone: "America/Sao_Paulo",
+              editorialTone: "Tech",
+              publishingFrequency: "Diario",
+              monthlyBudgetCents: 0,
+              monthlyCostUsedCents: 0,
+              costStatus: "healthy",
+              riskLevel: "ok",
+              healthScore: 92,
+              activeWorkflowsCount: 0,
+              pendingApprovalsCount: 0,
+              connectedPlatformsCount: 0,
+              lastActivityAt: "2026-07-13T03:30:01.000Z",
+              createdAt: "2026-07-13T03:30:00.000Z",
+              updatedAt: "2026-07-13T03:30:01.000Z",
+            },
+            settings: {
+              id: "cs_ch_1",
+              channelId: "ch_1",
+              averageVideoDurationSeconds: 600,
+              allowedFormats: ["horizontal"],
+              allowedSubniches: [],
+              blockedThemes: [],
+              preferredSources: [],
+              visualIdentity: {
+                primaryColor: "#1B3A5C",
+                secondaryColor: "#E8D9B4",
+                typography: "Inter",
+                subtitleStyle: "A configurar",
+                openingStyle: "A configurar",
+                thumbnailStyle: "A configurar",
+              },
+              narration: {
+                voiceName: "A configurar",
+                voiceProvider: "A configurar",
+                speed: 1,
+                tone: "A configurar",
+                pronunciationNotes: [],
+              },
+              createdAt: "2026-07-13T03:30:00.000Z",
+              updatedAt: "2026-07-13T03:30:01.000Z",
+            },
+            editorialRules: {
+              id: "er_ch_1",
+              channelId: "ch_1",
+              factualContentRequiresSources: true,
+              minimumSources: 4,
+              allowFictionalNarratives: false,
+              allowThirdPartyAssets: true,
+              requiresHumanApprovalBeforePublication: true,
+              highRiskAutoBlock: true,
+              prohibitedClaims: ["claim-a"],
+              complianceNotes: ["nota-a"],
+              createdAt: "2026-07-13T03:30:00.000Z",
+              updatedAt: "2026-07-13T03:30:01.000Z",
+            },
+          },
+          meta: baseMeta,
+        });
+      }
+
       throw new Error(`Unexpected request: ${url}`);
     },
     async (calls) => {
       const list = await getChannels();
+      const profile = await getChannelProfile("ch_1");
       const created = await createChannel({
         name: "Canal Operacional",
         slug: "Canal-Operacional",
@@ -205,25 +354,45 @@ test("channels API calls real endpoints with typed envelopes", async () => {
         language: "pt-BR",
       });
       const updated = await updateChannel("ch_1", { status: "paused" });
+      const updatedProfile = await updateChannelProfile("ch_1", {
+        editorialTone: "Tech",
+        language: "en-US",
+        audience: "Publico B",
+        allowedFormats: ["horizontal"],
+        editorialRules: {
+          minimumSources: 4,
+          prohibitedClaims: ["claim-a"],
+          complianceNotes: ["nota-a"],
+        },
+      });
       const settings = await getChannelSettings("ch_1");
 
       assert.equal(list.data.length, 1);
+      assert.equal(profile.data.editorialRules.minimumSources, 3);
       assert.equal(created.data.slug, "canal-operacional");
       assert.equal(updated.data.status, "paused");
+      assert.equal(updatedProfile.data.channel.language, "en-US");
+      assert.equal(JSON.parse(String(calls[4].init?.body ?? "{}")).requestedBy, "Ana Ribeiro");
       assert.equal(settings.data.channelId, "ch_1");
 
-      assert.equal(calls.length, 4);
+      assert.equal(calls.length, 6);
       assert.equal(calls[0].url, "/api/channels");
       assert.equal(calls[0].init?.method, undefined);
-      assert.equal(calls[1].url, "/api/channels");
-      assert.equal(calls[1].init?.method, "POST");
-      assert.equal(getHeaderValue(calls[1].init?.headers, "content-type"), "application/json");
-      assert.equal(JSON.parse(String(calls[1].init?.body ?? "{}")).slug, "Canal-Operacional");
-      assert.equal(calls[2].url, "/api/channels/ch_1");
-      assert.equal(calls[2].init?.method, "PATCH");
+      assert.equal(calls[1].url, "/api/channels/ch_1/profile");
+      assert.equal(calls[1].init?.method, undefined);
+      assert.equal(calls[2].url, "/api/channels");
+      assert.equal(calls[2].init?.method, "POST");
       assert.equal(getHeaderValue(calls[2].init?.headers, "content-type"), "application/json");
-      assert.equal(JSON.parse(String(calls[2].init?.body ?? "{}")).status, "paused");
-      assert.equal(calls[3].url, "/api/channels/ch_1/settings");
+      assert.equal(JSON.parse(String(calls[2].init?.body ?? "{}")).slug, "Canal-Operacional");
+      assert.equal(calls[3].url, "/api/channels/ch_1");
+      assert.equal(calls[3].init?.method, "PATCH");
+      assert.equal(getHeaderValue(calls[3].init?.headers, "content-type"), "application/json");
+      assert.equal(JSON.parse(String(calls[3].init?.body ?? "{}")).status, "paused");
+      assert.equal(calls[4].url, "/api/channels/ch_1/profile");
+      assert.equal(calls[4].init?.method, "PATCH");
+      assert.equal(getHeaderValue(calls[4].init?.headers, "content-type"), "application/json");
+      assert.equal(JSON.parse(String(calls[4].init?.body ?? "{}")).allowedFormats[0], "horizontal");
+      assert.equal(calls[5].url, "/api/channels/ch_1/settings");
     },
   );
 });

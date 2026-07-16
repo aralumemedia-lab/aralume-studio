@@ -12,7 +12,7 @@
 - A Sprint 13 foi encerrada no PR #23, merge commit
   `9b89d1be04e7a6e319efb9a957282097c4854f31`.
 - A Sprint 14/V1 Acceptance foi concluida em branch isolada para validacao, sem release ou deploy.
-- O resultado foi `V1.0 NÃO ACEITA`: 5 `PASS`, 5 `FAIL` e 8 `NOT PROVEN`; matriz, relatório, evidências, limitações e remediação estão documentados.
+- O resultado foi `V1.0 NÃƒO ACEITA`: 5 `PASS`, 5 `FAIL` e 8 `NOT PROVEN`; matriz, relatÃ³rio, evidÃªncias, limitaÃ§Ãµes e remediaÃ§Ã£o estÃ£o documentados.
 
 ## Baseline e branch
 
@@ -83,14 +83,14 @@ recriacao do frontend e limpeza administrativa da S12.
 
 - Branch: `codex/sprint-14-v1-acceptance`.
 - Base: `d78959a47a2bafbb343408d703eafafec8c6df59`.
-- PR: #24; commit-base do aceite e das evidências: `22388e7`.
-- O head vigente da PR deve ser consultado diretamente no GitHub; correções documentais posteriores foram feitas na mesma PR.
-- Merge ainda pendente de nova revisão; release permanece bloqueada e remediações não foram iniciadas.
+- PR: #24; commit-base do aceite e das evidÃªncias: `22388e7`.
+- O head vigente da PR deve ser consultado diretamente no GitHub; correÃ§Ãµes documentais posteriores foram feitas na mesma PR.
+- Merge ainda pendente de nova revisÃ£o; release permanece bloqueada e remediaÃ§Ãµes nÃ£o foram iniciadas.
 - Gates tecnicos: lint, typecheck, 64 testes, build e `git diff --check` aprovados.
-- Veredito de revisão documental: `APPROVE_WITH_NOTES`, condicionado à revisão/aprovação objetiva no GitHub.
+- Veredito de revisÃ£o documental: `APPROVE_WITH_NOTES`, condicionado Ã  revisÃ£o/aprovaÃ§Ã£o objetiva no GitHub.
 - Bloqueio principal: o frontend ainda possui fluxos obrigatorios ausentes ou mockados.
-- Backlog de remediação: seção "Remediacao pos-Sprint 14 (PROPOSTA — nao iniciada)" em `docs/PRODUCT_BACKLOG.md`.
-- Nenhuma release, tag, deploy, publicação externa ou implementação de remediação foi iniciada.
+- Backlog de remediaÃ§Ã£o: seÃ§Ã£o "Remediacao pos-Sprint 14 (PROPOSTA â€” nao iniciada)" em `docs/PRODUCT_BACKLOG.md`.
+- Nenhuma release, tag, deploy, publicaÃ§Ã£o externa ou implementaÃ§Ã£o de remediaÃ§Ã£o foi iniciada.
 
 ## Riscos
 
@@ -105,7 +105,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - Nota: bloco historico da proposta inicial do E16; a sequencia consolidada e vigente esta mais abaixo e inclui V1-02 no mesmo epico.
 - Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
-- Critérios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
+- CritÃ©rios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
 - Itens R14: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
 - Historias: H16.1, H16.2, H16.3, H16.4.
 - Sequencia proposta: Sprint proposta A e Sprint proposta B.
@@ -119,15 +119,26 @@ recriacao do frontend e limpeza administrativa da S12.
 - Epic 2: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
 - Epic 3: E18 - Governanca e Publicacao Assistida pelo Frontend.
 - Epic 4: E19 - Cockpits Reais e Evidencias Transversais.
-- Critérios V1: V1-02..V1-14, com R14-02..R14-14.
+- CritÃ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
 - Sequencia recomendada: Sprint proposta A, B, C, D, e depois R14-REACCEPT.
 - Primeira sprint recomendada: Sprint proposta A, focada em E16 com o perfil editorial como prerequisito inseparavel.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
 - Nao iniciado: nenhuma remediacao funcional comecou nesta execucao.
 
+## Sprint 15 - formalizacao documental
+
+- Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
+- Spec normativa: `docs/specs/016-sprint-15-editorial-profile-ideas-research.md`.
+- Estado: planned / not started.
+- Historias: H16.0, H16.1 e H16.2.
+- Itens R14: R14-02, R14-03 e R14-04.
+- Sequencia: primeira fatia funcional do E16; H16.3 e H16.4 permanecem para a fatia seguinte do mesmo epic.
+- Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
+- Nao iniciado: nenhuma remediacao funcional comecou nesta execucao.
+
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
 reduzir os 56 existentes, persistencia e isolamento demonstrados, QA visual feito,
-PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance será necessário após a remediação.
+PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance serÃ¡ necessÃ¡rio apÃ³s a remediaÃ§Ã£o.

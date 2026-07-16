@@ -101,6 +101,12 @@ export type EditorialRules = {
   updatedAt: ISODate;
 };
 
+export type ChannelEditorialProfile = {
+  channel: Channel;
+  settings: ChannelSettings;
+  editorialRules: EditorialRules;
+};
+
 export type AgentPhase =
   | "intelligence"
   | "research"
@@ -953,6 +959,7 @@ export type OperationalModeSnapshot = {
 export type AuditLog = {
   id: ID;
   channelId?: ID;
+  requestId?: string;
   actorType: "user" | "agent" | "system";
   actorName: string;
   action: string;

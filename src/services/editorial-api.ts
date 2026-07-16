@@ -5,6 +5,7 @@ import { ApiRequestError, requestApiEnvelope } from "@/services/http-client";
 
 const CONTENT_IDEAS_PATH = "/content-ideas";
 const PRODUCTION_ITEMS_PATH = "/production-items";
+const DEFAULT_REQUESTED_BY = "Ana Ribeiro";
 
 export type ContentIdeaFilters = {
   channelId?: ID;
@@ -24,7 +25,9 @@ export type CreateContentIdeaInput = Pick<
   | "clipPotentialScore"
   | "riskLevel"
   | "status"
->;
+> & {
+  requestedBy?: string;
+};
 
 export type UpdateContentIdeaInput = Partial<Omit<CreateContentIdeaInput, "channelId">>;
 
@@ -49,7 +52,10 @@ export async function createContentIdea(
 ): Promise<ApiSuccess<ContentIdea>> {
   return requestApiEnvelope<ApiSuccess<ContentIdea>>(CONTENT_IDEAS_PATH, {
     method: "POST",
-    body: JSON.stringify(input),
+    body: JSON.stringify({
+      ...input,
+      requestedBy: input.requestedBy ?? DEFAULT_REQUESTED_BY,
+    }),
   });
 }
 
@@ -59,7 +65,10 @@ export async function updateContentIdea(
 ): Promise<ApiSuccess<ContentIdea>> {
   return requestApiEnvelope<ApiSuccess<ContentIdea>>(`${CONTENT_IDEAS_PATH}/${id}`, {
     method: "PATCH",
-    body: JSON.stringify(input),
+    body: JSON.stringify({
+      ...input,
+      requestedBy: input.requestedBy ?? DEFAULT_REQUESTED_BY,
+    }),
   });
 }
 

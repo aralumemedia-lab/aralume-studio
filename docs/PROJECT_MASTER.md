@@ -1,116 +1,116 @@
-# ARALUME STUDIO — DOCUMENTO MESTRE V2.1 PÓS-LOVABLE
+# ARALUME STUDIO â€” DOCUMENTO MESTRE V2.1 PÃ“S-LOVABLE
 
-**Documento principal do novo projeto Aralume Studio**  
-**Versão:** 2.1  
-**Status:** Fonte oficial de verdade do projeto após criação inicial do frontend via Lovable  
-**Uso obrigatório:** Codex, GitHub, agentes de desenvolvimento, documentação, roadmap, critérios de aceite, revisões técnicas e prompts de sprint  
-**Repositório oficial:** `https://github.com/aralumemedia-lab/aralume-studio.git`  
+**Documento principal do novo projeto Aralume Studio**
+**VersÃ£o:** 2.1
+**Status:** Fonte oficial de verdade do projeto apÃ³s criaÃ§Ã£o inicial do frontend via Lovable
+**Uso obrigatÃ³rio:** Codex, GitHub, agentes de desenvolvimento, documentaÃ§Ã£o, roadmap, critÃ©rios de aceite, revisÃµes tÃ©cnicas e prompts de sprint
+**RepositÃ³rio oficial:** `https://github.com/aralumemedia-lab/aralume-studio.git`
 **Contexto local informado:** `C:\Users\carol\Documents\aralume-studio V2`
 
 ---
 
-## 0. Mudança de contexto em relação à V2.0
+## 0. MudanÃ§a de contexto em relaÃ§Ã£o Ã  V2.0
 
-Este documento substitui o Documento Mestre V2.0 como orientação operacional do projeto Aralume Studio.
+Este documento substitui o Documento Mestre V2.0 como orientaÃ§Ã£o operacional do projeto Aralume Studio.
 
-A V2.0 foi criada para orientar a reconstrução do projeto do zero. Depois disso, o frontend inicial foi criado via Lovable. Portanto, o plano não começa mais em “criar o frontend do zero”. O plano correto agora é:
+A V2.0 foi criada para orientar a reconstruÃ§Ã£o do projeto do zero. Depois disso, o frontend inicial foi criado via Lovable. Portanto, o plano nÃ£o comeÃ§a mais em â€œcriar o frontend do zeroâ€. O plano correto agora Ã©:
 
 1. Preservar o frontend criado via Lovable como base inicial.
 2. Auditar rigorosamente esse frontend no Codex.
-3. Corrigir contratos, mocks, rotas, documentação, estrutura e problemas de build.
+3. Corrigir contratos, mocks, rotas, documentaÃ§Ã£o, estrutura e problemas de build.
 4. Congelar contratos TypeScript aprovados.
 5. Criar o backend no Codex seguindo exatamente os contratos do frontend.
 6. Integrar tela por tela, sem refazer a plataforma inteira.
 
-A regra central permanece: **a Aralume deve nascer como uma plataforma operacional rastreável, não como apenas um gerador de vídeo**.
+A regra central permanece: **a Aralume deve nascer como uma plataforma operacional rastreÃ¡vel, nÃ£o como apenas um gerador de vÃ­deo**.
 
-A regra nova é: **o frontend Lovable não está automaticamente aprovado; ele precisa passar por auditoria e estabilização no Codex antes de ser considerado a base oficial do produto**.
+A regra nova Ã©: **o frontend Lovable nÃ£o estÃ¡ automaticamente aprovado; ele precisa passar por auditoria e estabilizaÃ§Ã£o no Codex antes de ser considerado a base oficial do produto**.
 
 ---
 
-## 1. Propósito deste documento
+## 1. PropÃ³sito deste documento
 
-Este documento é a fonte principal de informação para conduzir a Aralume Studio a partir do estado atual: frontend inicial já criado via Lovable e backend ainda não implementado.
+Este documento Ã© a fonte principal de informaÃ§Ã£o para conduzir a Aralume Studio a partir do estado atual: frontend inicial jÃ¡ criado via Lovable e backend ainda nÃ£o implementado.
 
-Ele existe para impedir a repetição dos erros do projeto anterior:
+Ele existe para impedir a repetiÃ§Ã£o dos erros do projeto anterior:
 
 - muitas sprints sem resultado operacional claro;
-- backend avançando antes do frontend ser usável;
-- uso excessivo de CLI como validação de produto;
+- backend avanÃ§ando antes do frontend ser usÃ¡vel;
+- uso excessivo de CLI como validaÃ§Ã£o de produto;
 - escopo amplo demais por sprint;
-- ausência de design system consolidado;
-- problemas de ambiente, banco, credenciais e paths de mídia;
+- ausÃªncia de design system consolidado;
+- problemas de ambiente, banco, credenciais e paths de mÃ­dia;
 - ambiguidade entre entidades globais e entidades por canal;
-- dificuldade de chegar a uma V1.0 demonstrável;
-- construção de funcionalidades sem validação visual;
-- mocks e contratos frágeis ou improvisados.
+- dificuldade de chegar a uma V1.0 demonstrÃ¡vel;
+- construÃ§Ã£o de funcionalidades sem validaÃ§Ã£o visual;
+- mocks e contratos frÃ¡geis ou improvisados.
 
 A partir deste documento, qualquer agente, plataforma ou desenvolvedor deve entender:
 
-- o que a Aralume Studio é;
-- o que ela não é;
-- qual é o estado atual do projeto;
+- o que a Aralume Studio Ã©;
+- o que ela nÃ£o Ã©;
+- qual Ã© o estado atual do projeto;
 - como tratar o frontend criado pelo Lovable;
 - como auditar e estabilizar a base atual;
 - quais contratos devem orientar o backend futuro;
 - qual stack usar;
 - como estruturar frontend e backend;
-- como desenhar a experiência operacional;
+- como desenhar a experiÃªncia operacional;
 - como modelar os dados;
 - como implementar workflows e agentes;
-- qual ordem de construção seguir;
-- quais gates precisam ser cumpridos antes de avançar;
+- qual ordem de construÃ§Ã£o seguir;
+- quais gates precisam ser cumpridos antes de avanÃ§ar;
 - o que define uma V1.0 real e funcional.
 
 ---
 
-## 2. Decisão executiva atualizada
+## 2. DecisÃ£o executiva atualizada
 
-A Aralume Studio será reconstruída com uma abordagem mais curta, objetiva e verificável.
+A Aralume Studio serÃ¡ reconstruÃ­da com uma abordagem mais curta, objetiva e verificÃ¡vel.
 
-A decisão anterior de começar pelo frontend foi mantida e executada parcialmente: **o frontend inicial já foi criado via Lovable**.
+A decisÃ£o anterior de comeÃ§ar pelo frontend foi mantida e executada parcialmente: **o frontend inicial jÃ¡ foi criado via Lovable**.
 
-A decisão executiva atual é:
+A decisÃ£o executiva atual Ã©:
 
 - Lovable foi usado como acelerador visual e gerador inicial do frontend.
-- Codex será o ambiente principal de auditoria, estabilização, backend, integração, testes e evolução por PRs.
-- GitHub será a fonte de verdade do código.
-- O frontend atual não deve ser recriado do zero sem autorização.
-- O backend será criado depois, seguindo os contratos TypeScript aprovados no frontend.
-- A próxima fase obrigatória é a **Sprint 0 — Auditoria e Estabilização do Frontend Lovable**.
-- Nenhum backend real será criado antes da Sprint 0 estar concluída.
-- Nenhum banco, Drizzle, Supabase, autenticação real, IA real, vídeo real ou publicação real deve ser implementado na Sprint 0.
-- Python será usado apenas como worker futuro, se necessário, para mídia, FFmpeg, LangGraph, IA pesada ou jobs assíncronos.
+- Codex serÃ¡ o ambiente principal de auditoria, estabilizaÃ§Ã£o, backend, integraÃ§Ã£o, testes e evoluÃ§Ã£o por PRs.
+- GitHub serÃ¡ a fonte de verdade do cÃ³digo.
+- O frontend atual nÃ£o deve ser recriado do zero sem autorizaÃ§Ã£o.
+- O backend serÃ¡ criado depois, seguindo os contratos TypeScript aprovados no frontend.
+- A prÃ³xima fase obrigatÃ³ria Ã© a **Sprint 0 â€” Auditoria e EstabilizaÃ§Ã£o do Frontend Lovable**.
+- Nenhum backend real serÃ¡ criado antes da Sprint 0 estar concluÃ­da.
+- Nenhum banco, Drizzle, Supabase, autenticaÃ§Ã£o real, IA real, vÃ­deo real ou publicaÃ§Ã£o real deve ser implementado na Sprint 0.
+- Python serÃ¡ usado apenas como worker futuro, se necessÃ¡rio, para mÃ­dia, FFmpeg, LangGraph, IA pesada ou jobs assÃ­ncronos.
 
-O novo projeto deve ser validado por tela, por fluxo, por contrato, por build e por PR. Não basta criar arquivos. Não basta parecer bonito. Não basta compilar uma vez. O sistema precisa ser progressivamente operável.
+O novo projeto deve ser validado por tela, por fluxo, por contrato, por build e por PR. NÃ£o basta criar arquivos. NÃ£o basta parecer bonito. NÃ£o basta compilar uma vez. O sistema precisa ser progressivamente operÃ¡vel.
 
 ---
 
-## 3. Visão do produto
+## 3. VisÃ£o do produto
 
-A Aralume Studio é uma plataforma SaaS empresarial para operação de uma fábrica editorial multicanal baseada em agentes de inteligência artificial.
+A Aralume Studio Ã© uma plataforma SaaS empresarial para operaÃ§Ã£o de uma fÃ¡brica editorial multicanal baseada em agentes de inteligÃªncia artificial.
 
-A plataforma deverá pesquisar oportunidades, criar pautas, organizar fontes, escrever roteiros, planejar cenas, gerar ou organizar narração, produzir ativos visuais, montar vídeos, gerar cortes, validar qualidade, validar conformidade, submeter conteúdos à aprovação humana, preparar publicações, coletar métricas e alimentar um ciclo de aprendizado editorial.
+A plataforma deverÃ¡ pesquisar oportunidades, criar pautas, organizar fontes, escrever roteiros, planejar cenas, gerar ou organizar narraÃ§Ã£o, produzir ativos visuais, montar vÃ­deos, gerar cortes, validar qualidade, validar conformidade, submeter conteÃºdos Ã  aprovaÃ§Ã£o humana, preparar publicaÃ§Ãµes, coletar mÃ©tricas e alimentar um ciclo de aprendizado editorial.
 
-Ela deve começar com um canal, mas nascer preparada para múltiplos canais. Cada canal terá nicho, público, linguagem, identidade visual, voz, regras editoriais, calendário, plataformas, orçamento e métricas próprias.
+Ela deve comeÃ§ar com um canal, mas nascer preparada para mÃºltiplos canais. Cada canal terÃ¡ nicho, pÃºblico, linguagem, identidade visual, voz, regras editoriais, calendÃ¡rio, plataformas, orÃ§amento e mÃ©tricas prÃ³prias.
 
-A infraestrutura, os agentes, o motor de workflows, o banco, o armazenamento, as validações, a auditoria, os custos e as integrações serão compartilhados, mas os dados editoriais e operacionais devem ser isolados por canal.
+A infraestrutura, os agentes, o motor de workflows, o banco, o armazenamento, as validaÃ§Ãµes, a auditoria, os custos e as integraÃ§Ãµes serÃ£o compartilhados, mas os dados editoriais e operacionais devem ser isolados por canal.
 
-A Aralume não é uma ferramenta simples para gerar vídeo automático. O produto correto é uma operação editorial automatizada, auditável, segura, escalável, controlada por custos, supervisionada por humanos e orientada por métricas.
+A Aralume nÃ£o Ã© uma ferramenta simples para gerar vÃ­deo automÃ¡tico. O produto correto Ã© uma operaÃ§Ã£o editorial automatizada, auditÃ¡vel, segura, escalÃ¡vel, controlada por custos, supervisionada por humanos e orientada por mÃ©tricas.
 
 ---
 
 ## 4. Estado atual do projeto
 
-### 4.1. O que já existe
+### 4.1. O que jÃ¡ existe
 
-O frontend inicial foi criado via Lovable no repositório:
+O frontend inicial foi criado via Lovable no repositÃ³rio:
 
 `https://github.com/aralumemedia-lab/aralume-studio.git`
 
-Esse frontend deve conter, ou deverá ser auditado para confirmar se contém:
+Esse frontend deve conter, ou deverÃ¡ ser auditado para confirmar se contÃ©m:
 
-- aplicação React/TypeScript/Vite;
+- aplicaÃ§Ã£o React/TypeScript/Vite;
 - identidade visual Aralume;
 - layout administrativo;
 - sidebar;
@@ -118,49 +118,49 @@ Esse frontend deve conter, ou deverá ser auditado para confirmar se contém:
 - rotas administrativas;
 - Dashboard;
 - Canais;
-- Escritório de Agentes;
-- páginas para os demais módulos;
+- EscritÃ³rio de Agentes;
+- pÃ¡ginas para os demais mÃ³dulos;
 - dados mockados;
 - contratos TypeScript;
 - mock-api ou camada equivalente;
-- design system ou componentes visuais reutilizáveis;
-- documentação inicial, se o Lovable tiver criado.
+- design system ou componentes visuais reutilizÃ¡veis;
+- documentaÃ§Ã£o inicial, se o Lovable tiver criado.
 
-### 4.2. O que ainda não existe e não deve ser inventado na Sprint 0
+### 4.2. O que ainda nÃ£o existe e nÃ£o deve ser inventado na Sprint 0
 
-Na Sprint 0, ainda não deve existir:
+Na Sprint 0, ainda nÃ£o deve existir:
 
 - backend real;
 - banco real;
 - Drizzle schema;
 - migrations;
 - Supabase;
-- autenticação real;
+- autenticaÃ§Ã£o real;
 - IA real;
-- geração de vídeo real;
-- publicação real;
+- geraÃ§Ã£o de vÃ­deo real;
+- publicaÃ§Ã£o real;
 - OAuth;
-- integração com plataformas externas;
+- integraÃ§Ã£o com plataformas externas;
 - workers Python;
-- renderização real via FFmpeg.
+- renderizaÃ§Ã£o real via FFmpeg.
 
-### 4.3. Interpretação correta do frontend Lovable
+### 4.3. InterpretaÃ§Ã£o correta do frontend Lovable
 
-O frontend criado pelo Lovable é uma base inicial. Ele não é automaticamente a arquitetura oficial aprovada.
+O frontend criado pelo Lovable Ã© uma base inicial. Ele nÃ£o Ã© automaticamente a arquitetura oficial aprovada.
 
 O Codex deve auditar:
 
 - se compila;
 - se as rotas existem;
-- se os contratos estão corretos;
-- se os mocks são tipados;
+- se os contratos estÃ£o corretos;
+- se os mocks sÃ£o tipados;
 - se a mock-api existe;
-- se as páginas consomem serviços e não mocks crus;
+- se as pÃ¡ginas consomem serviÃ§os e nÃ£o mocks crus;
 - se `channelId` existe em dados operacionais;
 - se o seletor de canal filtra contexto;
-- se a experiência visual está alinhada ao padrão SaaS premium;
-- se não há dependência indevida de Supabase, backend, autenticação ou API externa;
-- se não há segredo exposto.
+- se a experiÃªncia visual estÃ¡ alinhada ao padrÃ£o SaaS premium;
+- se nÃ£o hÃ¡ dependÃªncia indevida de Supabase, backend, autenticaÃ§Ã£o ou API externa;
+- se nÃ£o hÃ¡ segredo exposto.
 
 ---
 
@@ -168,111 +168,111 @@ O Codex deve auditar:
 
 ### 5.1. Escopo grande demais por sprint
 
-Erro anterior: o projeto avançou em muitas frentes ao mesmo tempo: agentes, backend, migrations, publicação, vídeo, OAuth, métricas, conformidade, frontend e testes.
+Erro anterior: o projeto avanÃ§ou em muitas frentes ao mesmo tempo: agentes, backend, migrations, publicaÃ§Ã£o, vÃ­deo, OAuth, mÃ©tricas, conformidade, frontend e testes.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
 - cada sprint deve ter escopo pequeno;
-- o que está fora do escopo deve ser declarado;
-- uma sprint não pode misturar design premium, backend, banco, IA, vídeo e publicação;
-- Sprint 0 é apenas auditoria e estabilização do frontend Lovable.
+- o que estÃ¡ fora do escopo deve ser declarado;
+- uma sprint nÃ£o pode misturar design premium, backend, banco, IA, vÃ­deo e publicaÃ§Ã£o;
+- Sprint 0 Ã© apenas auditoria e estabilizaÃ§Ã£o do frontend Lovable.
 
-### 5.2. Backend avançou mais que frontend
+### 5.2. Backend avanÃ§ou mais que frontend
 
-Erro anterior: o backend ficou tecnicamente denso, mas o operador não tinha uma experiência visual equivalente para usar o sistema.
+Erro anterior: o backend ficou tecnicamente denso, mas o operador nÃ£o tinha uma experiÃªncia visual equivalente para usar o sistema.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
 - frontend foi criado primeiro;
-- backend será criado depois seguindo contratos do frontend;
-- toda funcionalidade real futura precisa aparecer na interface ou ter motivo técnico claro.
+- backend serÃ¡ criado depois seguindo contratos do frontend;
+- toda funcionalidade real futura precisa aparecer na interface ou ter motivo tÃ©cnico claro.
 
 ### 5.3. Frontend sem design system consolidado
 
-Erro anterior: telas com densidade inadequada, colisão visual, quebra de textos longos, headers apertados e aparência abaixo do esperado.
+Erro anterior: telas com densidade inadequada, colisÃ£o visual, quebra de textos longos, headers apertados e aparÃªncia abaixo do esperado.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
 - design system precisa ser auditado;
-- componentes reutilizáveis precisam existir;
+- componentes reutilizÃ¡veis precisam existir;
 - telas premium precisam ser validadas visualmente;
-- Lovable não deve ser considerado suficiente sem revisão do Codex.
+- Lovable nÃ£o deve ser considerado suficiente sem revisÃ£o do Codex.
 
-### 5.4. Validação por CLI em vez de produto operável
+### 5.4. ValidaÃ§Ã£o por CLI em vez de produto operÃ¡vel
 
-Erro anterior: muitos testes e comandos, mas pouca validação operacional em tela.
+Erro anterior: muitos testes e comandos, mas pouca validaÃ§Ã£o operacional em tela.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
-- build e testes continuam obrigatórios;
-- UI navegável é critério de produto;
-- Dashboard, Canais e Escritório de Agentes são telas prioritárias.
+- build e testes continuam obrigatÃ³rios;
+- UI navegÃ¡vel Ã© critÃ©rio de produto;
+- Dashboard, Canais e EscritÃ³rio de Agentes sÃ£o telas prioritÃ¡rias.
 
 ### 5.5. Problemas de ambiente, banco e credenciais
 
-Erro anterior: atrito com PostgreSQL local, variáveis de ambiente, senhas, migrations e exposição de segredo em texto operacional.
+Erro anterior: atrito com PostgreSQL local, variÃ¡veis de ambiente, senhas, migrations e exposiÃ§Ã£o de segredo em texto operacional.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
 - `.env.example` sem segredos;
-- nenhum segredo em log, prompt, documento ou código;
+- nenhum segredo em log, prompt, documento ou cÃ³digo;
 - qualquer segredo exposto deve ser rotacionado;
-- banco só entra quando a Sprint de backend/banco começar.
+- banco sÃ³ entra quando a Sprint de backend/banco comeÃ§ar.
 
 ### 5.6. Ambiguidade entre global e canal
 
-Erro anterior: confusão entre política global e política por canal.
+Erro anterior: confusÃ£o entre polÃ­tica global e polÃ­tica por canal.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
-- entidade global não recebe `channelId`;
+- entidade global nÃ£o recebe `channelId`;
 - entidade operacional por canal recebe `channelId`;
 - contratos do frontend devem refletir essa regra;
-- backend futuro deve implementar a mesma semântica.
+- backend futuro deve implementar a mesma semÃ¢ntica.
 
-### 5.7. Pipeline de mídia antes de storage maduro
+### 5.7. Pipeline de mÃ­dia antes de storage maduro
 
 Erro anterior: falha por arquivo de entrada fora do `storage_root`.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
-- mídia real só depois de asset registry, storage root, jobs e validação de paths;
-- Sprint 0 não toca em mídia real.
+- mÃ­dia real sÃ³ depois de asset registry, storage root, jobs e validaÃ§Ã£o de paths;
+- Sprint 0 nÃ£o toca em mÃ­dia real.
 
 ### 5.8. Prompt grande usado para construir tudo
 
-Erro anterior: prompts amplos demais geraram sprints longas e difíceis de validar.
+Erro anterior: prompts amplos demais geraram sprints longas e difÃ­ceis de validar.
 
-Correção agora:
+CorreÃ§Ã£o agora:
 
-- Documento Mestre é contexto e norma;
-- prompts de execução devem ser pequenos e específicos;
+- Documento Mestre Ã© contexto e norma;
+- prompts de execuÃ§Ã£o devem ser pequenos e especÃ­ficos;
 - Sprint 0 tem escopo fechado.
 
 ---
 
-## 6. Princípios inegociáveis
+## 6. PrincÃ­pios inegociÃ¡veis
 
-1. Multicanal desde o início.
-2. Canal como raiz operacional do conteúdo.
-3. Separação entre configuração e regra de negócio.
+1. Multicanal desde o inÃ­cio.
+2. Canal como raiz operacional do conteÃºdo.
+3. SeparaÃ§Ã£o entre configuraÃ§Ã£o e regra de negÃ³cio.
 4. Rastreabilidade completa.
-5. Auditoria de eventos e decisões.
+5. Auditoria de eventos e decisÃµes.
 6. Controle de custos por canal, etapa e fornecedor.
-7. Aprovação humana em decisões de risco.
-8. Conteúdo original como padrão.
-9. Fontes rastreáveis para conteúdo factual.
-10. Integrações autorizadas, sem simulação de comportamento humano.
-11. Nenhuma credencial em código, log, prompt ou documento público.
+7. AprovaÃ§Ã£o humana em decisÃµes de risco.
+8. ConteÃºdo original como padrÃ£o.
+9. Fontes rastreÃ¡veis para conteÃºdo factual.
+10. IntegraÃ§Ãµes autorizadas, sem simulaÃ§Ã£o de comportamento humano.
+11. Nenhuma credencial em cÃ³digo, log, prompt ou documento pÃºblico.
 12. Design system antes de multiplicar novas telas.
-13. Frontend operacional como critério de produto.
-14. Workers especializados somente quando a fundação estiver madura.
+13. Frontend operacional como critÃ©rio de produto.
+14. Workers especializados somente quando a fundaÃ§Ã£o estiver madura.
 15. Testes e screenshots como parte do Definition of Done.
-16. Nenhuma expansão de canais antes de estabilidade do primeiro canal.
-17. Nenhuma publicação real sem conformidade, aprovação humana e autorização.
-18. Nenhum ativo de mídia sem origem, licença ou geração rastreada.
-19. Nenhum workflow sem status, eventos, custo, erro e idempotência.
-20. Nenhuma fase concluída sem evidências.
+16. Nenhuma expansÃ£o de canais antes de estabilidade do primeiro canal.
+17. Nenhuma publicaÃ§Ã£o real sem conformidade, aprovaÃ§Ã£o humana e autorizaÃ§Ã£o.
+18. Nenhum ativo de mÃ­dia sem origem, licenÃ§a ou geraÃ§Ã£o rastreada.
+19. Nenhum workflow sem status, eventos, custo, erro e idempotÃªncia.
+20. Nenhuma fase concluÃ­da sem evidÃªncias.
 21. Backend futuro deve seguir contratos aprovados do frontend.
 22. O frontend Lovable deve ser auditado antes de ser tratado como base oficial aprovada.
 
@@ -295,14 +295,14 @@ Stack esperada:
 - dados mockados locais;
 - contratos TypeScript;
 - mock-api local;
-- sem backend real obrigatório;
-- sem Supabase obrigatório;
-- sem autenticação real obrigatória;
-- sem chamadas externas obrigatórias.
+- sem backend real obrigatÃ³rio;
+- sem Supabase obrigatÃ³rio;
+- sem autenticaÃ§Ã£o real obrigatÃ³ria;
+- sem chamadas externas obrigatÃ³rias.
 
 ### 7.2. Backend futuro
 
-O backend será criado posteriormente no Codex, seguindo os contratos do frontend.
+O backend serÃ¡ criado posteriormente no Codex, seguindo os contratos do frontend.
 
 Stack recomendada:
 
@@ -317,22 +317,22 @@ Stack recomendada:
 
 ### 7.3. Workers futuros
 
-Python será permitido apenas como worker desacoplado para:
+Python serÃ¡ permitido apenas como worker desacoplado para:
 
 - FFmpeg;
-- renderização;
-- processamento de mídia;
+- renderizaÃ§Ã£o;
+- processamento de mÃ­dia;
 - LangGraph;
 - IA pesada;
-- jobs assíncronos.
+- jobs assÃ­ncronos.
 
-Python não será a aplicação principal nesta fase.
+Python nÃ£o serÃ¡ a aplicaÃ§Ã£o principal nesta fase.
 
 ---
 
-## 8. Estrutura de repositório recomendada após auditoria
+## 8. Estrutura de repositÃ³rio recomendada apÃ³s auditoria
 
-A estrutura real pode variar por causa do Lovable, mas o Codex deve convergir para a separação abaixo sempre que possível, sem reescrever o projeto inteiro na Sprint 0.
+A estrutura real pode variar por causa do Lovable, mas o Codex deve convergir para a separaÃ§Ã£o abaixo sempre que possÃ­vel, sem reescrever o projeto inteiro na Sprint 0.
 
 ```text
 /
@@ -392,7 +392,7 @@ A estrutura real pode variar por causa do Lovable, mas o Codex deve convergir pa
       design-tokens.css
 ```
 
-Quando o backend começar, a estrutura recomendada será:
+Quando o backend comeÃ§ar, a estrutura recomendada serÃ¡:
 
 ```text
 server/
@@ -429,24 +429,24 @@ server/
 
 O frontend deve seguir camadas claras:
 
-- **AppShell:** layout global, sidebar, topbar, seletor de canal e área principal.
-- **Pages:** composição das telas.
-- **Components:** peças reutilizáveis.
+- **AppShell:** layout global, sidebar, topbar, seletor de canal e Ã¡rea principal.
+- **Pages:** composiÃ§Ã£o das telas.
+- **Components:** peÃ§as reutilizÃ¡veis.
 - **Contracts:** tipos e status oficiais.
 - **Services:** mock-api agora; api-client real depois.
 - **Mocks:** dados demo isolados.
-- **Design system:** tokens, badges, cards, tabelas, ícones e estados.
+- **Design system:** tokens, badges, cards, tabelas, Ã­cones e estados.
 
 Regras:
 
-- páginas devem consumir funções de serviço;
-- páginas não devem importar mocks crus diretamente;
-- componentes visuais não devem conhecer a origem dos dados;
+- pÃ¡ginas devem consumir funÃ§Ãµes de serviÃ§o;
+- pÃ¡ginas nÃ£o devem importar mocks crus diretamente;
+- componentes visuais nÃ£o devem conhecer a origem dos dados;
 - status devem usar tipos oficiais;
 - badges devem ser padronizados;
 - dados operacionais devem ter `channelId`;
 - seletor de canal deve alterar o contexto visual;
-- mocks não são lixo temporário; eles são a simulação inicial do domínio.
+- mocks nÃ£o sÃ£o lixo temporÃ¡rio; eles sÃ£o a simulaÃ§Ã£o inicial do domÃ­nio.
 
 ---
 
@@ -455,15 +455,15 @@ Regras:
 ### 10.1. Regras gerais
 
 - Use `camelCase` no frontend.
-- Todos os IDs são `string`.
-- Todas as datas são strings ISO 8601.
-- Valores monetários são inteiros em centavos com sufixo `Cents`.
-- Durações são em segundos com sufixo `Seconds`.
+- Todos os IDs sÃ£o `string`.
+- Todas as datas sÃ£o strings ISO 8601.
+- Valores monetÃ¡rios sÃ£o inteiros em centavos com sufixo `Cents`.
+- DuraÃ§Ãµes sÃ£o em segundos com sufixo `Seconds`.
 - Dados operacionais por canal devem conter `channelId`.
-- Entidades globais não devem conter `channelId` sem necessidade.
-- O backend futuro deve respeitar esses contratos ou propor alteração formal.
+- Entidades globais nÃ£o devem conter `channelId` sem necessidade.
+- O backend futuro deve respeitar esses contratos ou propor alteraÃ§Ã£o formal.
 
-### 10.2. Status obrigatórios
+### 10.2. Status obrigatÃ³rios
 
 ```ts
 export type ChannelStatus = "active" | "paused" | "draft" | "archived" | "blocked" | "warning";
@@ -565,7 +565,7 @@ O frontend deve possuir contratos equivalentes a:
 - `AgentOfficeSnapshot`;
 - `ProductionItem`.
 
-Se esses tipos não existirem no frontend Lovable, a Sprint 0 deve criá-los ou documentar a pendência, dependendo do impacto no build.
+Se esses tipos nÃ£o existirem no frontend Lovable, a Sprint 0 deve criÃ¡-los ou documentar a pendÃªncia, dependendo do impacto no build.
 
 ---
 
@@ -573,7 +573,7 @@ Se esses tipos não existirem no frontend Lovable, a Sprint 0 deve criá-los ou 
 
 O frontend deve ter `src/services/mock-api.ts` ou equivalente.
 
-Funções esperadas:
+FunÃ§Ãµes esperadas:
 
 ```ts
 getDashboardSummary(channelId?)
@@ -601,11 +601,11 @@ getAuditLogs(channelId?)
 Regras:
 
 - pode haver delay artificial;
-- deve retornar estrutura próxima à futura API;
-- deve filtrar por `channelId` quando aplicável;
-- não deve chamar APIs externas;
-- não deve usar segredos;
-- deve facilitar substituição por `api-client.ts` real.
+- deve retornar estrutura prÃ³xima Ã  futura API;
+- deve filtrar por `channelId` quando aplicÃ¡vel;
+- nÃ£o deve chamar APIs externas;
+- nÃ£o deve usar segredos;
+- deve facilitar substituiÃ§Ã£o por `api-client.ts` real.
 
 ---
 
@@ -613,19 +613,19 @@ Regras:
 
 ### 12.1. Objetivo visual
 
-O frontend deve parecer uma plataforma SaaS empresarial premium, com alta densidade de informação, identidade própria e leitura operacional clara.
+O frontend deve parecer uma plataforma SaaS empresarial premium, com alta densidade de informaÃ§Ã£o, identidade prÃ³pria e leitura operacional clara.
 
-As referências visuais usadas nas conversas devem orientar a direção de arte: sidebar limpa, cards compactos, fontes pequenas, KPIs no topo, painel lateral de detalhes, tabs compactas, ícones consistentes, linhas de workflow e status visíveis.
+As referÃªncias visuais usadas nas conversas devem orientar a direÃ§Ã£o de arte: sidebar limpa, cards compactos, fontes pequenas, KPIs no topo, painel lateral de detalhes, tabs compactas, Ã­cones consistentes, linhas de workflow e status visÃ­veis.
 
-A Aralume não deve parecer template genérico, landing page ou dashboard vazio.
+A Aralume nÃ£o deve parecer template genÃ©rico, landing page ou dashboard vazio.
 
-### 12.2. Princípios visuais
+### 12.2. PrincÃ­pios visuais
 
-- Tema claro como padrão.
-- Alta densidade, sem poluição.
-- Fonte pequena e legível.
+- Tema claro como padrÃ£o.
+- Alta densidade, sem poluiÃ§Ã£o.
+- Fonte pequena e legÃ­vel.
 - Pouca sombra, mais borda suave.
-- Azul como cor primária.
+- Azul como cor primÃ¡ria.
 - Verde para OK.
 - Amarelo ou laranja para alerta.
 - Vermelho para bloqueio/falha.
@@ -633,25 +633,25 @@ A Aralume não deve parecer template genérico, landing page ou dashboard vazio.
 - Cinza para neutro e pausado.
 - Cards compactos.
 - Tabelas densas.
-- Sidebar fixa e recolhível.
-- Topbar com busca, filtros e ação principal.
+- Sidebar fixa e recolhÃ­vel.
+- Topbar com busca, filtros e aÃ§Ã£o principal.
 - Painel lateral para detalhes.
 - Layout desktop responsivo.
 
 ### 12.3. Tipografia
 
-Padrão recomendado:
+PadrÃ£o recomendado:
 
-- Título de página: 22px a 26px.
-- Subtítulo ou breadcrumb: 12px a 13px.
-- Título de card: 13px a 14px.
+- TÃ­tulo de pÃ¡gina: 22px a 26px.
+- SubtÃ­tulo ou breadcrumb: 12px a 13px.
+- TÃ­tulo de card: 13px a 14px.
 - Texto comum: 12px a 13px.
 - Labels: 10px a 12px.
 - Tabelas: 11px a 12px.
 - Badges: 10px a 11px.
-- Números de KPI: 20px a 28px.
+- NÃºmeros de KPI: 20px a 28px.
 
-### 12.4. Componentes obrigatórios
+### 12.4. Componentes obrigatÃ³rios
 
 - `AppShell`;
 - `SidebarNav`;
@@ -689,7 +689,7 @@ Padrão recomendado:
 - `LoadingState`;
 - `ErrorState`.
 
-Se o Lovable tiver criado nomes diferentes, o Codex deve mapear equivalentes antes de renomear. Renomear por estética é proibido na Sprint 0.
+Se o Lovable tiver criado nomes diferentes, o Codex deve mapear equivalentes antes de renomear. Renomear por estÃ©tica Ã© proibido na Sprint 0.
 
 ### 12.5. Logo e iconografia
 
@@ -697,26 +697,26 @@ A marca Aralume deve transmitir:
 
 - luz;
 - clareza;
-- automação;
+- automaÃ§Ã£o;
 - controle;
-- inteligência;
-- operação editorial;
+- inteligÃªncia;
+- operaÃ§Ã£o editorial;
 - multiagentes;
 - rastreabilidade;
 - tecnologia premium;
-- confiança empresarial.
+- confianÃ§a empresarial.
 
 O logo deve ter:
 
-- símbolo próprio;
-- wordmark “Aralume”;
-- versão completa para sidebar expandida;
-- versão compacta para sidebar recolhida;
+- sÃ­mbolo prÃ³prio;
+- wordmark â€œAralumeâ€;
+- versÃ£o completa para sidebar expandida;
+- versÃ£o compacta para sidebar recolhida;
 - boa leitura em tamanho pequeno;
-- estética SaaS premium;
-- ausência de aparência infantil ou genérica.
+- estÃ©tica SaaS premium;
+- ausÃªncia de aparÃªncia infantil ou genÃ©rica.
 
-Ícones devem ser consistentes, com traço fino, cantos arredondados e boa leitura em 16px, 18px e 20px.
+Ãcones devem ser consistentes, com traÃ§o fino, cantos arredondados e boa leitura em 16px, 18px e 20px.
 
 ---
 
@@ -746,12 +746,12 @@ Rotas esperadas:
 
 A rota inicial deve redirecionar para `/dashboard`.
 
-Não criar:
+NÃ£o criar:
 
 - landing page;
-- página pública;
+- pÃ¡gina pÃºblica;
 - login real;
-- rotas aleatórias;
+- rotas aleatÃ³rias;
 - fluxos externos.
 
 ---
@@ -760,47 +760,47 @@ Não criar:
 
 ### 14.1. Dashboard
 
-Objetivo: visão executiva e operacional.
+Objetivo: visÃ£o executiva e operacional.
 
 Deve exibir:
 
 - canais ativos;
-- conteúdos em produção;
-- conteúdos aguardando aprovação;
-- publicações programadas;
-- custo do mês;
+- conteÃºdos em produÃ§Ã£o;
+- conteÃºdos aguardando aprovaÃ§Ã£o;
+- publicaÃ§Ãµes programadas;
+- custo do mÃªs;
 - falhas recentes;
 - alertas de conformidade;
-- produção por status;
-- indicadores de audiência;
-- recomendações do agente analista.
+- produÃ§Ã£o por status;
+- indicadores de audiÃªncia;
+- recomendaÃ§Ãµes do agente analista.
 
 ### 14.2. Canais
 
-Objetivo: administrar canais e entender se estão prontos para operar.
+Objetivo: administrar canais e entender se estÃ£o prontos para operar.
 
 Layout recomendado:
 
-- lista de canais à esquerda;
+- lista de canais Ã  esquerda;
 - detalhe do canal no centro;
-- painéis operacionais à direita.
+- painÃ©is operacionais Ã  direita.
 
 Abas esperadas:
 
-- Visão geral;
+- VisÃ£o geral;
 - Perfil editorial;
 - Identidade visual;
-- Voz e narração;
+- Voz e narraÃ§Ã£o;
 - Regras editoriais;
 - Plataformas;
-- Orçamento;
-- Histórico.
+- OrÃ§amento;
+- HistÃ³rico.
 
-A tela de Canais não deve ser apenas CRUD. Ela deve mostrar readiness operacional.
+A tela de Canais nÃ£o deve ser apenas CRUD. Ela deve mostrar readiness operacional.
 
-### 14.3. Escritório de Agentes
+### 14.3. EscritÃ³rio de Agentes
 
-Objetivo: cockpit operacional da fábrica editorial.
+Objetivo: cockpit operacional da fÃ¡brica editorial.
 
 Layout:
 
@@ -812,68 +812,68 @@ Layout:
 
 O cockpit deve responder em 30 segundos:
 
-- quem está trabalhando;
-- em qual conteúdo;
+- quem estÃ¡ trabalhando;
+- em qual conteÃºdo;
 - em qual etapa;
 - o que foi entregue;
-- o que está bloqueando;
-- qual é o próximo agente.
+- o que estÃ¡ bloqueando;
+- qual Ã© o prÃ³ximo agente.
 
-### 14.4. Produção
+### 14.4. ProduÃ§Ã£o
 
-Deve mostrar conteúdos em andamento por canal, etapa, agente atual, progresso, custo acumulado, risco e próxima ação.
+Deve mostrar conteÃºdos em andamento por canal, etapa, agente atual, progresso, custo acumulado, risco e prÃ³xima aÃ§Ã£o.
 
 ### 14.5. Pautas
 
-Deve permitir visualizar oportunidades, score editorial, nicho, canal, fonte da ideia, risco e ações simuladas.
+Deve permitir visualizar oportunidades, score editorial, nicho, canal, fonte da ideia, risco e aÃ§Ãµes simuladas.
 
 ### 14.6. Pesquisas
 
-Deve exibir sessões de pesquisa, fontes, claims, confiança, divergências, risco de desatualização e data de acesso.
+Deve exibir sessÃµes de pesquisa, fontes, claims, confianÃ§a, divergÃªncias, risco de desatualizaÃ§Ã£o e data de acesso.
 
 ### 14.7. Roteiros
 
-Deve exibir roteiros, versões, status, duração estimada, estrutura narrativa, CTA, ideias de cortes e histórico.
+Deve exibir roteiros, versÃµes, status, duraÃ§Ã£o estimada, estrutura narrativa, CTA, ideias de cortes e histÃ³rico.
 
-### 14.8. Ativos de Mídia
+### 14.8. Ativos de MÃ­dia
 
-Deve exibir narrações, imagens, vídeos, thumbnails, trilhas, legendas, origem, licença, prompt, modelo, status, risco e custo.
+Deve exibir narraÃ§Ãµes, imagens, vÃ­deos, thumbnails, trilhas, legendas, origem, licenÃ§a, prompt, modelo, status, risco e custo.
 
-### 14.9. Vídeos
+### 14.9. VÃ­deos
 
-Deve exibir vídeos principais, render status, duração, formato, resolução, canal, roteiro vinculado, custo, qualidade e conformidade.
+Deve exibir vÃ­deos principais, render status, duraÃ§Ã£o, formato, resoluÃ§Ã£o, canal, roteiro vinculado, custo, qualidade e conformidade.
 
 ### 14.10. Cortes
 
-Deve exibir cortes derivados, vídeo-mãe, gancho, duração, plataforma sugerida, status, risco e potencial.
+Deve exibir cortes derivados, vÃ­deo-mÃ£e, gancho, duraÃ§Ã£o, plataforma sugerida, status, risco e potencial.
 
-### 14.11. Aprovações
+### 14.11. AprovaÃ§Ãµes
 
-Deve exibir fila de aprovação, canal, conteúdo, roteiro, fontes, vídeo/corte, custo, risco, alertas, recomendação dos agentes e ações simuladas.
+Deve exibir fila de aprovaÃ§Ã£o, canal, conteÃºdo, roteiro, fontes, vÃ­deo/corte, custo, risco, alertas, recomendaÃ§Ã£o dos agentes e aÃ§Ãµes simuladas.
 
-### 14.12. Publicações
+### 14.12. PublicaÃ§Ãµes
 
-Deve exibir calendário ou fila, plataforma, status, canal, conteúdo, data planejada, tipo e alertas de token/conexão, sem publicação real.
+Deve exibir calendÃ¡rio ou fila, plataforma, status, canal, conteÃºdo, data planejada, tipo e alertas de token/conexÃ£o, sem publicaÃ§Ã£o real.
 
-### 14.13. Métricas
+### 14.13. MÃ©tricas
 
-Deve exibir visão por canal, vídeo, tema, retenção, views, alcance, comentários, compartilhamentos, seguidores e recomendações editoriais mockadas.
+Deve exibir visÃ£o por canal, vÃ­deo, tema, retenÃ§Ã£o, views, alcance, comentÃ¡rios, compartilhamentos, seguidores e recomendaÃ§Ãµes editoriais mockadas.
 
 ### 14.14. Custos
 
-Deve exibir custo por canal, etapa, fornecedor, mês, orçamento, limites, alertas e custo por conteúdo.
+Deve exibir custo por canal, etapa, fornecedor, mÃªs, orÃ§amento, limites, alertas e custo por conteÃºdo.
 
 ### 14.15. Conformidade
 
-Deve exibir alertas, bloqueios, riscos, conteúdos reprovados, claims sem fonte, uso de terceiros, tema proibido e necessidade de revisão humana.
+Deve exibir alertas, bloqueios, riscos, conteÃºdos reprovados, claims sem fonte, uso de terceiros, tema proibido e necessidade de revisÃ£o humana.
 
-### 14.16. Administração
+### 14.16. AdministraÃ§Ã£o
 
-Deve exibir usuários mockados, perfis, permissões, integrações futuras, provedores futuros, modos operacionais e configurações globais, sem autenticação real.
+Deve exibir usuÃ¡rios mockados, perfis, permissÃµes, integraÃ§Ãµes futuras, provedores futuros, modos operacionais e configuraÃ§Ãµes globais, sem autenticaÃ§Ã£o real.
 
 ### 14.17. Logs e Auditoria
 
-Deve exibir eventos, ator, canal, workflow, agente, ação, timestamp, status, erro, custo e metadados.
+Deve exibir eventos, ator, canal, workflow, agente, aÃ§Ã£o, timestamp, status, erro, custo e metadados.
 
 ---
 
@@ -881,9 +881,9 @@ Deve exibir eventos, ator, canal, workflow, agente, ação, timestamp, status, e
 
 ### 15.1. Regra de `channel_id`
 
-- Entidades editoriais e operacionais terão `channel_id`.
-- Entidades globais de configuração da plataforma não terão `channel_id`.
-- Entidades globais e por canal devem ser separadas quando tiverem semântica diferente.
+- Entidades editoriais e operacionais terÃ£o `channel_id`.
+- Entidades globais de configuraÃ§Ã£o da plataforma nÃ£o terÃ£o `channel_id`.
+- Entidades globais e por canal devem ser separadas quando tiverem semÃ¢ntica diferente.
 
 Exemplos com `channel_id`:
 
@@ -918,7 +918,7 @@ Exemplos por canal:
 
 ### 15.2. Tabelas iniciais futuras
 
-Quando o backend começar, a fase inicial deve conter:
+Quando o backend comeÃ§ar, a fase inicial deve conter:
 
 - `channels`;
 - `channel_settings`;
@@ -931,7 +931,7 @@ Quando o backend começar, a fase inicial deve conter:
 - `cost_entries`;
 - `human_approval_items`.
 
-Não criar todas as tabelas da V1.0 em uma única sprint sem necessidade.
+NÃ£o criar todas as tabelas da V1.0 em uma Ãºnica sprint sem necessidade.
 
 ---
 
@@ -939,14 +939,14 @@ Não criar todas as tabelas da V1.0 em uma única sprint sem necessidade.
 
 ### 16.1. Agentes esperados
 
-- Inteligência de Nicho;
+- InteligÃªncia de Nicho;
 - Pesquisador;
 - Editorial;
 - Roteirista;
-- Direção Visual;
-- Narração;
-- Produção Visual;
-- Editor de Vídeo;
+- DireÃ§Ã£o Visual;
+- NarraÃ§Ã£o;
+- ProduÃ§Ã£o Visual;
+- Editor de VÃ­deo;
 - Gerador de Cortes;
 - Qualidade;
 - Conformidade;
@@ -963,16 +963,16 @@ Não criar todas as tabelas da V1.0 em uma única sprint sem necessidade.
 6. Validar pauta.
 7. Criar roteiro.
 8. Planejar cenas.
-9. Gerar ou registrar narração.
+9. Gerar ou registrar narraÃ§Ã£o.
 10. Gerar ou registrar ativos visuais.
-11. Montar vídeo principal.
+11. Montar vÃ­deo principal.
 12. Gerar cortes.
 13. Validar qualidade.
 14. Validar conformidade.
-15. Solicitar aprovação humana.
-16. Preparar publicação.
+15. Solicitar aprovaÃ§Ã£o humana.
+16. Preparar publicaÃ§Ã£o.
 17. Publicar ou gerar rascunho autorizado.
-18. Coletar métricas.
+18. Coletar mÃ©tricas.
 19. Analisar desempenho.
 20. Alimentar aprendizado.
 
@@ -992,40 +992,40 @@ Todo handoff deve registrar:
 
 ---
 
-## 17. Segurança, credenciais e conformidade
+## 17. SeguranÃ§a, credenciais e conformidade
 
-Regras obrigatórias:
+Regras obrigatÃ³rias:
 
 - nunca commitar `.env`;
 - nunca imprimir token;
 - nunca colar senha em prompt;
 - nunca registrar segredo em audit log;
 - usar `.env.example`;
-- mascarar valores sensíveis;
+- mascarar valores sensÃ­veis;
 - rotacionar segredo exposto;
-- não publicar conteúdo sem aprovação;
-- não usar automação que burle plataformas;
-- não copiar e republicar conteúdo de terceiros sem direito;
-- conteúdo factual precisa de fonte;
-- conteúdo bloqueado não publica.
+- nÃ£o publicar conteÃºdo sem aprovaÃ§Ã£o;
+- nÃ£o usar automaÃ§Ã£o que burle plataformas;
+- nÃ£o copiar e republicar conteÃºdo de terceiros sem direito;
+- conteÃºdo factual precisa de fonte;
+- conteÃºdo bloqueado nÃ£o publica.
 
 ---
 
-## 18. Mídia, storage e renderização
+## 18. MÃ­dia, storage e renderizaÃ§Ã£o
 
-Esta seção é futura. Não deve ser implementada na Sprint 0.
+Esta seÃ§Ã£o Ã© futura. NÃ£o deve ser implementada na Sprint 0.
 
 Regras futuras:
 
 - todo ativo deve ser registrado antes de uso;
-- renderizador só pode usar arquivos dentro do storage root autorizado;
+- renderizador sÃ³ pode usar arquivos dentro do storage root autorizado;
 - caminhos externos devem ser rejeitados;
 - todo render deve ser job;
-- todo render deve registrar entrada, saída, comando, logs, status, erro e duração.
+- todo render deve registrar entrada, saÃ­da, comando, logs, status, erro e duraÃ§Ã£o.
 
 ---
 
-## 19. Testes e validação
+## 19. Testes e validaÃ§Ã£o
 
 ### 19.1. Camadas esperadas no ciclo do projeto
 
@@ -1039,7 +1039,7 @@ Regras futuras:
 - contract tests;
 - integration tests com banco, quando o backend existir.
 
-### 19.2. QA visual obrigatório
+### 19.2. QA visual obrigatÃ³rio
 
 Telas premium devem ser validadas em:
 
@@ -1057,17 +1057,17 @@ Validar:
 - tabela cheia;
 - estado vazio;
 - estado de erro;
-- status crítico;
+- status crÃ­tico;
 - sem overflow horizontal;
-- sem sobreposição;
-- sem botão quebrado;
-- sem texto ilegível.
+- sem sobreposiÃ§Ã£o;
+- sem botÃ£o quebrado;
+- sem texto ilegÃ­vel.
 
-Na Sprint 0, se screenshots não forem possíveis, registrar pendência formal.
+Na Sprint 0, se screenshots nÃ£o forem possÃ­veis, registrar pendÃªncia formal.
 
 ---
 
-## 20. Ordem atualizada de construção até a V1.0
+## 20. Ordem atualizada de construÃ§Ã£o atÃ© a V1.0
 
 Nota operacional atualizada:
 
@@ -1077,24 +1077,24 @@ Nota operacional atualizada:
 - A Sprint 10 foi encerrada e integrada ao `main` via PR #17.
 - As fases abaixo continuam como roadmap conceitual e nao precisam coincidir numericamente com a sequencia operacional das sprints entregues.
 
-### Fase 0 — Documento Mestre e contexto oficial
+### Fase 0 â€” Documento Mestre e contexto oficial
 
-**Status:** concluída parcialmente.
+**Status:** concluÃ­da parcialmente.
 
 Entregas:
 
 - Documento Mestre V2 criado;
-- Documento Mestre V2.1 pós-Lovable criado;
-- visão consolidada;
+- Documento Mestre V2.1 pÃ³s-Lovable criado;
+- visÃ£o consolidada;
 - erros do projeto anterior documentados;
-- estratégia de frontend primeiro definida;
+- estratÃ©gia de frontend primeiro definida;
 - backend futuro no Codex definido.
 
-Pendência:
+PendÃªncia:
 
-- consolidar este documento no repositório como `docs/PROJECT_MASTER.md`.
+- consolidar este documento no repositÃ³rio como `docs/PROJECT_MASTER.md`.
 
-### Fase 1 — Frontend Lovable criado
+### Fase 1 â€” Frontend Lovable criado
 
 **Status:** criado fora do Codex.
 
@@ -1107,21 +1107,21 @@ Entregas esperadas:
 - rotas principais;
 - Dashboard;
 - Canais;
-- Escritório de Agentes;
-- páginas administrativas;
+- EscritÃ³rio de Agentes;
+- pÃ¡ginas administrativas;
 - mocks;
 - contratos TypeScript;
 - mock-api;
 - design system;
-- documentação inicial.
+- documentaÃ§Ã£o inicial.
 
 Gate:
 
-- só será aprovada após auditoria do Codex.
+- sÃ³ serÃ¡ aprovada apÃ³s auditoria do Codex.
 
-### Fase 1.1 — Sprint 0: Auditoria e estabilização do frontend Lovable
+### Fase 1.1 â€” Sprint 0: Auditoria e estabilizaÃ§Ã£o do frontend Lovable
 
-**Próxima fase obrigatória.**
+**PrÃ³xima fase obrigatÃ³ria.**
 
 Objetivo:
 
@@ -1135,35 +1135,35 @@ Escopo:
 - verificar mocks;
 - verificar mock-api;
 - verificar design system;
-- verificar páginas;
+- verificar pÃ¡ginas;
 - verificar `channelId`;
 - verificar seletor de canal;
-- verificar ausência de backend real indevido;
-- verificar ausência de Supabase obrigatório;
-- verificar ausência de segredos;
-- criar/atualizar documentação;
+- verificar ausÃªncia de backend real indevido;
+- verificar ausÃªncia de Supabase obrigatÃ³rio;
+- verificar ausÃªncia de segredos;
+- criar/atualizar documentaÃ§Ã£o;
 - abrir PR.
 
 Fora do escopo:
 
 - backend real;
 - banco;
-- autenticação;
+- autenticaÃ§Ã£o;
 - IA real;
-- publicação real;
-- vídeo real;
-- integrações externas.
+- publicaÃ§Ã£o real;
+- vÃ­deo real;
+- integraÃ§Ãµes externas.
 
 Gate:
 
-- frontend compila ou erros estão documentados;
+- frontend compila ou erros estÃ£o documentados;
 - rotas principais existem;
 - contratos e mocks auditados;
-- documentação mínima criada;
+- documentaÃ§Ã£o mÃ­nima criada;
 - nenhum backend real criado;
 - PR aberto.
 
-### Fase 2 — Backend Foundation
+### Fase 2 â€” Backend Foundation
 
 Objetivo:
 
@@ -1176,7 +1176,7 @@ Entregas:
 - PostgreSQL;
 - Zod;
 - health check;
-- padrão de erro;
+- padrÃ£o de erro;
 - migrations iniciais;
 - seed demo;
 - endpoints base.
@@ -1186,9 +1186,9 @@ Gate:
 - backend sobe;
 - migrations aplicam em banco limpo;
 - health check responde;
-- contratos compatíveis com frontend.
+- contratos compatÃ­veis com frontend.
 
-### Fase 3 — Canais reais
+### Fase 3 â€” Canais reais
 
 Objetivo:
 
@@ -1199,21 +1199,21 @@ Entregas:
 - CRUD real de canais;
 - channel settings;
 - regras editoriais;
-- orçamento;
-- integração da tela Canais com backend.
+- orÃ§amento;
+- integraÃ§Ã£o da tela Canais com backend.
 
 Gate:
 
 - criar dois canais reais;
 - comprovar isolamento de dados por canal.
 
-### Fase 4 — Dashboard real inicial
+### Fase 4 â€” Dashboard real inicial
 
 Objetivo:
 
-- conectar Dashboard a dados reais de canais, custos, workflows e aprovações iniciais.
+- conectar Dashboard a dados reais de canais, custos, workflows e aprovaÃ§Ãµes iniciais.
 
-### Fase 5 — Escritório de Agentes persistido
+### Fase 5 â€” EscritÃ³rio de Agentes persistido
 
 Objetivo:
 
@@ -1223,59 +1223,59 @@ Gate:
 
 - iniciar workflow demo e ver handoff no frontend.
 
-### Fase 6 — Pipeline Editorial
+### Fase 6 â€” Pipeline Editorial
 
 Objetivo:
 
-- pauta, pesquisa, fonte, claim, roteiro e versões.
+- pauta, pesquisa, fonte, claim, roteiro e versÃµes.
 
 Gate:
 
-- criar pauta, registrar fonte, criar roteiro versionado e enviar para aprovação.
+- criar pauta, registrar fonte, criar roteiro versionado e enviar para aprovaÃ§Ã£o.
 
-### Fase 7 — Aprovação, Qualidade e Conformidade
+### Fase 7 â€” AprovaÃ§Ã£o, Qualidade e Conformidade
 
 Objetivo:
 
-- bloquear riscos antes de mídia real.
+- bloquear riscos antes de mÃ­dia real.
 
 Gate:
 
-- conteúdo com risco alto fica bloqueado até decisão humana.
+- conteÃºdo com risco alto fica bloqueado atÃ© decisÃ£o humana.
 
-### Fase 8 — Custos e Modos Operacionais
+### Fase 8 â€” Custos e Modos Operacionais
 
 Objetivo:
 
-- governar execução real.
+- governar execuÃ§Ã£o real.
 
 Gate:
 
-- modo demo bloqueia IA real e publicação real.
+- modo demo bloqueia IA real e publicaÃ§Ã£o real.
 
-### Fase 9 — Ativos de Mídia
+### Fase 9 â€” Ativos de MÃ­dia
 
 Objetivo:
 
-- registrar mídia corretamente.
+- registrar mÃ­dia corretamente.
 
 Gate:
 
-- todo ativo usado por conteúdo tem origem e URI interna válida.
+- todo ativo usado por conteÃºdo tem origem e URI interna vÃ¡lida.
 
-### Fase 10 — Renderização Controlada
+### Fase 10 â€” RenderizaÃ§Ã£o Controlada
 
-**Status:** concluída.
+**Status:** concluÃ­da.
 
 Objetivo:
 
-- gerar vídeo demo reproduzível.
+- gerar vÃ­deo demo reproduzÃ­vel.
 
 Gate:
 
-- renderizar vídeo curto de teste com logs e validação.
+- renderizar vÃ­deo curto de teste com logs e validaÃ§Ã£o.
 
-### Fase 11 — Cortes
+### Fase 11 â€” Cortes
 
 **Status:** em andamento.
 
@@ -1285,25 +1285,25 @@ Objetivo:
 
 Gate:
 
-- gerar pelo menos um corte vinculado ao vídeo principal.
+- gerar pelo menos um corte vinculado ao vÃ­deo principal.
 
-### Fase 12 — Publicação Assistida
+### Fase 12 â€” PublicaÃ§Ã£o Assistida
 
 **Status:** materializada na Sprint 11 e encerrada.
 
 Objetivo:
 
-- preparar publicação sem risco externo.
+- preparar publicaÃ§Ã£o sem risco externo.
 
 Gate:
 
-- pacote de publicação pronto, sem envio externo automático.
+- pacote de publicaÃ§Ã£o pronto, sem envio externo automÃ¡tico.
 
-### Fase 13 — Integrações Reais Autorizadas
+### Fase 13 â€” IntegraÃ§Ãµes Reais Autorizadas
 
 Objetivo:
 
-- conectar provedores com governança.
+- conectar provedores com governanÃ§a.
 
 Sprint alvo:
 
@@ -1311,9 +1311,9 @@ Sprint alvo:
 
 Gate:
 
-- integração oficial funcionando sem expor segredo.
+- integraÃ§Ã£o oficial funcionando sem expor segredo.
 
-### Fase 14 — Métricas e Aprendizado
+### Fase 14 â€” MÃ©tricas e Aprendizado
 
 Objetivo:
 
@@ -1325,9 +1325,9 @@ Sprint alvo:
 
 Gate:
 
-- métricas geram recomendação editorial por canal.
+- mÃ©tricas geram recomendaÃ§Ã£o editorial por canal.
 
-### Fase 15 — Hardening V1.0
+### Fase 15 â€” Hardening V1.0
 
 **Status:** planejada.
 
@@ -1341,15 +1341,15 @@ Sprint alvo:
 
 Gate:
 
-- demonstração ponta a ponta pelo frontend;
-- aceite binário documentado como V1.0 aceita ou V1.0 não aceita na Sprint 14;
-- esta fase é validada pela Sprint 14 e pela spec `docs/specs/012-v1-acceptance.md`, sem reclassificar a Fase 12 historica.
+- demonstraÃ§Ã£o ponta a ponta pelo frontend;
+- aceite binÃ¡rio documentado como V1.0 aceita ou V1.0 nÃ£o aceita na Sprint 14;
+- esta fase Ã© validada pela Sprint 14 e pela spec `docs/specs/012-v1-acceptance.md`, sem reclassificar a Fase 12 historica.
 
 ### Mapa de identificadores
 
-- **Fase do roadmap do produto**: linha histórica de capacidade do produto no Documento Mestre.
-- **Sprint de execução**: unidade sequencial de entrega, integração e validação.
-- **Spec**: contrato normativo que governa a execução da sprint.
+- **Fase do roadmap do produto**: linha histÃ³rica de capacidade do produto no Documento Mestre.
+- **Sprint de execuÃ§Ã£o**: unidade sequencial de entrega, integraÃ§Ã£o e validaÃ§Ã£o.
+- **Spec**: contrato normativo que governa a execuÃ§Ã£o da sprint.
 - Os identificadores podem divergir numericamente.
 - A Fase 12 do roadmap materializou-se na Sprint 11 e permanece encerrada.
 - A Sprint 12 materializa o E13 - Integracoes Reais Autorizadas e e regida pela spec `docs/specs/015-authorized-real-integrations.md`.
@@ -1359,7 +1359,7 @@ Gate:
 
 ---
 
-## 21. V1.0 — critérios obrigatórios
+## 21. V1.0 â€” critÃ©rios obrigatÃ³rios
 
 A V1.0 existe quando um operador consegue:
 
@@ -1369,67 +1369,67 @@ A V1.0 existe quando um operador consegue:
 4. Registrar pesquisa e fontes.
 5. Criar roteiro versionado.
 6. Planejar cenas.
-7. Registrar narração ou gerar narração autorizada.
+7. Registrar narraÃ§Ã£o ou gerar narraÃ§Ã£o autorizada.
 8. Registrar ativos visuais.
-9. Renderizar vídeo demo ou real controlado.
+9. Renderizar vÃ­deo demo ou real controlado.
 10. Gerar pelo menos um corte.
 11. Validar qualidade.
 12. Validar conformidade.
-13. Submeter à aprovação humana.
-14. Preparar publicação ou rascunho.
+13. Submeter Ã  aprovaÃ§Ã£o humana.
+14. Preparar publicaÃ§Ã£o ou rascunho.
 15. Registrar custos.
-16. Registrar métricas.
-17. Gerar recomendação editorial.
-18. Ver todo o histórico no frontend.
+16. Registrar mÃ©tricas.
+17. Gerar recomendaÃ§Ã£o editorial.
+18. Ver todo o histÃ³rico no frontend.
 
-Não é V1.0 se:
+NÃ£o Ã© V1.0 se:
 
-- só funciona por CLI;
-- só tem backend;
-- só tem mock visual;
-- não tem canal real;
-- não tem aprovação humana;
-- não tem rastreabilidade;
-- não tem controle de custo;
-- não tem validação visual;
-- não tem fluxo ponta a ponta.
+- sÃ³ funciona por CLI;
+- sÃ³ tem backend;
+- sÃ³ tem mock visual;
+- nÃ£o tem canal real;
+- nÃ£o tem aprovaÃ§Ã£o humana;
+- nÃ£o tem rastreabilidade;
+- nÃ£o tem controle de custo;
+- nÃ£o tem validaÃ§Ã£o visual;
+- nÃ£o tem fluxo ponta a ponta.
 
 ---
 
-A decisão final de V1.0 é binária: V1.0 aceita ou V1.0 não aceita.
+A decisÃ£o final de V1.0 Ã© binÃ¡ria: V1.0 aceita ou V1.0 nÃ£o aceita.
 
-## 22. Sprint 0 — Prompt normativo para Codex
+## 22. Sprint 0 â€” Prompt normativo para Codex
 
-Use este prompt para a primeira rodada do Codex após o frontend Lovable:
+Use este prompt para a primeira rodada do Codex apÃ³s o frontend Lovable:
 
 ```text
-Você atuará como engenheiro de software sênior e guardião técnico da Aralume Studio.
+VocÃª atuarÃ¡ como engenheiro de software sÃªnior e guardiÃ£o tÃ©cnico da Aralume Studio.
 
-Repositório:
+RepositÃ³rio:
 https://github.com/aralumemedia-lab/aralume-studio.git
 
-Contexto obrigatório:
-O frontend inicial da Aralume Studio já foi criado via Lovable.
+Contexto obrigatÃ³rio:
+O frontend inicial da Aralume Studio jÃ¡ foi criado via Lovable.
 
-Não recrie o frontend do zero.
-Não substitua a identidade visual sem necessidade.
-Não implemente backend real nesta rodada.
-Não conecte Supabase.
-Não crie banco.
-Não implemente autenticação real.
-Não implemente IA real.
-Não implemente vídeo real.
-Não implemente publicação real.
-Não crie integrações externas.
+NÃ£o recrie o frontend do zero.
+NÃ£o substitua a identidade visual sem necessidade.
+NÃ£o implemente backend real nesta rodada.
+NÃ£o conecte Supabase.
+NÃ£o crie banco.
+NÃ£o implemente autenticaÃ§Ã£o real.
+NÃ£o implemente IA real.
+NÃ£o implemente vÃ­deo real.
+NÃ£o implemente publicaÃ§Ã£o real.
+NÃ£o crie integraÃ§Ãµes externas.
 
-Sua tarefa é executar a Sprint 0 — Auditoria e Estabilização do Frontend Lovable.
+Sua tarefa Ã© executar a Sprint 0 â€” Auditoria e EstabilizaÃ§Ã£o do Frontend Lovable.
 
-Antes de qualquer alteração:
+Antes de qualquer alteraÃ§Ã£o:
 1. Localize e leia o Documento Mestre V2.1.
 2. Trate esse documento como fonte oficial de verdade.
-3. Audite o estado real do repositório.
+3. Audite o estado real do repositÃ³rio.
 4. Compare o frontend gerado pelo Lovable com o Documento Mestre V2.1.
-5. Corrija apenas problemas estruturais, bloqueadores ou desalinhamentos críticos.
+5. Corrija apenas problemas estruturais, bloqueadores ou desalinhamentos crÃ­ticos.
 
 Objetivos:
 - consolidar docs/PROJECT_MASTER.md;
@@ -1438,14 +1438,14 @@ Objetivos:
 - verificar contratos TypeScript;
 - verificar mocks;
 - verificar mock-api;
-- verificar se páginas consomem services/mock-api e não mocks crus;
+- verificar se pÃ¡ginas consomem services/mock-api e nÃ£o mocks crus;
 - verificar se dados operacionais possuem channelId;
 - verificar se seletor de canal filtra contexto;
 - verificar design system;
-- verificar documentação;
-- verificar ausência de segredos;
-- verificar ausência de backend/Supabase/API externa indevida;
-- gerar relatório final preciso.
+- verificar documentaÃ§Ã£o;
+- verificar ausÃªncia de segredos;
+- verificar ausÃªncia de backend/Supabase/API externa indevida;
+- gerar relatÃ³rio final preciso.
 
 Branch:
 codex/sprint-0-audit-stabilize-lovable-frontend
@@ -1458,12 +1458,12 @@ chore: audit and stabilize Lovable frontend foundation
 
 ## 23. Regras de sprint e PR
 
-Toda sprint deve começar com:
+Toda sprint deve comeÃ§ar com:
 
 - branch atual;
 - SHA local;
 - SHA remoto;
-- divergência;
+- divergÃªncia;
 - working tree;
 - untracked;
 - staged;
@@ -1479,39 +1479,39 @@ Toda sprint deve terminar com:
 - migrations, se houver;
 - testes executados;
 - resultado;
-- screenshots, se houver alteração visual;
-- pendências;
+- screenshots, se houver alteraÃ§Ã£o visual;
+- pendÃªncias;
 - riscos;
-- recomendação;
-- confirmação de que nenhum segredo foi exposto.
+- recomendaÃ§Ã£o;
+- confirmaÃ§Ã£o de que nenhum segredo foi exposto.
 
-Não misturar:
+NÃ£o misturar:
 
 - limpeza administrativa com feature;
 - design premium com backend pesado;
-- IA real com fundação;
-- publicação real com protótipo;
-- refatoração grande com feature nova.
+- IA real com fundaÃ§Ã£o;
+- publicaÃ§Ã£o real com protÃ³tipo;
+- refatoraÃ§Ã£o grande com feature nova.
 
 ---
 
-## 24. Antipadrões proibidos
+## 24. AntipadrÃµes proibidos
 
-- Recriar o frontend Lovable do zero sem autorização.
+- Recriar o frontend Lovable do zero sem autorizaÃ§Ã£o.
 - Criar backend antes de auditar contratos.
-- Criar a plataforma inteira em uma única solicitação.
+- Criar a plataforma inteira em uma Ãºnica solicitaÃ§Ã£o.
 - Criar tela bonita sem dados estruturados.
 - Criar backend sem tela correspondente.
 - Criar entidade operacional sem `channelId` no frontend ou `channel_id` no backend.
-- Criar política global com campos de canal.
-- Usar arquivo de mídia fora do storage oficial.
-- Publicar sem aprovação.
-- Usar automação que burle plataforma.
+- Criar polÃ­tica global com campos de canal.
+- Usar arquivo de mÃ­dia fora do storage oficial.
+- Publicar sem aprovaÃ§Ã£o.
+- Usar automaÃ§Ã£o que burle plataforma.
 - Colar token ou senha em prompt.
-- Considerar sprint concluída sem teste.
+- Considerar sprint concluÃ­da sem teste.
 - Considerar frontend aprovado sem build e auditoria.
-- Avançar para IA real antes de custo e modo operacional.
-- Avançar para vídeo real antes de asset registry.
+- AvanÃ§ar para IA real antes de custo e modo operacional.
+- AvanÃ§ar para vÃ­deo real antes de asset registry.
 - Expandir canais antes de estabilizar o primeiro.
 
 ---
@@ -1520,11 +1520,11 @@ Não misturar:
 
 ### 25.1. Produto
 
-- operador entende a situação em menos de 30 segundos;
+- operador entende a situaÃ§Ã£o em menos de 30 segundos;
 - fluxo principal funciona pelo frontend;
-- canais não misturam dados;
-- conteúdo tem rastreabilidade;
-- aprovação humana funciona;
+- canais nÃ£o misturam dados;
+- conteÃºdo tem rastreabilidade;
+- aprovaÃ§Ã£o humana funciona;
 - custos aparecem corretamente;
 - conformidade bloqueia riscos.
 
@@ -1532,36 +1532,36 @@ Não misturar:
 
 - build passa;
 - typecheck passa;
-- contratos são claros;
-- mocks são realistas;
+- contratos sÃ£o claros;
+- mocks sÃ£o realistas;
 - mock-api simula futura API;
-- sem segredo no repositório;
+- sem segredo no repositÃ³rio;
 - sem logs locais commitados;
 - arquitetura modular;
 - endpoints futuros documentados.
 
-### 25.3. Operação
+### 25.3. OperaÃ§Ã£o
 
-- tempo de criação de conteúdo reduzido;
+- tempo de criaÃ§Ã£o de conteÃºdo reduzido;
 - baixa taxa de retrabalho;
-- custo previsível;
-- aprovação em lote possível;
-- falhas visíveis;
+- custo previsÃ­vel;
+- aprovaÃ§Ã£o em lote possÃ­vel;
+- falhas visÃ­veis;
 - reprocessamento seguro.
 
 ---
 
-## 26. Conclusão
+## 26. ConclusÃ£o
 
-A Aralume Studio deve ser construída com menos ansiedade e mais critério.
+A Aralume Studio deve ser construÃ­da com menos ansiedade e mais critÃ©rio.
 
-A etapa Lovable acelerou a criação visual, mas não substitui engenharia, auditoria, contratos e governança. O próximo passo correto é estabilizar o frontend no Codex, documentar a base real e só então criar backend.
+A etapa Lovable acelerou a criaÃ§Ã£o visual, mas nÃ£o substitui engenharia, auditoria, contratos e governanÃ§a. O prÃ³ximo passo correto Ã© estabilizar o frontend no Codex, documentar a base real e sÃ³ entÃ£o criar backend.
 
-A decisão fundamental agora é:
+A decisÃ£o fundamental agora Ã©:
 
-**O frontend Lovable é a base inicial, mas o Codex deve transformá-lo em fundação confiável. O backend só começa depois que contratos, mocks, rotas e documentação estiverem auditados.**
+**O frontend Lovable Ã© a base inicial, mas o Codex deve transformÃ¡-lo em fundaÃ§Ã£o confiÃ¡vel. O backend sÃ³ comeÃ§a depois que contratos, mocks, rotas e documentaÃ§Ã£o estiverem auditados.**
 
-Este documento passa a ser a fonte principal de informação do projeto a partir do estado pós-Lovable.
+Este documento passa a ser a fonte principal de informaÃ§Ã£o do projeto a partir do estado pÃ³s-Lovable.
 
 ## 27. Modelo de entrega a partir da Sprint 11
 
@@ -1590,7 +1590,8 @@ Regras normativas:
 
 | Ordem | Epic | Escopo principal | Resultado |
 | --- | --- | --- | --- |
-| Sprint proposta A | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-06 | perfil editorial, pauta, pesquisa, fontes, claims, roteiro e plano visual operaveis no frontend |
+| Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
+| Sprint 16 (planejada) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05 a V1-06 | roteiro versionado e plano visual com cenas operaveis no frontend |
 | Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-10 | narracao, ativos, render e cortes operaveis no frontend |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-14 | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
@@ -1598,13 +1599,13 @@ Regras normativas:
 
 ### Mapa de remediacao
 
-| Critério V1 | R14 | Epic | Sprint sugerida |
+| CritÃ©rio V1 | R14 | Epic | Sprint sugerida |
 | --- | --- | --- | --- |
-| V1-02 | R14-02 | E16 | Sprint proposta A |
-| V1-03 | R14-03 | E16 | Sprint proposta A |
-| V1-04 | R14-04 | E16 | Sprint proposta A |
-| V1-05 | R14-05 | E16 | Sprint proposta A |
-| V1-06 | R14-06 | E16 | Sprint proposta A |
+| V1-02 | R14-02 | E16 | Sprint 15 |
+| V1-03 | R14-03 | E16 | Sprint 15 |
+| V1-04 | R14-04 | E16 | Sprint 15 |
+| V1-05 | R14-05 | E16 | Sprint 16 |
+| V1-06 | R14-06 | E16 | Sprint 16 |
 | V1-07 | R14-07 | E17 | Sprint proposta B |
 | V1-08 | R14-08 | E17 | Sprint proposta B |
 | V1-09 | R14-09 | E17 | Sprint proposta B |

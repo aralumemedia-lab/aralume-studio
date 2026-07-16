@@ -46,6 +46,33 @@ export const updateChannelBodySchema = createChannelBodySchema
     message: "At least one field must be provided",
   });
 
+const editorialRulesUpdateSchema = z
+  .object({
+    factualContentRequiresSources: z.boolean().optional(),
+    minimumSources: z.number().int().nonnegative().max(20).optional(),
+    allowFictionalNarratives: z.boolean().optional(),
+    allowThirdPartyAssets: z.boolean().optional(),
+    requiresHumanApprovalBeforePublication: z.boolean().optional(),
+    highRiskAutoBlock: z.boolean().optional(),
+    prohibitedClaims: z.array(z.string().trim().min(1).max(240)).optional(),
+    complianceNotes: z.array(z.string().trim().min(1).max(240)).optional(),
+  })
+  .strict();
+
+export const updateChannelProfileBodySchema = z
+  .object({
+    requestedBy: z.string().trim().min(1).max(120).optional(),
+    editorialTone: z.string().trim().min(1).max(240).optional(),
+    language: z.string().trim().min(2).max(16).optional(),
+    audience: z.string().trim().min(1).max(240).optional(),
+    allowedFormats: z.array(z.string().trim().min(1).max(64)).min(1).max(8).optional(),
+    editorialRules: editorialRulesUpdateSchema.optional(),
+  })
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "At least one field must be provided",
+  });
+
 export const channelIdParamsSchema = z
   .object({
     id: z.string().trim().min(1),

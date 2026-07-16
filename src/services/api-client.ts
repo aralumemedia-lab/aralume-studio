@@ -20,9 +20,11 @@ export {
   createChannel,
   describeChannelsApiError,
   getChannel,
+  getChannelProfile,
   getChannelSettings,
   getChannels,
   updateChannel,
+  updateChannelProfile,
 } from "./channels-api";
 
 export {
@@ -55,8 +57,10 @@ export {
   createResearchSession,
   createResearchSource,
   describeResearchApiError,
+  getClaimEvidenceList,
   getResearchSession,
   getResearchSessions,
+  getResearchSources,
 } from "./research-api";
 
 export {

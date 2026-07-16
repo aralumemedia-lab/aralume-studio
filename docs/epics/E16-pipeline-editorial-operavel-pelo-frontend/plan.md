@@ -1,5 +1,11 @@
 # E16 - Plan
 
+## Sprint 15 scope
+
+- Included: `/channels`, `/ideas`, `/research`.
+- Excluded: `/scripts` and `/production`, which stay reserved for H16.3 and H16.4.
+- The sprint must keep the channel profile, content idea and research flows small and vertical.
+
 ## Frontend
 
 - `/ideas`

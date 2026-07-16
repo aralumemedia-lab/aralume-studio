@@ -8,6 +8,7 @@ import {
   createChannelBodySchema,
   formatValidationIssues,
   updateChannelBodySchema,
+  updateChannelProfileBodySchema,
 } from "./channel.schema.js";
 import type { ChannelsService } from "./channel.service.js";
 
@@ -47,6 +48,27 @@ export function createChannelsRouter(service: ChannelsService): Router {
     const params = parseParams(channelIdParamsSchema, req.params);
     const body = parseBody(updateChannelBodySchema, req.body);
     const updated = service.updateChannel(params.id, body);
+    res.json(
+      createSuccessResponse(updated, {
+        requestId: getRequestId(res),
+      }),
+    );
+  });
+
+  router.get("/:id/profile", (req, res) => {
+    const params = parseParams(channelIdParamsSchema, req.params);
+    const profile = service.getChannelProfile(params.id);
+    res.json(
+      createSuccessResponse(profile, {
+        requestId: getRequestId(res),
+      }),
+    );
+  });
+
+  router.patch("/:id/profile", (req, res) => {
+    const params = parseParams(channelIdParamsSchema, req.params);
+    const body = parseBody(updateChannelProfileBodySchema, req.body);
+    const updated = service.updateChannelProfile(params.id, body, getRequestId(res));
     res.json(
       createSuccessResponse(updated, {
         requestId: getRequestId(res),

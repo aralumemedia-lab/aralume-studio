@@ -17,7 +17,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | completed | released | PR #22 mergeado; OAuth com dois escopos, descoberta, selecao, upload privado/nao listado, consulta, replay idempotente, isolamento e revogacao validados. |
 | 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | completed | released | PR #23 mergeada em `9b89d1be04e7a6e319efb9a957282097c4854f31`; gate E14 atendido. |
-| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃO ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
+| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃƒO ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
 
@@ -47,15 +47,15 @@
 
 - Sprint 14 executada em 2026-07-15 na branch `codex/sprint-14-v1-acceptance`, a partir de `d78959a47a2bafbb343408d703eafafec8c6df59`.
 - S12 e S13 foram confirmadas como encerradas no preflight.
-- O gate concluiu com veredito `V1.0 NÃO ACEITA`; 5 criterios passaram, 5 falharam e 8 ficaram sem prova suficiente.
-- A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementação.
-- E15 foi executado como gate documental; V1.0 não está liberada para release.
+- O gate concluiu com veredito `V1.0 NÃƒO ACEITA`; 5 criterios passaram, 5 falharam e 8 ficaram sem prova suficiente.
+- A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementaÃ§Ã£o.
+- E15 foi executado como gate documental; V1.0 nÃ£o estÃ¡ liberada para release.
 
 ## Proposta de remediacao apos Sprint 14
 
 - Epic selecionado: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
-- Critérios V1 mapeados: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia de perfil editorial.
+- CritÃ©rios V1 mapeados: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia de perfil editorial.
 - Itens R14 mapeados: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
 - Historias propostas: H16.1 a H16.4.
 - Sequencia sugerida: Sprint proposta A para pauta/pesquisa/fontes/claims; Sprint proposta B para roteiro/versoes/plano visual/cenas/E2E.
@@ -87,3 +87,13 @@
 - Esta pagina nao substitui specs.
 - Mudanca material de escopo exige atualizacao documental antes do codigo.
 - Nenhuma limpeza administrativa ou remocao da branch da Sprint 12 pertence a S13.
+
+## Sprint 15 - Editorial Profile, Ideas and Research
+
+- Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
+- Spec normativa: `docs/specs/016-sprint-15-editorial-profile-ideas-research.md`.
+- Estado: planned / not started.
+- Objetivo: entregar H16.0, H16.1 e H16.2 como primeira fatia funcional do E16.
+- Escopo: perfil editorial, pautas, pesquisa, fontes e claims.
+- Fora de escopo: H16.3, H16.4, media, render, clips, governanca, publicacao, dashboard, agent office e novo V1 Acceptance.
+- Sequencia posterior: Sprint 16 fica reservada para H16.3 e H16.4; E17, E18 e E19 seguem somente apos o E16 ser completado.

@@ -7,6 +7,7 @@ export type AuditStatus = "success" | "warning" | "failed";
 export type AuditLog = {
   id: ID;
   channelId?: ID;
+  requestId?: string;
   actorType: AuditActorType;
   actorName: string;
   action: string;

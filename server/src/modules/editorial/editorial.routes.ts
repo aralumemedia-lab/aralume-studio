@@ -40,7 +40,7 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.post("/content-ideas", (req, res) => {
     const body = parseBody(contentIdeaCreateSchema, req.body);
-    const created = service.createContentIdea(body);
+    const created = service.createContentIdea(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -53,7 +53,7 @@ export function createEditorialRouter(service: EditorialService): Router {
   router.patch("/content-ideas/:id", (req, res) => {
     const params = parseParams(contentIdeaIdParamsSchema, req.params);
     const body = parseBody(contentIdeaPatchSchema, req.body);
-    const updated = service.updateContentIdea(params.id, body);
+    const updated = service.updateContentIdea(params.id, body, getRequestId(res));
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
@@ -77,7 +77,7 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.post("/research-sessions", (req, res) => {
     const body = parseBody(researchSessionCreateSchema, req.body);
-    const created = service.createResearchSession(body);
+    const created = service.createResearchSession(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -87,17 +87,29 @@ export function createEditorialRouter(service: EditorialService): Router {
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 
+  router.get("/research-sessions/:id/sources", (req, res) => {
+    const params = parseParams(researchSessionIdParamsSchema, req.params);
+    const items = service.listResearchSources({ researchSessionId: params.id });
+    res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
+  });
+
   router.post("/research-sessions/:id/sources", (req, res) => {
     const params = parseParams(researchSessionIdParamsSchema, req.params);
     const body = parseBody(researchSourceCreateSchema, req.body);
-    const created = service.createResearchSource(params.id, body);
+    const created = service.createResearchSource(params.id, body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
+  });
+
+  router.get("/research-sessions/:id/claims", (req, res) => {
+    const params = parseParams(researchSessionIdParamsSchema, req.params);
+    const items = service.listClaimEvidence({ researchSessionId: params.id });
+    res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
   });
 
   router.post("/research-sessions/:id/claims", (req, res) => {
     const params = parseParams(researchSessionIdParamsSchema, req.params);
     const body = parseBody(claimEvidenceCreateSchema, req.body);
-    const created = service.createClaimEvidence(params.id, body);
+    const created = service.createClaimEvidence(params.id, body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 

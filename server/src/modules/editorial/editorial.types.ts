@@ -222,6 +222,7 @@ export type ContentIdeaCreateInput = {
   clipPotentialScore: number;
   riskLevel: RiskLevel;
   status: ContentStatus;
+  requestedBy?: string;
 };
 
 export type ContentIdeaPatchInput = Partial<Omit<ContentIdeaCreateInput, "channelId">>;
@@ -236,6 +237,7 @@ export type ResearchSessionCreateInput = {
   confidenceScore: number;
   riskLevel: RiskLevel;
   summary?: string;
+  requestedBy?: string;
 };
 
 export type ResearchSourceCreateInput = {
@@ -247,6 +249,7 @@ export type ResearchSourceCreateInput = {
   confidenceLevel: ConfidenceLevel;
   freshnessRisk: RiskLevel;
   usageNotes: string;
+  requestedBy?: string;
 };
 
 export type ClaimEvidenceCreateInput = {
@@ -256,6 +259,7 @@ export type ClaimEvidenceCreateInput = {
   informationType: InformationType;
   confidenceLevel: ConfidenceLevel;
   riskLevel: RiskLevel;
+  requestedBy?: string;
 };
 
 export type ScriptCreateInput = {
