@@ -1,0 +1,116 @@
+# E18 - Stories
+
+## H18.1 - Qualidade tecnica operavel pelo frontend
+
+- Actor: revisor tecnico
+- Objective: inspect quality findings from the frontend and keep them queryable after reload.
+- V1 criterion: V1-11
+- R14 item: R14-11
+- Dependencies: E17; quality-check contracts; review states
+- Priority: P1
+- Acceptance criteria:
+  - The operator can review a quality finding from the governance surface.
+  - The blocked or approved state remains visible after reload.
+  - Invalid transitions are rejected.
+  - The action creates an audit entry.
+- Tests:
+  - Server HTTP tests for quality-check flows.
+  - Frontend route or panel tests for loading, empty, error and success states.
+  - Browser E2E on the required viewports.
+- Evidence:
+  - Acceptance matrix row for V1-11.
+  - Quality decision visible after reload.
+  - Audit log entry and screenshot.
+- DoR:
+  - The quality gate rules are explicit.
+  - The browser path is mapped.
+- DoD:
+  - The quality state persists through reload.
+  - The channel isolation and audit evidence are visible.
+
+## H18.2 - Conformidade e direitos operavel pelo frontend
+
+- Actor: compliance reviewer
+- Objective: inspect compliance findings and block unsafe content from the frontend.
+- V1 criterion: V1-12
+- R14 item: R14-12
+- Dependencies: H18.1; compliance contracts; blocked-state rules
+- Priority: P1
+- Acceptance criteria:
+  - The operator can review a compliance finding from the governance surface.
+  - A blocked state prevents unsafe progression.
+  - The result remains visible after reload.
+  - Invalid or cross-channel findings are rejected.
+  - The action creates an audit entry.
+- Tests:
+  - Server HTTP tests for compliance flows.
+  - Frontend route or panel tests for loading, empty, error and success states.
+  - Browser E2E with a blocked case.
+- Evidence:
+  - Acceptance matrix row for V1-12.
+  - Compliance block visible after reload.
+  - Audit log entry and screenshot.
+- DoR:
+  - The compliance gate rules are explicit.
+  - The same-channel rule is explicit.
+- DoD:
+  - The compliance state persists through reload.
+  - The blocked-state semantics are proven.
+
+## H18.3 - Aprovacao humana operavel pelo frontend
+
+- Actor: human approver
+- Objective: approve, reject or request changes from the frontend and keep the decision history visible.
+- V1 criterion: V1-13
+- R14 item: R14-13
+- Dependencies: H18.2; approval decision contracts; history preservation
+- Priority: P1
+- Acceptance criteria:
+  - The operator can approve, reject or request changes.
+  - The prior decision history remains immutable.
+  - The current decision remains visible after reload.
+  - Invalid transitions are rejected.
+  - The action creates an audit entry.
+- Tests:
+  - Server unit and HTTP tests for approval decisions and conflicts.
+  - Frontend route or panel tests for loading, empty, error and success states.
+  - Browser E2E covering the decision history.
+- Evidence:
+  - Acceptance matrix row for V1-13.
+  - Decision history visible in the UI.
+  - Audit log entry and screenshot.
+- DoR:
+  - The approval decision model is stable.
+  - The browser path is mapped.
+- DoD:
+  - The approval history survives reload.
+  - The channel isolation and audit evidence are visible.
+
+## H18.4 - Publicacao assistida operavel pelo frontend
+
+- Actor: operator / publisher
+- Objective: prepare a publication draft or readiness package without auto-send.
+- V1 criterion: V1-14
+- R14 item: R14-14
+- Dependencies: H18.3; publication target and readiness contracts; approval and compliance gates
+- Priority: P1
+- Acceptance criteria:
+  - The operator can prepare a publication draft or readiness package.
+  - Readiness and blocked states remain explicit.
+  - The package remains visible after reload.
+  - Auto-send external behavior is not triggered.
+  - The action creates an audit entry.
+- Tests:
+  - Server HTTP tests for publication target and job flows.
+  - Frontend route tests for loading, empty, error and success states.
+  - Browser E2E for readiness and draft states.
+- Evidence:
+  - Acceptance matrix row for V1-14.
+  - Publication readiness visible after reload.
+  - Audit log entry and screenshot.
+- DoR:
+  - The publication readiness contract is stable.
+  - The no-auto-send rule is explicit.
+- DoD:
+  - The publication package survives reload.
+  - The channel isolation and audit evidence are visible.

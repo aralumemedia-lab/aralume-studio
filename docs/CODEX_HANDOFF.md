@@ -99,6 +99,33 @@ recriacao do frontend e limpeza administrativa da S12.
 - Dados insuficientes nao podem resultar em recomendacao falsa.
 - A regra nao demonstra causalidade; deve comunicar sinal e limitacoes.
 
+## Handoff - E16
+
+- Estado: definicao documental do primeiro epico de remediacao da V1 concluida.
+- Nota: bloco historico da proposta inicial do E16; a sequencia consolidada e vigente esta mais abaixo e inclui V1-02 no mesmo epico.
+- Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
+- Iniciativa: Remediacao da Operabilidade da V1.
+- Critérios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
+- Itens R14: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
+- Historias: H16.1, H16.2, H16.3, H16.4.
+- Sequencia proposta: Sprint proposta A e Sprint proposta B.
+- Gate futuro: reaceite da V1 somente apos evidencias, contratos e testes E2E do E16.
+- Nao iniciado: nenhuma historia foi implementada, nenhuma sprint foi iniciada, nenhum release foi preparado.
+
+## Handoff - Remediacao V1
+
+- Estado: planejamento documental consolidado para a remediacao da V1.
+- Epic 1: E16 - Pipeline Editorial Operavel pelo Frontend.
+- Epic 2: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
+- Epic 3: E18 - Governanca e Publicacao Assistida pelo Frontend.
+- Epic 4: E19 - Cockpits Reais e Evidencias Transversais.
+- Critérios V1: V1-02..V1-14, com R14-02..R14-14.
+- Itens tecnicos: R14-T01 e R14-T02.
+- Sequencia recomendada: Sprint proposta A, B, C, D, e depois R14-REACCEPT.
+- Primeira sprint recomendada: Sprint proposta A, focada em E16 com o perfil editorial como prerequisito inseparavel.
+- Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
+- Nao iniciado: nenhuma remediacao funcional comecou nesta execucao.
+
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
