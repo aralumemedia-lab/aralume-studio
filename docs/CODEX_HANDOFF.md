@@ -1,4 +1,4 @@
-# Codex Handoff - Sprint 13
+﻿# Codex Handoff - Sprint 13
 
 ## Estado atual
 
@@ -12,7 +12,7 @@
 - A Sprint 13 foi encerrada no PR #23, merge commit
   `9b89d1be04e7a6e319efb9a957282097c4854f31`.
 - A Sprint 14/V1 Acceptance foi concluida em branch isolada para validacao, sem release ou deploy.
-- O resultado foi `V1.0 NÃƒO ACEITA`: 5 `PASS`, 5 `FAIL` e 8 `NOT PROVEN`; matriz, relatÃ³rio, evidÃªncias, limitaÃ§Ãµes e remediaÃ§Ã£o estÃ£o documentados.
+- O resultado foi `V1.0 NÃƒÆ’O ACEITA`: 5 `PASS`, 5 `FAIL` e 8 `NOT PROVEN`; matriz, relatÃƒÂ³rio, evidÃƒÂªncias, limitaÃƒÂ§ÃƒÂµes e remediaÃƒÂ§ÃƒÂ£o estÃƒÂ£o documentados.
 
 ## Baseline e branch
 
@@ -83,14 +83,14 @@ recriacao do frontend e limpeza administrativa da S12.
 
 - Branch: `codex/sprint-14-v1-acceptance`.
 - Base: `d78959a47a2bafbb343408d703eafafec8c6df59`.
-- PR: #24; commit-base do aceite e das evidÃªncias: `22388e7`.
-- O head vigente da PR deve ser consultado diretamente no GitHub; correÃ§Ãµes documentais posteriores foram feitas na mesma PR.
-- Merge ainda pendente de nova revisÃ£o; release permanece bloqueada e remediaÃ§Ãµes nÃ£o foram iniciadas.
+- PR: #24; commit-base do aceite e das evidÃƒÂªncias: `22388e7`.
+- O head vigente da PR deve ser consultado diretamente no GitHub; correÃƒÂ§ÃƒÂµes documentais posteriores foram feitas na mesma PR.
+- Merge ainda pendente de nova revisÃƒÂ£o; release permanece bloqueada e remediaÃƒÂ§ÃƒÂµes nÃƒÂ£o foram iniciadas.
 - Gates tecnicos: lint, typecheck, 64 testes, build e `git diff --check` aprovados.
-- Veredito de revisÃ£o documental: `APPROVE_WITH_NOTES`, condicionado Ã  revisÃ£o/aprovaÃ§Ã£o objetiva no GitHub.
+- Veredito de revisÃƒÂ£o documental: `APPROVE_WITH_NOTES`, condicionado ÃƒÂ  revisÃƒÂ£o/aprovaÃƒÂ§ÃƒÂ£o objetiva no GitHub.
 - Bloqueio principal: o frontend ainda possui fluxos obrigatorios ausentes ou mockados.
-- Backlog de remediaÃ§Ã£o: seÃ§Ã£o "Remediacao pos-Sprint 14 (PROPOSTA â€” nao iniciada)" em `docs/PRODUCT_BACKLOG.md`.
-- Nenhuma release, tag, deploy, publicaÃ§Ã£o externa ou implementaÃ§Ã£o de remediaÃ§Ã£o foi iniciada.
+- Backlog de remediaÃƒÂ§ÃƒÂ£o: seÃƒÂ§ÃƒÂ£o "Remediacao pos-Sprint 14 (atualizada apos Sprint 15)" em `docs/PRODUCT_BACKLOG.md`.
+- Nenhuma release, tag, deploy, publicaÃƒÂ§ÃƒÂ£o externa ou implementaÃƒÂ§ÃƒÂ£o de remediaÃƒÂ§ÃƒÂ£o foi iniciada.
 
 ## Riscos
 
@@ -102,13 +102,13 @@ recriacao do frontend e limpeza administrativa da S12.
 ## Handoff - E16
 
 - Estado: definicao documental do primeiro epico de remediacao da V1 concluida.
-- Nota: bloco historico da proposta inicial do E16; a sequencia consolidada e vigente esta mais abaixo e inclui V1-02 no mesmo epico.
+- Nota: bloco historico da proposta inicial do E16; a entrega atual da Sprint 15 inclui H16.0-H16.2, e a sequencia consolidada vigente esta mais abaixo.
 - Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
-- CritÃ©rios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
+- CritÃƒÂ©rios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
 - Itens R14: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
-- Historias: H16.1, H16.2, H16.3, H16.4.
-- Sequencia proposta: Sprint proposta A e Sprint proposta B.
+- Historias: H16.0, H16.1, H16.2, H16.3, H16.4.
+- Sequencia proposta: Sprint 15 e Sprint 16.
 - Gate futuro: reaceite da V1 somente apos evidencias, contratos e testes E2E do E16.
 - Nao iniciado: nenhuma historia foi implementada, nenhuma sprint foi iniciada, nenhum release foi preparado.
 
@@ -119,7 +119,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - Epic 2: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
 - Epic 3: E18 - Governanca e Publicacao Assistida pelo Frontend.
 - Epic 4: E19 - Cockpits Reais e Evidencias Transversais.
-- CritÃ©rios V1: V1-02..V1-14, com R14-02..R14-14.
+- CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
 - Sequencia recomendada: Sprint proposta A, B, C, D, e depois R14-REACCEPT.
 - Primeira sprint recomendada: Sprint proposta A, focada em E16 com o perfil editorial como prerequisito inseparavel.
@@ -130,15 +130,16 @@ recriacao do frontend e limpeza administrativa da S12.
 
 - Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Spec normativa: `docs/specs/016-sprint-15-editorial-profile-ideas-research.md`.
-- Estado: planned / not started.
+- Estado: completed.
 - Historias: H16.0, H16.1 e H16.2.
+- Resultado: H16.0, H16.1 e H16.2 entregues no head da PR #26; H16.3 e H16.4 continuam pendentes.
 - Itens R14: R14-02, R14-03 e R14-04.
-- Sequencia: primeira fatia funcional do E16; H16.3 e H16.4 permanecem para a fatia seguinte do mesmo epic.
+- Sequencia: primeira fatia funcional do E16 entregue; H16.3 e H16.4 permanecem para a fatia seguinte do mesmo epic.
 - Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Nao iniciado: nenhuma remediacao funcional comecou nesta execucao.
+- Pendente: H16.3 e H16.4 nao iniciadas nesta execucao.
 
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
 reduzir os 56 existentes, persistencia e isolamento demonstrados, QA visual feito,
-PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance serÃ¡ necessÃ¡rio apÃ³s a remediaÃ§Ã£o.
+PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance serÃƒÂ¡ necessÃƒÂ¡rio apÃƒÂ³s a remediaÃƒÂ§ÃƒÂ£o.

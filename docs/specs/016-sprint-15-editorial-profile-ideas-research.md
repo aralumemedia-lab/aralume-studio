@@ -5,7 +5,7 @@
 - Spec ID: 016
 - Sprint number: 15
 - Spec title: Editorial Profile, Ideas and Research
-- Status: planned / not started
+- Status: completed
 - Date: 2026-07-15
 - Owner: Codex
 - Linked ADR: none
@@ -15,7 +15,7 @@
 - Epic ID: E16
 - Epic name: Pipeline Editorial Operavel pelo Frontend
 - Epic objective: make the editorial pipeline operable through the frontend so the operator can configure the channel profile, create ideas, create research sessions, register sources and claims, and reload the app with the same channel-scoped data.
-- Epic status: proposed / not started
+- Epic status: partial / in progress
 
 ## 3. Sprint objective
 
@@ -27,6 +27,7 @@
 - Problem being solved: the current repository shows editorial lists and partial actions, but it still does not prove the full channel-scoped path from profile setup to research evidence through the frontend.
 - Why this sprint exists now: Sprint 14 ended with V1.0 NAO ACEITA and the first remediation sprint must close the upstream editorial gaps before the remaining E16 stories can be planned.
 - Historical context: the earlier roadmap used a generic "Sprint proposta A" label; this sprint formalizes the first executable slice as Sprint 15.
+- Current head on PR #26 already implements H16.0, H16.1 and H16.2; H16.3 and H16.4 remain pending for the next slice.
 
 ## 5. Dependencies
 
@@ -172,7 +173,7 @@ Reason for exclusion: these stories belong to the next E16 slice and are intenti
 
 ## 20. Evidence
 
-- Required screenshots: 1366x768, 1600x900, 1792x1024, 1920x1080, sidebar expanded and collapsed, empty state, invalid form state and success state.
+- Required screenshots: `screenshots/sprint-15/channels-1366-expanded.png`, `screenshots/sprint-15/channels-1366-collapsed.png`, `screenshots/sprint-15/ideas-1600-success.png`, `screenshots/sprint-15/ideas-1366-invalid.png`, `screenshots/sprint-15/research-1792-success.png`, `screenshots/sprint-15/research-1920-reload.png`, `screenshots/sprint-15/research-1600-empty-channel-b.png`, `screenshots/sprint-15/research-1600-isolation.png`.
 - Required logs: browser reload proof, audit logs and backend test output.
 - Required reports: updated Sprint 15 documentation and traceability.
 - Required links: the draft PR and the relevant acceptance documents.
@@ -213,7 +214,7 @@ Reason for exclusion: these stories belong to the next E16 slice and are intenti
 
 ## 24. Gate of the sprint
 
-- Gate name: Sprint 15 ready for merge and draft PR.
+- Gate name: Sprint 15 accepted and mergeable.
 - Objective condition: H16.0, H16.1 and H16.2 are implemented, tested and evidenced without starting H16.3 or H16.4.
 - Verification method: backend tests, frontend route tests, browser E2E and screenshot sweep.
 - Pass criteria: the included records persist through reload, remain channel-scoped and emit audit logs.

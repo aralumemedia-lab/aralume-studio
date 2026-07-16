@@ -1,4 +1,4 @@
-# Next Sprints
+﻿# Next Sprints
 
 ## Regras de sequenciamento
 
@@ -17,7 +17,8 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | completed | released | PR #22 mergeado; OAuth com dois escopos, descoberta, selecao, upload privado/nao listado, consulta, replay idempotente, isolamento e revogacao validados. |
 | 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | completed | released | PR #23 mergeada em `9b89d1be04e7a6e319efb9a957282097c4854f31`; gate E14 atendido. |
-| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃƒO ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
+| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
+| 4 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed | not released | PR #26 entregou H16.0, H16.1 e H16.2; H16.3 e H16.4 permanecem pendentes. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
 
@@ -47,18 +48,18 @@
 
 - Sprint 14 executada em 2026-07-15 na branch `codex/sprint-14-v1-acceptance`, a partir de `d78959a47a2bafbb343408d703eafafec8c6df59`.
 - S12 e S13 foram confirmadas como encerradas no preflight.
-- O gate concluiu com veredito `V1.0 NÃƒO ACEITA`; 5 criterios passaram, 5 falharam e 8 ficaram sem prova suficiente.
-- A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementaÃ§Ã£o.
-- E15 foi executado como gate documental; V1.0 nÃ£o estÃ¡ liberada para release.
+- O gate concluiu com veredito `V1.0 NÃƒÆ’O ACEITA`; 5 criterios passaram, 5 falharam e 8 ficaram sem prova suficiente.
+- A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementaÃƒÂ§ÃƒÂ£o.
+- E15 foi executado como gate documental; V1.0 nÃƒÂ£o estÃƒÂ¡ liberada para release.
 
 ## Proposta de remediacao apos Sprint 14
 
 - Epic selecionado: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
-- CritÃ©rios V1 mapeados: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia de perfil editorial.
+- CritÃƒÂ©rios V1 mapeados: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia de perfil editorial.
 - Itens R14 mapeados: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
-- Historias propostas: H16.1 a H16.4.
-- Sequencia sugerida: Sprint proposta A para pauta/pesquisa/fontes/claims; Sprint proposta B para roteiro/versoes/plano visual/cenas/E2E.
+- Historias propostas: H16.0 a H16.4.
+- Sequencia sugerida: Sprint 15 para H16.0-H16.2; Sprint 16 para H16.3-H16.4.
 - Estado: planejamento documental concluido, sem inicio de remediacao, sem sprint iniciada e sem novo V1 Acceptance.
 - Reaceite futuro: somente apos evidencias front-end reais, persistencia, auditoria e isolamento por canal.
 
@@ -66,7 +67,7 @@
 
 | Ordem | Epic | Escopo principal | Tipo | Dependencias | Resultado esperado |
 | --- | --- | --- | --- | --- | --- |
-| Sprint proposta A | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-06 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes, claims, roteiro e plano visual operaveis |
+| Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes e claims operaveis |
 | Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-10 | funcional + frontend + backend + integracao | E16 concluida | narracao, ativos, render e cortes operaveis |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-14 | funcional + frontend + backend + governance | E17 concluida | qualidade, compliance, aprovacao e publicacao assistida operaveis |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
@@ -92,8 +93,9 @@
 
 - Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Spec normativa: `docs/specs/016-sprint-15-editorial-profile-ideas-research.md`.
-- Estado: planned / not started.
+- Estado: completed.
 - Objetivo: entregar H16.0, H16.1 e H16.2 como primeira fatia funcional do E16.
 - Escopo: perfil editorial, pautas, pesquisa, fontes e claims.
 - Fora de escopo: H16.3, H16.4, media, render, clips, governanca, publicacao, dashboard, agent office e novo V1 Acceptance.
+- Resultado: H16.0, H16.1 e H16.2 entregues no head da PR #26; H16.3 e H16.4 continuam pendentes.
 - Sequencia posterior: Sprint 16 fica reservada para H16.3 e H16.4; E17, E18 e E19 seguem somente apos o E16 ser completado.
