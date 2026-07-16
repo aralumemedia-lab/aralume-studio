@@ -542,6 +542,16 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(sourceResponse.status, 201);
     assert.equal(sourceJson.data.channelId, channelAJson.data.id);
 
+    const sourcesListResponse = await fetch(
+      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/sources`,
+    );
+    const sourcesList = (await sourcesListResponse.json()) as {
+      data: Array<{ id: string; researchSessionId: string }>;
+    };
+    assert.equal(sourcesListResponse.status, 200);
+    assert.equal(sourcesList.data.length, 1);
+    assert.equal(sourcesList.data[0].researchSessionId, sessionJson.data.id);
+
     const claimResponse = await fetch(
       `${baseUrl}/api/research-sessions/${sessionJson.data.id}/claims`,
       {
@@ -558,6 +568,16 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
       },
     );
     assert.equal(claimResponse.status, 201);
+
+    const claimsListResponse = await fetch(
+      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/claims`,
+    );
+    const claimsList = (await claimsListResponse.json()) as {
+      data: Array<{ id: string; sourceId: string }>;
+    };
+    assert.equal(claimsListResponse.status, 200);
+    assert.equal(claimsList.data.length, 1);
+    assert.equal(claimsList.data[0].sourceId, sourceJson.data.id);
 
     const scriptResponse = await fetch(`${baseUrl}/api/scripts`, {
       method: "POST",

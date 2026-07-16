@@ -1,6 +1,6 @@
 # E16 - Pipeline Editorial Operavel pelo Frontend
 
-- Status: proposed / not started
+- Status: partial / in progress
 - Epic name: Pipeline Editorial Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P1
@@ -12,6 +12,13 @@ Sprint 14 closed with `V1.0 NAO ACEITA`. The matrix still shows the editorial pi
 
 The first remediation epic must make the editorial pipeline operable by the frontend without expanding into media, render, clips, approvals, publication, metrics, costs, dashboard or agent-office work.
 
+## Sprint 15 slice
+
+- Included now: H16.0, H16.1 and H16.2.
+- Still pending: H16.3 and H16.4.
+- Sprint 15 is the first functional slice of E16 and does not close the epic.
+- Sprint 15 is delivered on the current head; E16 stays open until H16.3 and H16.4 land.
+
 ## Problem
 
 An operator can browse the editorial pipeline today, but the repository does not yet prove the whole flow as a frontend-operated, channel-scoped, auditable path with reload verification and traceability across artifacts.
@@ -22,11 +29,11 @@ Labels used below: `implemented`, `partial`, `only backend`, `only mock`, `absen
 
 | Capability | Frontend state | Backend state | Contracts | Persistence | Audit | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| Perfil editorial / V1-02 | partial | implemented | implemented | existing, but not demonstrable | absent | channel settings exist but the full operator flow is still not proven |
-| Pauta / V1-03 | partial | implemented | implemented | existing, but not demonstrable | absent | not demonstrable end to end |
-| Pesquisa / V1-04 | partial | implemented | implemented | existing, but not demonstrable | absent | not demonstrable end to end |
-| Fontes / V1-04 | only backend | implemented | implemented | existing, but not demonstrable | absent | service and route tests only |
-| Claims / V1-04 | only backend | implemented | implemented | existing, but not demonstrable | absent | service and route tests only |
+| Perfil editorial / V1-02 | implemented | implemented | implemented | implemented | implemented | implemented |
+| Pauta / V1-03 | implemented | implemented | implemented | implemented | implemented | implemented |
+| Pesquisa / V1-04 | implemented | implemented | implemented | implemented | implemented | implemented |
+| Fontes / V1-04 | implemented | implemented | implemented | implemented | implemented | implemented |
+| Claims / V1-04 | implemented | implemented | implemented | implemented | implemented | implemented |
 | Roteiro / V1-05 | partial | implemented | implemented | existing, but not demonstrable | absent | list and read paths exist; creation path still not proven in frontend |
 | Versoes / V1-05 | only backend | implemented | implemented | existing, but not demonstrable | absent | backend versioning is tested; frontend history flow is incomplete |
 | Plano visual / V1-06 | absent | implemented | implemented | existing, but not demonstrable | absent | no dedicated frontend operable surface proved |
@@ -156,4 +163,4 @@ Make the editorial pipeline operable through the frontend so an operator can:
 
 ## Final gate
 
-READY FOR SPRINT PLANNING when the story bundle is complete, evidence exists on the same head and the epic can be split into small sprint-sized slices without changing scope.
+Sprint 15 is already delivered on the current head; E16 remains open until H16.3 and H16.4 are implemented and evidenced on the next slice.

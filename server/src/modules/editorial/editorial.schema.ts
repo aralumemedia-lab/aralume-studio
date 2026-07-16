@@ -93,6 +93,7 @@ export const contentIdeaCreateSchema = z
     clipPotentialScore: positiveIntSchema.max(100),
     riskLevel: riskLevelSchema,
     status: contentStatusSchema,
+    requestedBy: z.string().trim().min(1).max(120).optional(),
   })
   .strict();
 
@@ -136,6 +137,7 @@ export const researchSessionCreateSchema = z
     confidenceScore: positiveIntSchema.max(100),
     riskLevel: riskLevelSchema,
     summary: z.string().trim().min(1).max(4000).optional(),
+    requestedBy: z.string().trim().min(1).max(120).optional(),
   })
   .strict();
 
@@ -163,6 +165,7 @@ export const researchSourceCreateSchema = z
     confidenceLevel: confidenceLevelSchema,
     freshnessRisk: riskLevelSchema,
     usageNotes: z.string().trim().min(1).max(4000),
+    requestedBy: z.string().trim().min(1).max(120).optional(),
   })
   .strict();
 
@@ -174,6 +177,7 @@ export const claimEvidenceCreateSchema = z
     informationType: informationTypeSchema,
     confidenceLevel: confidenceLevelSchema,
     riskLevel: riskLevelSchema,
+    requestedBy: z.string().trim().min(1).max(120).optional(),
   })
   .strict();
 

@@ -1,6 +1,6 @@
 # E16 - Traceability
 
-| Critério V1 | R14 | Historia | Aceite | Tarefa | Contrato | Componente | Endpoint | Teste | Evidencia |
+| CritÃ©rio V1 | R14 | Historia | Aceite | Tarefa | Contrato | Componente | Endpoint | Teste | Evidencia |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | V1-02 Perfil editorial | R14-02 | H16.0 | Abrir o perfil do canal, salvar e ver o mesmo estado apos reload | Implementar mutacao de perfil e remover qualquer mascaramento mock | `Channel`, `ChannelSettings`, `GET/PATCH /api/channels/:id` | `/channels` | `GET/PATCH /api/channels/:id`, `GET /api/channels/:id/settings` | `server/test/channels.test.ts`, `src/services/channels-api.test.ts`, `src/tests/channels-route.test.ts`, browser E2E | `docs/acceptance/v1/V1_ACCEPTANCE_MATRIX.md`, `V1_ACCEPTANCE_REPORT.md`, `V1_EVIDENCE_INDEX.md` |
 | V1-03 Pauta | R14-03 | H16.1 | Criar ideia, recarregar e ver o mesmo ID no mesmo canal | Implementar mutacao de pauta e remover mock da acao primaria | `ContentIdea`, `POST/PATCH /api/content-ideas`, error envelope | `/ideas` | `POST /api/content-ideas`, `PATCH /api/content-ideas/:id`, `GET /api/content-ideas?channelId=` | `server/test/editorial.test.ts`, `src/services/editorial-api.test.ts`, `src/tests/editorial-route-integrations.test.ts`, route tests, browser E2E | `docs/acceptance/v1/V1_ACCEPTANCE_MATRIX.md`, `V1_ACCEPTANCE_REPORT.md`, `V1_EVIDENCE_INDEX.md` |
@@ -12,3 +12,9 @@
 
 - V1-02 / R14-02 is an upstream dependency for channel context and editorial profile alignment.
 - It is included in the first epic bundle as H16.0 because the editorial flow depends on it.
+
+## Sprint 15 note
+
+- Covered now: V1-02, V1-03 and V1-04.
+- Pending later: V1-05 and V1-06.
+- H16.3 and H16.4 remain outside this sprint slice.

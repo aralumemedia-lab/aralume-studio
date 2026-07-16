@@ -238,6 +238,54 @@ test("GET /api/channels and write endpoints work with standard envelopes", async
     assert.equal(settings.data.channelId, created.data.id);
     assert.equal(settings.data.id, `cs_${created.data.id}`);
     assert.equal(settings.data.averageVideoDurationSeconds, 600);
+
+    const profileResponse = await fetch(`${baseUrl}/api/channels/${created.data.id}/profile`);
+    const profile = (await profileResponse.json()) as {
+      data: {
+        channel: { id: string; language: string };
+        editorialRules: { minimumSources: number };
+      };
+    };
+    assert.equal(profileResponse.status, 200);
+    assert.equal(profile.data.channel.id, created.data.id);
+    assert.equal(profile.data.editorialRules.minimumSources, 3);
+
+    const profilePatchResponse = await fetch(`${baseUrl}/api/channels/${created.data.id}/profile`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        editorialTone: "Didatico",
+        language: "en-US",
+        audience: "Publico A",
+        allowedFormats: ["horizontal", "vertical"],
+        editorialRules: {
+          minimumSources: 4,
+          prohibitedClaims: ["claim-a"],
+          complianceNotes: ["nota-a"],
+        },
+      }),
+    });
+    const profilePatch = (await profilePatchResponse.json()) as {
+      data: {
+        channel: { language: string; audience: string };
+        editorialRules: { minimumSources: number };
+      };
+      meta: { requestId: string };
+    };
+    assert.equal(profilePatchResponse.status, 200);
+    assert.equal(profilePatch.data.channel.language, "en-US");
+    assert.equal(profilePatch.data.editorialRules.minimumSources, 4);
+    assert.ok(profilePatch.meta.requestId);
+
+    const auditResponse = await fetch(`${baseUrl}/api/audit-logs?channelId=${created.data.id}`);
+    const auditJson = (await auditResponse.json()) as {
+      data: Array<{ action: string; entityType: string; requestId?: string }>;
+    };
+    assert.equal(auditResponse.status, 200);
+    assert.equal(
+      auditJson.data.some((entry) => entry.action === "channel.profile.updated"),
+      true,
+    );
   } finally {
     await stopServer(server);
   }

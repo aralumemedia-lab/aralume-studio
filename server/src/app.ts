@@ -113,6 +113,7 @@ export function createApp(options: CreateAppOptions = {}) {
     (!options.channelsRepository
       ? createAuditRepository(auditDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT })
       : createAuditRepository(undefined, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT }));
+  const auditService = createAuditService(auditRepository);
   const publicationsRepository =
     options.publicationsRepository ??
     (!options.channelsRepository
@@ -127,8 +128,10 @@ export function createApp(options: CreateAppOptions = {}) {
     (!options.channelsRepository
       ? createCostsRepository(costsDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT })
       : createCostsRepository(undefined, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT }));
-  const channelsService = createChannelsService(channelsRepository);
-  const editorialService = createEditorialService(editorialRepository, channelsRepository);
+  const channelsService = createChannelsService(channelsRepository, { auditService });
+  const editorialService = createEditorialService(editorialRepository, channelsRepository, {
+    auditService,
+  });
   const mediaAssetsService = createMediaAssetsService(
     mediaAssetsRepository,
     {
@@ -145,7 +148,6 @@ export function createApp(options: CreateAppOptions = {}) {
     editorialRepository,
     channelsRepository,
   );
-  const auditService = createAuditService(auditRepository);
   const metricsRepository =
     options.metricsRepository ??
     createMetricsRepository(metricsDemoSeed, { storageRoot: env.ARALUME_ASSET_STORAGE_ROOT });

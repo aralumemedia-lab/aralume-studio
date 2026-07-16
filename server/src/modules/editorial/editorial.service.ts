@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { AppError } from "../../http/errors.js";
+import type { AuditService } from "../audit/audit.service.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
 import {
   claimEvidenceCreateSchema,
@@ -54,28 +55,37 @@ export type EditorialIdFactory = () => string;
 export type CreateEditorialServiceOptions = {
   clock?: EditorialClock;
   idFactory?: EditorialIdFactory;
+  auditService?: AuditService;
 };
 
 export type EditorialService = {
   listContentIdeas(filters?: ContentIdeaFilters): ContentIdea[];
   getContentIdea(id: ID): ContentIdea;
-  createContentIdea(input: ContentIdeaCreateInput): ContentIdea;
-  updateContentIdea(id: ID, input: ContentIdeaPatchInput): ContentIdea;
+  createContentIdea(input: ContentIdeaCreateInput, requestId?: string): ContentIdea;
+  updateContentIdea(id: ID, input: ContentIdeaPatchInput, requestId?: string): ContentIdea;
   listProductionItems(filters?: ProductionItemFilters): ProductionItem[];
   getProductionItem(id: ID): ProductionItem;
   listResearchSessions(filters?: ResearchSessionFilters): ResearchSession[];
   getResearchSession(id: ID): ResearchSession;
-  createResearchSession(input: ResearchSessionCreateInput): ResearchSession;
+  createResearchSession(input: ResearchSessionCreateInput, requestId?: string): ResearchSession;
   listResearchSources(filters?: { channelId?: ID; researchSessionId?: ID }): ResearchSource[];
   getResearchSource(id: ID): ResearchSource;
-  createResearchSource(researchSessionId: ID, input: ResearchSourceCreateInput): ResearchSource;
+  createResearchSource(
+    researchSessionId: ID,
+    input: ResearchSourceCreateInput,
+    requestId?: string,
+  ): ResearchSource;
   listClaimEvidence(filters?: {
     channelId?: ID;
     researchSessionId?: ID;
     sourceId?: ID;
   }): ClaimEvidence[];
   getClaimEvidence(id: ID): ClaimEvidence;
-  createClaimEvidence(researchSessionId: ID, input: ClaimEvidenceCreateInput): ClaimEvidence;
+  createClaimEvidence(
+    researchSessionId: ID,
+    input: ClaimEvidenceCreateInput,
+    requestId?: string,
+  ): ClaimEvidence;
   listScripts(filters?: ScriptFilters): Script[];
   getScript(id: ID): Script;
   createScript(input: ScriptCreateInput): Script;
@@ -99,6 +109,7 @@ export function createEditorialService(
 ): EditorialService {
   const clock = options.clock ?? (() => new Date());
   const idFactory = options.idFactory ?? (() => randomUUID());
+  const auditService = options.auditService;
 
   return {
     listContentIdeas(filters = {}) {
@@ -110,7 +121,7 @@ export function createEditorialService(
       return getRequiredContentIdea(repository, id);
     },
 
-    createContentIdea(input) {
+    createContentIdea(input, requestId) {
       const parsed = contentIdeaCreateSchema.parse(input);
       assertChannelExists(channelsRepository, parsed.channelId);
 
@@ -124,11 +135,27 @@ export function createEditorialService(
 
       repository.upsertContentIdea(idea);
       repository.upsertProductionItem(buildProductionItemForIdea(idea, undefined, now));
+      recordAudit(auditService, {
+        requestId,
+        channelId: idea.channelId,
+        actorType: "user",
+        actorName: parsed.requestedBy?.trim() || "Aralume Studio",
+        action: "content_idea.created",
+        entityType: "ContentIdea",
+        entityId: idea.id,
+        status: "success",
+        message: "Content idea created.",
+        metadata: {
+          title: idea.title,
+          status: idea.status,
+          niche: idea.niche,
+        },
+      });
 
       return idea;
     },
 
-    updateContentIdea(id, input) {
+    updateContentIdea(id, input, requestId) {
       const existing = getRequiredContentIdea(repository, id);
       const parsed = contentIdeaPatchSchema.parse(input);
       const now = toIso(clock());
@@ -146,6 +173,22 @@ export function createEditorialService(
           now,
         ),
       );
+      recordAudit(auditService, {
+        requestId,
+        channelId: next.channelId,
+        actorType: "user",
+        actorName: parsed.requestedBy?.trim() || "Aralume Studio",
+        action: "content_idea.updated",
+        entityType: "ContentIdea",
+        entityId: next.id,
+        status: "success",
+        message: "Content idea updated.",
+        metadata: {
+          title: next.title,
+          status: next.status,
+          niche: next.niche,
+        },
+      });
 
       return next;
     },
@@ -173,7 +216,7 @@ export function createEditorialService(
       return getRequiredResearchSession(repository, id);
     },
 
-    createResearchSession(input) {
+    createResearchSession(input, requestId) {
       const parsed = researchSessionCreateSchema.parse(input);
       assertChannelExists(channelsRepository, parsed.channelId);
       const contentIdea = getRequiredContentIdea(repository, parsed.contentId);
@@ -189,6 +232,22 @@ export function createEditorialService(
 
       repository.upsertResearchSession(session);
       advanceIdeaStage(repository, contentIdea, "research", now);
+      recordAudit(auditService, {
+        requestId,
+        channelId: session.channelId,
+        actorType: "user",
+        actorName: parsed.requestedBy?.trim() || "Aralume Studio",
+        action: "research_session.created",
+        entityType: "ResearchSession",
+        entityId: session.id,
+        status: "success",
+        message: "Research session created.",
+        metadata: {
+          contentId: session.contentId,
+          sourceCount: session.sourceCount,
+          claimCount: session.claimCount,
+        },
+      });
       return session;
     },
 
@@ -206,7 +265,7 @@ export function createEditorialService(
       return found;
     },
 
-    createResearchSource(researchSessionId, input) {
+    createResearchSource(researchSessionId, input, requestId) {
       const session = getRequiredResearchSession(repository, researchSessionId);
       const parsed = researchSourceCreateSchema.parse(input);
       const now = toIso(clock());
@@ -226,6 +285,23 @@ export function createEditorialService(
         sourceCount: session.sourceCount + 1,
         updatedAt: now,
       });
+      recordAudit(auditService, {
+        requestId,
+        channelId: source.channelId,
+        actorType: "user",
+        actorName: parsed.requestedBy?.trim() || "Aralume Studio",
+        action: "research_source.created",
+        entityType: "ResearchSource",
+        entityId: source.id,
+        status: "success",
+        message: "Research source created.",
+        metadata: {
+          researchSessionId: source.researchSessionId,
+          sourceType: source.sourceType,
+          confidenceLevel: source.confidenceLevel,
+          url: source.url,
+        },
+      });
 
       return source;
     },
@@ -244,7 +320,7 @@ export function createEditorialService(
       return found;
     },
 
-    createClaimEvidence(researchSessionId, input) {
+    createClaimEvidence(researchSessionId, input, requestId) {
       const session = getRequiredResearchSession(repository, researchSessionId);
       const parsed = claimEvidenceCreateSchema.parse(input);
       const source = getRequiredResearchSource(repository, parsed.sourceId);
@@ -272,6 +348,23 @@ export function createEditorialService(
         ...session,
         claimCount: session.claimCount + 1,
         updatedAt: now,
+      });
+      recordAudit(auditService, {
+        requestId,
+        channelId: claim.channelId,
+        actorType: "user",
+        actorName: parsed.requestedBy?.trim() || "Aralume Studio",
+        action: "claim_evidence.created",
+        entityType: "ClaimEvidence",
+        entityId: claim.id,
+        status: "success",
+        message: "Claim evidence created.",
+        metadata: {
+          researchSessionId: claim.researchSessionId,
+          sourceId: claim.sourceId,
+          informationType: claim.informationType,
+          confidenceLevel: claim.confidenceLevel,
+        },
       });
 
       return claim;
@@ -796,5 +889,24 @@ function conflict(message: string, details: Record<string, unknown>): AppError {
     status: 409,
     message,
     details,
+  });
+}
+
+type MutationAuditInput = Omit<
+  Parameters<NonNullable<AuditService>["recordAuditLog"]>[0],
+  "id" | "createdAt"
+> & {
+  requestId?: string;
+};
+
+function recordAudit(auditService: AuditService | undefined, input: MutationAuditInput): void {
+  if (!auditService) {
+    return;
+  }
+
+  const { requestId, ...audit } = input;
+  auditService.recordAuditLog({
+    ...audit,
+    metadata: { ...(audit.metadata ?? {}), ...(requestId ? { requestId } : {}) },
   });
 }

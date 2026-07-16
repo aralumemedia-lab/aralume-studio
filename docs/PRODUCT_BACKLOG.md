@@ -1,4 +1,4 @@
-# Product Backlog
+﻿# Product Backlog
 
 Este backlog e um indice de planejamento. As specs continuam sendo os contratos
 normativos das sprints.
@@ -12,7 +12,7 @@ normativos das sprints.
 | E12 | Publicacao Assistida | Preparar publicacao com aprovacao, compliance e sem envio automatico. | completed | Pacote pronto sem envio externo automatico. | E10, E11 |
 | E13 | Integracoes Reais Autorizadas | Conectar provedores com governanca, autorizacao e seguranca. | completed | Integracao oficial sem segredo e com destino server-side comprovado. | E12; ADR 002; PR #22 |
 | E14 | Metricas e Aprendizado | Fechar o ciclo com metricas por canal e recomendacoes assistidas. | completed | Metricas geram recomendacao editorial por canal. | E13 concluido; PR #23 mergeada |
-| E15 | Hardening V1.0 | Consolidar a base operacional demonstravel para V1.0. | completed | Gate de aceite executado; veredito binario `V1.0 NÃO ACEITA`; remediacao formalizada abaixo. | E13 e E14 concluidos |
+| E15 | Hardening V1.0 | Consolidar a base operacional demonstravel para V1.0. | completed | Gate de aceite executado; veredito binario `V1.0 NÃƒÆ’O ACEITA`; remediacao formalizada abaixo. | E13 e E14 concluidos |
 
 ## Sprints formalizadas
 
@@ -21,7 +21,7 @@ normativos das sprints.
 | S11 | Publicacao Assistida | E12 | `docs/specs/011-publication-assisted.md` | completed | PR #19 mergeado. |
 | S12 | Integracoes Reais Autorizadas | E13 | `docs/specs/015-authorized-real-integrations.md` | completed | PR #22; validacao real concluida em 2026-07-15. |
 | S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | completed | PR #23 mergeada por merge commit `9b89d1be04e7a6e319efb9a957282097c4854f31`. |
-| S14 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | completed | Gate concluido com veredito `V1.0 NÃO ACEITA`; 13 criterios pendentes; PR #24 documental. |
+| S14 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | completed | Gate concluido com veredito `V1.0 NÃƒÆ’O ACEITA`; 13 criterios pendentes; PR #24 documental. |
 
 ## Historias da Sprint 11
 
@@ -63,11 +63,13 @@ aplicacao automatica de recomendacoes, migrations SQL, hardening e V1 Acceptance
 
 ## Remediacao V1 - roadmap consolidado
 
-Esta secao consolida a sequencia apos a Sprint 14 e supera a proposta inicial restrita ao E16.
+Esta secao consolida a sequencia apos a Sprint 14 e formaliza a primeira fatia funcional do E16 como Sprint 15.
+Sprint 15 foi executada na PR #26; Sprint 16 permanece planejada para H16.3 e H16.4.
 
 | Sequencia | Epic | Criterios V1 | Itens R14 | Tipo principal | Saida esperada |
 | --- | --- | --- | --- | --- | --- |
-| Sprint proposta A | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02, V1-03, V1-04, V1-05, V1-06 | R14-02, R14-03, R14-04, R14-05, R14-06 | funcional + frontend + UX | perfil editorial, pauta, pesquisa, fontes, claims, roteiro e plano visual operaveis no frontend |
+| Sprint 15 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04 | funcional + frontend + UX | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
+| Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05, V1-06 | R14-05, R14-06 | funcional + frontend + UX | roteiro versionado, versoes e plano visual com cenas operaveis no frontend |
 | Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08, V1-09, V1-10 | R14-07, R14-08, R14-09, R14-10 | funcional + frontend + backend + integracao | narracao, ativos, render e cortes operaveis no frontend |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13, V1-14 | R14-11, R14-12, R14-13, R14-14 | funcional + frontend + backend + governance | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | R14-T01, R14-T02 | technical + evidence + QA | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
@@ -77,11 +79,11 @@ Esta secao consolida a sequencia apos a Sprint 14 e supera a proposta inicial re
 
 | Criterio V1 | R14 | Epic | Sprint sugerida |
 | --- | --- | --- | --- |
-| V1-02 | R14-02 | E16 | Sprint proposta A |
-| V1-03 | R14-03 | E16 | Sprint proposta A |
-| V1-04 | R14-04 | E16 | Sprint proposta A |
-| V1-05 | R14-05 | E16 | Sprint proposta A |
-| V1-06 | R14-06 | E16 | Sprint proposta A |
+| V1-02 | R14-02 | E16 | Sprint 15 |
+| V1-03 | R14-03 | E16 | Sprint 15 |
+| V1-04 | R14-04 | E16 | Sprint 15 |
+| V1-05 | R14-05 | E16 | Sprint 16 |
+| V1-06 | R14-06 | E16 | Sprint 16 |
 | V1-07 | R14-07 | E17 | Sprint proposta B |
 | V1-08 | R14-08 | E17 | Sprint proposta B |
 | V1-09 | R14-09 | E17 | Sprint proposta B |
@@ -103,34 +105,34 @@ Esta secao consolida a sequencia apos a Sprint 14 e supera a proposta inicial re
 - A Sprint 14 foi iniciada em branch isolada e nao autoriza merge, release ou deploy.
 - O primeiro candidato nao atende todos os 18 criterios obrigatorios; o resultado detalhado esta em `docs/acceptance/v1/`.
 
-## Remediacao pos-Sprint 14 (PROPOSTA — nao iniciada)
+## Remediacao pos-Sprint 14 (atualizada apos Sprint 15)
 
-Esta secao transforma os 13 criterios `FAIL`/`NOT PROVEN` e os dois cockpits mockados em trabalho planejavel. Ela nao inicia sprint, nao autoriza implementacao e nao altera o veredito da V1.0.
+Esta secao transforma os 13 criterios `FAIL`/`NOT PROVEN` e os dois cockpits mockados em trabalho planejavel. Ela nao inicia sprint, nao autoriza implementacao e nao altera o veredito da V1.0. A Sprint 15 foi executada e a Sprint 16 fica reservada para H16.3-H16.4.
 
 | ID | Tipo | Criterio / superficie | Grupo | Prioridade | Dependencias |
 | --- | --- | --- | --- | --- | --- |
-| R14-02 | Historia funcional | V1-02 Perfil editorial | A — Pipeline editorial | P1 | V1-01 |
-| R14-03 | Historia funcional | V1-03 Pauta | A — Pipeline editorial | P1 | V1-02 |
-| R14-04 | Historia funcional | V1-04 Pesquisa/fontes | A — Pipeline editorial | P1 | R14-03 |
-| R14-05 | Historia funcional | V1-05 Roteiro versionado | A — Pipeline editorial | P1 | R14-04 |
-| R14-06 | Historia funcional | V1-06 Plano visual/cenas | A — Pipeline editorial | P1 | R14-05 |
-| R14-07 | Historia funcional | V1-07 Narracao autorizada | B — Midia e producao | P1 | R14-06 |
-| R14-08 | Historia funcional | V1-08 Ativos rastreaveis | B — Midia e producao | P1 | R14-07 |
-| R14-09 | Historia funcional | V1-09 Render controlado | B — Midia e producao | P1 | R14-08 |
-| R14-10 | Historia funcional | V1-10 Corte derivado | B — Midia e producao | P1 | R14-09 |
-| R14-11 | Historia funcional | V1-11 Qualidade | C — Governanca | P1 | R14-09, R14-10 |
-| R14-12 | Historia funcional | V1-12 Conformidade | C — Governanca | P1 | R14-08, R14-11 |
-| R14-13 | Historia funcional | V1-13 Aprovacao humana | C — Governanca | P1 | R14-11, R14-12 |
-| R14-14 | Historia funcional | V1-14 Publicacao assistida | C — Governanca | P1 | R14-13 |
-| R14-T01 | Tarefa tecnica | Dashboard real | D — Cockpits reais | P0 | APIs reais de custos, metricas, auditoria e workflows |
-| R14-T02 | Tarefa tecnica | Escritorio de Agentes real | D — Cockpits reais | P0 | Contratos reais de agentes, workflows e handoffs |
-| R14-REACCEPT | Tarefa tecnica | Nova execucao V1 Acceptance | E — Reaceite | P1 | R14-02 a R14-14, R14-T01 e R14-T02 |
+| R14-02 | Historia funcional | V1-02 Perfil editorial | A Ã¢â‚¬â€ Pipeline editorial | P1 | V1-01 |
+| R14-03 | Historia funcional | V1-03 Pauta | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-02 |
+| R14-04 | Historia funcional | V1-04 Pesquisa/fontes | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-03 |
+| R14-05 | Historia funcional | V1-05 Roteiro versionado | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-04 |
+| R14-06 | Historia funcional | V1-06 Plano visual/cenas | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-05 |
+| R14-07 | Historia funcional | V1-07 Narracao autorizada | B Ã¢â‚¬â€ Midia e producao | P1 | R14-06 |
+| R14-08 | Historia funcional | V1-08 Ativos rastreaveis | B Ã¢â‚¬â€ Midia e producao | P1 | R14-07 |
+| R14-09 | Historia funcional | V1-09 Render controlado | B Ã¢â‚¬â€ Midia e producao | P1 | R14-08 |
+| R14-10 | Historia funcional | V1-10 Corte derivado | B Ã¢â‚¬â€ Midia e producao | P1 | R14-09 |
+| R14-11 | Historia funcional | V1-11 Qualidade | C Ã¢â‚¬â€ Governanca | P1 | R14-09, R14-10 |
+| R14-12 | Historia funcional | V1-12 Conformidade | C Ã¢â‚¬â€ Governanca | P1 | R14-08, R14-11 |
+| R14-13 | Historia funcional | V1-13 Aprovacao humana | C Ã¢â‚¬â€ Governanca | P1 | R14-11, R14-12 |
+| R14-14 | Historia funcional | V1-14 Publicacao assistida | C Ã¢â‚¬â€ Governanca | P1 | R14-13 |
+| R14-T01 | Tarefa tecnica | Dashboard real | D Ã¢â‚¬â€ Cockpits reais | P0 | APIs reais de custos, metricas, auditoria e workflows |
+| R14-T02 | Tarefa tecnica | Escritorio de Agentes real | D Ã¢â‚¬â€ Cockpits reais | P0 | Contratos reais de agentes, workflows e handoffs |
+| R14-REACCEPT | Tarefa tecnica | Nova execucao V1 Acceptance | E Ã¢â‚¬â€ Reaceite | P1 | R14-02 a R14-14, R14-T01 e R14-T02 |
 
 ### Definition of Ready comum
 
 Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisado, dados e IDs definidos, canal-scoping especificado, estrategia de persistencia e auditoria, cenarios positivos/negativos, teste de contrato, teste de rota e evidencias visuais planejadas. Nenhum item autoriza mock como comportamento final.
 
-### R14-02 — Perfil editorial
+### R14-02 Ã¢â‚¬â€ Perfil editorial
 
 - Ator/valor: operador configura a identidade editorial do canal sem editar banco ou CLI.
 - Estado atual/causa raiz: campos sao exibidos, mas a mutacao frontend completa nao foi comprovada; falta fatia de formulario + persistencia.
@@ -139,7 +141,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: perfil incorreto contamina toda a linha editorial; P1; M.
 - Dependencias: V1-01. Aceite: salvar, recarregar, isolar por canal e produzir evento auditavel sem segredo.
 
-### R14-03 — Criacao de pauta
+### R14-03 Ã¢â‚¬â€ Criacao de pauta
 
 - Ator/valor: operador cria pauta e inicia o pipeline pelo frontend.
 - Estado atual/causa raiz: `/ideas` lista dados, `Nova pauta` nao abre formulario e transicoes sao toasts mockados.
@@ -148,7 +150,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: bloqueia todo o pipeline; P1; M.
 - Dependencias: R14-02. Aceite: pauta nova aparece apos reload e cada transicao muda estado via API real.
 
-### R14-04 — Pesquisa, fontes e claims
+### R14-04 Ã¢â‚¬â€ Pesquisa, fontes e claims
 
 - Ator/valor: pesquisador registra fonte e claim rastreavel ligado a pauta.
 - Estado atual/causa raiz: `/research` e consulta; comandos de fonte/claim nao foram demonstrados.
@@ -157,7 +159,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: conteudo sem sustentacao; P1; L.
 - Dependencias: R14-03. Aceite: sessao, fonte, claim e vinculo sao criados pelo frontend e consultaveis depois.
 
-### R14-05 — Roteiro versionado
+### R14-05 Ã¢â‚¬â€ Roteiro versionado
 
 - Ator/valor: editor cria roteiro e preserva historico de versoes.
 - Estado atual/causa raiz: `/scripts` lista roteiros, sem criacao/versionamento E2E.
@@ -166,7 +168,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: perda de contexto editorial; P1; M.
 - Dependencias: R14-04. Aceite: duas versoes sao criadas, a anterior permanece imutavel e o roteiro e canal-scoped.
 
-### R14-06 — Plano visual e cenas
+### R14-06 Ã¢â‚¬â€ Plano visual e cenas
 
 - Ator/valor: produtor planeja cenas ligadas ao roteiro antes do render.
 - Estado atual/causa raiz: contratos/backend existem, mas nao ha tela operacional comprovada.
@@ -175,7 +177,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: render sem plano rastreavel; P1; M.
 - Dependencias: R14-05. Aceite: plano e cenas novas aparecem no frontend e vinculam roteiro/pauta/canal.
 
-### R14-07 — Narracao autorizada
+### R14-07 Ã¢â‚¬â€ Narracao autorizada
 
 - Ator/valor: operador registra narracao propria ou autorizada com procedencia.
 - Estado atual/causa raiz: existe seed `ma_hist_narration_01`, mas seed nao prova entrada operacional.
@@ -184,7 +186,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: uso indevido de audio; P1; M.
 - Dependencias: R14-06. Aceite: narracao nova e autorizada e selecionavel pelo plano/render.
 
-### R14-08 — Ativos visuais rastreaveis
+### R14-08 Ã¢â‚¬â€ Ativos visuais rastreaveis
 
 - Ator/valor: operador registra/importa imagem, video, thumbnail ou musica com procedencia.
 - Estado atual/causa raiz: `/media-assets` le e detalha, mas nao comprovou criacao/importacao frontend completa.
@@ -193,7 +195,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: ativo sem direitos/rastreabilidade; P1; M.
 - Dependencias: R14-07. Aceite: ativo novo e validado, canal-scoped e utilizavel no render.
 
-### R14-09 — Render controlado
+### R14-09 Ã¢â‚¬â€ Render controlado
 
 - Ator/valor: produtor inicia render auditavel pelo frontend.
 - Estado atual/causa raiz: controles e backend existem, mas nao houve transacao E2E nesta rodada.
@@ -202,82 +204,82 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: saida nao reproduzivel; P1; M.
 - Dependencias: R14-08. Aceite: job novo conclui ou falha com estado, output, custo e evento auditavel.
 
-### R14-10 — Corte derivado
+### R14-10 Ã¢â‚¬â€ Corte derivado
 
-- Ator/valor: editor gera corte rastreado do video-mãe.
+- Ator/valor: editor gera corte rastreado do video-mÃƒÂ£e.
 - Estado atual/causa raiz: contrato/servico existem, mas criacao persistida nao foi observada.
 - Superficies: `/clips`; `POST /api/clips`, `GET /api/clips/:id`; persistencia do corte/arquivo/vinculo; auditoria.
 - Testes/evidencia: intervalo invalido, canal divergente, idempotencia, reload e screenshot.
 - Risco/prioridade/estimativa: derivado sem vinculo; P1; M.
 - Dependencias: R14-09. Aceite: corte novo exibe video-mae, intervalo, gancho, status e arquivo.
 
-### R14-11 — Qualidade tecnica
+### R14-11 Ã¢â‚¬â€ Qualidade tecnica
 
 - Ator/valor: revisor verifica qualidade antes de aprovar/publicar.
 - Estado atual/causa raiz: backend/servico existe, mas gate visual completo nao foi executado.
 - Superficies: `/approvals`; `GET/POST /api/quality-checks`; persistencia de findings/status; auditoria.
 - Testes/evidencia: caso aprovado e bloqueado, regra de bloqueio, reload e screenshot.
 - Risco/prioridade/estimativa: produto defeituoso avancar; P1; M.
-- Dependencias: R14-09, R14-10. Aceite: qualidade bloqueada impede avanço e aprovada permite próximo gate.
+- Dependencias: R14-09, R14-10. Aceite: qualidade bloqueada impede avanÃƒÂ§o e aprovada permite prÃƒÂ³ximo gate.
 
-### R14-12 — Conformidade e direitos
+### R14-12 Ã¢â‚¬â€ Conformidade e direitos
 
-- Ator/valor: compliance bloqueia risco material e exige correção.
-- Estado atual/causa raiz: alertas consultaveis, mas cenário negativo nao foi exercitado pelo frontend.
+- Ator/valor: compliance bloqueia risco material e exige correÃƒÂ§ÃƒÂ£o.
+- Estado atual/causa raiz: alertas consultaveis, mas cenÃƒÂ¡rio negativo nao foi exercitado pelo frontend.
 - Superficies: `/compliance`/`/approvals`; `GET/POST /api/compliance-checks`; persistencia de findings/status; auditoria.
-- Testes/evidencia: caso blocked, correção, revalidação, canal divergente e screenshot.
-- Risco/prioridade/estimativa: violação de direitos/policy; P1; M.
-- Dependencias: R14-08, R14-11. Aceite: bloqueio material impede aprovação/publicação até revalidação aprovada.
+- Testes/evidencia: caso blocked, correÃƒÂ§ÃƒÂ£o, revalidaÃƒÂ§ÃƒÂ£o, canal divergente e screenshot.
+- Risco/prioridade/estimativa: violaÃƒÂ§ÃƒÂ£o de direitos/policy; P1; M.
+- Dependencias: R14-08, R14-11. Aceite: bloqueio material impede aprovaÃƒÂ§ÃƒÂ£o/publicaÃƒÂ§ÃƒÂ£o atÃƒÂ© revalidaÃƒÂ§ÃƒÂ£o aprovada.
 
-### R14-13 — Aprovacao humana
+### R14-13 Ã¢â‚¬â€ Aprovacao humana
 
-- Ator/valor: responsável decide com rastreabilidade, sem aprovação automática.
-- Estado atual/causa raiz: ações reais e testes existem, mas nenhuma decisão humana E2E foi registrada.
-- Superficies: `/approvals`; endpoints approve/reject/request-changes; persistencia de decisão/histórico; auditoria.
-- Testes/evidencia: três decisões, estados inválidos, reload e screenshot com ator/timestamp.
-- Risco/prioridade/estimativa: publicação sem supervisão; P1; M.
-- Dependencias: R14-11, R14-12. Aceite: somente decisão válida muda o estado e o histórico fica consultável.
+- Ator/valor: responsÃƒÂ¡vel decide com rastreabilidade, sem aprovaÃƒÂ§ÃƒÂ£o automÃƒÂ¡tica.
+- Estado atual/causa raiz: aÃƒÂ§ÃƒÂµes reais e testes existem, mas nenhuma decisÃƒÂ£o humana E2E foi registrada.
+- Superficies: `/approvals`; endpoints approve/reject/request-changes; persistencia de decisÃƒÂ£o/histÃƒÂ³rico; auditoria.
+- Testes/evidencia: trÃƒÂªs decisÃƒÂµes, estados invÃƒÂ¡lidos, reload e screenshot com ator/timestamp.
+- Risco/prioridade/estimativa: publicaÃƒÂ§ÃƒÂ£o sem supervisÃƒÂ£o; P1; M.
+- Dependencias: R14-11, R14-12. Aceite: somente decisÃƒÂ£o vÃƒÂ¡lida muda o estado e o histÃƒÂ³rico fica consultÃƒÂ¡vel.
 
-### R14-14 — Publicacao assistida
+### R14-14 Ã¢â‚¬â€ Publicacao assistida
 
-- Ator/valor: operador prepara pacote/draft sem upload automático.
+- Ator/valor: operador prepara pacote/draft sem upload automÃƒÂ¡tico.
 - Estado atual/causa raiz: telas e contratos existem, mas readiness/job nao foram demonstrados ponta a ponta.
 - Superficies: `/publications`; targets/readiness e `POST /api/publications`; persistencia de job/payload/bloqueios; auditoria.
-- Testes/evidencia: readiness blocked/ready, aprovação ausente, replay, reload e screenshot; nenhum upload real.
-- Risco/prioridade/estimativa: publicação sem governança; P1; M.
-- Dependencias: R14-13. Aceite: pacote preparado com source video, approval, compliance, readiness e bloqueios visíveis, sem envio automático.
+- Testes/evidencia: readiness blocked/ready, aprovaÃƒÂ§ÃƒÂ£o ausente, replay, reload e screenshot; nenhum upload real.
+- Risco/prioridade/estimativa: publicaÃƒÂ§ÃƒÂ£o sem governanÃƒÂ§a; P1; M.
+- Dependencias: R14-13. Aceite: pacote preparado com source video, approval, compliance, readiness e bloqueios visÃƒÂ­veis, sem envio automÃƒÂ¡tico.
 
-### R14-T01 — Dashboard real
+### R14-T01 Ã¢â‚¬â€ Dashboard real
 
 - Ator/valor: operador acompanha KPIs operacionais reais por canal.
-- Estado atual/causa raiz: `src/services/api-client.ts:91` reexporta `getDashboardSummary` de `mock-api.ts`; não há superfície real comprovada para o resumo.
-- Superficies: `/dashboard`; contratos de custos, metrics, audit e workflows; persistencia nos dominios existentes; auditoria de ações quando aplicável.
+- Estado atual/causa raiz: `src/services/api-client.ts:91` reexporta `getDashboardSummary` de `mock-api.ts`; nÃƒÂ£o hÃƒÂ¡ superfÃƒÂ­cie real comprovada para o resumo.
+- Superficies: `/dashboard`; contratos de custos, metrics, audit e workflows; persistencia nos dominios existentes; auditoria de aÃƒÂ§ÃƒÂµes quando aplicÃƒÂ¡vel.
 - Testes/evidencia: sem mock import, requests reais, loading/erro/vazio, isolamento e screenshot por viewport.
 - Risco/prioridade/estimativa: cockpit enganoso; P0; L.
-- Dependencias: R14-09 a R14-14, APIs de metrics/costs/audit e decisão de contrato.
-- Aceite: nenhum mock chega ao dashboard; KPIs e estados vêm de APIs reais e preservam `channelId`.
+- Dependencias: R14-09 a R14-14, APIs de metrics/costs/audit e decisÃƒÂ£o de contrato.
+- Aceite: nenhum mock chega ao dashboard; KPIs e estados vÃƒÂªm de APIs reais e preservam `channelId`.
 
-### R14-T02 — Escritorio de Agentes real
+### R14-T02 Ã¢â‚¬â€ Escritorio de Agentes real
 
 - Ator/valor: operador acompanha agentes, workflows, handoffs, fila e bloqueios reais.
-- Estado atual/causa raiz: `src/services/api-client.ts:91,135` reexporta agentes, snapshot e workflows de `mock-api.ts`; endpoints reais não estão comprovados.
-- Superficies: `/agent-office`; contratos `/api/agents`, `/api/agent-office/snapshot`, `/api/workflows`; persistencia de execução/handoff; auditoria de transições.
+- Estado atual/causa raiz: `src/services/api-client.ts:91,135` reexporta agentes, snapshot e workflows de `mock-api.ts`; endpoints reais nÃƒÂ£o estÃƒÂ£o comprovados.
+- Superficies: `/agent-office`; contratos `/api/agents`, `/api/agent-office/snapshot`, `/api/workflows`; persistencia de execuÃƒÂ§ÃƒÂ£o/handoff; auditoria de transiÃƒÂ§ÃƒÂµes.
 - Testes/evidencia: requests reais, estados loading/erro/vazio, canal, timeline, fila e screenshot por viewport.
 - Risco/prioridade/estimativa: falsa visibilidade operacional; P0; L.
-- Dependencias: contrato backend aprovado e integração com workflows/handoffs.
-- Aceite: nenhum fixture/mock é exibido como estado real; agentes e workflows vêm de APIs persistentes e auditáveis.
+- Dependencias: contrato backend aprovado e integraÃƒÂ§ÃƒÂ£o com workflows/handoffs.
+- Aceite: nenhum fixture/mock ÃƒÂ© exibido como estado real; agentes e workflows vÃƒÂªm de APIs persistentes e auditÃƒÂ¡veis.
 
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
-- Status: proposta documental, nao iniciada.
+- Status: parcial, com Sprint 15 entregue.
 - Nota: esta e a proposta inicial do E16, preservada como historico; a sequencia consolidada e vigente aparece mais abaixo e inclui V1-02 no mesmo epico.
 - Iniciativa: Remediacao da Operabilidade da V1.
 - Objetivo: tornar operaveis pelo frontend os fluxos editoriais de pauta, pesquisa, fontes, claims, roteiro, versao, plano visual e cenas com persistencia, auditoria e isolamento por canal.
-- Critérios V1 relacionados: V1-03 Pauta, V1-04 Pesquisa e fontes, V1-05 Roteiro versionado, V1-06 Planejamento visual.
+- CritÃƒÂ©rios V1 relacionados: V1-03 Pauta, V1-04 Pesquisa e fontes, V1-05 Roteiro versionado, V1-06 Planejamento visual.
 - Dependencia upstream: V1-02 Perfil editorial, somente como precondicao de contexto.
 - Itens R14 incluidos: R14-03, R14-04, R14-05, R14-06.
 - Itens R14 dependentes: R14-02 como dependencia de identidade/perfil editorial.
-- Historias previstas: H16.1 Pautas operaveis pelo frontend; H16.2 Pesquisa, fontes e claims; H16.3 Roteiro versionado; H16.4 Planejamento visual e cenas.
+- Historias previstas: H16.0 Perfil editorial operavel pelo frontend; H16.1 Pautas operaveis pelo frontend; H16.2 Pesquisa, fontes e claims; H16.3 Roteiro versionado; H16.4 Planejamento visual e cenas.
 - Fora de escopo: IA externa, scraping, geracao automatica, midia, renderizacao, cortes, publicacao, autenticao nova, redesign geral, release e novo V1 Acceptance.
 - Gate: apenas planejamento documental ate a conclusao das dependencias e validacoes.
 
@@ -293,12 +295,12 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Nao tratar esta proposta como inicio de sprint.
 - Nao registrar remediacao como concluida.
 
-### R14-REACCEPT — Reexecucao da V1 Acceptance
+### R14-REACCEPT Ã¢â‚¬â€ Reexecucao da V1 Acceptance
 
-- Ator/valor: revisor independente decide novamente o aceite binário.
-- Estado atual/causa raiz: só pode ocorrer após R14-02 a R14-14 e R14-T01/T02; nenhum reaceite foi iniciado.
+- Ator/valor: revisor independente decide novamente o aceite binÃƒÂ¡rio.
+- Estado atual/causa raiz: sÃƒÂ³ pode ocorrer apÃƒÂ³s R14-02 a R14-14 e R14-T01/T02; nenhum reaceite foi iniciado.
 - Superficies: jornada inteira pelo frontend; todos os contratos acima; dados novos, IDs, persistencia e auditoria.
-- Testes/evidencia: 18 critérios, positivos/negativos, isolamento, custos, auditoria, QA visual, logs e matriz vinculada ao head.
+- Testes/evidencia: 18 critÃƒÂ©rios, positivos/negativos, isolamento, custos, auditoria, QA visual, logs e matriz vinculada ao head.
 - Risco/prioridade/estimativa: aceitar V1 sem prova; P1; L.
-- Dependencias: todos os itens obrigatórios fechados e checks verdes.
-- Aceite: cada V1-01..V1-18 tem status `PASS` com prova nova no mesmo head; caso contrário, permanece `V1.0 NÃO ACEITA`.
+- Dependencias: todos os itens obrigatÃƒÂ³rios fechados e checks verdes.
+- Aceite: cada V1-01..V1-18 tem status `PASS` com prova nova no mesmo head; caso contrÃƒÂ¡rio, permanece `V1.0 NÃƒÆ’O ACEITA`.

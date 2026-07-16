@@ -15,6 +15,8 @@ import {
   describeResearchApiError,
   getResearchSession,
   getResearchSessions,
+  getResearchSources,
+  getClaimEvidenceList,
 } from "./research-api";
 import {
   createScript,
@@ -186,6 +188,25 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
+      if (url === "/api/research-sessions/rs_1/sources" && !init?.method) {
+        return jsonResponse({
+          data: [
+            {
+              id: "src_1",
+              channelId: "ch_1",
+              researchSessionId: "rs_1",
+              title: "Fonte",
+              accessedAt: "2026-07-13T03:30:00.000Z",
+              sourceType: "article",
+              confidenceLevel: "high",
+              freshnessRisk: "ok",
+              usageNotes: "Notas",
+            },
+          ],
+          meta: { ...baseMeta, total: 1, page: 1, pageSize: 1 },
+        });
+      }
+
       if (url === "/api/research-sessions/rs_1/claims" && init?.method === "POST") {
         return jsonResponse({
           data: {
@@ -202,6 +223,25 @@ test("editorial frontend services hit the expected API endpoints", async () => {
             updatedAt: "2026-07-13T03:30:00.000Z",
           },
           meta: baseMeta,
+        });
+      }
+
+      if (url === "/api/research-sessions/rs_1/claims" && !init?.method) {
+        return jsonResponse({
+          data: [
+            {
+              id: "ce_1",
+              channelId: "ch_1",
+              researchSessionId: "rs_1",
+              sourceId: "src_1",
+              claim: "Claim",
+              evidenceSummary: "Resumo",
+              informationType: "fact",
+              confidenceLevel: "high",
+              riskLevel: "ok",
+            },
+          ],
+          meta: { ...baseMeta, total: 1, page: 1, pageSize: 1 },
         });
       }
 
@@ -373,6 +413,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         freshnessRisk: "ok",
         usageNotes: "Notas",
       });
+      await getResearchSources("rs_1");
       await createClaimEvidence("rs_1", {
         sourceId: "src_1",
         claim: "Claim",
@@ -381,6 +422,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         confidenceLevel: "high",
         riskLevel: "ok",
       });
+      await getClaimEvidenceList("rs_1");
       await getScripts({ channelId: "ch_1" });
       await createScript({
         channelId: "ch_1",
@@ -436,6 +478,18 @@ test("editorial frontend services hit the expected API endpoints", async () => {
       );
       assert.equal(
         calls.some((call) => call.url === "/api/research-sessions/rs_1/sources"),
+        true,
+      );
+      assert.equal(
+        calls.some(
+          (call) => call.url === "/api/research-sessions/rs_1/sources" && !call.init?.method,
+        ),
+        true,
+      );
+      assert.equal(
+        calls.some(
+          (call) => call.url === "/api/research-sessions/rs_1/claims" && !call.init?.method,
+        ),
         true,
       );
       assert.equal(

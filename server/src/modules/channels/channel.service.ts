@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { AppError } from "../../http/errors.js";
+import type { AuditService } from "../audit/audit.service.js";
 import { channelStatusSchema, timezoneSchema, slugSchema } from "./channel.schema.js";
 import type {
   Channel,
@@ -9,6 +10,7 @@ import type {
   ChannelsRepository,
   CreateChannelInput,
   ID,
+  EditorialRules,
   UpdateChannelInput,
   RiskLevel,
   CostStatus,
@@ -20,14 +22,26 @@ export type ChannelIdFactory = () => string;
 export type CreateChannelsServiceOptions = {
   clock?: ChannelsClock;
   idFactory?: ChannelIdFactory;
+  auditService?: AuditService;
+};
+
+export type ChannelProfileUpdateInput = {
+  requestedBy?: string;
+  editorialTone?: string;
+  language?: string;
+  audience?: string;
+  allowedFormats?: string[];
+  editorialRules?: Partial<EditorialRules>;
 };
 
 export type ChannelsService = {
   listChannels(): Channel[];
   createChannel(input: CreateChannelInput): Channel;
   getChannel(id: ID): Channel;
+  getChannelProfile(id: ID): ChannelBundle;
   updateChannel(id: ID, input: UpdateChannelInput): Channel;
   getChannelSettings(id: ID): ChannelSettings;
+  updateChannelProfile(id: ID, input: ChannelProfileUpdateInput, requestId?: string): ChannelBundle;
 };
 
 export function createChannelsService(
@@ -36,6 +50,7 @@ export function createChannelsService(
 ): ChannelsService {
   const clock = options.clock ?? (() => new Date());
   const idFactory = options.idFactory ?? (() => randomUUID());
+  const auditService = options.auditService;
 
   return {
     listChannels() {
@@ -68,6 +83,24 @@ export function createChannelsService(
       return found;
     },
 
+    getChannelProfile(id) {
+      const bundle = repository.getChannelBundle(id);
+      if (!bundle) {
+        throw new AppError({
+          code: "NOT_FOUND",
+          status: 404,
+          message: "Channel profile not found",
+          details: { id },
+        });
+      }
+
+      return {
+        ...bundle,
+        editorialRules:
+          bundle.editorialRules ?? buildDefaultEditorialRules(id, bundle.channel.createdAt),
+      };
+    },
+
     updateChannel(id, input) {
       const existing = getChannelOrThrow(repository, id);
       const parsedInput = normalizeUpdateInput(input);
@@ -94,6 +127,8 @@ export function createChannelsService(
       repository.upsertChannel({
         channel: nextChannel,
         settings: repository.getChannelSettings(id) ?? buildDefaultSettings(id, now),
+        editorialRules:
+          repository.getChannelBundle(id)?.editorialRules ?? buildDefaultEditorialRules(id, now),
       });
 
       return nextChannel;
@@ -111,6 +146,74 @@ export function createChannelsService(
       }
 
       return settings;
+    },
+
+    updateChannelProfile(id, input, requestId) {
+      const existingBundle = getChannelBundleOrThrow(repository, id);
+      const parsed = normalizeProfileInput(input);
+      const now = toIso(clock());
+      const requestedBy = parsed.requestedBy?.trim() || "Aralume Studio";
+      const nextChannel: Channel = {
+        ...existingBundle.channel,
+        editorialTone:
+          parsed.editorialTone !== undefined
+            ? parsed.editorialTone.trim()
+            : existingBundle.channel.editorialTone,
+        language:
+          parsed.language !== undefined ? parsed.language.trim() : existingBundle.channel.language,
+        audience:
+          parsed.audience !== undefined ? parsed.audience.trim() : existingBundle.channel.audience,
+        updatedAt: now,
+        lastActivityAt: now,
+      };
+      const nextSettings: ChannelSettings = {
+        ...(existingBundle.settings ?? buildDefaultSettings(id, now)),
+        allowedFormats: parsed.allowedFormats ?? existingBundle.settings.allowedFormats,
+        updatedAt: now,
+      };
+      const nextEditorialRules: EditorialRules = {
+        ...(existingBundle.editorialRules ?? buildDefaultEditorialRules(id, now)),
+        ...(parsed.editorialRules ?? {}),
+        prohibitedClaims:
+          parsed.editorialRules?.prohibitedClaims ??
+          existingBundle.editorialRules?.prohibitedClaims ??
+          [],
+        complianceNotes:
+          parsed.editorialRules?.complianceNotes ??
+          existingBundle.editorialRules?.complianceNotes ??
+          [],
+        updatedAt: now,
+      };
+
+      const nextBundle: ChannelBundle = {
+        channel: nextChannel,
+        settings: nextSettings,
+        editorialRules: nextEditorialRules,
+      };
+      repository.upsertChannel(nextBundle);
+      auditService?.recordAuditLog({
+        channelId: id,
+        requestId,
+        actorType: "user",
+        actorName: requestedBy,
+        action: "channel.profile.updated",
+        entityType: "ChannelEditorialProfile",
+        entityId: id,
+        status: "success",
+        message: "Channel editorial profile updated.",
+        metadata: {
+          editorialTone: nextChannel.editorialTone,
+          language: nextChannel.language,
+          audience: nextChannel.audience,
+          allowedFormats: nextSettings.allowedFormats,
+          requestedBy,
+        },
+      });
+
+      return {
+        ...nextBundle,
+        editorialRules: nextEditorialRules,
+      };
     },
   };
 }
@@ -209,6 +312,7 @@ function buildChannelBundle(id: ID, input: CreateChannelInput, now: string): Cha
       updatedAt: now,
     },
     settings: buildDefaultSettings(id, now),
+    editorialRules: buildDefaultEditorialRules(id, now),
   };
 }
 
@@ -236,6 +340,23 @@ function buildDefaultSettings(id: ID, now: string): ChannelSettings {
       tone: "A configurar",
       pronunciationNotes: [],
     },
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+function buildDefaultEditorialRules(id: ID, now: string): EditorialRules {
+  return {
+    id: `er_${id}`,
+    channelId: id,
+    factualContentRequiresSources: true,
+    minimumSources: 3,
+    allowFictionalNarratives: false,
+    allowThirdPartyAssets: true,
+    requiresHumanApprovalBeforePublication: true,
+    highRiskAutoBlock: true,
+    prohibitedClaims: [],
+    complianceNotes: [],
     createdAt: now,
     updatedAt: now,
   };
@@ -271,4 +392,62 @@ function riskLevelFromStatus(status: Channel["status"]): RiskLevel {
 
 function toIso(date: Date): string {
   return date.toISOString();
+}
+
+function normalizeProfileInput(input: ChannelProfileUpdateInput): ChannelProfileUpdateInput {
+  const output: ChannelProfileUpdateInput = {};
+
+  if (input.requestedBy !== undefined) {
+    output.requestedBy = input.requestedBy.trim();
+  }
+
+  if (input.editorialTone !== undefined) {
+    output.editorialTone = input.editorialTone.trim();
+  }
+
+  if (input.language !== undefined) {
+    output.language = input.language.trim();
+  }
+
+  if (input.audience !== undefined) {
+    output.audience = input.audience.trim();
+  }
+
+  if (input.allowedFormats !== undefined) {
+    output.allowedFormats = input.allowedFormats.map((value) => value.trim()).filter(Boolean);
+  }
+
+  if (input.editorialRules !== undefined) {
+    output.editorialRules = {
+      ...input.editorialRules,
+    };
+
+    if (input.editorialRules.prohibitedClaims !== undefined) {
+      output.editorialRules.prohibitedClaims = input.editorialRules.prohibitedClaims
+        .map((value) => value.trim())
+        .filter(Boolean);
+    }
+
+    if (input.editorialRules.complianceNotes !== undefined) {
+      output.editorialRules.complianceNotes = input.editorialRules.complianceNotes
+        .map((value) => value.trim())
+        .filter(Boolean);
+    }
+  }
+
+  return output;
+}
+
+function getChannelBundleOrThrow(repository: ChannelsRepository, id: ID): ChannelBundle {
+  const found = repository.getChannelBundle(id);
+  if (!found) {
+    throw new AppError({
+      code: "NOT_FOUND",
+      status: 404,
+      message: "Channel not found",
+      details: { id },
+    });
+  }
+
+  return found;
 }

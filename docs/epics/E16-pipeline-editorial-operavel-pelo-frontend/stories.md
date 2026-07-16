@@ -1,5 +1,10 @@
 # E16 - Stories
 
+## Sprint 15
+
+- Included now: H16.0, H16.1 and H16.2.
+- Pending later: H16.3 and H16.4.
+
 ## H16.0 - Perfil editorial operavel pelo frontend
 
 - Actor: editor / operador

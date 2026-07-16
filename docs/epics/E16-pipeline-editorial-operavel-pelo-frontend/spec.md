@@ -5,8 +5,8 @@
 - Epic ID: E16
 - Epic name: Pipeline Editorial Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
-- Status: proposed / not started
-- Related criteria: V1-03, V1-04, V1-05, V1-06
+- Status: partial / in progress
+- Related criteria: V1-02, V1-03, V1-04, V1-05, V1-06
 - Upstream dependency: V1-02
 - Related R14 items: R14-03, R14-04, R14-05, R14-06
 

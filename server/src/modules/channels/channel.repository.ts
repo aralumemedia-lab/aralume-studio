@@ -24,6 +24,11 @@ export class InMemoryChannelsRepository implements ChannelsRepository {
     return bundle ? clone(bundle.channel) : undefined;
   }
 
+  getChannelBundle(id: ID): ChannelBundle | undefined {
+    const bundle = this.channels.get(id);
+    return bundle ? clone(bundle) : undefined;
+  }
+
   getChannelSettings(id: ID): ChannelSettings | undefined {
     const bundle = this.channels.get(id);
     return bundle ? clone(bundle.settings) : undefined;

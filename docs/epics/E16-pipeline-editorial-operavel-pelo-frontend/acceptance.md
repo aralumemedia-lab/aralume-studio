@@ -1,4 +1,10 @@
-# E16 - Acceptance
+﻿# E16 - Acceptance
+
+## Sprint 15 scope delivered
+
+- This acceptance section is read as the first slice of E16.
+- H16.0, H16.1 and H16.2 are the delivered stories for Sprint 15.
+- H16.3 and H16.4 remain pending and are not part of this sprint gate.
 
 ## Positive scenarios
 
@@ -71,14 +77,22 @@
 ## Evidence
 
 - Browser screenshots for the required viewports.
+- Current Sprint 15 browser evidence:
+  - `screenshots/sprint-15/channels-1366-expanded.png`
+  - `screenshots/sprint-15/channels-1366-collapsed.png`
+  - `screenshots/sprint-15/ideas-1600-success.png`
+  - `screenshots/sprint-15/ideas-1366-invalid.png`
+  - `screenshots/sprint-15/research-1792-success.png`
+  - `screenshots/sprint-15/research-1920-reload.png`
+  - `screenshots/sprint-15/research-1600-empty-channel-b.png`
 - Route-level test output.
 - Server test output.
 - Audit log output.
 - Reload proof in the browser.
 
-## Epic gate
+## Sprint 15 gate
 
-READY FOR SPRINT PLANNING only when:
+Sprint 15 is accepted on the current head when:
 
 1. The five stories are individually accepted.
 2. The frontend no longer masks the primary editorial actions behind mocks.
@@ -86,3 +100,5 @@ READY FOR SPRINT PLANNING only when:
 4. Audit evidence is present for the mutating actions.
 5. The visual-plan placement is explicit and proven.
 6. The traceability matrix covers each criterion and dependency.
+
+H16.3 and H16.4 remain pending for the next E16 slice.
