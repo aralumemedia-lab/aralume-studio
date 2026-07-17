@@ -1,6 +1,6 @@
 # E17 - Pipeline Midia e Producao Operavel pelo Frontend
 
-- Status: proposed / not started
+- Status: partial / in progress
 - Epic name: Pipeline Midia e Producao Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P1
@@ -8,13 +8,11 @@
 
 ## Context
 
-Sprint 14 left the media and production path without a proven frontend-operated flow. The repo already has real media asset, render and clip modules, routes and tests, but the current UI still does not prove the operator journey from narration and assets to render and derived clips.
-
-This epic starts after the editorial pipeline is made operable. It must not absorb approvals, compliance, publication, metrics, costs, dashboard or agent-office work.
+Sprint 16 closed the editorial pipeline. Sprint 17 starts E17 in a smaller slice so the repository can prove the media registry path for narration and visual assets before render and clip generation are attempted.
 
 ## Problem
 
-The operator can inspect media and production surfaces, but the repository does not yet prove that narration, assets, render jobs and clips are created, persisted, reloaded and isolated by channel through the frontend.
+Before Sprint 17, the operator could inspect media surfaces but the repository did not prove that narration metadata and visual assets were created, persisted, reloaded and isolated by channel through the frontend. The current sprint head closes that gap for H17.1 and H17.2.
 
 ## Current capability classification
 
@@ -22,67 +20,58 @@ Labels used below: `implemented`, `partial`, `only backend`, `only mock`, `absen
 
 | Capability | Frontend state | Backend state | Contracts | Persistence | Audit | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| Narracao / V1-07 | partial | implemented | implemented | existing, but not demonstrable | absent | seed exists but the operator command path is not fully proven |
-| Ativos visuais / V1-08 | partial | implemented | implemented | existing, but not demonstrable | absent | list/detail exist but create/import proof is incomplete |
-| Render controlado / V1-09 | partial | implemented | implemented | existing, but not demonstrable | absent | render job proof exists in backend tests, not in the full frontend journey |
-| Corte derivado / V1-10 | partial | implemented | implemented | existing, but not demonstrable | absent | clip surface exists, but the full create/reload proof is missing |
+| Narracao / V1-07 | implemented | implemented | implemented | implemented for reload in the same process | implemented | create/update, reload, audit and isolation proven by Sprint 17 E2E |
+| Ativos visuais / V1-08 | implemented | implemented | implemented | implemented for reload in the same process | implemented | create/update, provenance, integrity, reload and isolation proven by Sprint 17 E2E |
+| Render controlado / V1-09 | absent | implemented | implemented | existing, but not demonstrable | implemented | intentionally left for the next E17 slice |
+| Corte derivado / V1-10 | absent | implemented | implemented | existing, but not demonstrable | implemented | intentionally left for the next E17 slice |
 
-## V1 criteria covered
+## V1 criteria covered in this sprint slice
 
 - V1-07 - Narracao autorizada
 - V1-08 - Ativos rastreaveis
-- V1-09 - Render controlado
-- V1-10 - Corte derivado
 
 ## Upstream dependency
 
 - E16 - Pipeline Editorial Operavel pelo Frontend
 
-The media and production flow depends on the editorial flow being operational enough to supply channel, script and visual-plan context.
+The media flow depends on the editorial flow being operational enough to supply channel and content context.
 
 ## R14 items included
 
 - R14-07 - Narracao autorizada
 - R14-08 - Ativos visuais rastreaveis
-- R14-09 - Render controlado
-- R14-10 - Corte derivado
 
 ## Epic objective
 
-Make the media and production pipeline operable through the frontend so an operator can:
+Make the first media slice operable through the frontend so an operator can:
 
-1. Use the channel and editorial context from E16.
-2. Register narration or a narration asset with provenance.
+1. Use the channel context from E16.
+2. Create or update narration metadata.
 3. Register visual assets with provenance and integrity data.
-4. Start a controlled render job.
-5. Review render state and output.
-6. Create a derived clip from the rendered video.
-7. Reload the app.
-8. Confirm persistence.
-9. Confirm auditability.
-10. Confirm channel isolation.
+4. Reload the app.
+5. Confirm persistence.
+6. Confirm auditability.
+7. Confirm channel isolation.
 
 ## Value
 
-- Turns the media path from inspection-only into a usable operator flow.
-- Preserves provenance across narration, assets, render and derived clips.
-- Prepares the evidence needed for the final V1 reaccept gate.
+- Turns the media registry from inspection-only into a usable operator flow.
+- Preserves provenance and integrity across narration and visual assets.
+- Prepares the second E17 slice for render and clips without mixing scope.
 
 ## Scope
 
-- Frontend entry points for media assets, videos and clips.
+- Frontend entry point for media assets.
 - Channel-scoped create, update, detail and state transitions.
-- Navigation between narration, assets, render and clips.
 - Reload verification for created records.
 - Channel isolation checks.
 - Audit trail requirements for mutating actions.
 
 ## Out of scope
 
-- Quality gates.
-- Compliance gates.
-- Human approval.
-- Publication.
+- Render control.
+- Derived clips.
+- Quality, compliance, approval and publication.
 - Metrics.
 - Costs.
 - Dashboard.
@@ -95,7 +84,7 @@ Make the media and production pipeline operable through the frontend so an opera
 ## Dependencies
 
 - E16 completed.
-- Existing media asset, render and clip backend routes, repository and validation rules.
+- Existing media asset backend routes, repository and validation rules.
 - Existing API envelope and error contracts.
 - Audit logging support in the platform.
 - Browser E2E and screenshot coverage.
@@ -104,14 +93,11 @@ Make the media and production pipeline operable through the frontend so an opera
 
 - Mixed real and mock transport may still leak into shared app-shell code.
 - Persistence is process-local in the current repository baseline.
-- Clip creation has no dedicated frontend service layer in the current baseline.
 - Cross-channel linking bugs can silently contaminate the flow if tests are incomplete.
 
 ## Indicators
 
 - Number of narration or asset IDs created by the frontend and visible after reload.
-- Number of render job IDs emitted by the frontend and visible after reload.
-- Number of clip IDs created and queryable after reload.
 - Number of audit entries emitted for media mutations.
 - Browser E2E and screenshot pass rate on the required viewports.
 
@@ -126,7 +112,7 @@ Make the media and production pipeline operable through the frontend so an opera
 ## Definition of Done
 
 - The included stories are accepted on the same head.
-- The frontend proves narration, asset, render and clip creation.
+- The frontend proves narration and visual asset creation/update.
 - Channel isolation is demonstrated.
 - Audit evidence is present.
 - The required tests and screenshots pass.
@@ -135,4 +121,4 @@ Make the media and production pipeline operable through the frontend so an opera
 
 ## Final gate
 
-READY FOR SPRINT PLANNING when the story bundle is complete, evidence exists on the same head and the epic can be split into small sprint-sized slices without changing scope.
+Sprint 17 is ready for PR review because H17.1 and H17.2 are implemented and evidenced on the same head. E17 remains partial and cannot be closed until H17.3 and H17.4 pass their own sprint gate.

@@ -20,6 +20,8 @@
 | 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
 | 4 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed | not released | PR #26 entregou H16.0, H16.1 e H16.2; a fatia complementar da Sprint 16 concluiu H16.3 e H16.4. |
 | 5 | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/017-sprint-16-scripts-visual-planning.md` | completed | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido. |
+| 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | implemented / pending merge | not released | H17.1 e H17.2 entregues no head da Sprint 17 com API real, reload, auditoria, isolamento e evidencia browser; E17 permanece parcial. |
+| 7 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | proposed | not released | Segunda fatia de E17; H17.3 e H17.4 permanecem pendentes para render e cortes. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
 
@@ -69,7 +71,8 @@
 | Ordem | Epic | Escopo principal | Tipo | Dependencias | Resultado esperado |
 | --- | --- | --- | --- | --- | --- |
 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes e claims operaveis |
-| Sprint proposta B | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-10 | funcional + frontend + backend + integracao | E16 concluida | narracao, ativos, render e cortes operaveis |
+| Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | funcional + frontend + backend + integracao | E16 concluida | narracao e ativos visuais operaveis |
+| Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | funcional + frontend + backend + integracao | Sprint 17 concluida | render e cortes operaveis |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-14 | funcional + frontend + backend + governance | E17 concluida | qualidade, compliance, aprovacao e publicacao assistida operaveis |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | evidence / reaccept | E16, E17, E18, E19 concluidos | novo V1 Acceptance com prova nova no mesmo head |
@@ -99,4 +102,14 @@
 - Escopo: perfil editorial, pautas, pesquisa, fontes e claims.
 - Fora de escopo: H16.3, H16.4, media, render, clips, governanca, publicacao, dashboard, agent office e novo V1 Acceptance.
 - Resultado: H16.0, H16.1 e H16.2 entregues no head da PR #26; H16.3 e H16.4 continuam pendentes.
-- Sequencia posterior: Sprint 16 concluiu H16.3 e H16.4; E17, E18 e E19 seguem somente apos o E16 ser completado.
+- Sequencia posterior: Sprint 17 executa H17.1 e H17.2; Sprint 18 conclui H17.3 e H17.4; E18 e E19 seguem somente apos o E17 ser completado.
+
+## Sprint 17 - Narration and Visual Assets
+
+- Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
+- Spec normativa: `docs/specs/018-sprint-17-narration-media-assets.md`.
+- Estado: implemented on sprint head / pending merge.
+- Resultado: H17.1 e H17.2 entregues com create/update real, reload no mesmo processo, auditoria e isolamento por canal.
+- Evidencia: `scripts/sprint17-browser-e2e.mjs` e `screenshots/sprint-17/`.
+- Pendente: H17.3 e H17.4; E17 permanece parcial.
+- V1.0 permanece `NAO ACEITA`; nenhum reaceite ou release foi executado.

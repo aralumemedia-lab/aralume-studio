@@ -173,6 +173,48 @@ test("media assets service enforces storage safety, cross-channel isolation and 
   assert.ok(harness.auditRepository.listAuditLogs({ channelId: "ch_historia" }).length > 0);
 });
 
+test("media assets create and update narration with queryable audit state", () => {
+  const harness = createHarness();
+  const created = harness.service.createMediaAsset({
+    channelId: "ch_negocios",
+    type: "narration",
+    category: "audio",
+    name: "Sprint 17 narration",
+    title: "Sprint 17 narration",
+    description: "Narration asset created for persistence checks.",
+    mimeType: "audio/wav",
+    extension: "wav",
+    sizeBytes: 2048,
+    checksum: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    storagePath: "ch_negocios/narration/sprint-17.wav",
+    origin: "generated",
+    provenance: "Created by the controlled persistence test.",
+    licenseStatus: "confirmed",
+    status: "available",
+    riskLevel: "ok",
+    costActualCents: 0,
+    providerName: "Aralume TTS",
+    modelName: "voice-v3",
+  });
+
+  const updated = harness.service.updateMediaAsset("ch_negocios", created.id, {
+    description: "Narration asset updated for persistence checks.",
+    usageSummary: "Used to verify same-process reload persistence.",
+    sizeBytes: 4096,
+  });
+  const queried = harness.service.getMediaAsset("ch_negocios", updated.id);
+
+  assert.equal(queried.channelId, "ch_negocios");
+  assert.equal(queried.description, "Narration asset updated for persistence checks.");
+  assert.equal(queried.usageSummary, "Used to verify same-process reload persistence.");
+  assert.equal(queried.sizeBytes, 4096);
+  assert.ok(
+    harness.auditRepository
+      .listAuditLogs({ channelId: "ch_negocios" })
+      .some((log) => log.action === "media_asset.updated"),
+  );
+});
+
 test("media assets HTTP routes keep channel context explicit and reject invalid storage paths", async () => {
   const { baseUrl, server } = await startServer();
 
@@ -248,6 +290,75 @@ test("media assets HTTP routes keep channel context explicit and reject invalid 
     const clipsResponse = await fetch(`${baseUrl}/api/clips?channelId=ch_historia`);
     assert.equal(videosResponse.status, 200);
     assert.equal(clipsResponse.status, 200);
+  } finally {
+    await stopServer(server);
+  }
+});
+
+test("media assets HTTP create and patch routes remain queryable in the active process", async () => {
+  const createdAsset = {
+    channelId: "ch_negocios",
+    type: "image",
+    category: "visual",
+    name: "Runner visual asset",
+    title: "Runner visual asset",
+    description: "Controlled visual asset created through HTTP.",
+    mimeType: "image/png",
+    extension: "png",
+    sizeBytes: 1024,
+    checksum: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    storagePath: "ch_negocios/image/runner-visual.png",
+    origin: "generated",
+    provenance: "Created by HTTP route test.",
+    licenseStatus: "known",
+    status: "available",
+    riskLevel: "ok",
+    costActualCents: 0,
+  };
+
+  const { baseUrl, server } = await startServer();
+
+  try {
+    const createResponse = await fetch(`${baseUrl}/api/media-assets`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(createdAsset),
+    });
+    const createPayload = (await createResponse.json()) as {
+      data: { id: string; title?: string; description: string };
+      meta: { requestId: string };
+    };
+    assert.equal(createResponse.status, 201);
+    assert.ok(createPayload.data.id.startsWith("ma_"));
+    assert.equal(createPayload.data.description, createdAsset.description);
+    const createdId = createPayload.data.id;
+
+    const patchResponse = await fetch(`${baseUrl}/api/media-assets/${createdId}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        channelId: "ch_negocios",
+        description: "Controlled visual asset updated through HTTP.",
+        usageSummary: "Updated through HTTP patch.",
+      }),
+    });
+    const patchPayload = (await patchResponse.json()) as {
+      data: { id: string; description: string; usageSummary?: string };
+      meta: { requestId: string };
+    };
+    assert.equal(patchResponse.status, 200);
+    assert.equal(patchPayload.data.id, createdId);
+    assert.equal(patchPayload.data.description, "Controlled visual asset updated through HTTP.");
+    const detailResponse = await fetch(
+      `${baseUrl}/api/media-assets/${createdId}?channelId=ch_negocios`,
+    );
+    const detailPayload = (await detailResponse.json()) as {
+      data: { id: string; description: string; usageSummary?: string; channelId: string };
+    };
+    assert.equal(detailResponse.status, 200);
+    assert.equal(detailPayload.data.channelId, "ch_negocios");
+    assert.equal(detailPayload.data.description, "Controlled visual asset updated through HTTP.");
+    assert.equal(detailPayload.data.usageSummary, "Updated through HTTP patch.");
   } finally {
     await stopServer(server);
   }

@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import type { HTMLAttributes } from "react";
 import type {
   AgentStatus,
   ApprovalStatus,
@@ -32,14 +33,16 @@ export function StatusBadge({
   children,
   className,
   dot,
+  ...props
 }: {
   tone?: Tone;
   children: React.ReactNode;
   className?: string;
   dot?: boolean;
-}) {
+} & HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
+      {...props}
       className={cn(
         "inline-flex items-center gap-1 rounded-sm border px-1.5 py-0.5 text-[10.5px] font-medium leading-none uppercase tracking-wide",
         toneStyles[tone],

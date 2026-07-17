@@ -3,44 +3,33 @@
 ## Frontend
 
 - `/media-assets`
-  - Wire narration and visual-asset create/update paths.
+  - Wire narration create/update paths.
+  - Wire visual asset create/update paths.
   - Keep list, detail and error states channel-scoped.
-- `/videos`
-  - Wire controlled render start and render state handling.
-  - Keep output and error states channel-scoped.
-- `/clips`
-  - Wire clip creation from a rendered video.
-  - Keep list, detail and invalid interval states explicit.
-- Shell navigation
-  - Preserve channel context and navigation between media artifacts.
 
 ## Backend
 
-- Keep the current media, render and clip module shape.
-- Add audit hooks for mutating media actions if any gap remains.
-- Keep cross-channel rejection and interval validation explicit in tests.
-- Keep the current repository abstraction stable for the epic.
+- Keep the current media asset module shape.
+- Reuse the existing repository abstraction and audit hooks.
+- Keep cross-channel rejection and storage validation explicit in tests.
 
 ## Contracts
 
 - `src/contracts/types.ts`
-- `src/contracts/api-contracts.ts`
 - `src/services/api-client.ts`
 - `src/services/media-assets-api.ts`
-- `src/services/renders-api.ts`
-- `src/routes/clips.tsx`
-- `src/services/http-client.ts`
+- `src/routes/media-assets.tsx`
+- `server/src/modules/media-assets/*`
 
 ## Persistence
 
-- Use the existing repository abstraction for the media and production domains.
+- Use the existing repository abstraction for media assets.
 - Require browser reload persistence as the acceptance bar.
-- Do not introduce a database or migration system in this epic.
+- Do not introduce a database or migration system in this epic slice.
 
 ## Audit
 
-- Record media create/update/render/clip events with channelId, actor, requestId and entity metadata.
-- Make audit entries queryable in the same platform audit surface used by the repo.
+- Record media asset create/update and validation events with channelId, actor, requestId and entity metadata.
 
 ## Error handling
 
@@ -50,10 +39,10 @@
 
 ## Tests
 
-- Server unit and HTTP tests for media, render and clip flows.
-- Service tests for the frontend API clients.
-- Route tests for `/media-assets`, `/videos` and `/clips`.
-- Browser E2E for create, reload, isolation, loading, empty, error and success states.
+- Server unit and HTTP tests for narration and visual-asset flows.
+- Service tests for the frontend API client.
+- Route tests for `/media-assets`.
+- Browser E2E for create, reload, isolation, loading, empty, error and validation/conflict states.
 - Screenshot QA at all required viewports.
 
 ## Accessibility
@@ -80,16 +69,15 @@
 
 ## Risks
 
-- The media and production flow may still inherit mixed real/mocked transport from shared app-shell imports.
-- Clip creation currently lacks a dedicated frontend service layer.
-- The repository is process-local, so restart durability is not part of this epic.
+- The media flow may still inherit mixed real/mocked transport from shared app-shell imports.
+- The repository is process-local, so restart durability is not part of this epic slice.
+- Cross-channel contamination can hide behind a visually correct list if tests are thin.
 
 ## Rollback
 
-- Revert the documentation and any future feature branch that introduces the epic.
+- Revert the documentation and any future feature branch that introduces the epic slice.
 - No database migration rollback is needed because this epic does not introduce one.
 
 ## ADRs
 
-- No new ADR is required to plan the epic if the existing route and contract topology is reused.
-- If clip placement changes the route topology or contract shape, capture it before implementation.
+- No new ADR is required to plan this slice if the existing route and contract topology is reused.
