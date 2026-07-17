@@ -5,7 +5,7 @@
 - Spec ID: 018
 - Sprint number: 17
 - Spec title: Narration and Visual Assets
-- Status: implemented on sprint head / pending draft PR merge
+- Status: completed and integrated by PR #28
 - Date: 2026-07-17
 - Owner: Codex
 - Linked ADR: none
@@ -202,5 +202,5 @@ Reason for exclusion: these stories belong to the second E17 slice and are inten
 - Verification method: backend tests, frontend route tests, browser E2E and screenshot sweep.
 - Pass criteria: the included records persist through reload, remain channel-scoped and emit audit logs.
 - Block criteria: mock primary actions, missing reload proof, missing audit logs, cross-channel leaks or any promise of restart durability.
-- Current result: gate satisfied on the Sprint 17 head; integration into `main` remains pending PR review and merge.
+- Current result: gate satisfied and integrated into `main` by PR #28.
 - Product status: V1.0 remains `NAO ACEITA`; this sprint does not execute `R14-REACCEPT`.

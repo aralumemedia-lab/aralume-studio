@@ -1592,14 +1592,14 @@ Regras normativas:
 | --- | --- | --- | --- |
 | Sprint 15 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
 | Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05 a V1-06 | roteiro versionado e plano visual com cenas operaveis no frontend |
-| Sprint 17 (entregue no head; merge pendente) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
+| Sprint 17 (entregue pela PR #28) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | render e cortes operaveis no frontend |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-14 | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | novo V1 Acceptance com prova nova no mesmo head |
 - Sprint 15 foi executada na PR #26 e a Sprint 16 concluiu H16.3 e H16.4; E16 esta fechado.
 - E17 passa a ser executado em duas sprints: Sprint 17 para H17.1/H17.2 e Sprint 18 para H17.3/H17.4.
-- H17.1 e H17.2 estao entregues no head da Sprint 17; E17 permanece parcial ate H17.3 e H17.4.
+- H17.1 e H17.2 estao integradas em `main` pela PR #28; E17 permanece parcial ate H17.3 e H17.4.
 
 ### Mapa de remediacao
 

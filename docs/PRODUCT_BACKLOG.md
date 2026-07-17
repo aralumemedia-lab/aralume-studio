@@ -70,7 +70,7 @@ Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 | --- | --- | --- | --- | --- | --- |
 | Sprint 15 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04 | funcional + frontend + UX | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
 | Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05, V1-06 | R14-05, R14-06 | funcional + frontend + UX | roteiro versionado, versoes e plano visual com cenas operaveis no frontend |
-| Sprint 17 (entregue no head; merge pendente) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08 | R14-07, R14-08 | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
+| Sprint 17 (entregue pela PR #28) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08 | R14-07, R14-08 | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10 | R14-09, R14-10 | funcional + frontend + backend + integracao | render e cortes operaveis no frontend |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13, V1-14 | R14-11, R14-12, R14-13, R14-14 | funcional + frontend + backend + governance | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | R14-T01, R14-T02 | technical + evidence + QA | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |

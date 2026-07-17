@@ -2,7 +2,7 @@
 
 ## H17.1 - Narracao operavel pelo frontend
 
-- Status: delivered on Sprint 17 head / pending merge
+- Status: completed by Sprint 17 / PR #28
 - Actor: operator / producer
 - Objective: create or update narration metadata from the frontend and keep it channel-scoped after reload.
 - V1 criterion: V1-07
@@ -32,7 +32,7 @@
 
 ## H17.2 - Ativos visuais rastreaveis
 
-- Status: delivered on Sprint 17 head / pending merge
+- Status: completed by Sprint 17 / PR #28
 - Actor: operator / producer
 - Objective: register a visual asset with provenance and integrity data from the frontend.
 - V1 criterion: V1-08
