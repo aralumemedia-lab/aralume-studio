@@ -6,6 +6,12 @@
 - H17.3 and H17.4 tasks are not included and remain pending.
 - The browser procedure is `node scripts/sprint17-browser-e2e.mjs`; evidence is under `screenshots/sprint-17/`.
 
+## Sprint 18 execution status
+
+- H17.3 and H17.4 are in progress under `docs/specs/019-sprint-18-render-derived-clips.md`.
+- Browser procedure: `node scripts/sprint18-browser-e2e.mjs`.
+- Evidence directory: `screenshots/sprint-18/`.
+
 ## Contracts
 
 - Reconcile narration and visual-asset payloads with the current `src/contracts/types.ts` models.
@@ -67,3 +73,13 @@
 - Do not edit `.env.local`.
 - Do not add external integrations.
 - Do not widen the scope to dashboard, agent office, approvals, compliance, publication, metrics or costs.
+
+## Sprint 18 tasks
+
+- Contracts: align render/clip input types, status enums, error envelopes and request correlation.
+- Frontend: prove `/videos` render lifecycle and `/clips` interval workflow with real API clients.
+- Backend: propagate request IDs through render and clip audits; preserve storage, cost and channel guards.
+- Tests: add HTTP regressions for 400/404/409, idempotency, interval validation, reload and audit correlation.
+- E2E: run controlled fixtures through render, reload, clip, invalid interval and channel isolation.
+- QA visual: capture all required Sprint 18 viewports and states without overflow.
+- Documentation: update V1-09/V1-10 traceability and keep E18/E19 pending.

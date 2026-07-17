@@ -64,4 +64,18 @@
 
 - H17.3 - Render controlado pelo frontend.
 - H17.4 - Corte derivado operavel pelo frontend.
-- Status: pending; not started in Sprint 17.
+- Status: in progress in Sprint 18; not complete until the Sprint 18 gate passes.
+
+## H17.3 - Render controlado pelo frontend
+
+- V1 criterion: V1-09
+- R14 item: R14-09
+- Route: `/videos`
+- Acceptance: real render creation, observable job/output state, sanitized failures, reload, idempotency, audit request correlation and channel isolation.
+
+## H17.4 - Corte derivado operavel pelo frontend
+
+- V1 criterion: V1-10
+- R14 item: R14-10
+- Route: `/clips`
+- Acceptance: completed parent video selection, valid interval creation, duplicate/out-of-duration rejection, reload, file/output traceability, audit request correlation and channel isolation.

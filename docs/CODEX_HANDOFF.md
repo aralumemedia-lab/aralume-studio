@@ -124,7 +124,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - Sequencia recomendada: Sprint 17, Sprint 18, Sprint proposta C, Sprint proposta D, e depois R14-REACCEPT.
 - Proxima sprint recomendada: Sprint 18, limitada a H17.3 e H17.4 para concluir E17.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Nao iniciado: nenhuma remediacao funcional fora do E17 primeiro slice comecou nesta execucao.
+- Nao iniciado: E18, E19, `R14-REACCEPT`, release, tag e deploy permanecem fora desta execucao.
 
 ## Sprint 15 - formalizacao documental
 
@@ -151,6 +151,18 @@ recriacao do frontend e limpeza administrativa da S12.
 - Pendente: H17.3 e H17.4.
 - Evidencia reproduzivel: `node scripts/sprint17-browser-e2e.mjs` e `screenshots/sprint-17/`.
 - Produto: E17 parcial e V1.0 ainda `NAO ACEITA`; nenhum reaceite ou release executado.
+
+## Sprint 18 - formalizacao e execucao
+
+- Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
+- Spec normativa: `docs/specs/019-sprint-18-render-derived-clips.md`.
+- Estado: in progress.
+- Historias: H17.3 e H17.4.
+- Criterios V1: V1-09 e V1-10.
+- Itens R14: R14-09 e R14-10.
+- Escopo: render controlado em `/videos`, videos resultantes, cortes derivados em `/clips`, intervalos, auditoria correlacionada, reload e isolamento.
+- Pendente por escopo: E18, E19, `R14-REACCEPT`, release, tag e deploy.
+- E17 somente sera concluido quando o gate da Spec 019 estiver comprovado no mesmo head.
 
 ## Definition of Done
 

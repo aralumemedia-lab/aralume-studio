@@ -78,3 +78,13 @@ READY FOR PR REVIEW only when:
 5. The traceability matrix covers each criterion and dependency.
 
 Current result: satisfied on the Sprint 17 head. E17 remains partial because H17.3 and H17.4 are pending.
+
+## Sprint 18 acceptance
+
+- `/videos` creates a real controlled render from channel-scoped source assets and exposes the persisted job/output state.
+- `/clips` creates a real derived clip from a completed channel-scoped video and preserves interval/provenance linkage.
+- Invalid, duplicate, out-of-duration, cross-channel, timeout, process-failure and policy-blocked paths are sanitized and tested.
+- Reload preserves the job, video and clip while the backend process remains alive.
+- Render and clip mutation audits include the originating HTTP `requestId`.
+- Browser evidence covers 1366x768, 1600x900, 1792x1024 and 1920x1080, sidebar states, loading, success, error, conflict, reload and isolation.
+- E17 may be marked complete only after all Sprint 18 criteria are proven; V1.0 remains `NAO ACEITA`.
