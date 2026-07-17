@@ -1,48 +1,51 @@
 # E17 - Tasks
 
+## Sprint 17 execution status
+
+- H17.1 and H17.2 tasks below are delivered on the Sprint 17 head and pending merge.
+- H17.3 and H17.4 tasks are not included and remain pending.
+- The browser procedure is `node scripts/sprint17-browser-e2e.mjs`; evidence is under `screenshots/sprint-17/`.
+
 ## Contracts
 
-- Reconcile media and clip payloads with the current `src/contracts/types.ts` models.
+- Reconcile narration and visual-asset payloads with the current `src/contracts/types.ts` models.
 - Keep the API envelope and error codes unchanged.
-- Confirm the clip placement contract before any implementation branch.
 - Keep `src/services/api-client.ts` limited to real services for the epic surfaces.
 
 ## Frontend
 
-- Implement the narration/asset actions on `/media-assets`.
-- Implement the render start and state actions on `/videos`.
-- Implement the clip creation action on `/clips`.
+- Implement narration create/update actions on `/media-assets`.
+- Implement visual asset create/update actions on `/media-assets`.
 - Remove mock-only primary actions from the epic flow.
-- Keep loading, empty, error and success states explicit.
+- Keep loading, empty, error, success and validation/conflict states explicit.
 
 ## Backend
 
 - Keep channel validation and cross-channel conflict rejection explicit.
-- Keep render job and clip validation rules explicit.
-- Keep the current repository abstraction stable for the epic.
+- Keep the current repository abstraction stable for the slice.
 
 ## Persistence
 
-- Verify that the media, render and clip repositories survive browser reloads inside the same process.
-- Preserve render state and clip ordering across reloads.
-- Do not add a database or migration layer in this epic.
+- Verify that the media repository survives browser reloads inside the same process.
+- Preserve asset ordering and details across reloads.
+- Do not add a database or migration layer in this slice.
 
 ## Audit
 
-- Record create/update/render/clip events with requestId, channelId, entityType, entityId, actor and action.
+- Record create/update and validation events with requestId, channelId, entityType, entityId, actor and action.
 
 ## Tests
 
-- Add or extend server HTTP tests for all four stories.
-- Add or extend frontend route tests for loading, empty, error and success states.
-- Add browser E2E coverage for create, reload, isolation, duplicate and invalid payload scenarios.
+- Add or extend server HTTP tests for the two stories.
+- Add or extend frontend route tests for loading, empty, error, success and validation/conflict states.
+- Add browser E2E coverage for create, reload, isolation and invalid payload scenarios.
 - Add screenshot coverage at all required viewports.
 
 ## Accessibility
 
 - Ensure keyboard focus reaches every form control and primary action.
 - Ensure table rows and detail panels remain readable with long values.
-- Ensure the clip surface can be operated without pointer-only assumptions.
+- Ensure the media surface can be operated without pointer-only assumptions.
 
 ## QA visual
 

@@ -378,6 +378,7 @@ export type MediaAssetsDependencies = {
     appendAuditLog(log: {
       id: ID;
       channelId?: ID;
+      requestId?: string;
       actorType: "user" | "agent" | "system";
       actorName: string;
       action: string;
@@ -400,8 +401,13 @@ export type CreateMediaAssetsServiceOptions = {
 export type MediaAssetsService = {
   listMediaAssets(filters: MediaAssetFilters): MediaAssetBase[];
   getMediaAsset(channelId: ID, id: ID): MediaAssetBase;
-  createMediaAsset(input: MediaAssetCreateInput): MediaAssetBase;
-  updateMediaAsset(channelId: ID, id: ID, input: MediaAssetPatchInput): MediaAssetBase;
+  createMediaAsset(input: MediaAssetCreateInput, requestId?: string): MediaAssetBase;
+  updateMediaAsset(
+    channelId: ID,
+    id: ID,
+    input: MediaAssetPatchInput,
+    requestId?: string,
+  ): MediaAssetBase;
   validateStorageReference(input: StorageReferenceValidationInput): MediaAssetStorageValidation;
   validateAssetIntegrity(
     channelId: ID,

@@ -121,10 +121,10 @@ recriacao do frontend e limpeza administrativa da S12.
 - Epic 4: E19 - Cockpits Reais e Evidencias Transversais.
 - CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
-- Sequencia recomendada: Sprint 15, Sprint 16, Sprint proposta B, Sprint proposta C, Sprint proposta D, e depois R14-REACCEPT.
-- Primeira sprint recomendada: Sprint 15, focada em E16 com o perfil editorial como prerequisito inseparavel.
+- Sequencia recomendada: Sprint 17, Sprint 18, Sprint proposta C, Sprint proposta D, e depois R14-REACCEPT.
+- Proxima sprint recomendada apos o merge da Sprint 17: Sprint 18, limitada a H17.3 e H17.4 para concluir E17.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Nao iniciado: nenhuma remediacao funcional comecou nesta execucao.
+- Nao iniciado: nenhuma remediacao funcional fora do E17 primeiro slice comecou nesta execucao.
 
 ## Sprint 15 - formalizacao documental
 
@@ -137,6 +137,20 @@ recriacao do frontend e limpeza administrativa da S12.
 - Sequencia: primeira fatia funcional do E16 entregue; H16.3 e H16.4 foram concluídas na fatia seguinte do mesmo epic.
 - Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
 - Pendente: nenhuma historia de E16 permanece pendente.
+
+## Sprint 17 - formalizacao documental
+
+- Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
+- Spec normativa: `docs/specs/018-sprint-17-narration-media-assets.md`.
+- Estado: implemented on sprint head / pending merge.
+- Historias: H17.1 e H17.2.
+- Resultado: H17.1 e H17.2 entregues no head da Sprint 17 com API real, reload, auditoria, validacao e isolamento por canal; H17.3 e H17.4 permanecem pendentes para a Sprint 18.
+- Itens R14: R14-07 e R14-08.
+- Sequencia: primeira fatia funcional do E17, sem render nem cortes.
+- Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
+- Pendente: H17.3 e H17.4.
+- Evidencia reproduzivel: `node scripts/sprint17-browser-e2e.mjs` e `screenshots/sprint-17/`.
+- Produto: E17 parcial e V1.0 ainda `NAO ACEITA`; nenhum reaceite ou release executado.
 
 ## Definition of Done
 
