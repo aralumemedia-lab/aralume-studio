@@ -416,6 +416,15 @@ test("render HTTP routes create a real job and surface the rendered video for th
     assert.equal(createResponse.status, 201);
     assert.equal(createdPayload.data.status, "completed");
     assert.ok(createdPayload.data.outputAssetId);
+    assert.ok(
+      harness.auditRepository
+        .listAuditLogs({ channelId: "ch_historia", entityId: createdPayload.data.id })
+        .some(
+          (entry) =>
+            entry.action === "render.execution_completed" &&
+            entry.requestId === createdPayload.meta.requestId,
+        ),
+    );
 
     const listResponse = await fetch(`${baseUrl}/api/renders?channelId=ch_historia`);
     const listPayload = (await listResponse.json()) as {

@@ -474,7 +474,7 @@ export const Route = createFileRoute("/clips")({
                           return;
                         }
 
-                        void createMutation.mutateAsync({
+                        createMutation.mutate({
                           channelId: activeChannelId,
                           parentVideoId: selectedParentVideo.id,
                           startSeconds: parsedStart,
@@ -893,7 +893,10 @@ function buildClipIdempotencyKey(channelId: string | undefined): string {
 function isConcludedVideo(video: VideoAsset): boolean {
   return (
     video.renderStatus === "rendered" &&
-    (video.status === "approved" || video.status === "published" || video.status === "scheduled")
+    (video.status === "editing" ||
+      video.status === "approved" ||
+      video.status === "published" ||
+      video.status === "scheduled")
   );
 }
 

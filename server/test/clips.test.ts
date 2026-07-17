@@ -185,6 +185,14 @@ test("derived clip service rejects invalid intervals, channel mismatches and sto
         (error) => error instanceof AppError && error.status === scenario.expectedStatus,
         scenario.name,
       );
+      assert.equal(
+        harness.renderJobsRepository.findRenderJobByIdempotencyKey(
+          scenario.input.channelId,
+          scenario.input.idempotencyKey,
+        ),
+        undefined,
+        `${scenario.name} must not leave a queued render job`,
+      );
     }
 
     await assert.rejects(
@@ -340,9 +348,9 @@ test("derived clip HTTP routes create a real clip and survive a repository resta
     assert.ok(concludedParentVideo);
     harness.mediaAssetsRepository.upsertVideoAsset({
       ...concludedParentVideo!,
-      status: "published",
-      complianceStatus: "approved",
-      qualityStatus: "passed",
+      status: "editing",
+      complianceStatus: "pending",
+      qualityStatus: "pending",
       storagePath: renderedPayload.data.outputStoragePath,
       sizeBytes: renderedPayload.data.outputSizeBytes,
       checksum: renderedPayload.data.outputChecksum,
@@ -372,12 +380,22 @@ test("derived clip HTTP routes create a real clip and survive a repository resta
         status: string;
         storagePath?: string;
       };
+      meta: { requestId: string };
     };
 
     assert.equal(clipResponse.status, 201);
     assert.equal(clipPayload.data.status, "completed");
     assert.equal(clipPayload.data.parentVideoId, "vd_historia_01");
     assert.ok(clipPayload.data.storagePath);
+    assert.ok(
+      harness.auditRepository
+        .listAuditLogs({ channelId: "ch_historia", entityId: clipPayload.data.renderJobId })
+        .some(
+          (entry) =>
+            entry.action === "clip.execution_completed" &&
+            entry.requestId === clipPayload.meta.requestId,
+        ),
+    );
 
     const clipFileResponse = await fetch(
       `${baseUrl}/api/clips/${clipPayload.data.id}/file?channelId=ch_historia`,

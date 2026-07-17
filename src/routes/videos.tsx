@@ -384,7 +384,7 @@ export const Route = createFileRoute("/videos")({
                         type="button"
                         disabled={!canCreate || createRenderMutation.isPending}
                         onClick={() => {
-                          void createRenderMutation.mutateAsync({
+                          createRenderMutation.mutate({
                             channelId: activeChannelId,
                             inputAssetIds: formState.selectedInputAssetIds,
                             renderType: "controlled_video",
@@ -861,6 +861,9 @@ function renderTone(status: VideoAsset["renderStatus"]): "muted" | "info" | "ok"
 function isConcludedVideoAsset(video: VideoAsset): boolean {
   return (
     video.renderStatus === "rendered" &&
-    (video.status === "approved" || video.status === "published" || video.status === "scheduled")
+    (video.status === "editing" ||
+      video.status === "approved" ||
+      video.status === "published" ||
+      video.status === "scheduled")
   );
 }
