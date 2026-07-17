@@ -212,12 +212,18 @@ async function main() {
 
       const auditLogsA = await apiGet(`/audit-logs?channelId=${channelA.id}`);
       const auditActionsA = auditLogsA.data.map((log) => log.action);
+      const registrationAudit = auditLogsA.data.find(
+        (log) => log.action === "media_asset.registered" && log.entityId === visualPayload.data.id,
+      );
+      const updateAudit = auditLogsA.data.find(
+        (log) => log.action === "media_asset.updated" && log.entityId === visualPayload.data.id,
+      );
       assert.ok(
-        auditActionsA.includes("media_asset.registered"),
+        registrationAudit?.requestId,
         `expected registration audit entries, got: ${auditActionsA.join(", ")}`,
       );
       assert.ok(
-        auditActionsA.includes("media_asset.updated"),
+        updateAudit?.requestId,
         `expected update or rejection audit entries, got: ${auditActionsA.join(", ")}`,
       );
 

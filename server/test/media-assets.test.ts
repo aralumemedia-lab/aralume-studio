@@ -316,7 +316,7 @@ test("media assets HTTP create and patch routes remain queryable in the active p
     costActualCents: 0,
   };
 
-  const { baseUrl, server } = await startServer();
+  const { baseUrl, server, harness } = await startServer();
 
   try {
     const createResponse = await fetch(`${baseUrl}/api/media-assets`, {
@@ -359,6 +359,16 @@ test("media assets HTTP create and patch routes remain queryable in the active p
     assert.equal(detailPayload.data.channelId, "ch_negocios");
     assert.equal(detailPayload.data.description, "Controlled visual asset updated through HTTP.");
     assert.equal(detailPayload.data.usageSummary, "Updated through HTTP patch.");
+
+    const auditLogs = harness.auditRepository.listAuditLogs({ channelId: "ch_negocios" });
+    const registrationAudit = auditLogs.find(
+      (log) => log.action === "media_asset.registered" && log.entityId === createdId,
+    );
+    const updateAudit = auditLogs.find(
+      (log) => log.action === "media_asset.updated" && log.entityId === createdId,
+    );
+    assert.equal(registrationAudit?.requestId, createPayload.meta.requestId);
+    assert.equal(updateAudit?.requestId, patchPayload.meta.requestId);
   } finally {
     await stopServer(server);
   }

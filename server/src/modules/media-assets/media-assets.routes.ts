@@ -37,7 +37,7 @@ export function createMediaAssetsRouter(
 
   router.post("/media-assets", (req, res) => {
     const body = parseBody(mediaAssetCreateSchema, req.body);
-    const created = service.createMediaAsset(body);
+    const created = service.createMediaAsset(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -72,7 +72,7 @@ export function createMediaAssetsRouter(
     const params = parseParams(mediaAssetIdParamsSchema, req.params);
     const body = parseBody(mediaAssetPatchSchema, omitChannelId(req.body));
     const query = parseChannelBody(req.body);
-    const updated = service.updateMediaAsset(query.channelId, params.id, body);
+    const updated = service.updateMediaAsset(query.channelId, params.id, body, getRequestId(res));
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 

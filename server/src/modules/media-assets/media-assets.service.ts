@@ -92,7 +92,7 @@ export function createMediaAssetsService(
       );
     },
 
-    createMediaAsset(input) {
+    createMediaAsset(input, requestId) {
       try {
         assertChannelExists(dependencies.channelsRepository, input.channelId);
         const validation = validateStorageReferenceInternal(
@@ -151,6 +151,7 @@ export function createMediaAssetsService(
         recordAudit(dependencies.auditRepository, {
           id: `au_${idFactory()}`,
           channelId: asset.channelId,
+          requestId,
           actorType: "system",
           actorName: "Aralume Core",
           action: "media_asset.registered",
@@ -174,23 +175,30 @@ export function createMediaAssetsService(
 
         return asset;
       } catch (error) {
-        auditRejectedMediaAsset(dependencies.auditRepository, idFactory, clock, input.channelId, {
-          action: "media_asset.registration_rejected",
-          entityType: "MediaAsset",
-          entityId: input.contentId ?? input.channelId,
-          error,
-          metadata: {
-            type: input.type,
-            storagePath: input.storagePath,
-            origin: input.origin,
-            licenseStatus: input.licenseStatus,
+        auditRejectedMediaAsset(
+          dependencies.auditRepository,
+          idFactory,
+          clock,
+          input.channelId,
+          requestId,
+          {
+            action: "media_asset.registration_rejected",
+            entityType: "MediaAsset",
+            entityId: input.contentId ?? input.channelId,
+            error,
+            metadata: {
+              type: input.type,
+              storagePath: input.storagePath,
+              origin: input.origin,
+              licenseStatus: input.licenseStatus,
+            },
           },
-        });
+        );
         throw error;
       }
     },
 
-    updateMediaAsset(channelId, id, input) {
+    updateMediaAsset(channelId, id, input, requestId) {
       try {
         const existing = getAssetForChannel(
           repository,
@@ -199,6 +207,7 @@ export function createMediaAssetsService(
           dependencies.auditRepository,
           clock,
           idFactory,
+          requestId,
         );
         const now = clock().toISOString();
         const nextStoragePath =
@@ -249,6 +258,7 @@ export function createMediaAssetsService(
         recordAudit(dependencies.auditRepository, {
           id: `au_${idFactory()}`,
           channelId,
+          requestId,
           actorType: "system",
           actorName: "Aralume Core",
           action: "media_asset.updated",
@@ -267,18 +277,25 @@ export function createMediaAssetsService(
         });
         return next;
       } catch (error) {
-        auditRejectedMediaAsset(dependencies.auditRepository, idFactory, clock, channelId, {
-          action: "media_asset.update_rejected",
-          entityType: "MediaAsset",
-          entityId: id,
-          error,
-          metadata: {
-            changedFields: Object.keys(input),
-            storagePath: input.storagePath,
-            origin: input.origin,
-            licenseStatus: input.licenseStatus,
+        auditRejectedMediaAsset(
+          dependencies.auditRepository,
+          idFactory,
+          clock,
+          channelId,
+          requestId,
+          {
+            action: "media_asset.update_rejected",
+            entityType: "MediaAsset",
+            entityId: id,
+            error,
+            metadata: {
+              changedFields: Object.keys(input),
+              storagePath: input.storagePath,
+              origin: input.origin,
+              licenseStatus: input.licenseStatus,
+            },
           },
-        });
+        );
         throw error;
       }
     },
@@ -311,16 +328,23 @@ export function createMediaAssetsService(
         });
         return result;
       } catch (error) {
-        auditRejectedMediaAsset(dependencies.auditRepository, idFactory, clock, input.channelId, {
-          action: "media_asset.storage_rejected",
-          entityType: "MediaAsset",
-          entityId: input.storagePath,
-          error,
-          metadata: {
-            type: input.type,
-            storagePath: input.storagePath,
+        auditRejectedMediaAsset(
+          dependencies.auditRepository,
+          idFactory,
+          clock,
+          input.channelId,
+          undefined,
+          {
+            action: "media_asset.storage_rejected",
+            entityType: "MediaAsset",
+            entityId: input.storagePath,
+            error,
+            metadata: {
+              type: input.type,
+              storagePath: input.storagePath,
+            },
           },
-        });
+        );
         throw error;
       }
     },
@@ -702,12 +726,14 @@ function getAssetForChannel(
   auditRepository: MediaAssetsDependencies["auditRepository"],
   clock: () => Date,
   idFactory: () => string,
+  requestId?: string,
 ): MediaAssetBase {
   const found = repository.getMediaAsset(id);
   if (!found) {
     recordAudit(auditRepository, {
       id: `au_${idFactory()}`,
       channelId,
+      requestId,
       actorType: "system",
       actorName: "Aralume Core",
       action: "media_asset.not_found",
@@ -729,6 +755,7 @@ function getAssetForChannel(
       "media_asset.cross_channel_denied",
       idFactory,
       clock().toISOString(),
+      requestId,
     );
     throw notFound("Media asset not found", { channelId, id });
   }
@@ -892,10 +919,12 @@ function auditCrossChannelAttempt(
   action: string,
   idFactory: () => string,
   now: string,
+  requestId?: string,
 ): void {
   recordAudit(auditRepository, {
     id: `au_${idFactory()}`,
     channelId,
+    requestId,
     actorType: "system",
     actorName: "Aralume Core",
     action,
@@ -913,6 +942,7 @@ function auditRejectedMediaAsset(
   idFactory: () => string,
   clock: () => Date,
   channelId: string,
+  requestId: string | undefined,
   input: {
     action: string;
     entityType: string;
@@ -932,6 +962,7 @@ function auditRejectedMediaAsset(
   recordAudit(auditRepository, {
     id: `au_${idFactory()}`,
     channelId,
+    requestId,
     actorType: "system",
     actorName: "Aralume Core",
     action: input.action,
