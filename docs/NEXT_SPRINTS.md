@@ -20,7 +20,7 @@
 | 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
 | 4 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed | not released | PR #26 entregou H16.0, H16.1 e H16.2; a fatia complementar da Sprint 16 concluiu H16.3 e H16.4. |
 | 5 | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/017-sprint-16-scripts-visual-planning.md` | completed | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido. |
-| 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | implemented / pending merge | not released | H17.1 e H17.2 entregues no head da Sprint 17 com API real, reload, auditoria, isolamento e evidencia browser; E17 permanece parcial. |
+| 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | completed | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser; E17 permanece parcial. |
 | 7 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | proposed | not released | Segunda fatia de E17; H17.3 e H17.4 permanecem pendentes para render e cortes. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
@@ -108,7 +108,7 @@
 
 - Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
 - Spec normativa: `docs/specs/018-sprint-17-narration-media-assets.md`.
-- Estado: implemented on sprint head / pending merge.
+- Estado: completed pela PR #28.
 - Resultado: H17.1 e H17.2 entregues com create/update real, reload no mesmo processo, auditoria e isolamento por canal.
 - Evidencia: `scripts/sprint17-browser-e2e.mjs` e `screenshots/sprint-17/`.
 - Pendente: H17.3 e H17.4; E17 permanece parcial.

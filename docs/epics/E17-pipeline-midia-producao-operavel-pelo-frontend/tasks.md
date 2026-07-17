@@ -2,7 +2,7 @@
 
 ## Sprint 17 execution status
 
-- H17.1 and H17.2 tasks below are delivered on the Sprint 17 head and pending merge.
+- H17.1 and H17.2 tasks below were delivered by Sprint 17 and integrated through PR #28.
 - H17.3 and H17.4 tasks are not included and remain pending.
 - The browser procedure is `node scripts/sprint17-browser-e2e.mjs`; evidence is under `screenshots/sprint-17/`.
 

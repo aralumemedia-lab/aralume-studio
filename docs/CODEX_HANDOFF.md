@@ -122,7 +122,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
 - Sequencia recomendada: Sprint 17, Sprint 18, Sprint proposta C, Sprint proposta D, e depois R14-REACCEPT.
-- Proxima sprint recomendada apos o merge da Sprint 17: Sprint 18, limitada a H17.3 e H17.4 para concluir E17.
+- Proxima sprint recomendada: Sprint 18, limitada a H17.3 e H17.4 para concluir E17.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
 - Nao iniciado: nenhuma remediacao funcional fora do E17 primeiro slice comecou nesta execucao.
 
@@ -142,9 +142,9 @@ recriacao do frontend e limpeza administrativa da S12.
 
 - Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
 - Spec normativa: `docs/specs/018-sprint-17-narration-media-assets.md`.
-- Estado: implemented on sprint head / pending merge.
+- Estado: completed pela PR #28.
 - Historias: H17.1 e H17.2.
-- Resultado: H17.1 e H17.2 entregues no head da Sprint 17 com API real, reload, auditoria, validacao e isolamento por canal; H17.3 e H17.4 permanecem pendentes para a Sprint 18.
+- Resultado: H17.1 e H17.2 integradas em `main` pela PR #28 com API real, reload, auditoria, validacao e isolamento por canal; H17.3 e H17.4 permanecem pendentes para a Sprint 18.
 - Itens R14: R14-07 e R14-08.
 - Sequencia: primeira fatia funcional do E17, sem render nem cortes.
 - Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
