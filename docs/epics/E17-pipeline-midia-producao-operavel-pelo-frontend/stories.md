@@ -60,22 +60,20 @@
   - The asset persists through reload.
   - The channel filter and error handling are proven.
 
-## Next slice
-
-- H17.3 - Render controlado pelo frontend.
-- H17.4 - Corte derivado operavel pelo frontend.
-- Status: in progress in Sprint 18; not complete until the Sprint 18 gate passes.
-
 ## H17.3 - Render controlado pelo frontend
 
+- Status: delivered on Sprint 18 head; pending PR integration
 - V1 criterion: V1-09
 - R14 item: R14-09
 - Route: `/videos`
 - Acceptance: real render creation, observable job/output state, sanitized failures, reload, idempotency, audit request correlation and channel isolation.
+- Tests/evidence: `server/test/renders.test.ts`, `src/services/renders-api.test.ts`, `src/tests/videos-route.test.ts`, `scripts/sprint18-browser-e2e.mjs`, `screenshots/sprint-18/`.
 
 ## H17.4 - Corte derivado operavel pelo frontend
 
+- Status: delivered on Sprint 18 head; pending PR integration
 - V1 criterion: V1-10
 - R14 item: R14-10
 - Route: `/clips`
 - Acceptance: completed parent video selection, valid interval creation, duplicate/out-of-duration rejection, reload, file/output traceability, audit request correlation and channel isolation.
+- Tests/evidence: `server/test/clips.test.ts`, `src/tests/clips-route.test.ts`, `scripts/sprint18-browser-e2e.mjs`, `screenshots/sprint-18/`.

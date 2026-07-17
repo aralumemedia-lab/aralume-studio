@@ -3,12 +3,12 @@
 ## Sprint 17 execution status
 
 - H17.1 and H17.2 tasks below were delivered by Sprint 17 and integrated through PR #28.
-- H17.3 and H17.4 tasks are not included and remain pending.
+- H17.3 and H17.4 tasks were not included in Sprint 17 and were carried into Sprint 18.
 - The browser procedure is `node scripts/sprint17-browser-e2e.mjs`; evidence is under `screenshots/sprint-17/`.
 
 ## Sprint 18 execution status
 
-- H17.3 and H17.4 are in progress under `docs/specs/019-sprint-18-render-derived-clips.md`.
+- H17.3 and H17.4 were delivered on the Sprint 18 head under `docs/specs/019-sprint-18-render-derived-clips.md`; PR integration remains pending.
 - Browser procedure: `node scripts/sprint18-browser-e2e.mjs`.
 - Evidence directory: `screenshots/sprint-18/`.
 
@@ -83,3 +83,11 @@
 - E2E: run controlled fixtures through render, reload, clip, invalid interval and channel isolation.
 - QA visual: capture all required Sprint 18 viewports and states without overflow.
 - Documentation: update V1-09/V1-10 traceability and keep E18/E19 pending.
+
+## Sprint 18 completion evidence
+
+- `npm test`: 68 passed, 0 failed.
+- `npm run lint`, `npm run backend:check`, `npm run build` and `git diff --check`: passed.
+- Browser procedure passed: `node scripts/sprint18-browser-e2e.mjs`.
+- Evidence: `screenshots/sprint-18/` covers empty, running, success, error, conflict, reload, sidebar and channel isolation states.
+- E17 is complete on the sprint head; E18, E19 and `R14-REACCEPT` remain pending.

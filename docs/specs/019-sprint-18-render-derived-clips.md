@@ -5,7 +5,7 @@
 - Spec ID: 019
 - Sprint number: 18
 - Spec title: Render and Derived Clips
-- Status: in progress
+- Status: accepted on Sprint 18 head; pending PR integration
 - Date: 2026-07-17
 - Owner: Codex
 - Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend
@@ -111,3 +111,10 @@ Every render and clip mutation must persist an audit event containing `requestId
 - Gate: Sprint 18 accepted and E17 complete.
 - Pass condition: H17.3 and H17.4 have real frontend evidence for render, output, clip, reload, audit and channel isolation.
 - Block condition: mock primary action, missing output/file, uncorrelated audit, cross-channel leak, unsanitized failure, missing browser evidence or any restart-durability promise.
+
+## 13. Execution result
+
+- H17.3 and H17.4 passed on the same Sprint 18 head through the real frontend, backend HTTP routes, same-process reload and channel isolation flow.
+- `npm test` passed with 68 tests; lint, backend check, build, diff check and browser E2E passed.
+- Browser evidence is under `screenshots/sprint-18/`; the reproducible command is `node scripts/sprint18-browser-e2e.mjs`.
+- The formal V1 Acceptance was not rerun. V1.0 remains `NAO ACEITA`, and E18/E19 plus `R14-REACCEPT` remain pending.

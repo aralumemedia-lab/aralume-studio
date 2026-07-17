@@ -1,6 +1,6 @@
 # E17 - Pipeline Midia e Producao Operavel pelo Frontend
 
-- Status: partial / in progress
+- Status: complete on Sprint 18 head; pending PR integration
 - Epic name: Pipeline Midia e Producao Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P1
@@ -22,8 +22,8 @@ Labels used below: `implemented`, `partial`, `only backend`, `only mock`, `absen
 | --- | --- | --- | --- | --- | --- | --- |
 | Narracao / V1-07 | implemented | implemented | implemented | implemented for reload in the same process | implemented | create/update, reload, audit and isolation proven by Sprint 17 E2E |
 | Ativos visuais / V1-08 | implemented | implemented | implemented | implemented for reload in the same process | implemented | create/update, provenance, integrity, reload and isolation proven by Sprint 17 E2E |
-| Render controlado / V1-09 | in progress | implemented | implemented | existing, reload to prove | implemented | Sprint 18 frontend/E2E pending |
-| Corte derivado / V1-10 | in progress | implemented | implemented | existing, reload to prove | implemented | Sprint 18 frontend/E2E pending |
+| Render controlado / V1-09 | implemented | implemented | implemented | same-process reload proven | implemented with requestId correlation | Sprint 18 frontend/E2E and screenshots |
+| Corte derivado / V1-10 | implemented | implemented | implemented | same-process reload proven | implemented with requestId correlation | Sprint 18 frontend/E2E and screenshots |
 
 ## V1 criteria covered in this sprint slice
 
@@ -70,11 +70,12 @@ Make the first media slice operable through the frontend so an operator can:
 - Reload verification for created records.
 - Channel isolation checks.
 - Audit trail requirements for mutating actions.
+- Controlled render from registered channel assets through `/videos`.
+- Derived clips from completed rendered videos through `/clips`.
+- Interval, idempotency, output-file and provenance traceability.
 
 ## Out of scope
 
-- Render control.
-- Derived clips.
 - Quality, compliance, approval and publication.
 - Metrics.
 - Costs.
@@ -125,4 +126,4 @@ Make the first media slice operable through the frontend so an operator can:
 
 ## Sprint 18 gate
 
-Sprint 18 is in progress. E17 can be closed only after H17.3 and H17.4 are implemented and evidenced on the same head.
+Sprint 18 evidence is complete on the sprint branch. E17 is closed on that head, pending its PR integration into `main`; H17.3 and H17.4 are not started in a later sprint.
