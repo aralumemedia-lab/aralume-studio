@@ -387,7 +387,11 @@ export const Route = createFileRoute("/publications")({
       Boolean(selectedTarget) &&
       Boolean(selectedSource) &&
       selectedTarget?.readinessStatus === "ready" &&
-      selectedSource?.canProceed;
+      selectedSource?.canProceed &&
+      jobForm.humanConfirmed &&
+      jobForm.title.trim().length > 0 &&
+      jobForm.description.trim().length > 0 &&
+      jobForm.idempotencyKey.trim().length > 0;
 
     return (
       <div className="space-y-4">
@@ -720,7 +724,7 @@ export const Route = createFileRoute("/publications")({
                       <Button
                         size="sm"
                         onClick={() =>
-                          void createTargetMutation.mutateAsync({
+                          createTargetMutation.mutate({
                             ...targetForm,
                             channelId: activeChannelId,
                             requestedBy: operatorName,
@@ -981,10 +985,14 @@ export const Route = createFileRoute("/publications")({
                       </div>
                       <div className="grid gap-3">
                         <div>
-                          <Label className="text-[10.5px] uppercase tracking-[0.08em]">
+                          <Label
+                            htmlFor="publication-title"
+                            className="text-[10.5px] uppercase tracking-[0.08em]"
+                          >
                             Titulo
                           </Label>
                           <Input
+                            id="publication-title"
                             value={jobForm.title}
                             onChange={(event) =>
                               setJobForm((current) => ({ ...current, title: event.target.value }))
@@ -992,10 +1000,14 @@ export const Route = createFileRoute("/publications")({
                           />
                         </div>
                         <div>
-                          <Label className="text-[10.5px] uppercase tracking-[0.08em]">
+                          <Label
+                            htmlFor="publication-description"
+                            className="text-[10.5px] uppercase tracking-[0.08em]"
+                          >
                             Descricao
                           </Label>
                           <textarea
+                            id="publication-description"
                             value={jobForm.description}
                             onChange={(event) =>
                               setJobForm((current) => ({
@@ -1009,10 +1021,14 @@ export const Route = createFileRoute("/publications")({
                         </div>
                         <div className="grid gap-3 md:grid-cols-2">
                           <div>
-                            <Label className="text-[10.5px] uppercase tracking-[0.08em]">
+                            <Label
+                              htmlFor="publication-scheduled-at"
+                              className="text-[10.5px] uppercase tracking-[0.08em]"
+                            >
                               Agendamento
                             </Label>
                             <Input
+                              id="publication-scheduled-at"
                               value={jobForm.scheduledAt}
                               onChange={(event) =>
                                 setJobForm((current) => ({
@@ -1024,11 +1040,15 @@ export const Route = createFileRoute("/publications")({
                             />
                           </div>
                           <div>
-                            <Label className="text-[10.5px] uppercase tracking-[0.08em]">
+                            <Label
+                              htmlFor="publication-idempotency"
+                              className="text-[10.5px] uppercase tracking-[0.08em]"
+                            >
                               Idempotencia
                             </Label>
                             <div className="mt-1 flex gap-2">
                               <Input
+                                id="publication-idempotency"
                                 value={jobForm.idempotencyKey}
                                 onChange={(event) =>
                                   setJobForm((current) => ({
@@ -1056,12 +1076,90 @@ export const Route = createFileRoute("/publications")({
                               </Button>
                             </div>
                           </div>
+                          <div>
+                            <Label
+                              htmlFor="publication-privacy"
+                              className="text-[10.5px] uppercase tracking-[0.08em]"
+                            >
+                              Privacidade
+                            </Label>
+                            <select
+                              id="publication-privacy"
+                              value={jobForm.privacyStatus}
+                              onChange={(event) =>
+                                setJobForm((current) => ({
+                                  ...current,
+                                  privacyStatus: event.target
+                                    .value as JobFormState["privacyStatus"],
+                                }))
+                              }
+                              className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
+                            >
+                              <option value="private">Privado</option>
+                              <option value="unlisted">Nao listado</option>
+                              <option value="public">Publico</option>
+                            </select>
+                          </div>
+                          <div>
+                            <Label
+                              htmlFor="publication-category"
+                              className="text-[10.5px] uppercase tracking-[0.08em]"
+                            >
+                              Categoria permitida
+                            </Label>
+                            <Input
+                              id="publication-category"
+                              value={jobForm.categoryId}
+                              onChange={(event) =>
+                                setJobForm((current) => ({
+                                  ...current,
+                                  categoryId: event.target.value,
+                                }))
+                              }
+                              placeholder="Opcional"
+                            />
+                          </div>
+                          <div>
+                            <Label
+                              htmlFor="publication-tags"
+                              className="text-[10.5px] uppercase tracking-[0.08em]"
+                            >
+                              Tags permitidas
+                            </Label>
+                            <Input
+                              id="publication-tags"
+                              value={jobForm.tags}
+                              onChange={(event) =>
+                                setJobForm((current) => ({ ...current, tags: event.target.value }))
+                              }
+                              placeholder="historia, editorial"
+                            />
+                          </div>
                         </div>
+
+                        <label className="flex items-start gap-2 rounded-md border border-info/30 bg-info-soft/30 p-3 text-xs text-foreground">
+                          <input
+                            type="checkbox"
+                            checked={jobForm.humanConfirmed}
+                            onChange={(event) =>
+                              setJobForm((current) => ({
+                                ...current,
+                                humanConfirmed: event.target.checked,
+                              }))
+                            }
+                            className="mt-0.5 h-4 w-4 rounded border-input accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          />
+                          <span>
+                            Confirmo humanamente que este pacote está pronto para revisão/publicação
+                            assistida. Esta confirmação não envia o conteúdo a nenhum provedor
+                            externo.
+                          </span>
+                        </label>
 
                         <div className="flex flex-wrap gap-2">
                           <Button
                             onClick={() =>
-                              void createJobMutation.mutateAsync({
+                              createJobMutation.mutate({
                                 channelId: activeChannelId,
                                 publicationTargetId: selectedTarget.id,
                                 contentId: selectedSource.contentId,
@@ -1069,6 +1167,17 @@ export const Route = createFileRoute("/publications")({
                                 title: jobForm.title.trim(),
                                 description: jobForm.description.trim(),
                                 idempotencyKey: jobForm.idempotencyKey.trim(),
+                                privacyStatus: jobForm.privacyStatus,
+                                metadata: {
+                                  tags: jobForm.tags
+                                    .split(",")
+                                    .map((tag) => tag.trim())
+                                    .filter(Boolean),
+                                  ...(jobForm.categoryId.trim()
+                                    ? { categoryId: jobForm.categoryId.trim() }
+                                    : {}),
+                                },
+                                humanConfirmed: true,
                                 scheduledAt:
                                   jobForm.scheduledAt.trim().length > 0
                                     ? jobForm.scheduledAt.trim()
@@ -1088,7 +1197,7 @@ export const Route = createFileRoute("/publications")({
                           <Button
                             variant="secondary"
                             onClick={() =>
-                              void rescheduleMutation.mutateAsync({
+                              rescheduleMutation.mutate({
                                 publicationJobId: selectedJob?.id ?? "",
                                 scheduledAt: jobForm.scheduledAt,
                               })
@@ -1146,6 +1255,18 @@ export const Route = createFileRoute("/publications")({
                       <DetailRow label="Content ID" value={selectedJob.contentId} mono />
                       <DetailRow label="Source ID" value={selectedJob.sourceVideoAssetId} mono />
                       <DetailRow label="Idempotencia" value={selectedJob.idempotencyKey} mono />
+                      <DetailRow
+                        label="Confirmacao humana"
+                        value={selectedJob.humanConfirmed ? "Confirmada" : "Ausente"}
+                      />
+                      <DetailRow
+                        label="Privacidade"
+                        value={selectedJob.privacyStatus ?? "private"}
+                      />
+                      <DetailRow
+                        label="Metadados"
+                        value={selectedJob.metadata?.tags?.join(", ") || "Sem tags"}
+                      />
                       <DetailRow
                         label="Agendado"
                         value={
@@ -1270,6 +1391,10 @@ type TargetFormState = {
 type JobFormState = {
   title: string;
   description: string;
+  privacyStatus: "public" | "unlisted" | "private";
+  categoryId: string;
+  tags: string;
+  humanConfirmed: boolean;
   scheduledAt: string;
   idempotencyKey: string;
 };
@@ -1443,6 +1568,10 @@ function createDefaultJobForm(): JobFormState {
   return {
     title: "",
     description: "",
+    privacyStatus: "private",
+    categoryId: "",
+    tags: "",
+    humanConfirmed: false,
     scheduledAt: "",
     idempotencyKey: "",
   };

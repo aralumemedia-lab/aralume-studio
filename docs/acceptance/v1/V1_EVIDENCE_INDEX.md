@@ -4,6 +4,7 @@ Este índice separa prova direta, prova automatizada e lacunas. A evidência nã
 
 | ID | Tipo | Evidência | Uso |
 | --- | --- | --- | --- |
+| E-12 | Supplemental Sprint 20 evidence | `docs/acceptance/v1/V1_SPRINT20_EVIDENCE.md`, `scripts/sprint20-browser-e2e.mjs` and `screenshots/sprint-20/`. | Records V1-14/H18.4 proof without changing the official matrix or executing reaccept. |
 | E-01 | Git/preflight | Base `d78959a47a2bafbb343408d703eafafec8c6df59`, `main...origin/main = 0 0`, working tree limpo e branch isolada. | Confirma baseline e escopo. |
 | E-02 | Gates | `git diff --check`, `npm run lint`, `npm run backend:check`, `npm test` e `npm run build` passaram. | Prova saúde técnica, não aceite funcional. |
 | E-03 | Backend | `server/src/app.ts` monta APIs de canais, editorial, assets, renders, governance, publications, costs, audit e metrics. | Prova existência de superfície backend. |
@@ -25,6 +26,7 @@ npm test
 npm run build
 git diff --check
 node scripts/sprint19-browser-e2e.mjs
+node scripts/sprint20-browser-e2e.mjs
 ```
 
 ## Gaps de evidência

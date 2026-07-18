@@ -24,6 +24,11 @@ export type PublicationJobStatus = Extract<
 >;
 
 export type PublicationTargetReadinessStatus = "ready" | "warning" | "blocked";
+export type PublicationPrivacyStatus = "public" | "unlisted" | "private";
+export type PublicationMetadata = {
+  tags?: string[];
+  categoryId?: string;
+};
 
 export type PublicationTarget = {
   id: ID;
@@ -51,6 +56,11 @@ export type PublicationJob = {
   platform: PublicationPlatform;
   title: string;
   description: string;
+  privacyStatus?: PublicationPrivacyStatus;
+  metadata?: PublicationMetadata;
+  humanConfirmed?: true;
+  confirmedBy?: string;
+  confirmedAt?: ISODate;
   idempotencyKey: string;
   scheduledAt?: ISODate;
   status: PublicationJobStatus;
@@ -117,6 +127,9 @@ export type PublicationJobCreateInput = {
   title: string;
   description: string;
   idempotencyKey: string;
+  privacyStatus?: PublicationPrivacyStatus;
+  metadata?: PublicationMetadata;
+  humanConfirmed?: true;
   scheduledAt?: ISODate;
   requestedBy?: string;
 };

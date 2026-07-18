@@ -44,6 +44,9 @@ export type CreatePublicationJobInput = {
   title: string;
   description: string;
   idempotencyKey: string;
+  privacyStatus: "public" | "unlisted" | "private";
+  metadata: { tags: string[]; categoryId?: string };
+  humanConfirmed: true;
   scheduledAt?: string;
   requestedBy?: string;
 };

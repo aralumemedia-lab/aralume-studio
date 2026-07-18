@@ -706,6 +706,11 @@ export type PublicationJob = {
   platform: PublicationTarget["platform"];
   title: string;
   description: string;
+  privacyStatus?: "public" | "unlisted" | "private";
+  metadata?: { tags: string[]; categoryId?: string };
+  humanConfirmed?: true;
+  confirmedBy?: string;
+  confirmedAt?: ISODate;
   idempotencyKey: string;
   scheduledAt?: ISODate;
   status: PublicationStatus;

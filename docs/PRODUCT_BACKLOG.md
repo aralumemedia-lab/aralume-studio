@@ -72,8 +72,8 @@ Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 | Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05, V1-06 | R14-05, R14-06 | funcional + frontend + UX | roteiro versionado, versoes e plano visual com cenas operaveis no frontend |
 | Sprint 17 (entregue pela PR #28) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08 | R14-07, R14-08 | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
 | Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10 | R14-09, R14-10 | funcional + frontend + backend + integracao | render e cortes operaveis no frontend com reload, auditoria e isolamento |
-| Sprint 19 (implementada nesta branch; PR pendente) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13 | funcional + frontend + backend + governance | qualidade, compliance e aprovacao humana operaveis no frontend |
-| Sprint 20 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | R14-14 | funcional + frontend + backend + governance | readiness e pacote de publicacao assistida sem auto-send |
+| Sprint 19 (mergeada pela PR #32) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13 | funcional + frontend + backend + governance | qualidade, compliance e aprovacao humana operaveis no frontend |
+| Sprint 20 (implementada nesta branch; revisao pendente) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | R14-14 | funcional + frontend + backend + governance | pacote de publicacao com confirmacao humana, readiness e sem auto-send |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | R14-T01, R14-T02 | technical + evidence + QA | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Final gate | R14-REACCEPT | V1-01..V1-18 | R14-02..R14-14, R14-T01, R14-T02 | evidence / reaccept | novo V1 Acceptance com prova nova no mesmo head |
 
@@ -245,11 +245,11 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 ### R14-14 Ã¢â‚¬â€ Publicacao assistida
 
 - Ator/valor: operador prepara pacote/draft sem upload automÃƒÂ¡tico.
-- Estado atual/causa raiz: telas e contratos existem, mas readiness/job nao foram demonstrados ponta a ponta.
+- Estado atual/causa raiz: fluxo de pacote real implementado nesta branch; evidencia formal e merge ainda pendentes.
 - Superficies: `/publications`; targets/readiness e `POST /api/publications`; persistencia de job/payload/bloqueios; auditoria.
 - Testes/evidencia: readiness blocked/ready, aprovaÃƒÂ§ÃƒÂ£o ausente, replay, reload e screenshot; nenhum upload real.
 - Risco/prioridade/estimativa: publicaÃƒÂ§ÃƒÂ£o sem governanÃƒÂ§a; P1; M.
-- Dependencias: R14-13. Sprint proposta: Sprint 20. Aceite: pacote preparado com source video, approval, compliance, readiness e bloqueios visiveis, sem envio automatico.
+- Dependencias: R14-13. Sprint: Sprint 20. Aceite: pacote preparado com source video, approval, compliance, readiness, confirmacao humana e bloqueios visiveis, sem envio automatico.
 
 ### R14-T01 Ã¢â‚¬â€ Dashboard real
 
@@ -273,8 +273,8 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 
 ### E18 - Sequencia proposta
 
-1. Sprint 19: H18.1, H18.2 e H18.3, implementada nesta branch e pendente de revisao/merge, cobrindo V1-11 a V1-13 e R14-11 a R14-13.
-2. Sprint 20: H18.4, cobrindo V1-14 e R14-14, somente apos o gate da Sprint 19.
+1. Sprint 19: H18.1, H18.2 e H18.3, mergeada pela PR #32, cobrindo V1-11 a V1-13 e R14-11 a R14-13.
+2. Sprint 20: H18.4, implementada nesta branch e pendente de revisao/merge, cobrindo V1-14 e R14-14 apos o gate da Sprint 19.
 3. E18 somente e considerado concluido depois das duas fatias, com auditoria correlacionada por requestId e sem auto-send externo.
 4. E19: R14-T01 e R14-T02.
 5. R14-REACCEPT: etapa final apos E16, E17, E18 e E19.

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import type {
   PublicationJobStatus,
+  PublicationPrivacyStatus,
   PublicationPlatform,
   PublicationTargetReadinessStatus,
   PublicationTargetStatus,
@@ -38,6 +39,13 @@ export const publicationPlatformSchema = z.enum(publicationPlatformValues);
 export const publicationTargetStatusSchema = z.enum(publicationTargetStatusValues);
 export const publicationJobStatusSchema = z.enum(publicationJobStatusValues);
 export const publicationTargetReadinessSchema = z.enum(publicationTargetReadinessValues);
+export const publicationPrivacyStatusSchema = z.enum(["public", "unlisted", "private"] as const);
+export const publicationMetadataSchema = z
+  .object({
+    tags: z.array(z.string().trim().min(1).max(50)).max(20).default([]),
+    categoryId: z.string().trim().min(1).max(80).optional(),
+  })
+  .strict();
 
 export const idSchema = z.string().trim().min(1);
 export const channelIdSchema = idSchema;
@@ -78,6 +86,9 @@ export const publicationJobCreateSchema = z
     title: z.string().trim().min(1).max(200),
     description: z.string().trim().min(1).max(4000),
     idempotencyKey: z.string().trim().min(1).max(200),
+    privacyStatus: publicationPrivacyStatusSchema.default("private"),
+    metadata: publicationMetadataSchema.default({ tags: [] }),
+    humanConfirmed: z.literal(true),
     scheduledAt: isoDateSchema.optional(),
     requestedBy: actorSchema.optional(),
   })

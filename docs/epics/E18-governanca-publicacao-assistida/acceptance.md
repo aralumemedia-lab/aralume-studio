@@ -10,7 +10,7 @@
 - Every mutation has an auditable entry correlated with its originating requestId.
 - Browser E2E and visual evidence cover the required states and viewports.
 
-Sprint 19 implementation evidence is available on the branch in `screenshots/sprint-19/` and through `node scripts/sprint19-browser-e2e.mjs`. The Sprint 19 gate is pending code review and merge; this is not a V1 Acceptance.
+Sprint 19 implementation evidence is available in `main` through `screenshots/sprint-19/` and `node scripts/sprint19-browser-e2e.mjs`. Its gate was merged by PR #32; this is not a V1 Acceptance.
 
 ### Sprint 20 gate - assisted publication
 
@@ -19,6 +19,8 @@ Sprint 19 implementation evidence is available on the branch in `screenshots/spr
 - Invalid, blocked and cross-channel publication inputs are rejected with sanitized errors.
 - Every mutation has an auditable entry correlated with its originating requestId.
 - E2E proves that preparing the package does not call an external provider or auto-send.
+- Human confirmation is required by the API and is persisted with the package.
+- Privacy and allowed metadata are validated; invalid payloads fail before a job is created.
 
 E18 is only complete after both slice gates pass. No V1 Acceptance is executed by either sprint.
 
@@ -97,7 +99,7 @@ E18 is only complete after both slice gates pass. No V1 Acceptance is executed b
 
 READY FOR E18 COMPLETION only when:
 
-1. The four stories are individually accepted; Sprint 19 currently covers H18.1-H18.3 on branch and H18.4 remains pending.
+1. The four stories are individually accepted; Sprint 19 is merged and H18.4 is implemented on this branch pending review and merge.
 2. The frontend no longer masks the primary governance actions behind mocks.
 3. The backend returns persisted and queryable artifacts for the same channel.
 4. Audit evidence is present for the mutating actions.

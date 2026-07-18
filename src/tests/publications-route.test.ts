@@ -15,6 +15,11 @@ test("publications route uses the real API client and exposes assisted publicati
   assert.ok(routeSource.includes("Publicacao assistida"));
   assert.ok(routeSource.includes("Aprovacao"));
   assert.ok(routeSource.includes("Conformidade"));
+  assert.ok(routeSource.includes("humanConfirmed"));
+  assert.ok(routeSource.includes("privacyStatus"));
+  assert.ok(routeSource.includes("metadata"));
+  assert.ok(routeSource.includes("Confirmacao humana"));
+  assert.ok(routeSource.includes("createJobMutation.mutate({"));
   assert.ok(routeSource.includes("Evidencias"));
   assert.ok(routeSource.includes("Novo alvo"));
   assert.ok(routeSource.includes("leitura limitada à descoberta dos canais"));
