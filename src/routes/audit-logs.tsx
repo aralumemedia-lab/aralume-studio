@@ -111,6 +111,15 @@ function AuditLogsPage() {
       ),
     },
     {
+      key: "requestId",
+      header: "Request ID",
+      render: (row) => (
+        <span className="font-mono text-[10.5px] text-muted-foreground" title={row.requestId}>
+          {row.requestId ?? "Nao informado"}
+        </span>
+      ),
+    },
+    {
       key: "status",
       header: "Status",
       render: (row) => <StatusBadge tone={toneFromStatus(row.status)}>{row.status}</StatusBadge>,

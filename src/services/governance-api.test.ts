@@ -561,3 +561,18 @@ test("governance API clients surface transport errors and timeout semantics", as
     },
   );
 });
+
+test("governance detail clients preserve the active channel scope", async () => {
+  const baseMeta = { requestId: "req_scope", generatedAt: "2026-07-13T03:30:00.000Z" };
+
+  await withFetchStub(
+    async (url) => {
+      assert.equal(url, "/api/approvals/ap_2/history?channelId=ch_historia");
+      return jsonResponse({ data: [], meta: baseMeta });
+    },
+    async () => {
+      const history = await getApprovalHistory("ap_2", "ch_historia");
+      assert.deepEqual(history.data, []);
+    },
+  );
+});

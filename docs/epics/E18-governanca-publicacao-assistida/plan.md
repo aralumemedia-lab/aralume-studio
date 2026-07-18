@@ -2,14 +2,14 @@
 
 ## Decomposicao proposta
 
-O E18 sera executado em duas fatias verticais, ambas propostas e nao iniciadas:
+O E18 sera executado em duas fatias verticais; a Sprint 19 foi implementada nesta branch e a Sprint 20 permanece proposta:
 
 | Fatia | Historias | Criterios | Dependencia | Gate |
 | --- | --- | --- | --- | --- |
-| Sprint 19 - Governanca e gates | H18.1, H18.2, H18.3 | V1-11..V1-13 | E17 integrado em main | qualidade, compliance e decisao humana reais pelo frontend, com reload, isolamento, auditoria e E2E |
+| Sprint 19 - Governanca e gates | H18.1, H18.2, H18.3 | V1-11..V1-13 | E17 integrado em main | implementada nesta branch; qualidade, compliance e decisao humana reais pelo frontend, com reload, isolamento, auditoria e E2E |
 | Sprint 20 - Publicacao assistida | H18.4 | V1-14 | Sprint 19 aceita | readiness ou pacote de publicacao consultavel, sem auto-send, com reload, isolamento, auditoria e E2E |
 
-Sprint 19 e a primeira sprint recomendada. Concluir uma sprint nao conclui automaticamente o E18.
+Sprint 19 e a primeira sprint recomendada e esta implementada nesta branch, pendente de revisao/merge. Concluir uma sprint nao conclui automaticamente o E18.
 
 ## Frontend
 
@@ -29,7 +29,7 @@ Sprint 19 e a primeira sprint recomendada. Concluir uma sprint nao conclui autom
 ## Backend
 
 - Keep the current governance and publication module shape.
-- Add audit hooks for mutating governance actions if any gap remains.
+- Add audit hooks for mutating governance actions; Sprint 19 now correlates governance mutations with the originating requestId.
 - Keep blocked-state semantics explicit in tests.
 - Keep the current repository abstraction stable for the epic.
 
@@ -102,7 +102,7 @@ Sprint 19 e a primeira sprint recomendada. Concluir uma sprint nao conclui autom
 - Governance actions can still look real while some flows rely on read-only surfaces.
 - Publication readiness can regress into a read-only summary if mutating actions are not tested.
 - The repository is process-local, so restart durability is not part of this epic.
-- Audit requestId propagation is a material prerequisite because current mutation services do not retain the HTTP correlation identifier.
+- H18.4 still requires requestId propagation validation; Sprint 19 closes the gap for governance mutations.
 - Combining all four stories in one sprint would couple independent gates and make the publication E2E depend on unproven upstream decisions.
 
 ## Rollback

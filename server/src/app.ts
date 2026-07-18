@@ -147,6 +147,7 @@ export function createApp(options: CreateAppOptions = {}) {
     governanceRepository,
     editorialRepository,
     channelsRepository,
+    { auditService },
   );
   const metricsRepository =
     options.metricsRepository ??

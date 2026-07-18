@@ -2,12 +2,12 @@
 
 ## Identification
 
-- Sprint: Sprint 19 (proposed)
+- Sprint: Sprint 19
 - Epic: E18 - Governanca e Publicacao Assistida pelo Frontend
 - Stories: H18.1, H18.2 and H18.3
 - Criteria: V1-11, V1-12 and V1-13
 - R14: R14-11, R14-12 and R14-13
-- Status: proposed / not started
+- Status: implemented on branch; pending review and merge
 - Upstream: E17 integrated in `main`
 
 ## Decision
@@ -28,6 +28,8 @@ Make quality, compliance and human approval operational through the frontend, wi
 - Sanitized loading, empty, error, success, blocked and conflict states.
 - Audit events correlated to the originating HTTP `requestId`.
 - Browser reload and isolation between two channels.
+- Sprint 19 evidence runner: `node scripts/sprint19-browser-e2e.mjs`.
+- Visual evidence: `screenshots/sprint-19/`.
 
 ## Out of scope
 
@@ -69,6 +71,13 @@ Make quality, compliance and human approval operational through the frontend, wi
 - The browser E2E proves create, decision, reload, isolation and audit correlation.
 - Screenshots cover the required viewports and states without horizontal overflow.
 
+## Implementation status
+
+- H18.1, H18.2 and H18.3 are implemented on the Sprint 19 branch.
+- The implementation uses real frontend mutations, same-process reload persistence, backend channel checks and audit entries with top-level `requestId`.
+- No formal V1 Acceptance was executed; V1.0 remains `NAO ACEITA`.
+- H18.4, E19, `R14-REACCEPT`, release, tag and deploy remain pending.
+
 ## Definition of Ready
 
 - Governance mutation payloads and current API gaps are mapped.
@@ -78,7 +87,7 @@ Make quality, compliance and human approval operational through the frontend, wi
 
 ## Definition of Done
 
-- H18.1, H18.2 and H18.3 pass their individual acceptance criteria on the same head.
+- H18.1, H18.2 and H18.3 pass their individual implementation gates on this branch, pending PR review and merge.
 - Backend, frontend and browser tests pass.
 - Reload, isolation and audit evidence are persisted and queryable.
 - H18.4 remains pending and E18 remains partial until Sprint 20 passes.

@@ -22,6 +22,7 @@ export type CreateComplianceCheckInput = {
   channelId: string;
   entityType: GovernanceEntityType;
   entityId: string;
+  requestedBy?: string;
 };
 
 export async function getComplianceChecks(
@@ -32,8 +33,13 @@ export async function getComplianceChecks(
   );
 }
 
-export async function getComplianceCheck(id: string): Promise<ApiSuccess<ComplianceCheck>> {
-  return requestApiEnvelope<ApiSuccess<ComplianceCheck>>(`${COMPLIANCE_CHECKS_PATH}/${id}`);
+export async function getComplianceCheck(
+  id: string,
+  channelId?: string,
+): Promise<ApiSuccess<ComplianceCheck>> {
+  return requestApiEnvelope<ApiSuccess<ComplianceCheck>>(
+    withQuery(`${COMPLIANCE_CHECKS_PATH}/${id}`, { channelId }),
+  );
 }
 
 export async function createComplianceCheck(

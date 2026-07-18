@@ -165,12 +165,14 @@ export type QualityCheckCreateInput = {
   channelId: ID;
   entityType: GovernanceEntityType;
   entityId: ID;
+  requestedBy?: string;
 };
 
 export type ComplianceCheckCreateInput = {
   channelId: ID;
   entityType: GovernanceEntityType;
   entityId: ID;
+  requestedBy?: string;
 };
 
 export type GovernanceRepository = {
