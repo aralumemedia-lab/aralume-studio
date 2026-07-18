@@ -2,8 +2,8 @@
 
 ## Sprint sequencing
 
-- Sprint 19: H18.1, H18.2 and H18.3 implemented on branch; pending review and merge. This is the first vertical slice and establishes the governance gates.
-- Sprint 20 (proposed, not started): H18.4. This slice starts only after Sprint 19 is accepted and prepares publication without auto-send.
+- Sprint 19: H18.1, H18.2 and H18.3 merged by PR #32. This is the first vertical slice and establishes the governance gates.
+- Sprint 20: H18.4 implemented on branch; review and merge pending. This slice started only after Sprint 19 was accepted and prepares publication without auto-send.
 - Completing a sprint does not automatically complete E18.
 
 ## H18.1 - Qualidade tecnica operavel pelo frontend
@@ -12,7 +12,7 @@
 - Objective: inspect quality findings from the frontend and keep them queryable after reload.
 - V1 criterion: V1-11
 - R14 item: R14-11
-- Planned slice: Sprint 19; implemented on branch, pending review/merge
+- Planned slice: Sprint 19; merged by PR #32
 - Dependencies: E17; quality-check contracts; review states
 - Priority: P1
 - Acceptance criteria:
@@ -39,17 +39,17 @@
 
 ## H18.1 status
 
-- Sprint 19 status: implemented on branch; quality mutation, requestId audit correlation and browser evidence are present.
+- Sprint 19 status: merged by PR #32; quality mutation, requestId audit correlation and browser evidence are present.
 
 ## H18.2 - Conformidade e direitos operavel pelo frontend
 
-- Sprint 19 status: implemented on branch; blocked compliance, cross-channel rejection and browser evidence are present.
+- Sprint 19 status: merged by PR #32; blocked compliance, cross-channel rejection and browser evidence are present.
 
 - Actor: compliance reviewer
 - Objective: inspect compliance findings and block unsafe content from the frontend.
 - V1 criterion: V1-12
 - R14 item: R14-12
-- Planned slice: Sprint 19; implemented on branch, pending review/merge
+- Planned slice: Sprint 19; merged by PR #32
 - Dependencies: H18.1; compliance contracts; blocked-state rules
 - Priority: P1
 - Acceptance criteria:
@@ -80,7 +80,7 @@
 - Objective: approve, reject or request changes from the frontend and keep the decision history visible.
 - V1 criterion: V1-13
 - R14 item: R14-13
-- Planned slice: Sprint 19; implemented on branch, pending review/merge
+- Planned slice: Sprint 19; merged by PR #32
 - Dependencies: H18.2; approval decision contracts; history preservation
 - Priority: P1
 - Acceptance criteria:
@@ -108,7 +108,7 @@
 
 ## H18.3 status
 
-- Sprint 19 status: implemented on branch; creation, decision, history, requestId audit correlation and browser evidence are present.
+- Sprint 19 status: merged by PR #32; creation, decision, history, requestId audit correlation and browser evidence are present.
 
 ## H18.4 - Publicacao assistida operavel pelo frontend
 
@@ -116,7 +116,7 @@
 - Objective: prepare a publication draft or readiness package without auto-send.
 - V1 criterion: V1-14
 - R14 item: R14-14
-- Planned slice: Sprint 20 proposed
+- Planned slice: Sprint 20; implementation in progress on branch, pending review and merge
 - Dependencies: H18.3; publication target and readiness contracts; approval and compliance gates
 - Priority: P1
 - Acceptance criteria:
@@ -125,19 +125,24 @@
   - The package remains visible after reload.
   - Auto-send external behavior is not triggered.
   - The mutation creates an audit entry containing the originating requestId.
+  - Human confirmation is explicit and persisted with the prepared package.
+  - Privacy and allowed metadata fields are editable and validated.
   - Cross-channel target, source and job references are rejected by the backend.
+  - Invalid payloads do not create partial publication jobs.
 - Tests:
   - Server HTTP tests for publication target and job flows.
   - Frontend route tests for loading, empty, error and success states.
   - Browser E2E for readiness and draft states.
+  - Browser E2E proves reload, isolation, audit requestId and no external send.
 - Evidence:
   - Acceptance matrix row for V1-14.
   - Publication readiness visible after reload.
   - Audit log entry and screenshot.
 - DoR:
   - The publication readiness contract is stable.
-  - The no-auto-send rule is explicit.
+  - The no-auto-send rule and explicit human confirmation are explicit.
 - DoD:
   - The publication package survives reload.
   - The channel isolation and audit evidence are visible.
   - The E2E proves that no external provider call or auto-send occurs.
+- Status: implemented on branch; not integrated until review and merge.

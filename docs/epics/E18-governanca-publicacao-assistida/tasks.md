@@ -2,15 +2,15 @@
 
 ## Sequenciamento
 
-- Sprint 19 implementada nesta branch: contratos, frontend, backend, auditoria, testes e evidencias de H18.1-H18.3; PR/revisao pendentes.
-- Sprint 20 proposta: contratos, frontend, backend, auditoria, testes e evidencias de H18.4.
-- Tarefas de H18.1-H18.3 executadas na branch; H18.4 permanece nao iniciada.
+- Sprint 19 mergeada pela PR #32: contratos, frontend, backend, auditoria, testes e evidencias de H18.1-H18.3.
+- Sprint 20 implementada nesta branch: contratos, frontend, backend, auditoria, testes e evidencias de H18.4; revisao e merge pendentes.
+- Tarefas de H18.1-H18.3 executadas; H18.4 executada nesta branch, sem fechar E18 antes do merge.
 
 ## Contracts
 
 - Reconcile governance and publication payloads with the current `src/contracts/types.ts` models.
 - Keep the API envelope and error codes unchanged.
-- Confirm the publication readiness contract before any implementation branch.
+- Confirm the publication readiness and explicit human confirmation contract before merge.
 - Keep `src/services/api-client.ts` limited to real services for the epic surfaces.
 - Confirm the separation between readiness/draft package and external provider actions; do not include YouTube OAuth, connection or upload.
 
@@ -40,10 +40,11 @@
 
 ## Tests
 
-- Server HTTP tests for H18.1-H18.3 were extended in Sprint 19; H18.4 remains planned for Sprint 20.
+- Server HTTP tests for H18.1-H18.3 were extended in Sprint 19; H18.4 tests cover confirmation, invalid payloads and requestId audit correlation.
 - Add or extend frontend route tests for loading, empty, error, conflict and success states.
 - Browser E2E coverage for Sprint 19 covers create, decision, reload, isolation, invalid payload and requestId audit scenarios via `scripts/sprint19-browser-e2e.mjs`.
 - Add screenshot coverage at all required viewports.
+- Run `node scripts/sprint20-browser-e2e.mjs` and keep external provider calls out of the assisted flow.
 
 ## Accessibility
 

@@ -140,38 +140,59 @@ test("publication service prepares packages, enforces gates and keeps channel is
       ),
     );
 
-    const createdTarget = harness.service.createPublicationTarget({
-      id: "pt_historia_linkedin",
-      channelId: "ch_historia",
-      platform: "linkedin",
-      accountName: "Aralume Historia LinkedIn",
-      status: "authenticated",
-      lastConnectedAt: "2026-07-13T03:20:00.000Z",
-      tokenExpiresAt: "2026-08-13T03:20:00.000Z",
-      sourceContentId: "idea_06",
-      sourceVideoAssetId: "vd_historia_01",
-      requestedBy: "Ana Ribeiro",
-    });
+    const createdTarget = harness.service.createPublicationTarget(
+      {
+        id: "pt_historia_linkedin",
+        channelId: "ch_historia",
+        platform: "linkedin",
+        accountName: "Aralume Historia LinkedIn",
+        status: "authenticated",
+        lastConnectedAt: "2026-07-13T03:20:00.000Z",
+        tokenExpiresAt: "2026-08-13T03:20:00.000Z",
+        sourceContentId: "idea_06",
+        sourceVideoAssetId: "vd_historia_01",
+        requestedBy: "Ana Ribeiro",
+      },
+      "req_publication_target",
+    );
     assert.equal(createdTarget.readinessStatus, "ready");
     assert.equal(createdTarget.channelId, "ch_historia");
+    assert.ok(
+      harness.auditRepository
+        .listAuditLogs({ channelId: "ch_historia", entityId: createdTarget.id })
+        .some((log) => log.requestId === "req_publication_target"),
+    );
 
-    const scheduledJob = harness.service.createPublicationJob({
-      channelId: "ch_historia",
-      publicationTargetId: "pt_historia_youtube",
-      contentId: "idea_06",
-      sourceVideoAssetId: "vd_historia_01",
-      title: "A logistica do Imperio Romano",
-      description: "Pacote assistido para revisao humana.",
-      idempotencyKey: "publication:ch_historia:vd_historia_01:youtube:002",
-      scheduledAt: "2026-07-15T13:00:00.000Z",
-      requestedBy: "Ana Ribeiro",
-    });
+    const scheduledJob = harness.service.createPublicationJob(
+      {
+        channelId: "ch_historia",
+        publicationTargetId: "pt_historia_youtube",
+        contentId: "idea_06",
+        sourceVideoAssetId: "vd_historia_01",
+        title: "A logistica do Imperio Romano",
+        description: "Pacote assistido para revisao humana.",
+        idempotencyKey: "publication:ch_historia:vd_historia_01:youtube:002",
+        humanConfirmed: true,
+        scheduledAt: "2026-07-15T13:00:00.000Z",
+        requestedBy: "Ana Ribeiro",
+      },
+      "req_publication_service",
+    );
 
     assert.equal(scheduledJob.status, "scheduled");
     assert.equal(scheduledJob.publicationTargetId, "pt_historia_youtube");
     assert.equal(scheduledJob.sourceVideoAssetId, "vd_historia_01");
     assert.equal(scheduledJob.approvalId, "ap_06");
     assert.equal(scheduledJob.complianceCheckId, "cc_06");
+    assert.equal(scheduledJob.humanConfirmed, true);
+    assert.equal(scheduledJob.confirmedBy, "Ana Ribeiro");
+    assert.equal(scheduledJob.privacyStatus, "private");
+    assert.deepEqual(scheduledJob.metadata, { tags: [] });
+    assert.ok(
+      harness.auditRepository
+        .listAuditLogs({ channelId: "ch_historia", entityId: scheduledJob.id })
+        .some((log) => log.requestId === "req_publication_service"),
+    );
 
     const afterVideoJob = harness.service.getPublicationTarget("pt_historia_youtube");
     assert.equal(afterVideoJob.latestPublicationJobId, scheduledJob.id);
@@ -184,6 +205,7 @@ test("publication service prepares packages, enforces gates and keeps channel is
       title: "A logistica do Imperio Romano",
       description: "Pacote assistido para revisao humana.",
       idempotencyKey: "publication:ch_historia:vd_historia_01:youtube:002",
+      humanConfirmed: true,
       scheduledAt: "2026-07-15T13:00:00.000Z",
       requestedBy: "Ana Ribeiro",
     });
@@ -197,6 +219,7 @@ test("publication service prepares packages, enforces gates and keeps channel is
       title: "As estradas romanas em 45s",
       description: "Pacote assistido para corte derivado.",
       idempotencyKey: "publication:ch_historia:cl_historia_01:youtube:001",
+      humanConfirmed: true,
       requestedBy: "Ana Ribeiro",
     });
     assert.equal(clipJob.status, "draft");
@@ -232,6 +255,7 @@ test("publication service prepares packages, enforces gates and keeps channel is
           title: "Titulo diferente",
           description: "Conteudo diferente",
           idempotencyKey: "publication:ch_historia:vd_historia_01:youtube:002",
+          humanConfirmed: true,
           requestedBy: "Ana Ribeiro",
         }),
       (error) => {
@@ -250,6 +274,7 @@ test("publication service prepares packages, enforces gates and keeps channel is
           title: "A logistica do Imperio Romano",
           description: "Pacote bloqueado por readiness.",
           idempotencyKey: "publication:ch_historia:vd_historia_01:tiktok:001",
+          humanConfirmed: true,
           requestedBy: "Ana Ribeiro",
         }),
       (error) => {
@@ -268,6 +293,7 @@ test("publication service prepares packages, enforces gates and keeps channel is
           title: "Paradoxo de Fermi e o silencio do cosmos",
           description: "Pacote bloqueado por conformidade.",
           idempotencyKey: "publication:ch_curiosidades:vd_curio_02:tiktok:001",
+          humanConfirmed: true,
           requestedBy: "Bruno Lima",
         }),
       (error) => {
@@ -325,6 +351,27 @@ test("publication HTTP routes expose channel-scoped targets, jobs and rescheduli
     assert.ok(targetListPayload.data.every((target) => target.channelId === "ch_historia"));
     assert.ok(targetListPayload.data.every((target) => target.readinessStatus === "ready"));
 
+    const invalidResponse = await fetch(`${baseUrl}/api/publications`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        channelId: "ch_historia",
+        publicationTargetId: "pt_historia_youtube",
+        contentId: "idea_06",
+        sourceVideoAssetId: "vd_historia_01",
+        title: "Pacote sem confirmacao",
+        description: "Deve falhar antes de criar o job.",
+        idempotencyKey: "publication:http:invalid-confirmation:001",
+        humanConfirmed: false,
+      }),
+    });
+    assert.equal(invalidResponse.status, 400);
+    const invalidListResponse = await fetch(
+      `${baseUrl}/api/publications?channelId=ch_historia&idempotencyKey=publication:http:invalid-confirmation:001`,
+    );
+    const invalidListPayload = (await invalidListResponse.json()) as { data: unknown[] };
+    assert.equal(invalidListPayload.data.length, 0);
+
     const createResponse = await fetch(`${baseUrl}/api/publications`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -336,6 +383,7 @@ test("publication HTTP routes expose channel-scoped targets, jobs and rescheduli
         title: "A logistica do Imperio Romano",
         description: "Pacote assistido para revisao humana.",
         idempotencyKey: "publication:http:historia:001",
+        humanConfirmed: true,
         scheduledAt: "2026-07-15T13:00:00.000Z",
         requestedBy: "Ana Ribeiro",
       }),
@@ -348,6 +396,17 @@ test("publication HTTP routes expose channel-scoped targets, jobs and rescheduli
     assert.equal(createPayload.data.status, "scheduled");
     assert.equal(createPayload.data.publicationTargetId, "pt_historia_youtube");
     assert.equal(createPayload.data.sourceVideoAssetId, "vd_historia_01");
+    const publicationAudit = harness.auditRepository.listAuditLogs({
+      channelId: "ch_historia",
+      entityId: createPayload.data.id,
+    });
+    assert.ok(
+      publicationAudit.some(
+        (log) =>
+          log.action === "publication.package_prepared" &&
+          log.requestId === createPayload.meta.requestId,
+      ),
+    );
 
     const listResponse = await fetch(
       `${baseUrl}/api/publications?channelId=ch_historia&publicationTargetId=pt_historia_youtube`,
@@ -391,6 +450,7 @@ test("publication HTTP routes expose channel-scoped targets, jobs and rescheduli
         title: "A logistica do Imperio Romano",
         description: "Pacote bloqueado por readiness.",
         idempotencyKey: "publication:http:block:001",
+        humanConfirmed: true,
         requestedBy: "Ana Ribeiro",
       }),
     });

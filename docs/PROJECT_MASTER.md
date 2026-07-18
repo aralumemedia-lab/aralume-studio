@@ -1594,14 +1594,14 @@ Regras normativas:
 | Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05 a V1-06 | roteiro versionado e plano visual com cenas operaveis no frontend |
 | Sprint 17 (entregue pela PR #28) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
 | Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | render e cortes operaveis no frontend com reload, auditoria e isolamento |
-| Sprint 19 (implementada nesta branch; PR pendente) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | qualidade, compliance e aprovacao humana operaveis pelo frontend |
-| Sprint 20 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | readiness e pacote de publicacao assistida sem auto-send |
+| Sprint 19 (mergeada pela PR #32) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | qualidade, compliance e aprovacao humana operaveis pelo frontend |
+| Sprint 20 (implementada nesta branch; revisao pendente) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | pacote de publicacao com confirmacao humana, readiness e sem auto-send |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | novo V1 Acceptance com prova nova no mesmo head |
 - Sprint 15 foi executada na PR #26 e a Sprint 16 concluiu H16.3 e H16.4; E16 esta fechado.
 - E17 passa a ser executado em duas sprints: Sprint 17 para H17.1/H17.2 e Sprint 18 para H17.3/H17.4.
 - H17.1 a H17.4 estao integradas em `main` pelas PRs #28 e #30; E17 esta concluido em `main`.
-- E18 esta planejado em duas fatias: Sprint 19 para H18.1-H18.3 e Sprint 20 para H18.4. Sprint 19 foi implementada nesta branch e aguarda revisao/merge; Sprint 20 nao foi iniciada.
+- E18 esta planejado em duas fatias: Sprint 19 para H18.1-H18.3 e Sprint 20 para H18.4. Sprint 19 esta integrada pela PR #32; Sprint 20 foi implementada nesta branch e aguarda revisao/merge.
 
 ### Mapa de remediacao
 
@@ -1628,5 +1628,5 @@ Regras normativas:
 - Gate final somente depois de E16, E17, E18 e E19 evidenciados.
 - O reaceite usa a mesma matriz de 18 criterios com evidencia nova no mesmo head.
 - Nenhuma remediacao funcional comeca sem a documentacao desta sequencia.
-- A primeira sprint recomendada e a Sprint 19; a Sprint 20 depende do gate da Sprint 19.
+- A primeira sprint recomendada foi a Sprint 19; a Sprint 20 iniciou somente apos o gate da Sprint 19.
 - E18 somente e concluido apos os gates das duas sprints, seguido de E19 e entao R14-REACCEPT.

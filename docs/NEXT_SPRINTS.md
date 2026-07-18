@@ -20,10 +20,10 @@
 | 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
 | 4 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed | not released | PR #26 entregou H16.0, H16.1 e H16.2; a fatia complementar da Sprint 16 concluiu H16.3 e H16.4. |
 | 5 | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/017-sprint-16-scripts-visual-planning.md` | completed | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido. |
-| 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | completed | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser; E17 permanece parcial. |
+| 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | completed | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser. |
 | 7 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/019-sprint-18-render-derived-clips.md` | completed and integrated by PR #30 | not released | Segunda fatia de E17; H17.3 e H17.4 integradas com render, cortes, reload, auditoria e isolamento. |
-| 8 | Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/020-sprint-19-governance-gates.md` | implemented on branch / PR pending | not released | H18.1, H18.2 e H18.3 implementadas com mutacoes reais, auditoria requestId, reload, isolamento, E2E e screenshots. |
-| 9 | Sprint 20 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/021-sprint-20-assisted-publication.md` | proposed / not started | not released | H18.4; readiness e pacote de publicacao sem auto-send, dependente do gate da Sprint 19. |
+| 8 | Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/020-sprint-19-governance-gates.md` | merged in PR #32 | not released | H18.1, H18.2 e H18.3 concluidas com mutacoes reais, auditoria requestId, reload, isolamento, E2E e screenshots. |
+| 9 | Sprint 20 | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/021-sprint-20-assisted-publication.md` | implemented on branch / review pending | not released | H18.4; pacote de publicacao com confirmacao humana, readiness e sem auto-send. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
 
@@ -75,8 +75,8 @@
 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes e claims operaveis |
 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | funcional + frontend + backend + integracao | E16 concluida | narracao e ativos visuais operaveis |
 | Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | funcional + frontend + backend + integracao | Sprint 17 concluida | render e cortes operaveis com reload, auditoria e isolamento |
-| Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | funcional + frontend + backend + governance | E17 concluida | implementada nesta branch; PR/revisao pendentes |
-| Sprint 20 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | funcional + frontend + backend + governance | Sprint 19 aceita | readiness e pacote de publicacao assistida sem auto-send |
+| Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | funcional + frontend + backend + governance | E17 concluida | mergeada pela PR #32 |
+| Sprint 20 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | funcional + frontend + backend + governance | Sprint 19 aceita | implementada nesta branch; pacote com confirmacao humana e sem auto-send |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | evidence / reaccept | E16, E17, E18, E19 concluidos | novo V1 Acceptance com prova nova no mesmo head |
 
@@ -148,22 +148,22 @@
 
 - Epic: E18 - Governanca e Publicacao Assistida pelo Frontend.
 - Spec normativa: `docs/specs/021-sprint-20-assisted-publication.md`.
-- Estado: proposed / not started.
+- Estado: implemented on branch; review and merge pending.
 - Historia: H18.4 publicacao assistida.
 - Criterio V1: V1-14.
 - Item R14: R14-14.
-- Dependencia: gate da Sprint 19 aceito.
+- Dependencia: gate da Sprint 19 aceito e integrado pela PR #32.
 - Objetivo: preparar readiness ou pacote/draft de publicacao consultavel pelo frontend, sem auto-send ou chamada a provedor externo.
 - Fora de escopo: OAuth, conexao ou upload YouTube, E19, reaceite, release, tag, deploy, banco e migrations.
 - Definition of Ready: contratos de readiness e pacote revisados, limite no-auto-send instrumentado, requestId auditavel e fixtures de bloqueio/ready definidas.
-- Definition of Done: pacote persistido no mesmo processo, reload, isolamento, estados, auditoria, E2E e screenshots aprovados.
+- Definition of Done: pacote persistido no mesmo processo após confirmação humana, reload, isolamento, estados, auditoria requestId, E2E e screenshots aprovados; E18 permanece parcial até o merge.
 
 ## Sequencia recomendada apos E17
 
-1. Sprint 19 proposta: governanca e gates.
-2. Sprint 20 proposta: publicacao assistida sem auto-send.
+1. Sprint 19 mergeada: governanca e gates.
+2. Sprint 20 implementada nesta branch: publicacao assistida sem auto-send, pendente de revisao/merge.
 3. E18 concluido somente apos os dois gates.
 4. Sprint proposta D: E19, R14-T01 e R14-T02.
 5. `R14-REACCEPT` somente depois de E16, E17, E18 e E19.
 
-Nenhuma sprint foi iniciada nesta atualizacao documental. V1.0 permanece `NAO ACEITA`.
+Sprint 20 está implementada nesta branch e aguarda revisão/merge. Nenhuma sprint seguinte foi iniciada. V1.0 permanece `NAO ACEITA`.

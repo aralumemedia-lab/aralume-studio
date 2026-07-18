@@ -25,7 +25,7 @@ export function createPublicationsRouter(service: PublicationsService): Router {
 
   router.post("/publication-targets", (req, res) => {
     const body = parseBody(publicationTargetCreateSchema, req.body);
-    const created = service.createPublicationTarget(body);
+    const created = service.createPublicationTarget(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -37,14 +37,18 @@ export function createPublicationsRouter(service: PublicationsService): Router {
 
   router.post("/publications", (req, res) => {
     const body = parseBody(publicationJobCreateSchema, req.body);
-    const created = service.createPublicationJob(body);
+    const created = service.createPublicationJob(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.post("/publications/:publicationJobId/reschedule", (req, res) => {
     const params = parseParams(publicationJobIdParamsSchema, req.params);
     const body = parseBody(publicationJobRescheduleSchema, req.body);
-    const updated = service.reschedulePublicationJob(params.publicationJobId, body);
+    const updated = service.reschedulePublicationJob(
+      params.publicationJobId,
+      body,
+      getRequestId(res),
+    );
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 

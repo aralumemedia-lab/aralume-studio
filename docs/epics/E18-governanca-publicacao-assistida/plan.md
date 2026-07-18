@@ -2,14 +2,14 @@
 
 ## Decomposicao proposta
 
-O E18 sera executado em duas fatias verticais; a Sprint 19 foi implementada nesta branch e a Sprint 20 permanece proposta:
+O E18 sera executado em duas fatias verticais; a Sprint 19 esta integrada e a Sprint 20 esta implementada nesta branch, pendente de revisao e merge:
 
 | Fatia | Historias | Criterios | Dependencia | Gate |
 | --- | --- | --- | --- | --- |
-| Sprint 19 - Governanca e gates | H18.1, H18.2, H18.3 | V1-11..V1-13 | E17 integrado em main | implementada nesta branch; qualidade, compliance e decisao humana reais pelo frontend, com reload, isolamento, auditoria e E2E |
-| Sprint 20 - Publicacao assistida | H18.4 | V1-14 | Sprint 19 aceita | readiness ou pacote de publicacao consultavel, sem auto-send, com reload, isolamento, auditoria e E2E |
+| Sprint 19 - Governanca e gates | H18.1, H18.2, H18.3 | V1-11..V1-13 | E17 integrado em main | mergeada pela PR #32; qualidade, compliance e decisao humana reais pelo frontend |
+| Sprint 20 - Publicacao assistida | H18.4 | V1-14 | Sprint 19 mergeada | implementada nesta branch; pacote com confirmacao humana, readiness, reload, isolamento, auditoria e E2E, sem auto-send |
 
-Sprint 19 e a primeira sprint recomendada e esta implementada nesta branch, pendente de revisao/merge. Concluir uma sprint nao conclui automaticamente o E18.
+Sprint 19 foi a primeira sprint recomendada e esta integrada pela PR #32. A Sprint 20 esta implementada nesta branch, pendente de revisao/merge. Concluir uma sprint nao conclui automaticamente o E18.
 
 ## Frontend
 
@@ -102,7 +102,7 @@ Sprint 19 e a primeira sprint recomendada e esta implementada nesta branch, pend
 - Governance actions can still look real while some flows rely on read-only surfaces.
 - Publication readiness can regress into a read-only summary if mutating actions are not tested.
 - The repository is process-local, so restart durability is not part of this epic.
-- H18.4 still requires requestId propagation validation; Sprint 19 closes the gap for governance mutations.
+- H18.4 propagates requestId through publication mutations; the branch must still prove it through review and browser evidence.
 - Combining all four stories in one sprint would couple independent gates and make the publication E2E depend on unproven upstream decisions.
 
 ## Rollback

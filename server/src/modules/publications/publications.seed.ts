@@ -61,6 +61,11 @@ export const publicationDemoSeed: PublicationSeed = {
       title: "A logistica do Imperio Romano",
       description:
         "Pacote assistido preparado para revisao humana, com aprovacao e conformidade confirmadas.",
+      privacyStatus: "private",
+      metadata: { tags: ["historia", "roma"] },
+      humanConfirmed: true,
+      confirmedBy: "Aralume Seed",
+      confirmedAt: now,
       idempotencyKey: "publication:ch_historia:vd_historia_01:youtube:001",
       scheduledAt: "2026-07-15T13:00:00.000Z",
       status: "scheduled",

@@ -37,11 +37,18 @@ import type { InMemoryPublicationsRepository } from "./publications.repository.j
 export type PublicationsService = {
   listPublicationTargets(filters?: PublicationTargetFilters): PublicationTargetView[];
   getPublicationTarget(id: string): PublicationTargetView;
-  createPublicationTarget(input: PublicationTargetCreateInput): PublicationTargetView;
+  createPublicationTarget(
+    input: PublicationTargetCreateInput,
+    requestId?: string,
+  ): PublicationTargetView;
   listPublicationJobs(filters?: PublicationJobFilters): PublicationJob[];
   getPublicationJob(id: string): PublicationJob;
-  createPublicationJob(input: PublicationJobCreateInput): PublicationJob;
-  reschedulePublicationJob(id: string, input: PublicationJobRescheduleInput): PublicationJob;
+  createPublicationJob(input: PublicationJobCreateInput, requestId?: string): PublicationJob;
+  reschedulePublicationJob(
+    id: string,
+    input: PublicationJobRescheduleInput,
+    requestId?: string,
+  ): PublicationJob;
 };
 
 type PublicationSource =
@@ -113,7 +120,7 @@ export function createPublicationsService(
       return enrichTarget(found, repository, dependencies, clock().toISOString());
     },
 
-    createPublicationTarget(input) {
+    createPublicationTarget(input, requestId) {
       const parsed = publicationTargetCreateSchema.parse(input);
       validateChannelExists(dependencies.channelsRepository, parsed.channelId);
 
@@ -173,24 +180,28 @@ export function createPublicationsService(
       };
 
       repository.upsertPublicationTarget(target);
-      recordAudit(dependencies.auditRepository, {
-        id: `au_${idFactory()}`,
-        channelId: target.channelId,
-        actorType: parsed.requestedBy?.trim() ? "user" : "system",
-        actorName: parsed.requestedBy?.trim() || "Aralume Core",
-        action: existing ? "publication_target.updated" : "publication_target.created",
-        entityType: "PublicationTarget",
-        entityId: target.id,
-        status: "success",
-        message: existing ? "Publication target updated." : "Publication target created.",
-        metadata: {
-          platform: target.platform,
-          status: target.status,
-          accountName: target.accountName,
-          tokenExpiresAt: target.tokenExpiresAt,
+      recordAudit(
+        dependencies.auditRepository,
+        {
+          id: `au_${idFactory()}`,
+          channelId: target.channelId,
+          actorType: parsed.requestedBy?.trim() ? "user" : "system",
+          actorName: parsed.requestedBy?.trim() || "Aralume Core",
+          action: existing ? "publication_target.updated" : "publication_target.created",
+          entityType: "PublicationTarget",
+          entityId: target.id,
+          status: "success",
+          message: existing ? "Publication target updated." : "Publication target created.",
+          metadata: {
+            platform: target.platform,
+            status: target.status,
+            accountName: target.accountName,
+            tokenExpiresAt: target.tokenExpiresAt,
+          },
+          createdAt: now,
         },
-        createdAt: now,
-      });
+        requestId,
+      );
 
       return enrichTarget(target, repository, dependencies, now);
     },
@@ -211,7 +222,7 @@ export function createPublicationsService(
       return found;
     },
 
-    createPublicationJob(input) {
+    createPublicationJob(input, requestId) {
       const parsed = publicationJobCreateSchema.parse(input);
       validateChannelExists(dependencies.channelsRepository, parsed.channelId);
 
@@ -233,22 +244,26 @@ export function createPublicationsService(
           });
         }
 
-        recordAudit(dependencies.auditRepository, {
-          id: `au_${idFactory()}`,
-          channelId: parsed.channelId,
-          actorType: parsed.requestedBy?.trim() ? "user" : "system",
-          actorName: parsed.requestedBy?.trim() || "Aralume Core",
-          action: "publication.job_idempotent_replay",
-          entityType: "PublicationJob",
-          entityId: existing.id,
-          status: "success",
-          message: "Publication package replayed by idempotency key.",
-          metadata: {
-            publicationTargetId: existing.publicationTargetId,
-            idempotencyKey: existing.idempotencyKey,
+        recordAudit(
+          dependencies.auditRepository,
+          {
+            id: `au_${idFactory()}`,
+            channelId: parsed.channelId,
+            actorType: parsed.requestedBy?.trim() ? "user" : "system",
+            actorName: parsed.requestedBy?.trim() || "Aralume Core",
+            action: "publication.job_idempotent_replay",
+            entityType: "PublicationJob",
+            entityId: existing.id,
+            status: "success",
+            message: "Publication package replayed by idempotency key.",
+            metadata: {
+              publicationTargetId: existing.publicationTargetId,
+              idempotencyKey: existing.idempotencyKey,
+            },
+            createdAt: clock().toISOString(),
           },
-          createdAt: clock().toISOString(),
-        });
+          requestId,
+        );
 
         return existing;
       }
@@ -314,6 +329,7 @@ export function createPublicationsService(
           dependencies.auditRepository,
           clock,
           idFactory,
+          requestId,
         );
         throw new AppError({
           code: gate.blockCode ?? "OPERATION_BLOCKED",
@@ -344,6 +360,11 @@ export function createPublicationsService(
         title: parsed.title,
         description: parsed.description,
         idempotencyKey: parsed.idempotencyKey,
+        privacyStatus: parsed.privacyStatus,
+        metadata: parsed.metadata,
+        humanConfirmed: parsed.humanConfirmed,
+        confirmedBy: parsed.requestedBy?.trim() || "Aralume Core",
+        confirmedAt: now,
         scheduledAt: parsed.scheduledAt,
         status: jobStatus,
         approvalId: gate.approval?.id,
@@ -363,69 +384,85 @@ export function createPublicationsService(
         updatedAt: now,
       });
 
-      recordAudit(dependencies.auditRepository, {
-        id: `au_${idFactory()}`,
-        channelId: parsed.channelId,
-        actorType: parsed.requestedBy?.trim() ? "user" : "system",
-        actorName: parsed.requestedBy?.trim() || "Aralume Core",
-        action: "publication.package_prepared",
-        entityType: "PublicationJob",
-        entityId: job.id,
-        status: "success",
-        message: "Publication package prepared.",
-        metadata: {
-          publicationTargetId: job.publicationTargetId,
-          sourceVideoAssetId: job.sourceVideoAssetId,
-          contentId: job.contentId,
-          scheduledAt: job.scheduledAt,
+      recordAudit(
+        dependencies.auditRepository,
+        {
+          id: `au_${idFactory()}`,
+          channelId: parsed.channelId,
+          actorType: parsed.requestedBy?.trim() ? "user" : "system",
+          actorName: parsed.requestedBy?.trim() || "Aralume Core",
+          action: "publication.package_prepared",
+          entityType: "PublicationJob",
+          entityId: job.id,
+          status: "success",
+          message: "Publication package prepared.",
+          metadata: {
+            publicationTargetId: job.publicationTargetId,
+            sourceVideoAssetId: job.sourceVideoAssetId,
+            contentId: job.contentId,
+            scheduledAt: job.scheduledAt,
+            privacyStatus: job.privacyStatus,
+            metadata: job.metadata,
+            humanConfirmed: job.humanConfirmed,
+          },
+          createdAt: now,
         },
-        createdAt: now,
-      });
+        requestId,
+      );
 
-      recordAudit(dependencies.auditRepository, {
-        id: `au_${idFactory()}`,
-        channelId: parsed.channelId,
-        actorType: parsed.requestedBy?.trim() ? "user" : "system",
-        actorName: parsed.requestedBy?.trim() || "Aralume Core",
-        action: "publication.job_created",
-        entityType: "PublicationJob",
-        entityId: job.id,
-        status: "success",
-        message: "Publication job created.",
-        metadata: {
-          publicationTargetId: job.publicationTargetId,
-          sourceVideoAssetId: job.sourceVideoAssetId,
-          approvalId: job.approvalId,
-          complianceCheckId: job.complianceCheckId,
+      recordAudit(
+        dependencies.auditRepository,
+        {
+          id: `au_${idFactory()}`,
+          channelId: parsed.channelId,
+          actorType: parsed.requestedBy?.trim() ? "user" : "system",
+          actorName: parsed.requestedBy?.trim() || "Aralume Core",
+          action: "publication.job_created",
+          entityType: "PublicationJob",
+          entityId: job.id,
+          status: "success",
+          message: "Publication job created.",
+          metadata: {
+            publicationTargetId: job.publicationTargetId,
+            sourceVideoAssetId: job.sourceVideoAssetId,
+            approvalId: job.approvalId,
+            complianceCheckId: job.complianceCheckId,
+            humanConfirmed: job.humanConfirmed,
+          },
+          createdAt: now,
         },
-        createdAt: now,
-      });
+        requestId,
+      );
 
-      recordAudit(dependencies.auditRepository, {
-        id: `au_${idFactory()}`,
-        channelId: parsed.channelId,
-        actorType: parsed.requestedBy?.trim() ? "user" : "system",
-        actorName: parsed.requestedBy?.trim() || "Aralume Core",
-        action:
-          jobStatus === "scheduled" ? "publication.job_scheduled" : "publication.job_saved_draft",
-        entityType: "PublicationJob",
-        entityId: job.id,
-        status: "success",
-        message:
-          jobStatus === "scheduled"
-            ? "Publication job scheduled."
-            : "Publication package saved as draft.",
-        metadata: {
-          publicationTargetId: job.publicationTargetId,
-          scheduledAt: job.scheduledAt,
+      recordAudit(
+        dependencies.auditRepository,
+        {
+          id: `au_${idFactory()}`,
+          channelId: parsed.channelId,
+          actorType: parsed.requestedBy?.trim() ? "user" : "system",
+          actorName: parsed.requestedBy?.trim() || "Aralume Core",
+          action:
+            jobStatus === "scheduled" ? "publication.job_scheduled" : "publication.job_saved_draft",
+          entityType: "PublicationJob",
+          entityId: job.id,
+          status: "success",
+          message:
+            jobStatus === "scheduled"
+              ? "Publication job scheduled."
+              : "Publication package saved as draft.",
+          metadata: {
+            publicationTargetId: job.publicationTargetId,
+            scheduledAt: job.scheduledAt,
+          },
+          createdAt: now,
         },
-        createdAt: now,
-      });
+        requestId,
+      );
 
       return job;
     },
 
-    reschedulePublicationJob(id, input) {
+    reschedulePublicationJob(id, input, requestId) {
       const parsed = publicationJobRescheduleSchema.parse(input);
       validateChannelExists(dependencies.channelsRepository, parsed.channelId);
 
@@ -455,25 +492,29 @@ export function createPublicationsService(
       };
 
       repository.upsertPublicationJob(updated);
-      recordAudit(dependencies.auditRepository, {
-        id: `au_${idFactory()}`,
-        channelId: parsed.channelId,
-        actorType: parsed.requestedBy?.trim() ? "user" : "system",
-        actorName: parsed.requestedBy?.trim() || "Aralume Core",
-        action: "publication.job_rescheduled",
-        entityType: "PublicationJob",
-        entityId: updated.id,
-        status: "success",
-        message:
-          nextStatus === "scheduled"
-            ? "Publication job rescheduled."
-            : "Publication schedule cleared.",
-        metadata: {
-          publicationTargetId: updated.publicationTargetId,
-          scheduledAt: updated.scheduledAt,
+      recordAudit(
+        dependencies.auditRepository,
+        {
+          id: `au_${idFactory()}`,
+          channelId: parsed.channelId,
+          actorType: parsed.requestedBy?.trim() ? "user" : "system",
+          actorName: parsed.requestedBy?.trim() || "Aralume Core",
+          action: "publication.job_rescheduled",
+          entityType: "PublicationJob",
+          entityId: updated.id,
+          status: "success",
+          message:
+            nextStatus === "scheduled"
+              ? "Publication job rescheduled."
+              : "Publication schedule cleared.",
+          metadata: {
+            publicationTargetId: updated.publicationTargetId,
+            scheduledAt: updated.scheduledAt,
+          },
+          createdAt: now,
         },
-        createdAt: now,
-      });
+        requestId,
+      );
 
       return updated;
     },
@@ -886,37 +927,43 @@ function recordBlockedPublicationAttempt(
   auditRepository: AuditRepository,
   clock: () => Date,
   idFactory: () => string,
+  requestId?: string,
 ): void {
   const now = clock().toISOString();
-  recordAudit(auditRepository, {
-    id: `au_${idFactory()}`,
-    channelId: input.channelId,
-    actorType: input.requestedBy?.trim() ? "user" : "system",
-    actorName: input.requestedBy?.trim() || "Aralume Core",
-    action: "publication.job_blocked",
-    entityType: "PublicationJob",
-    entityId: input.idempotencyKey,
-    status: "warning",
-    message: gate.blockMessage ?? "Publication package blocked.",
-    metadata: {
-      publicationTargetId: input.publicationTargetId,
-      contentId: input.contentId,
-      sourceVideoAssetId: input.sourceVideoAssetId,
-      readinessStatus: gate.readinessStatus,
-      readinessReasons: gate.readinessReasons,
-      approvalId: gate.approval?.id,
-      complianceCheckId: gate.compliance?.id,
-      blockCode: gate.blockCode,
+  recordAudit(
+    auditRepository,
+    {
+      id: `au_${idFactory()}`,
+      channelId: input.channelId,
+      actorType: input.requestedBy?.trim() ? "user" : "system",
+      actorName: input.requestedBy?.trim() || "Aralume Core",
+      action: "publication.job_blocked",
+      entityType: "PublicationJob",
+      entityId: input.idempotencyKey,
+      status: "warning",
+      message: gate.blockMessage ?? "Publication package blocked.",
+      metadata: {
+        publicationTargetId: input.publicationTargetId,
+        contentId: input.contentId,
+        sourceVideoAssetId: input.sourceVideoAssetId,
+        readinessStatus: gate.readinessStatus,
+        readinessReasons: gate.readinessReasons,
+        approvalId: gate.approval?.id,
+        complianceCheckId: gate.compliance?.id,
+        blockCode: gate.blockCode,
+      },
+      createdAt: now,
     },
-    createdAt: now,
-  });
+    requestId,
+  );
 }
 
 function recordAudit(
   auditRepository: AuditRepository,
   log: Parameters<AuditRepository["appendAuditLog"]>[0],
+  requestId?: string,
 ): void {
-  auditRepository.appendAuditLog(log);
+  auditRepository.appendAuditLog({ ...log, requestId });
 }
 
 function validateChannelExists(channelsRepository: ChannelsRepository, channelId: string): void {
@@ -979,6 +1026,9 @@ function fingerprintFor(
     sourceVideoAssetId: "sourceVideoAssetId" in input ? input.sourceVideoAssetId : undefined,
     title: "title" in input ? input.title : undefined,
     description: "description" in input ? input.description : undefined,
+    privacyStatus: "privacyStatus" in input ? input.privacyStatus : undefined,
+    metadata: "metadata" in input ? input.metadata : undefined,
+    humanConfirmed: "humanConfirmed" in input ? input.humanConfirmed : undefined,
     scheduledAt: "scheduledAt" in input ? (input.scheduledAt ?? undefined) : undefined,
     idempotencyKey: "idempotencyKey" in input ? input.idempotencyKey : undefined,
   });
