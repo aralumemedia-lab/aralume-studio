@@ -11,4 +11,4 @@
 
 - E16 must be complete before E17 starts because the media flow depends on editorial context.
 - H17.3 and H17.4 are covered by the Sprint 18 traceability rows above.
-- Sprint 18 gate passed on the branch head; E17 is complete pending PR integration, and no formal V1 Acceptance was run.
+- Sprint 18 gate passed and E17 is integrated in `main` by PR #30; no formal V1 Acceptance was run.

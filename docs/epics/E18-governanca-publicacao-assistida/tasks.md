@@ -1,16 +1,23 @@
 # E18 - Tasks
 
+## Sequenciamento
+
+- Sprint 19 proposta: contratos, frontend, backend, auditoria, testes e evidencias de H18.1-H18.3.
+- Sprint 20 proposta: contratos, frontend, backend, auditoria, testes e evidencias de H18.4.
+- Nenhuma tarefa destas fatias foi iniciada nesta execucao.
+
 ## Contracts
 
 - Reconcile governance and publication payloads with the current `src/contracts/types.ts` models.
 - Keep the API envelope and error codes unchanged.
 - Confirm the publication readiness contract before any implementation branch.
 - Keep `src/services/api-client.ts` limited to real services for the epic surfaces.
+- Confirm the separation between readiness/draft package and external provider actions; do not include YouTube OAuth, connection or upload.
 
 ## Frontend
 
 - Implement the quality, compliance and approval actions on the governance surfaces.
-- Implement the publication readiness and draft actions on `/publications`.
+- Sprint 20: implement the publication readiness and draft-package actions on `/publications`.
 - Remove mock-only primary actions from the epic flow.
 - Keep loading, empty, error and success states explicit.
 
@@ -19,6 +26,7 @@
 - Keep channel validation and cross-channel conflict rejection explicit.
 - Keep approval history and publication readiness rules explicit.
 - Keep the current repository abstraction stable for the epic.
+- Propagate the HTTP requestId from routes through services into every governance/publication audit mutation.
 
 ## Persistence
 
@@ -32,9 +40,9 @@
 
 ## Tests
 
-- Add or extend server HTTP tests for all four stories.
-- Add or extend frontend route tests for loading, empty, error and success states.
-- Add browser E2E coverage for create, reload, isolation, duplicate and invalid payload scenarios.
+- Add or extend server HTTP tests for H18.1-H18.3 in Sprint 19 and H18.4 in Sprint 20.
+- Add or extend frontend route tests for loading, empty, error, conflict and success states.
+- Add browser E2E coverage per slice for create, reload, isolation, duplicate, invalid payload and requestId audit scenarios.
 - Add screenshot coverage at all required viewports.
 
 ## Accessibility

@@ -1,5 +1,25 @@
 # E18 - Acceptance
 
+## Slice gates
+
+### Sprint 19 gate - governance and decisions
+
+- H18.1, H18.2 and H18.3 are accepted through real frontend mutations and queries.
+- Quality and compliance blocked states, approval decisions and history are visible after same-process reload.
+- Cross-channel attempts are rejected by the backend and the frontend shows sanitized messages.
+- Every mutation has an auditable entry correlated with its originating requestId.
+- Browser E2E and visual evidence cover the required states and viewports.
+
+### Sprint 20 gate - assisted publication
+
+- H18.4 prepares a target, readiness result or draft package through the real frontend path.
+- The package is visible after same-process reload and remains channel-scoped.
+- Invalid, blocked and cross-channel publication inputs are rejected with sanitized errors.
+- Every mutation has an auditable entry correlated with its originating requestId.
+- E2E proves that preparing the package does not call an external provider or auto-send.
+
+E18 is only complete after both slice gates pass. No V1 Acceptance is executed by either sprint.
+
 ## Positive scenarios
 
 - Review a quality result and see it again after reload.
@@ -49,7 +69,7 @@
 ## Audit
 
 - Every mutating governance action must leave a queryable audit record.
-- The audit record must include channelId, entity type, entity ID and request metadata.
+- The audit record must include channelId, entity type, entity ID, actor, status, sanitized message and the originating requestId.
 
 ## Accessibility
 
@@ -73,7 +93,7 @@
 
 ## Epic gate
 
-READY FOR SPRINT PLANNING only when:
+READY FOR E18 COMPLETION only when:
 
 1. The four stories are individually accepted.
 2. The frontend no longer masks the primary governance actions behind mocks.
@@ -81,3 +101,4 @@ READY FOR SPRINT PLANNING only when:
 4. Audit evidence is present for the mutating actions.
 5. The publication readiness flow is explicit and proven.
 6. The traceability matrix covers each criterion and dependency.
+7. Sprint 19 and Sprint 20 gates both pass, with no external auto-send and no open material finding.

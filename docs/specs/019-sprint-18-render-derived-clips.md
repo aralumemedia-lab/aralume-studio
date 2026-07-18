@@ -5,7 +5,7 @@
 - Spec ID: 019
 - Sprint number: 18
 - Spec title: Render and Derived Clips
-- Status: accepted on Sprint 18 head; pending PR integration
+- Status: accepted and integrated in `main` by PR #30
 - Date: 2026-07-17
 - Owner: Codex
 - Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend

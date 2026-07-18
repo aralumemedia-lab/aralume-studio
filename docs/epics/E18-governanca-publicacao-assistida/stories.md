@@ -1,18 +1,27 @@
 # E18 - Stories
 
+## Sprint sequencing
+
+- Sprint 19 (proposed, not started): H18.1, H18.2 and H18.3. This is the first recommended vertical slice and establishes the governance gates.
+- Sprint 20 (proposed, not started): H18.4. This slice starts only after Sprint 19 is accepted and prepares publication without auto-send.
+- Completing a sprint does not automatically complete E18.
+
 ## H18.1 - Qualidade tecnica operavel pelo frontend
 
 - Actor: revisor tecnico
 - Objective: inspect quality findings from the frontend and keep them queryable after reload.
 - V1 criterion: V1-11
 - R14 item: R14-11
+- Planned slice: Sprint 19 proposed
 - Dependencies: E17; quality-check contracts; review states
 - Priority: P1
 - Acceptance criteria:
   - The operator can review a quality finding from the governance surface.
+  - The frontend can create or refresh the quality result through the real API path required by the contract.
   - The blocked or approved state remains visible after reload.
   - Invalid transitions are rejected.
-  - The action creates an audit entry.
+  - The mutation creates an audit entry containing the originating requestId.
+  - Cross-channel access returns a sanitized 404 or conflict and creates no partial record.
 - Tests:
   - Server HTTP tests for quality-check flows.
   - Frontend route or panel tests for loading, empty, error and success states.
@@ -34,14 +43,16 @@
 - Objective: inspect compliance findings and block unsafe content from the frontend.
 - V1 criterion: V1-12
 - R14 item: R14-12
+- Planned slice: Sprint 19 proposed
 - Dependencies: H18.1; compliance contracts; blocked-state rules
 - Priority: P1
 - Acceptance criteria:
   - The operator can review a compliance finding from the governance surface.
+  - The frontend can create or refresh the compliance result through the real API path required by the contract.
   - A blocked state prevents unsafe progression.
   - The result remains visible after reload.
   - Invalid or cross-channel findings are rejected.
-  - The action creates an audit entry.
+  - The mutation creates an audit entry containing the originating requestId.
 - Tests:
   - Server HTTP tests for compliance flows.
   - Frontend route or panel tests for loading, empty, error and success states.
@@ -63,14 +74,17 @@
 - Objective: approve, reject or request changes from the frontend and keep the decision history visible.
 - V1 criterion: V1-13
 - R14 item: R14-13
+- Planned slice: Sprint 19 proposed
 - Dependencies: H18.2; approval decision contracts; history preservation
 - Priority: P1
 - Acceptance criteria:
   - The operator can approve, reject or request changes.
+  - The frontend can create or select the approval record required by the real decision flow.
   - The prior decision history remains immutable.
   - The current decision remains visible after reload.
   - Invalid transitions are rejected.
-  - The action creates an audit entry.
+  - The mutation creates an audit entry containing the originating requestId.
+  - Approval history is queryable from the same channel-scoped surface after reload.
 - Tests:
   - Server unit and HTTP tests for approval decisions and conflicts.
   - Frontend route or panel tests for loading, empty, error and success states.
@@ -92,6 +106,7 @@
 - Objective: prepare a publication draft or readiness package without auto-send.
 - V1 criterion: V1-14
 - R14 item: R14-14
+- Planned slice: Sprint 20 proposed
 - Dependencies: H18.3; publication target and readiness contracts; approval and compliance gates
 - Priority: P1
 - Acceptance criteria:
@@ -99,7 +114,8 @@
   - Readiness and blocked states remain explicit.
   - The package remains visible after reload.
   - Auto-send external behavior is not triggered.
-  - The action creates an audit entry.
+  - The mutation creates an audit entry containing the originating requestId.
+  - Cross-channel target, source and job references are rejected by the backend.
 - Tests:
   - Server HTTP tests for publication target and job flows.
   - Frontend route tests for loading, empty, error and success states.
@@ -114,3 +130,4 @@
 - DoD:
   - The publication package survives reload.
   - The channel isolation and audit evidence are visible.
+  - The E2E proves that no external provider call or auto-send occurs.

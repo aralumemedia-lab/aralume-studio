@@ -5,7 +5,7 @@
 - Epic ID: E17
 - Epic name: Pipeline Midia e Producao Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
-- Status: complete on Sprint 18 head; pending PR integration
+- Status: complete and integrated in `main` by PR #30
 - Current sprint slice: Sprint 18
 - Related criteria: V1-07, V1-08, V1-09, V1-10
 - Upstream dependency: E16

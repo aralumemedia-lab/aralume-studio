@@ -71,8 +71,9 @@ Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 | Sprint 15 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04 | funcional + frontend + UX | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
 | Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05, V1-06 | R14-05, R14-06 | funcional + frontend + UX | roteiro versionado, versoes e plano visual com cenas operaveis no frontend |
 | Sprint 17 (entregue pela PR #28) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08 | R14-07, R14-08 | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
-| Sprint 18 (entregue no head; PR pendente) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10 | R14-09, R14-10 | funcional + frontend + backend + integracao | render e cortes operaveis no frontend com reload, auditoria e isolamento |
-| Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13, V1-14 | R14-11, R14-12, R14-13, R14-14 | funcional + frontend + backend + governance | qualidade, compliance, aprovacao e publicacao assistida operaveis no frontend |
+| Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10 | R14-09, R14-10 | funcional + frontend + backend + integracao | render e cortes operaveis no frontend com reload, auditoria e isolamento |
+| Sprint 19 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13 | funcional + frontend + backend + governance | qualidade, compliance e aprovacao humana operaveis no frontend |
+| Sprint 20 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | R14-14 | funcional + frontend + backend + governance | readiness e pacote de publicacao assistida sem auto-send |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | R14-T01, R14-T02 | technical + evidence + QA | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Final gate | R14-REACCEPT | V1-01..V1-18 | R14-02..R14-14, R14-T01, R14-T02 | evidence / reaccept | novo V1 Acceptance com prova nova no mesmo head |
 
@@ -89,10 +90,10 @@ Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 | V1-08 | R14-08 | E17 | Sprint 17 |
 | V1-09 | R14-09 | E17 | Sprint 18 |
 | V1-10 | R14-10 | E17 | Sprint 18 |
-| V1-11 | R14-11 | E18 | Sprint proposta C |
-| V1-12 | R14-12 | E18 | Sprint proposta C |
-| V1-13 | R14-13 | E18 | Sprint proposta C |
-| V1-14 | R14-14 | E18 | Sprint proposta C |
+| V1-11 | R14-11 | E18 | Sprint 19 |
+| V1-12 | R14-12 | E18 | Sprint 19 |
+| V1-13 | R14-13 | E18 | Sprint 19 |
+| V1-14 | R14-14 | E18 | Sprint 20 |
 | Dashboard real | R14-T01 | E19 | Sprint proposta D |
 | Escritorio de Agentes real | R14-T02 | E19 | Sprint proposta D |
 | Reaccept final | R14-REACCEPT | final gate | after Sprint D |
@@ -221,7 +222,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Superficies: `/approvals`; `GET/POST /api/quality-checks`; persistencia de findings/status; auditoria.
 - Testes/evidencia: caso aprovado e bloqueado, regra de bloqueio, reload e screenshot.
 - Risco/prioridade/estimativa: produto defeituoso avancar; P1; M.
-- Dependencias: R14-09, R14-10. Aceite: qualidade bloqueada impede avanÃƒÂ§o e aprovada permite prÃƒÂ³ximo gate.
+- Dependencias: R14-09, R14-10. Sprint proposta: Sprint 19. Aceite: qualidade bloqueada impede avanco e aprovada permite proximo gate.
 
 ### R14-12 Ã¢â‚¬â€ Conformidade e direitos
 
@@ -230,7 +231,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Superficies: `/compliance`/`/approvals`; `GET/POST /api/compliance-checks`; persistencia de findings/status; auditoria.
 - Testes/evidencia: caso blocked, correÃƒÂ§ÃƒÂ£o, revalidaÃƒÂ§ÃƒÂ£o, canal divergente e screenshot.
 - Risco/prioridade/estimativa: violaÃƒÂ§ÃƒÂ£o de direitos/policy; P1; M.
-- Dependencias: R14-08, R14-11. Aceite: bloqueio material impede aprovaÃƒÂ§ÃƒÂ£o/publicaÃƒÂ§ÃƒÂ£o atÃƒÂ© revalidaÃƒÂ§ÃƒÂ£o aprovada.
+- Dependencias: R14-08, R14-11. Sprint proposta: Sprint 19. Aceite: bloqueio material impede aprovacao/publicacao ate revalidacao aprovada.
 
 ### R14-13 Ã¢â‚¬â€ Aprovacao humana
 
@@ -239,7 +240,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Superficies: `/approvals`; endpoints approve/reject/request-changes; persistencia de decisÃƒÂ£o/histÃƒÂ³rico; auditoria.
 - Testes/evidencia: trÃƒÂªs decisÃƒÂµes, estados invÃƒÂ¡lidos, reload e screenshot com ator/timestamp.
 - Risco/prioridade/estimativa: publicaÃƒÂ§ÃƒÂ£o sem supervisÃƒÂ£o; P1; M.
-- Dependencias: R14-11, R14-12. Aceite: somente decisÃƒÂ£o vÃƒÂ¡lida muda o estado e o histÃƒÂ³rico fica consultÃƒÂ¡vel.
+- Dependencias: R14-11, R14-12. Sprint proposta: Sprint 19. Aceite: somente decisao valida muda o estado e o historico fica consultavel.
 
 ### R14-14 Ã¢â‚¬â€ Publicacao assistida
 
@@ -248,7 +249,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Superficies: `/publications`; targets/readiness e `POST /api/publications`; persistencia de job/payload/bloqueios; auditoria.
 - Testes/evidencia: readiness blocked/ready, aprovaÃƒÂ§ÃƒÂ£o ausente, replay, reload e screenshot; nenhum upload real.
 - Risco/prioridade/estimativa: publicaÃƒÂ§ÃƒÂ£o sem governanÃƒÂ§a; P1; M.
-- Dependencias: R14-13. Aceite: pacote preparado com source video, approval, compliance, readiness e bloqueios visÃƒÂ­veis, sem envio automÃƒÂ¡tico.
+- Dependencias: R14-13. Sprint proposta: Sprint 20. Aceite: pacote preparado com source video, approval, compliance, readiness e bloqueios visiveis, sem envio automatico.
 
 ### R14-T01 Ã¢â‚¬â€ Dashboard real
 
@@ -269,6 +270,14 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: falsa visibilidade operacional; P0; L.
 - Dependencias: contrato backend aprovado e integraÃƒÂ§ÃƒÂ£o com workflows/handoffs.
 - Aceite: nenhum fixture/mock ÃƒÂ© exibido como estado real; agentes e workflows vÃƒÂªm de APIs persistentes e auditÃƒÂ¡veis.
+
+### E18 - Sequencia proposta
+
+1. Sprint 19: H18.1, H18.2 e H18.3, cobrindo V1-11 a V1-13 e R14-11 a R14-13.
+2. Sprint 20: H18.4, cobrindo V1-14 e R14-14, somente apos o gate da Sprint 19.
+3. E18 somente e considerado concluido depois das duas fatias, com auditoria correlacionada por requestId e sem auto-send externo.
+4. E19: R14-T01 e R14-T02.
+5. R14-REACCEPT: etapa final apos E16, E17, E18 e E19.
 
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
