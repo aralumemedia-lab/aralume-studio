@@ -132,5 +132,5 @@ export type CreateRendersServiceOptions = {
 export type RendersService = {
   listRenderJobs(filters: RenderJobFilters): RenderJob[];
   getRenderJob(channelId: ID, id: ID): RenderJob;
-  createRenderJob(input: CreateRenderJobInput): Promise<RenderJob>;
+  createRenderJob(input: CreateRenderJobInput, requestId?: string): Promise<RenderJob>;
 };

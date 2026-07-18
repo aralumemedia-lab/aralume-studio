@@ -23,7 +23,7 @@ export function createRendersRouter(service: RendersService): Router {
   router.post("/renders", async (req, res, next) => {
     try {
       const body = parseBody(createRenderJobSchema, req.body);
-      const created = await service.createRenderJob(body);
+      const created = await service.createRenderJob(body, getRequestId(res));
       res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
     } catch (error) {
       next(error);

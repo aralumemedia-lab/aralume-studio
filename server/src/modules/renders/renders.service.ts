@@ -78,6 +78,7 @@ export function createRendersService(
       ffmpegPath: options.ffmpegPath,
       timeoutMs: 30_000,
     });
+  const baseDependencies = dependencies;
 
   return {
     listRenderJobs(filters) {
@@ -120,7 +121,16 @@ export function createRendersService(
       return found;
     },
 
-    async createRenderJob(input) {
+    async createRenderJob(input, requestId) {
+      const dependencies = requestId
+        ? {
+            ...baseDependencies,
+            auditRepository: createRequestAuditRepository(
+              baseDependencies.auditRepository,
+              requestId,
+            ),
+          }
+        : baseDependencies;
       const parsed = normalizeCreateInput(input);
       validateChannelExists(dependencies.channelsRepository, parsed.channelId);
 
@@ -158,6 +168,30 @@ export function createRendersService(
         });
 
         return existing;
+      }
+
+      if (parsed.renderType === "controlled_clip") {
+        try {
+          const parentVideo = resolveParentVideo(parsed, dependencies.mediaAssetsRepository);
+          validateClipInterval(parsed, parentVideo);
+        } catch (error) {
+          if (error instanceof AppError) {
+            recordAudit(dependencies.auditRepository, {
+              id: `au_${idFactory()}`,
+              channelId: parsed.channelId,
+              actorType: parsed.requestedBy?.trim() ? "user" : "system",
+              actorName: parsed.requestedBy?.trim() || "Aralume Core",
+              action: "clip.request_rejected",
+              entityType: "RenderJob",
+              entityId: parsed.parentVideoId ?? "unknown",
+              status: "failed",
+              message: error.message,
+              metadata: { errorCode: error.code, errorDetails: error.details },
+              createdAt: clock().toISOString(),
+            });
+          }
+          throw error;
+        }
       }
 
       const jobId = `rj_${idFactory()}`;
@@ -1668,7 +1702,10 @@ function validateClipInterval(input: CreateRenderJobInput, parentVideo: VideoAss
 function isConcludedVideo(video: VideoAsset): boolean {
   return (
     video.renderStatus === "rendered" &&
-    (video.status === "approved" || video.status === "published" || video.status === "scheduled")
+    (video.status === "editing" ||
+      video.status === "approved" ||
+      video.status === "published" ||
+      video.status === "scheduled")
   );
 }
 
@@ -1940,6 +1977,23 @@ function recordAudit(
   log: Parameters<AuditRepository["appendAuditLog"]>[0],
 ): void {
   auditRepository.appendAuditLog(log);
+}
+
+function createRequestAuditRepository(
+  repository: AuditRepository,
+  requestId: string,
+): AuditRepository {
+  return {
+    replaceAll(seed) {
+      repository.replaceAll(seed);
+    },
+    listAuditLogs(filters) {
+      return repository.listAuditLogs(filters);
+    },
+    appendAuditLog(log) {
+      repository.appendAuditLog({ ...log, requestId });
+    },
+  };
 }
 
 function auditCrossChannelAttempt(

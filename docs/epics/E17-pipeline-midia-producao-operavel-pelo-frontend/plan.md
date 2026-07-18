@@ -6,6 +6,10 @@
   - Wire narration create/update paths.
   - Wire visual asset create/update paths.
   - Keep list, detail and error states channel-scoped.
+- `/videos`
+  - Use the real render client and expose pending, terminal, error and conflict states.
+- `/clips`
+  - Select rendered videos, validate intervals and expose persisted clip details and file access.
 
 ## Backend
 
@@ -20,6 +24,8 @@
 - `src/services/media-assets-api.ts`
 - `src/routes/media-assets.tsx`
 - `server/src/modules/media-assets/*`
+- `src/services/renders-api.ts`
+- `src/tests/clips-route.test.ts`
 
 ## Persistence
 
@@ -30,6 +36,7 @@
 ## Audit
 
 - Record media asset create/update and validation events with channelId, actor, requestId and entity metadata.
+- Propagate the HTTP requestId through render and clip mutation audits.
 
 ## Error handling
 
@@ -44,6 +51,7 @@
 - Route tests for `/media-assets`.
 - Browser E2E for create, reload, isolation, loading, empty, error and validation/conflict states.
 - Screenshot QA at all required viewports.
+- Sprint 18 E2E: `node scripts/sprint18-browser-e2e.mjs` with controlled render policy and temporary storage fixtures.
 
 ## Accessibility
 
@@ -72,6 +80,7 @@
 - The media flow may still inherit mixed real/mocked transport from shared app-shell imports.
 - The repository is process-local, so restart durability is not part of this epic slice.
 - Cross-channel contamination can hide behind a visually correct list if tests are thin.
+- Browser process teardown and deterministic render policy must remain controlled by the runner.
 
 ## Rollback
 
@@ -81,3 +90,9 @@
 ## ADRs
 
 - No new ADR is required to plan this slice if the existing route and contract topology is reused.
+
+## Sprint 18 implementation result
+
+- H17.3 and H17.4 passed the same-head browser, HTTP, reload, audit and isolation gate.
+- No database, migration, dependency or external integration was introduced.
+- E17 is complete on the Sprint 18 head; PR integration is still pending.

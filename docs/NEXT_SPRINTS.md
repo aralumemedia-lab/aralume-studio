@@ -21,7 +21,7 @@
 | 4 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed | not released | PR #26 entregou H16.0, H16.1 e H16.2; a fatia complementar da Sprint 16 concluiu H16.3 e H16.4. |
 | 5 | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/017-sprint-16-scripts-visual-planning.md` | completed | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido. |
 | 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | completed | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser; E17 permanece parcial. |
-| 7 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | proposed | not released | Segunda fatia de E17; H17.3 e H17.4 permanecem pendentes para render e cortes. |
+| 7 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/019-sprint-18-render-derived-clips.md` | completed on branch / pending PR integration | not released | Segunda fatia de E17; H17.3 e H17.4 comprovadas com render, cortes, reload, auditoria e isolamento. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
 
@@ -72,7 +72,7 @@
 | --- | --- | --- | --- | --- | --- |
 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes e claims operaveis |
 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | funcional + frontend + backend + integracao | E16 concluida | narracao e ativos visuais operaveis |
-| Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | funcional + frontend + backend + integracao | Sprint 17 concluida | render e cortes operaveis |
+| Sprint 18 (entregue no head; PR pendente) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | funcional + frontend + backend + integracao | Sprint 17 concluida | render e cortes operaveis com reload, auditoria e isolamento |
 | Sprint proposta C | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-14 | funcional + frontend + backend + governance | E17 concluida | qualidade, compliance, aprovacao e publicacao assistida operaveis |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | evidence / reaccept | E16, E17, E18, E19 concluidos | novo V1 Acceptance com prova nova no mesmo head |
@@ -111,5 +111,19 @@
 - Estado: completed pela PR #28.
 - Resultado: H17.1 e H17.2 entregues com create/update real, reload no mesmo processo, auditoria e isolamento por canal.
 - Evidencia: `scripts/sprint17-browser-e2e.mjs` e `screenshots/sprint-17/`.
-- Pendente: H17.3 e H17.4; E17 permanece parcial.
+- Pendente: integracao da Sprint 18; E18, E19 e `R14-REACCEPT` seguem pendentes.
 - V1.0 permanece `NAO ACEITA`; nenhum reaceite ou release foi executado.
+
+## Sprint 18 - Render and Derived Clips
+
+- Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
+- Spec normativa: `docs/specs/019-sprint-18-render-derived-clips.md`.
+- Estado: accepted on Sprint 18 head; pending PR integration.
+- Historias: H17.3 e H17.4.
+- Criterios V1: V1-09 e V1-10.
+- Itens R14: R14-09 e R14-10.
+- Escopo: render controlado em `/videos`, video resultante, cortes derivados em `/clips`, intervalos, auditoria, reload e isolamento.
+- Fora de escopo: E18, E19, reaceite, release, tag, deploy, banco e migrations.
+- Gate: atendido no head da Sprint 18 com testes, E2E, screenshots e rastreabilidade das duas historias; E17 aguarda integracao em `main`.
+- Evidencia: `node scripts/sprint18-browser-e2e.mjs`, `screenshots/sprint-18/`, 68 testes aprovados, auditoria correlacionada por `requestId`.
+- V1-09/V1-10 receberam evidencia nova; nenhum V1 Acceptance formal foi executado.

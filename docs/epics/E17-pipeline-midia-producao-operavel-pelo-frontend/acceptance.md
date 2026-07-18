@@ -77,4 +77,21 @@ READY FOR PR REVIEW only when:
 4. Audit evidence is present for the mutating actions.
 5. The traceability matrix covers each criterion and dependency.
 
-Current result: satisfied on the Sprint 17 head. E17 remains partial because H17.3 and H17.4 are pending.
+Historical Sprint 17 result: satisfied for H17.1 and H17.2; H17.3 and H17.4 were pending at that head and are covered by the Sprint 18 gate below.
+
+## Sprint 18 acceptance
+
+- `/videos` creates a real controlled render from channel-scoped source assets and exposes the persisted job/output state.
+- `/clips` creates a real derived clip from a completed channel-scoped video and preserves interval/provenance linkage.
+- Invalid, duplicate, out-of-duration, cross-channel, timeout, process-failure and policy-blocked paths are sanitized and tested.
+- Reload preserves the job, video and clip while the backend process remains alive.
+- Render and clip mutation audits include the originating HTTP `requestId`.
+- Browser evidence covers 1366x768, 1600x900, 1792x1024 and 1920x1080, sidebar states, loading, success, error, conflict, reload and isolation.
+- E17 is complete on the Sprint 18 head after all Sprint 18 criteria were proven; V1.0 remains `NAO ACEITA`.
+
+## Sprint 18 gate result
+
+- H17.3: passed through `/videos` with real render, output, reload, conflict, audit correlation and channel isolation.
+- H17.4: passed through `/clips` with real clip, interval validation, conflict, reload, file output, audit correlation and channel isolation.
+- `node scripts/sprint18-browser-e2e.mjs`: passed with controlled temporary storage/policy fixtures and no orphaned processes.
+- Formal V1 Acceptance was not executed; the new evidence is staged for the future reaccept gate.

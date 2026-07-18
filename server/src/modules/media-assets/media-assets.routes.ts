@@ -101,21 +101,24 @@ export function createMediaAssetsRouter(
   router.post("/clips", async (req, res, next) => {
     try {
       const body = parseBody(derivedClipCreateSchema, req.body);
-      const createdJob = await rendersService.createRenderJob({
-        channelId: body.channelId,
-        inputAssetIds: [],
-        renderType: "controlled_clip",
-        renderProfile: "controlled_demo_clip_segment_v1",
-        idempotencyKey: body.idempotencyKey,
-        parentVideoId: body.parentVideoId,
-        startSeconds: body.startSeconds,
-        endSeconds: body.endSeconds,
-        targetPlatform: body.targetPlatform,
-        title: body.title,
-        hook: body.hook,
-        description: body.description,
-        requestedBy: body.requestedBy,
-      });
+      const createdJob = await rendersService.createRenderJob(
+        {
+          channelId: body.channelId,
+          inputAssetIds: [],
+          renderType: "controlled_clip",
+          renderProfile: "controlled_demo_clip_segment_v1",
+          idempotencyKey: body.idempotencyKey,
+          parentVideoId: body.parentVideoId,
+          startSeconds: body.startSeconds,
+          endSeconds: body.endSeconds,
+          targetPlatform: body.targetPlatform,
+          title: body.title,
+          hook: body.hook,
+          description: body.description,
+          requestedBy: body.requestedBy,
+        },
+        getRequestId(res),
+      );
 
       const clipId = createdJob.outputAssetId;
       if (!clipId) {

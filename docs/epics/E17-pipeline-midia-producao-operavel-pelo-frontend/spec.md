@@ -5,11 +5,11 @@
 - Epic ID: E17
 - Epic name: Pipeline Midia e Producao Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
-- Status: partial / in progress
-- Current sprint slice: Sprint 17
-- Related criteria: V1-07, V1-08
+- Status: complete on Sprint 18 head; pending PR integration
+- Current sprint slice: Sprint 18
+- Related criteria: V1-07, V1-08, V1-09, V1-10
 - Upstream dependency: E16
-- Related R14 items: R14-07, R14-08
+- Related R14 items: R14-07, R14-08, R14-09, R14-10
 
 ## Actors
 
@@ -105,3 +105,10 @@
 - Every step is channel-scoped and auditable.
 - The frontend shows loading, empty, error, success and validation/conflict states for the media surface.
 - The frontend can navigate between the artifacts without losing traceability.
+
+## Sprint 18 slice
+
+- H17.3 is governed by `docs/specs/019-sprint-18-render-derived-clips.md` and `/videos`.
+- H17.4 is governed by `docs/specs/019-sprint-18-render-derived-clips.md` and `/clips`.
+- H17.3 and H17.4 passed the Sprint 18 gate on the same head; E17 is complete on the sprint branch and is not yet integrated into `main`.
+- V1-09 and V1-10 have new implementation evidence, but the formal V1 Acceptance was not rerun and V1.0 remains `NAO ACEITA`.

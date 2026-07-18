@@ -1,6 +1,6 @@
 # E17 - Pipeline Midia e Producao Operavel pelo Frontend
 
-- Status: partial / in progress
+- Status: complete on Sprint 18 head; pending PR integration
 - Epic name: Pipeline Midia e Producao Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P1
@@ -8,11 +8,11 @@
 
 ## Context
 
-Sprint 16 closed the editorial pipeline. Sprint 17 starts E17 in a smaller slice so the repository can prove the media registry path for narration and visual assets before render and clip generation are attempted.
+Sprint 16 closed the editorial pipeline. Sprint 17 proved the media registry path for narration and visual assets. Sprint 18 now proves controlled render and derived clips through the frontend using the existing backend modules.
 
 ## Problem
 
-Before Sprint 17, the operator could inspect media surfaces but the repository did not prove that narration metadata and visual assets were created, persisted, reloaded and isolated by channel through the frontend. The current sprint head closes that gap for H17.1 and H17.2.
+Before Sprint 17, the operator could inspect media surfaces but the repository did not prove the media path through the frontend. Sprint 17 closed the narration and asset gap; Sprint 18 addresses the remaining render and clip evidence gap for H17.3 and H17.4.
 
 ## Current capability classification
 
@@ -22,13 +22,15 @@ Labels used below: `implemented`, `partial`, `only backend`, `only mock`, `absen
 | --- | --- | --- | --- | --- | --- | --- |
 | Narracao / V1-07 | implemented | implemented | implemented | implemented for reload in the same process | implemented | create/update, reload, audit and isolation proven by Sprint 17 E2E |
 | Ativos visuais / V1-08 | implemented | implemented | implemented | implemented for reload in the same process | implemented | create/update, provenance, integrity, reload and isolation proven by Sprint 17 E2E |
-| Render controlado / V1-09 | absent | implemented | implemented | existing, but not demonstrable | implemented | intentionally left for the next E17 slice |
-| Corte derivado / V1-10 | absent | implemented | implemented | existing, but not demonstrable | implemented | intentionally left for the next E17 slice |
+| Render controlado / V1-09 | implemented | implemented | implemented | same-process reload proven | implemented with requestId correlation | Sprint 18 frontend/E2E and screenshots |
+| Corte derivado / V1-10 | implemented | implemented | implemented | same-process reload proven | implemented with requestId correlation | Sprint 18 frontend/E2E and screenshots |
 
 ## V1 criteria covered in this sprint slice
 
 - V1-07 - Narracao autorizada
 - V1-08 - Ativos rastreaveis
+- V1-09 - Render controlado
+- V1-10 - Corte derivado
 
 ## Upstream dependency
 
@@ -40,6 +42,8 @@ The media flow depends on the editorial flow being operational enough to supply 
 
 - R14-07 - Narracao autorizada
 - R14-08 - Ativos visuais rastreaveis
+- R14-09 - Render controlado
+- R14-10 - Corte derivado
 
 ## Epic objective
 
@@ -66,11 +70,12 @@ Make the first media slice operable through the frontend so an operator can:
 - Reload verification for created records.
 - Channel isolation checks.
 - Audit trail requirements for mutating actions.
+- Controlled render from registered channel assets through `/videos`.
+- Derived clips from completed rendered videos through `/clips`.
+- Interval, idempotency, output-file and provenance traceability.
 
 ## Out of scope
 
-- Render control.
-- Derived clips.
 - Quality, compliance, approval and publication.
 - Metrics.
 - Costs.
@@ -119,6 +124,6 @@ Make the first media slice operable through the frontend so an operator can:
 - Documentation stays aligned with backlog, next-sprint planning and handoff.
 - No secrets, release or scope creep is introduced.
 
-## Final gate
+## Sprint 18 gate
 
-Sprint 17 is ready for PR review because H17.1 and H17.2 are implemented and evidenced on the same head. E17 remains partial and cannot be closed until H17.3 and H17.4 pass their own sprint gate.
+Sprint 18 evidence is complete on the sprint branch. E17 is closed on that head, pending its PR integration into `main`; H17.3 and H17.4 are not started in a later sprint.

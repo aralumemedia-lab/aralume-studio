@@ -122,9 +122,9 @@ recriacao do frontend e limpeza administrativa da S12.
 - CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
 - Sequencia recomendada: Sprint 17, Sprint 18, Sprint proposta C, Sprint proposta D, e depois R14-REACCEPT.
-- Proxima sprint recomendada: Sprint 18, limitada a H17.3 e H17.4 para concluir E17.
+- Proximo passo recomendado: planejar E18 na Sprint proposta C; E17 aguarda apenas a integracao da PR da Sprint 18.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Nao iniciado: nenhuma remediacao funcional fora do E17 primeiro slice comecou nesta execucao.
+- Nao iniciado: E18, E19, `R14-REACCEPT`, release, tag e deploy permanecem fora desta execucao.
 
 ## Sprint 15 - formalizacao documental
 
@@ -144,13 +144,26 @@ recriacao do frontend e limpeza administrativa da S12.
 - Spec normativa: `docs/specs/018-sprint-17-narration-media-assets.md`.
 - Estado: completed pela PR #28.
 - Historias: H17.1 e H17.2.
-- Resultado: H17.1 e H17.2 integradas em `main` pela PR #28 com API real, reload, auditoria, validacao e isolamento por canal; H17.3 e H17.4 permanecem pendentes para a Sprint 18.
+- Resultado: H17.1 e H17.2 integradas em `main` pela PR #28; H17.3 e H17.4 foram entregues e comprovadas no head da Sprint 18, aguardando integracao da PR.
 - Itens R14: R14-07 e R14-08.
 - Sequencia: primeira fatia funcional do E17, sem render nem cortes.
 - Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Pendente: H17.3 e H17.4.
+- Pendente: integracao da PR da Sprint 18; E18, E19 e `R14-REACCEPT` continuam pendentes.
 - Evidencia reproduzivel: `node scripts/sprint17-browser-e2e.mjs` e `screenshots/sprint-17/`.
-- Produto: E17 parcial e V1.0 ainda `NAO ACEITA`; nenhum reaceite ou release executado.
+- Produto: E17 completo no head da Sprint 18, ainda nao integrado em `main`; V1.0 continua `NAO ACEITA`; nenhum reaceite ou release executado.
+
+## Sprint 18 - formalizacao e execucao
+
+- Epic: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
+- Spec normativa: `docs/specs/019-sprint-18-render-derived-clips.md`.
+- Estado: accepted on Sprint 18 head; pending PR integration.
+- Historias: H17.3 e H17.4.
+- Criterios V1: V1-09 e V1-10.
+- Itens R14: R14-09 e R14-10.
+- Escopo: render controlado em `/videos`, videos resultantes, cortes derivados em `/clips`, intervalos, auditoria correlacionada, reload e isolamento.
+- Pendente por escopo: E18, E19, `R14-REACCEPT`, release, tag e deploy.
+- Gate comprovado no mesmo head: 68 testes, lint, backend check, build, E2E browser, screenshots, reload, auditoria correlacionada e isolamento por canal.
+- V1-09 e V1-10 possuem evidencia nova; nao houve novo V1 Acceptance. E18 e E19 seguem como proximos epicos, e `R14-REACCEPT` permanece final.
 
 ## Definition of Done
 
