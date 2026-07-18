@@ -95,4 +95,4 @@
 
 - H17.3 and H17.4 passed the same-head browser, HTTP, reload, audit and isolation gate.
 - No database, migration, dependency or external integration was introduced.
-- E17 is complete on the Sprint 18 head; PR integration is still pending.
+- E17 is complete and integrated in `main` by PR #30.

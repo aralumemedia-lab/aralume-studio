@@ -1,6 +1,6 @@
 # E17 - Pipeline Midia e Producao Operavel pelo Frontend
 
-- Status: complete on Sprint 18 head; pending PR integration
+- Status: complete and integrated in `main` by PR #30
 - Epic name: Pipeline Midia e Producao Operavel pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P1
@@ -126,4 +126,4 @@ Make the first media slice operable through the frontend so an operator can:
 
 ## Sprint 18 gate
 
-Sprint 18 evidence is complete on the sprint branch. E17 is closed on that head, pending its PR integration into `main`; H17.3 and H17.4 are not started in a later sprint.
+Sprint 18 evidence is complete and integrated in `main` by PR #30. E17 is closed; H17.3 and H17.4 are not started in a later sprint.

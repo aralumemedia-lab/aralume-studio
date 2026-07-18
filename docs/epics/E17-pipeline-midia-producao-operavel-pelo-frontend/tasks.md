@@ -8,7 +8,7 @@
 
 ## Sprint 18 execution status
 
-- H17.3 and H17.4 were delivered on the Sprint 18 head under `docs/specs/019-sprint-18-render-derived-clips.md`; PR integration remains pending.
+- H17.3 and H17.4 were delivered under `docs/specs/019-sprint-18-render-derived-clips.md` and integrated in `main` by PR #30.
 - Browser procedure: `node scripts/sprint18-browser-e2e.mjs`.
 - Evidence directory: `screenshots/sprint-18/`.
 

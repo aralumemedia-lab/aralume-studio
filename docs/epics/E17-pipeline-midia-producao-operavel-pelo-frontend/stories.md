@@ -62,7 +62,7 @@
 
 ## H17.3 - Render controlado pelo frontend
 
-- Status: delivered on Sprint 18 head; pending PR integration
+- Status: delivered and integrated in `main` by PR #30
 - V1 criterion: V1-09
 - R14 item: R14-09
 - Route: `/videos`
@@ -71,7 +71,7 @@
 
 ## H17.4 - Corte derivado operavel pelo frontend
 
-- Status: delivered on Sprint 18 head; pending PR integration
+- Status: delivered and integrated in `main` by PR #30
 - V1 criterion: V1-10
 - R14 item: R14-10
 - Route: `/clips`
