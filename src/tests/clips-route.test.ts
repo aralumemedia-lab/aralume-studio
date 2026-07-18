@@ -13,6 +13,7 @@ test("clips route uses real video and derived-clip APIs with operational states"
   assert.ok(routeSource.includes("LoadingState"));
   assert.ok(routeSource.includes("ErrorState"));
   assert.ok(routeSource.includes("EmptyState"));
+  assert.ok(routeSource.includes('aria-label="Chave de idempotencia"'));
   assert.ok(routeSource.includes("mutate("));
   assert.equal(routeSource.includes("mutateAsync"), false);
 });

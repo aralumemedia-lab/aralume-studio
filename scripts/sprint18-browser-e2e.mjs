@@ -188,14 +188,17 @@ async function main() {
 
       await numberInputs.nth(0).fill("0");
       await numberInputs.nth(1).fill("1.5");
-      await (await findInputByValuePrefix(page, "clip:")).fill(clipIdempotencyKey);
+      await page.getByLabel("Chave de idempotencia").fill(clipIdempotencyKey);
+      await expectText(page, "Intervalo valido para envio");
+      const clipSubmitButton = page.getByRole("button", { name: "Gerar corte" });
+      await waitForEnabled(clipSubmitButton);
       const clipConflictPromise = page.waitForResponse(
         (response) =>
           response.url().endsWith("/api/clips") &&
           response.request().method() === "POST" &&
           response.status() === 409,
       );
-      await page.getByRole("button", { name: "Gerar corte" }).click();
+      await clipSubmitButton.click();
       await clipConflictPromise;
       await expectText(page, "entrou em conflito");
       await capture(page, "clips-1600-conflict.png");
@@ -410,6 +413,15 @@ async function findInputByValuePrefix(page, prefix) {
 
 async function readInputValue(page, prefix) {
   return (await findInputByValuePrefix(page, prefix)).inputValue();
+}
+
+async function waitForEnabled(locator) {
+  await locator.waitFor({ state: "visible" });
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    if (await locator.isEnabled()) return;
+    await delay(50);
+  }
+  throw new Error("Expected control to become enabled");
 }
 
 async function assertNoHorizontalOverflow(page) {

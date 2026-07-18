@@ -396,6 +396,7 @@ export const Route = createFileRoute("/clips")({
                         </Label>
                         <Input
                           value={formState.idempotencyKey}
+                          aria-label="Chave de idempotencia"
                           onChange={(event) =>
                             setFormState((current) => ({
                               ...current,
