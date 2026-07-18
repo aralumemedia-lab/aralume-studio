@@ -8,7 +8,7 @@
 - Criterion: V1-14
 - R14: R14-14
 - Status: proposed / not started
-- Upstream: Sprint 19 governance gates integrated in `main`
+- Upstream prerequisite: Sprint 19 governance gates accepted and merged before Sprint 20 starts; prerequisite not yet met
 
 ## Decision
 
@@ -67,7 +67,7 @@ Make publication readiness and assisted package preparation operational through 
 
 ## Definition of Ready
 
-- Sprint 19 governance gates are integrated and their states are queryable.
+- Sprint 19 governance gates must be accepted and their states queryable before this sprint starts.
 - The no-auto-send rule is explicit in the UI, contract and E2E.
 - Source video, clip, target and approval fixtures are defined for both channels.
 - External YouTube mutations are excluded from the test runner and acceptance flow.
