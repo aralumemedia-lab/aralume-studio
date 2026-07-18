@@ -2,9 +2,9 @@
 
 ## Sequenciamento
 
-- Sprint 19 proposta: contratos, frontend, backend, auditoria, testes e evidencias de H18.1-H18.3.
+- Sprint 19 implementada nesta branch: contratos, frontend, backend, auditoria, testes e evidencias de H18.1-H18.3; PR/revisao pendentes.
 - Sprint 20 proposta: contratos, frontend, backend, auditoria, testes e evidencias de H18.4.
-- Nenhuma tarefa destas fatias foi iniciada nesta execucao.
+- Tarefas de H18.1-H18.3 executadas na branch; H18.4 permanece nao iniciada.
 
 ## Contracts
 
@@ -40,9 +40,9 @@
 
 ## Tests
 
-- Add or extend server HTTP tests for H18.1-H18.3 in Sprint 19 and H18.4 in Sprint 20.
+- Server HTTP tests for H18.1-H18.3 were extended in Sprint 19; H18.4 remains planned for Sprint 20.
 - Add or extend frontend route tests for loading, empty, error, conflict and success states.
-- Add browser E2E coverage per slice for create, reload, isolation, duplicate, invalid payload and requestId audit scenarios.
+- Browser E2E coverage for Sprint 19 covers create, decision, reload, isolation, invalid payload and requestId audit scenarios via `scripts/sprint19-browser-e2e.mjs`.
 - Add screenshot coverage at all required viewports.
 
 ## Accessibility

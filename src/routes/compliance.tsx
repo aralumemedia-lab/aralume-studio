@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
+import { GovernanceCheckActions } from "@/components/governance/governance-check-actions";
 import { ComplianceStatusBadge, RiskBadge, StatusBadge } from "@/components/status/badges";
 import {
   Card,
@@ -165,6 +166,7 @@ export const Route = createFileRoute("/compliance")({
           description="Leituras deterministicas de risco, bloqueio e revisao humana sobre o pipeline editorial."
         />
         <div className="p-4 space-y-4">
+          <GovernanceCheckActions channelId={activeChannelId} />
           <Card>
             <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-4">
               <label className="space-y-1">

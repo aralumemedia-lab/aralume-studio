@@ -12,6 +12,7 @@ import {
   complianceCheckIdParamsSchema,
   complianceCheckListQuerySchema,
   formatValidationIssues,
+  governanceDetailQuerySchema,
   qualityCheckCreateSchema,
   qualityCheckIdParamsSchema,
   qualityCheckListQuerySchema,
@@ -29,40 +30,42 @@ export function createGovernanceRouter(service: GovernanceService): Router {
 
   router.post("/approvals", (req, res) => {
     const body = parseBody(approvalCreateSchema, req.body);
-    const created = service.createApproval(body);
+    const created = service.createApproval(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.get("/approvals/:id", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
-    const found = service.getApproval(params.id);
+    const query = parseQuery(governanceDetailQuerySchema, req.query);
+    const found = service.getApproval(params.id, query.channelId);
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 
   router.post("/approvals/:id/approve", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
     const body = parseBody(approvalDecisionSchema, req.body);
-    const updated = service.approveApproval(params.id, body);
+    const updated = service.approveApproval(params.id, body, getRequestId(res));
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.post("/approvals/:id/reject", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
     const body = parseBody(approvalDecisionSchema, req.body);
-    const updated = service.rejectApproval(params.id, body);
+    const updated = service.rejectApproval(params.id, body, getRequestId(res));
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.post("/approvals/:id/request-changes", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
     const body = parseBody(approvalDecisionSchema, req.body);
-    const updated = service.requestApprovalChanges(params.id, body);
+    const updated = service.requestApprovalChanges(params.id, body, getRequestId(res));
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.get("/approvals/:id/history", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
-    const history = service.getApprovalHistory(params.id);
+    const query = parseQuery(governanceDetailQuerySchema, req.query);
+    const history = service.getApprovalHistory(params.id, query.channelId);
     res.json(createListSuccessResponse(history, { requestId: getRequestId(res) }));
   });
 
@@ -74,13 +77,14 @@ export function createGovernanceRouter(service: GovernanceService): Router {
 
   router.post("/quality-checks", (req, res) => {
     const body = parseBody(qualityCheckCreateSchema, req.body);
-    const created = service.createQualityCheck(body);
+    const created = service.createQualityCheck(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.get("/quality-checks/:id", (req, res) => {
     const params = parseParams(qualityCheckIdParamsSchema, req.params);
-    const found = service.getQualityCheck(params.id);
+    const query = parseQuery(governanceDetailQuerySchema, req.query);
+    const found = service.getQualityCheck(params.id, query.channelId);
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 
@@ -92,13 +96,14 @@ export function createGovernanceRouter(service: GovernanceService): Router {
 
   router.post("/compliance-checks", (req, res) => {
     const body = parseBody(complianceCheckCreateSchema, req.body);
-    const created = service.createComplianceCheck(body);
+    const created = service.createComplianceCheck(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.get("/compliance-checks/:id", (req, res) => {
     const params = parseParams(complianceCheckIdParamsSchema, req.params);
-    const found = service.getComplianceCheck(params.id);
+    const query = parseQuery(governanceDetailQuerySchema, req.query);
+    const found = service.getComplianceCheck(params.id, query.channelId);
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 

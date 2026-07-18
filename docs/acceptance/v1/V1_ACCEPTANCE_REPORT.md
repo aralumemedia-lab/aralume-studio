@@ -85,3 +85,6 @@ Não foi implementada uma recriação ampla do frontend nem uma API nova para ag
 O backlog não cria uma sprint nova nem muda o escopo desta execução; é uma sequência proposta para trabalho futuro.
 
 Detalhes por critério: [`V1_ACCEPTANCE_MATRIX.md`](./V1_ACCEPTANCE_MATRIX.md).
+# Sprint 19 follow-up evidence (not a new acceptance)
+
+Sprint 19 produced supplemental evidence for V1-11, V1-12 and V1-13 on its implementation branch. See `docs/acceptance/v1/V1_SPRINT19_EVIDENCE.md`. The formal acceptance result is unchanged: V1.0 remains `NAO ACEITA`; no reaccept was executed.

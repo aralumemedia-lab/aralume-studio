@@ -22,6 +22,7 @@ export type CreateQualityCheckInput = {
   channelId: string;
   entityType: GovernanceEntityType;
   entityId: string;
+  requestedBy?: string;
 };
 
 export async function getQualityChecks(
@@ -30,8 +31,13 @@ export async function getQualityChecks(
   return requestApiEnvelope<ApiListSuccess<QualityCheck>>(withQuery(QUALITY_CHECKS_PATH, filters));
 }
 
-export async function getQualityCheck(id: string): Promise<ApiSuccess<QualityCheck>> {
-  return requestApiEnvelope<ApiSuccess<QualityCheck>>(`${QUALITY_CHECKS_PATH}/${id}`);
+export async function getQualityCheck(
+  id: string,
+  channelId: string,
+): Promise<ApiSuccess<QualityCheck>> {
+  return requestApiEnvelope<ApiSuccess<QualityCheck>>(
+    withQuery(`${QUALITY_CHECKS_PATH}/${id}`, { channelId }),
+  );
 }
 
 export async function createQualityCheck(

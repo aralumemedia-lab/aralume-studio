@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { AppError } from "../../http/errors.js";
+import type { AuditService } from "../audit/audit.service.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
 import type {
   ClaimEvidence,
@@ -55,22 +56,27 @@ export type GovernanceIdFactory = () => string;
 export type CreateGovernanceServiceOptions = {
   clock?: GovernanceClock;
   idFactory?: GovernanceIdFactory;
+  auditService?: AuditService;
 };
 
 export type GovernanceService = {
   listApprovals(filters?: ApprovalFilters): HumanApproval[];
-  getApproval(id: string): HumanApproval;
-  createApproval(input: ApprovalCreateInput): HumanApproval;
-  approveApproval(id: string, input: ApprovalDecisionInput): HumanApproval;
-  rejectApproval(id: string, input: ApprovalDecisionInput): HumanApproval;
-  requestApprovalChanges(id: string, input: ApprovalDecisionInput): HumanApproval;
-  getApprovalHistory(id: string): ApprovalDecision[];
+  getApproval(id: string, channelId?: string): HumanApproval;
+  createApproval(input: ApprovalCreateInput, requestId?: string): HumanApproval;
+  approveApproval(id: string, input: ApprovalDecisionInput, requestId?: string): HumanApproval;
+  rejectApproval(id: string, input: ApprovalDecisionInput, requestId?: string): HumanApproval;
+  requestApprovalChanges(
+    id: string,
+    input: ApprovalDecisionInput,
+    requestId?: string,
+  ): HumanApproval;
+  getApprovalHistory(id: string, channelId?: string): ApprovalDecision[];
   listQualityChecks(filters?: QualityCheckFilters): QualityCheck[];
-  getQualityCheck(id: string): QualityCheck;
-  createQualityCheck(input: QualityCheckCreateInput): QualityCheck;
+  getQualityCheck(id: string, channelId?: string): QualityCheck;
+  createQualityCheck(input: QualityCheckCreateInput, requestId?: string): QualityCheck;
   listComplianceChecks(filters?: ComplianceCheckFilters): ComplianceCheck[];
-  getComplianceCheck(id: string): ComplianceCheck;
-  createComplianceCheck(input: ComplianceCheckCreateInput): ComplianceCheck;
+  getComplianceCheck(id: string, channelId?: string): ComplianceCheck;
+  createComplianceCheck(input: ComplianceCheckCreateInput, requestId?: string): ComplianceCheck;
 };
 
 type ResolvedTarget = {
@@ -136,6 +142,7 @@ export function createGovernanceService(
 ): GovernanceService {
   const clock = options.clock ?? (() => new Date());
   const idFactory = options.idFactory ?? (() => randomUUID());
+  const auditService = options.auditService;
 
   return {
     listApprovals(filters = {}) {
@@ -144,11 +151,11 @@ export function createGovernanceService(
       return repository.listApprovals(normalized);
     },
 
-    getApproval(id) {
-      return getRequiredApproval(repository, id);
+    getApproval(id, channelId) {
+      return getRequiredApproval(repository, id, channelId);
     },
 
-    createApproval(input) {
+    createApproval(input, requestId) {
       const parsed = approvalCreateSchema.parse(input);
       validateChannelExists(channelsRepository, parsed.channelId);
       const target = resolveTarget(
@@ -163,6 +170,9 @@ export function createGovernanceService(
         idFactory,
         clock,
         target,
+        auditService,
+        requestId,
+        parsed.requestedBy,
       );
       const complianceCheck = ensureCurrentComplianceCheck(
         repository,
@@ -170,6 +180,9 @@ export function createGovernanceService(
         idFactory,
         clock,
         target,
+        auditService,
+        requestId,
+        parsed.requestedBy,
       );
       const now = toIso(clock());
       const initialStatus = isApprovalBlocked(qualityCheck, complianceCheck)
@@ -194,10 +207,23 @@ export function createGovernanceService(
       };
 
       repository.upsertApproval(approval);
+      recordGovernanceAudit(auditService, {
+        requestId,
+        channelId: approval.channelId,
+        actorName: approval.requestedBy,
+        action: "approval.created",
+        entityType: "human_approval",
+        entityId: approval.id,
+        status: approval.status === "blocked" ? "warning" : "success",
+        message:
+          approval.status === "blocked"
+            ? "Solicitacao de aprovacao criada e bloqueada pelos gates de governanca."
+            : "Solicitacao de aprovacao criada.",
+      });
       return approval;
     },
 
-    approveApproval(id, input) {
+    approveApproval(id, input, requestId) {
       return decideApproval(
         repository,
         editorialRepository,
@@ -205,6 +231,8 @@ export function createGovernanceService(
         clock,
         idFactory,
         id,
+        auditService,
+        requestId,
         {
           ...approvalDecisionSchema.parse(input),
           decision: "approve",
@@ -212,7 +240,7 @@ export function createGovernanceService(
       );
     },
 
-    rejectApproval(id, input) {
+    rejectApproval(id, input, requestId) {
       return decideApproval(
         repository,
         editorialRepository,
@@ -220,6 +248,8 @@ export function createGovernanceService(
         clock,
         idFactory,
         id,
+        auditService,
+        requestId,
         {
           ...approvalDecisionSchema.parse(input),
           decision: "reject",
@@ -227,7 +257,7 @@ export function createGovernanceService(
       );
     },
 
-    requestApprovalChanges(id, input) {
+    requestApprovalChanges(id, input, requestId) {
       return decideApproval(
         repository,
         editorialRepository,
@@ -235,6 +265,8 @@ export function createGovernanceService(
         clock,
         idFactory,
         id,
+        auditService,
+        requestId,
         {
           ...approvalDecisionSchema.parse(input),
           decision: "request_changes",
@@ -242,8 +274,8 @@ export function createGovernanceService(
       );
     },
 
-    getApprovalHistory(id) {
-      getRequiredApproval(repository, id);
+    getApprovalHistory(id, channelId) {
+      getRequiredApproval(repository, id, channelId);
       return repository.listApprovalDecisions(id);
     },
 
@@ -253,11 +285,11 @@ export function createGovernanceService(
       return repository.listQualityChecks(normalized);
     },
 
-    getQualityCheck(id) {
-      return getRequiredQualityCheck(repository, id);
+    getQualityCheck(id, channelId) {
+      return getRequiredQualityCheck(repository, id, channelId);
     },
 
-    createQualityCheck(input) {
+    createQualityCheck(input, requestId) {
       const parsed = qualityCheckCreateSchema.parse(input);
       validateChannelExists(channelsRepository, parsed.channelId);
       const target = resolveTarget(
@@ -286,6 +318,16 @@ export function createGovernanceService(
       };
 
       repository.upsertQualityCheck(check);
+      recordGovernanceAudit(auditService, {
+        requestId,
+        channelId: check.channelId,
+        actorName: parsed.requestedBy ?? "Aralume Core",
+        action: "quality_check.created",
+        entityType: "quality_check",
+        entityId: check.id,
+        status: check.status === "blocked" ? "warning" : "success",
+        message: "Verificacao de qualidade registrada.",
+      });
       return check;
     },
 
@@ -295,11 +337,11 @@ export function createGovernanceService(
       return repository.listComplianceChecks(normalized);
     },
 
-    getComplianceCheck(id) {
-      return getRequiredComplianceCheck(repository, id);
+    getComplianceCheck(id, channelId) {
+      return getRequiredComplianceCheck(repository, id, channelId);
     },
 
-    createComplianceCheck(input) {
+    createComplianceCheck(input, requestId) {
       const parsed = complianceCheckCreateSchema.parse(input);
       validateChannelExists(channelsRepository, parsed.channelId);
       const target = resolveTarget(
@@ -327,6 +369,16 @@ export function createGovernanceService(
       };
 
       repository.upsertComplianceCheck(check);
+      recordGovernanceAudit(auditService, {
+        requestId,
+        channelId: check.channelId,
+        actorName: parsed.requestedBy ?? "Aralume Core",
+        action: "compliance_check.created",
+        entityType: "compliance_check",
+        entityId: check.id,
+        status: check.status === "blocked" || check.status === "rejected" ? "warning" : "success",
+        message: "Verificacao de conformidade registrada.",
+      });
       return check;
     },
   };
@@ -339,11 +391,15 @@ function decideApproval(
   clock: GovernanceClock,
   idFactory: GovernanceIdFactory,
   approvalId: string,
+  auditService: AuditService | undefined,
+  requestId: string | undefined,
   input: ApprovalDecisionInput & {
     decision: "approve" | "reject" | "request_changes";
   },
 ): HumanApproval {
   const approval = getRequiredApproval(repository, approvalId);
+  validateChannelExists(channelsRepository, input.channelId);
+  assertSameChannel(approval.channelId, input.channelId, "Approval");
   validateChannelExists(channelsRepository, approval.channelId);
   const target = resolveTarget(
     editorialRepository,
@@ -357,6 +413,9 @@ function decideApproval(
     idFactory,
     clock,
     target,
+    auditService,
+    requestId,
+    input.decidedBy,
   );
   const complianceCheck = ensureCurrentComplianceCheck(
     repository,
@@ -364,6 +423,9 @@ function decideApproval(
     idFactory,
     clock,
     target,
+    auditService,
+    requestId,
+    input.decidedBy,
   );
   const now = toIso(clock());
 
@@ -396,6 +458,23 @@ function decideApproval(
     actor: input.decidedBy,
     decidedAt: now,
     createdAt: now,
+  });
+
+  recordGovernanceAudit(auditService, {
+    requestId,
+    channelId: updated.channelId,
+    actorName: input.decidedBy,
+    action: `approval.${
+      input.decision === "approve"
+        ? "approved"
+        : input.decision === "reject"
+          ? "rejected"
+          : "changes_requested"
+    }`,
+    entityType: "human_approval",
+    entityId: updated.id,
+    status: "success",
+    message: "Decisao humana registrada.",
   });
 
   return updated;
@@ -459,6 +538,9 @@ function ensureCurrentQualityCheck(
   idFactory: GovernanceIdFactory,
   clock: GovernanceClock,
   target: ResolvedTarget,
+  auditService: AuditService | undefined,
+  requestId: string | undefined,
+  actorName: string,
 ): QualityCheck {
   const existing = repository
     .listQualityChecks({
@@ -474,6 +556,16 @@ function ensureCurrentQualityCheck(
 
   const created = buildQualityCheck(editorialRepository, target, idFactory, clock);
   repository.upsertQualityCheck(created);
+  recordGovernanceAudit(auditService, {
+    requestId,
+    channelId: created.channelId,
+    actorName,
+    action: "quality_check.created",
+    entityType: "quality_check",
+    entityId: created.id,
+    status: created.status === "blocked" ? "warning" : "success",
+    message: "Verificacao de qualidade criada como parte da aprovacao.",
+  });
   return created;
 }
 
@@ -483,6 +575,9 @@ function ensureCurrentComplianceCheck(
   idFactory: GovernanceIdFactory,
   clock: GovernanceClock,
   target: ResolvedTarget,
+  auditService: AuditService | undefined,
+  requestId: string | undefined,
+  actorName: string,
 ): ComplianceCheck {
   const existing = repository
     .listComplianceChecks({
@@ -498,6 +593,16 @@ function ensureCurrentComplianceCheck(
 
   const created = buildComplianceCheck(editorialRepository, target, idFactory, clock);
   repository.upsertComplianceCheck(created);
+  recordGovernanceAudit(auditService, {
+    requestId,
+    channelId: created.channelId,
+    actorName,
+    action: "compliance_check.created",
+    entityType: "compliance_check",
+    entityId: created.id,
+    status: created.status === "blocked" || created.status === "rejected" ? "warning" : "success",
+    message: "Verificacao de conformidade criada como parte da aprovacao.",
+  });
   return created;
 }
 
@@ -1345,7 +1450,11 @@ function validateOptionalChannel(channelsRepository: ChannelsRepository, channel
   validateChannelExists(channelsRepository, channelId);
 }
 
-function getRequiredApproval(repository: GovernanceRepository, id: string): HumanApproval {
+function getRequiredApproval(
+  repository: GovernanceRepository,
+  id: string,
+  channelId?: string,
+): HumanApproval {
   if (!idSchema.safeParse(id).success) {
     throw validation("Invalid approval id", { id });
   }
@@ -1355,10 +1464,16 @@ function getRequiredApproval(repository: GovernanceRepository, id: string): Huma
     throw notFound("Approval not found", { id });
   }
 
+  assertEntityChannel(found.channelId, channelId, { id });
+
   return found;
 }
 
-function getRequiredQualityCheck(repository: GovernanceRepository, id: string): QualityCheck {
+function getRequiredQualityCheck(
+  repository: GovernanceRepository,
+  id: string,
+  channelId?: string,
+): QualityCheck {
   if (!idSchema.safeParse(id).success) {
     throw validation("Invalid quality check id", { id });
   }
@@ -1368,10 +1483,16 @@ function getRequiredQualityCheck(repository: GovernanceRepository, id: string): 
     throw notFound("Quality check not found", { id });
   }
 
+  assertEntityChannel(found.channelId, channelId, { id });
+
   return found;
 }
 
-function getRequiredComplianceCheck(repository: GovernanceRepository, id: string): ComplianceCheck {
+function getRequiredComplianceCheck(
+  repository: GovernanceRepository,
+  id: string,
+  channelId?: string,
+): ComplianceCheck {
   if (!idSchema.safeParse(id).success) {
     throw validation("Invalid compliance check id", { id });
   }
@@ -1381,7 +1502,19 @@ function getRequiredComplianceCheck(repository: GovernanceRepository, id: string
     throw notFound("Compliance check not found", { id });
   }
 
+  assertEntityChannel(found.channelId, channelId, { id });
+
   return found;
+}
+
+function assertEntityChannel(
+  entityChannelId: string,
+  requestedChannelId: string | undefined,
+  details: Record<string, unknown>,
+): void {
+  if (requestedChannelId && entityChannelId !== requestedChannelId) {
+    throw notFound("Governance entity not found", details);
+  }
 }
 
 function getRequiredContentIdea(repository: EditorialRepository, id: string): ContentIdea {
@@ -1466,6 +1599,36 @@ function normalizeComplianceFilters(filters: ComplianceCheckFilters): Compliance
     entityType: filters.entityType,
     entityId: filters.entityId,
   };
+}
+
+function recordGovernanceAudit(
+  auditService: AuditService | undefined,
+  input: {
+    requestId?: string;
+    channelId: string;
+    actorName: string;
+    action: string;
+    entityType: string;
+    entityId: string;
+    status: "success" | "warning" | "failed";
+    message: string;
+  },
+): void {
+  if (!auditService) {
+    return;
+  }
+
+  auditService.recordAuditLog({
+    requestId: input.requestId,
+    channelId: input.channelId,
+    actorType: input.actorName === "Aralume Core" ? "system" : "user",
+    actorName: input.actorName,
+    action: input.action,
+    entityType: input.entityType,
+    entityId: input.entityId,
+    status: input.status,
+    message: input.message,
+  });
 }
 
 function toIso(date: Date): string {

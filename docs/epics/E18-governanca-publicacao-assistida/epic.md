@@ -1,6 +1,6 @@
 # E18 - Governanca e Publicacao Assistida pelo Frontend
 
-- Status: proposed / split into Sprint 19 and Sprint 20 / not started
+- Status: partial; Sprint 19 implemented on branch and pending review/merge; Sprint 20 not started
 - Epic name: Governanca e Publicacao Assistida pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P1
@@ -22,9 +22,9 @@ Labels used below: `implemented`, `partial`, `only backend`, `only mock`, `absen
 
 | Capability | Frontend state | Backend state | Contracts | Persistence | Audit | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| Qualidade / V1-11 | partial / read-only review | implemented | implemented | existing, but not demonstrable | partial / requestId correlation missing in current mutations | backend rule coverage exists, but the complete frontend gate is not proven |
-| Conformidade / V1-12 | partial / read-only review | implemented | implemented | existing, but not demonstrable | partial / requestId correlation missing in current mutations | alert surfaces exist, but the negative gate is not proven |
-| Aprovacao humana / V1-13 | partial / decision actions only | implemented | implemented | existing, but not demonstrable | partial / requestId correlation missing in current mutations | decision actions exist, but creation and end-to-end decision proof are missing |
+| Qualidade / V1-11 | real create/review action implemented on branch | implemented | implemented | same-process reload | requestId correlated in Sprint 19 mutations | success, blocked, conflict and reload evidence produced |
+| Conformidade / V1-12 | real create/review action implemented on branch | implemented | implemented | same-process reload | requestId correlated in Sprint 19 mutations | success, blocked, conflict and reload evidence produced |
+| Aprovacao humana / V1-13 | create, decision and history implemented on branch | implemented | implemented | same-process reload | requestId correlated in Sprint 19 mutations | decision, history, isolation and reload evidence produced |
 | Publicacao assistida / V1-14 | partial / target and job surface | implemented | implemented | existing, but not demonstrable | partial / requestId correlation missing in current mutations | readiness and job proof are incomplete; external YouTube actions are outside this epic |
 
 ## Decomposicao aprovada
@@ -36,7 +36,7 @@ O E18 nao cabe com seguranca em uma unica sprint vertical. A primeira fatia reco
 | Sprint 19 | H18.1, H18.2, H18.3 | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13 | Tornar qualidade, compliance e decisao humana operaveis, auditaveis e demonstraveis pelo frontend |
 | Sprint 20 | H18.4 | V1-14 | R14-14 | Preparar publicacao assistida e readiness sem auto-send, apos os gates da Sprint 19 |
 
-Sprint 19 e Sprint 20 permanecem propostas e nao iniciadas. O E18 somente podera ser marcado como concluido depois dos gates das duas fatias no mesmo head de cada entrega correspondente.
+Sprint 19 foi implementada nesta branch e aguarda revisao/merge. Sprint 20 permanece proposta e nao iniciada. O E18 somente podera ser marcado como concluido depois dos gates das duas fatias.
 
 ## V1 criteria covered
 
@@ -106,13 +106,13 @@ Make the governance and publication pipeline operable through the frontend so an
 - E17 completed.
 - Existing governance and publication backend routes, repository and validation rules.
 - Existing API envelope and error contracts.
-- Audit logging support in the platform, including propagation of `requestId` from HTTP mutations into audit entries.
+- Audit logging support in the platform, including propagation of `requestId` from HTTP mutations into audit entries; Sprint 19 closes this requirement for H18.1-H18.3.
 - Browser E2E and screenshot coverage.
 
 ## Risks
 
 - Governance actions can still look real while quality and compliance remain read-only in the frontend.
-- Current governance and publication mutation services do not yet propagate the HTTP `requestId` into audit entries.
+- H18.4 publication mutations still require the same request correlation before E18 can close.
 - Publication readiness can regress into a read-only summary if mutating actions are not tested.
 - The current publication surface also contains YouTube connection and upload actions that are outside the assisted, no-auto-send scope.
 - Process-local persistence remains the baseline.
@@ -135,7 +135,7 @@ Make the governance and publication pipeline operable through the frontend so an
 
 ## Definition of Done
 
-- Sprint 19 and Sprint 20 are accepted on their respective reviewed heads; the epic is only complete after both gates pass.
+- Sprint 19 must be reviewed and merged; Sprint 20 must then pass its own gate. The epic is only complete after both gates pass.
 - The frontend proves quality, compliance, approval and publication readiness.
 - Channel isolation is demonstrated.
 - Audit evidence is present.

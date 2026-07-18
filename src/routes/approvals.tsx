@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
+import { GovernanceCheckActions } from "@/components/governance/governance-check-actions";
 import {
   ApprovalStatusBadge,
   ComplianceStatusBadge,
@@ -31,6 +32,7 @@ import type {
 } from "@/contracts/types";
 import {
   approveApproval,
+  createApproval,
   describeApprovalsApiError,
   getApprovalHistory,
   getApprovals,
@@ -95,6 +97,10 @@ export const Route = createFileRoute("/approvals")({
     const [riskFilter, setRiskFilter] = useState<HumanApproval["riskLevel"] | "all">("all");
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [decisionReason, setDecisionReason] = useState("");
+    const [newEntityType, setNewEntityType] = useState<GovernanceEntityType>("script");
+    const [newEntityId, setNewEntityId] = useState("");
+    const [newApprovalTitle, setNewApprovalTitle] = useState("");
+    const [newApprovalSummary, setNewApprovalSummary] = useState("");
 
     useEffect(() => {
       setChannelFilter(activeChannelId);
@@ -164,7 +170,7 @@ export const Route = createFileRoute("/approvals")({
 
     const historyQuery = useQuery({
       queryKey: ["approval-history", selected?.id],
-      queryFn: () => getApprovalHistory(selected!.id),
+      queryFn: () => getApprovalHistory(selected!.id, selected!.channelId),
       enabled: !!selected,
     });
 
@@ -175,6 +181,7 @@ export const Route = createFileRoute("/approvals")({
         }
 
         const input = {
+          channelId: selected.channelId,
           decidedBy: operatorName,
           decisionReason: decisionReason.trim(),
         };
@@ -194,6 +201,42 @@ export const Route = createFileRoute("/approvals")({
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["approvals"] }),
           queryClient.invalidateQueries({ queryKey: ["approval-history"] }),
+          queryClient.invalidateQueries({ queryKey: ["approvals-quality"] }),
+          queryClient.invalidateQueries({ queryKey: ["approvals-compliance"] }),
+        ]);
+      },
+      onError: (error) => {
+        toast.error(describeApprovalsApiError(error));
+      },
+    });
+
+    const createApprovalMutation = useMutation({
+      mutationFn: () => {
+        if (!activeChannelId || !newEntityId.trim()) {
+          throw new Error("Informe o canal ativo e o ID do artefato.");
+        }
+
+        return createApproval({
+          channelId: activeChannelId,
+          entityType: newEntityType,
+          entityId: newEntityId.trim(),
+          requestedBy: operatorName,
+          title: newApprovalTitle.trim() || undefined,
+          summary: newApprovalSummary.trim() || undefined,
+        });
+      },
+      onSuccess: async (response) => {
+        toast.success(
+          response.data.status === "blocked"
+            ? "Aprovacao criada com bloqueio de governanca."
+            : "Solicitacao de aprovacao criada.",
+        );
+        setNewEntityId("");
+        setNewApprovalTitle("");
+        setNewApprovalSummary("");
+        setSelectedId(response.data.id);
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["approvals"] }),
           queryClient.invalidateQueries({ queryKey: ["approvals-quality"] }),
           queryClient.invalidateQueries({ queryKey: ["approvals-compliance"] }),
         ]);
@@ -261,6 +304,88 @@ export const Route = createFileRoute("/approvals")({
           description="Fila de aprovacao humana com qualidade, conformidade e historico de decisoes."
         />
         <div className="p-4 space-y-4">
+          <GovernanceCheckActions channelId={activeChannelId} />
+          <Card>
+            <SectionHeader
+              title="Nova aprovacao"
+              description="Crie uma solicitacao real para o artefato selecionado do canal ativo."
+            />
+            <div className="space-y-3">
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <label className="space-y-1">
+                  <span className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                    Tipo de artefato
+                  </span>
+                  <select
+                    aria-label="Tipo de artefato da aprovacao"
+                    value={newEntityType}
+                    onChange={(event) =>
+                      setNewEntityType(event.target.value as GovernanceEntityType)
+                    }
+                    className="h-8 w-full rounded-sm border border-border bg-surface px-2 text-[12px] outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
+                  >
+                    {Object.entries(entityTypeLabel).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                    ID do artefato
+                  </span>
+                  <input
+                    aria-label="ID do artefato da aprovacao"
+                    value={newEntityId}
+                    onChange={(event) => setNewEntityId(event.target.value)}
+                    placeholder="Ex.: sc_01"
+                    className="h-8 w-full rounded-sm border border-border bg-surface px-2 text-[12px] outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
+                  />
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                    Titulo opcional
+                  </span>
+                  <input
+                    aria-label="Titulo da aprovacao"
+                    value={newApprovalTitle}
+                    onChange={(event) => setNewApprovalTitle(event.target.value)}
+                    className="h-8 w-full rounded-sm border border-border bg-surface px-2 text-[12px] outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
+                  />
+                </label>
+                <label className="space-y-1">
+                  <span className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                    Resumo opcional
+                  </span>
+                  <input
+                    aria-label="Resumo da aprovacao"
+                    value={newApprovalSummary}
+                    onChange={(event) => setNewApprovalSummary(event.target.value)}
+                    className="h-8 w-full rounded-sm border border-border bg-surface px-2 text-[12px] outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
+                  />
+                </label>
+              </div>
+              <button
+                type="button"
+                disabled={
+                  !activeChannelId || !newEntityId.trim() || createApprovalMutation.isPending
+                }
+                onClick={() => createApprovalMutation.mutate()}
+                className={decisionButtonClass(
+                  "ok",
+                  !activeChannelId || !newEntityId.trim() || createApprovalMutation.isPending,
+                )}
+              >
+                {createApprovalMutation.isPending ? "Criando aprovacao..." : "Criar aprovacao"}
+              </button>
+              {!activeChannelId && (
+                <div className="text-[12px] text-warning">
+                  Selecione um canal ativo para continuar.
+                </div>
+              )}
+            </div>
+          </Card>
           <Card>
             <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-4">
               <label className="space-y-1">
@@ -538,6 +663,7 @@ export const Route = createFileRoute("/approvals")({
                           Justificativa
                         </div>
                         <textarea
+                          aria-label="Justificativa da decisao"
                           value={decisionReason}
                           onChange={(event) => setDecisionReason(event.target.value)}
                           rows={4}
@@ -548,7 +674,7 @@ export const Route = createFileRoute("/approvals")({
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                         <button
                           disabled={approveDisabled}
-                          onClick={() => void decisionMutation.mutateAsync("approve")}
+                          onClick={() => decisionMutation.mutate("approve")}
                           title={approveDisabledReason ?? undefined}
                           className={decisionButtonClass("ok", approveDisabled)}
                         >
@@ -556,7 +682,7 @@ export const Route = createFileRoute("/approvals")({
                         </button>
                         <button
                           disabled={decisionDisabled || finalState}
-                          onClick={() => void decisionMutation.mutateAsync("reject")}
+                          onClick={() => decisionMutation.mutate("reject")}
                           className={decisionButtonClass(
                             "critical",
                             decisionDisabled || !!finalState,
@@ -566,7 +692,7 @@ export const Route = createFileRoute("/approvals")({
                         </button>
                         <button
                           disabled={decisionDisabled || finalState}
-                          onClick={() => void decisionMutation.mutateAsync("request_changes")}
+                          onClick={() => decisionMutation.mutate("request_changes")}
                           className={decisionButtonClass(
                             "warning",
                             decisionDisabled || !!finalState,

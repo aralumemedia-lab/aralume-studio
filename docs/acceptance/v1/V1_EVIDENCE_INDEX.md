@@ -24,6 +24,7 @@ npm run backend:check
 npm test
 npm run build
 git diff --check
+node scripts/sprint19-browser-e2e.mjs
 ```
 
 ## Gaps de evidência

@@ -48,3 +48,6 @@ Os resultados desta matriz foram produzidos no commit-base `22388e7`. Correçõe
 - Critérios obrigatórios não atendidos: 13.
 
 Os critérios `FAIL` ou `NOT PROVEN` impedem o aceite. Endpoints, testes unitários, seeds e gates técnicos não substituem a prova operacional pelo frontend exigida pela spec.
+# Sprint 19 supplemental evidence
+
+The Sprint 19 evidence for V1-11, V1-12 and V1-13 is recorded in `docs/acceptance/v1/V1_SPRINT19_EVIDENCE.md`; formal statuses remain NOT PROVEN until a new V1 Acceptance.

@@ -6,6 +6,8 @@ import test from "node:test";
 
 import { createApp } from "../src/app.js";
 import { AppError } from "../src/http/errors.js";
+import { createAuditRepository } from "../src/modules/audit/audit.repository.js";
+import { createAuditService } from "../src/modules/audit/audit.service.js";
 import { createChannelsRepository } from "../src/modules/channels/channel.repository.js";
 import { channelDemoSeed } from "../src/modules/channels/channel.seed.js";
 import { createEditorialRepository } from "../src/modules/editorial/editorial.repository.js";
@@ -23,6 +25,8 @@ function createHarness(seed?: typeof governanceDemoSeed) {
   const channelsRepository = createChannelsRepository(channelDemoSeed);
   const editorialRepository = createEditorialRepository(editorialDemoSeed);
   const governanceRepository = createGovernanceRepository(seed);
+  const auditRepository = createAuditRepository();
+  const auditService = createAuditService(auditRepository);
   let tick = 0;
   let id = 0;
 
@@ -33,10 +37,17 @@ function createHarness(seed?: typeof governanceDemoSeed) {
     {
       clock: () => new Date(Date.parse("2026-07-13T03:30:00.000Z") + tick++ * 1000),
       idFactory: () => String(++id).padStart(4, "0"),
+      auditService,
     },
   );
 
-  return { channelsRepository, editorialRepository, governanceRepository, service };
+  return {
+    channelsRepository,
+    editorialRepository,
+    governanceRepository,
+    auditRepository,
+    service,
+  };
 }
 
 async function startServer(harness: ReturnType<typeof createHarness>) {
@@ -53,6 +64,7 @@ async function startServer(harness: ReturnType<typeof createHarness>) {
     channelsRepository: harness.channelsRepository,
     editorialRepository: harness.editorialRepository,
     governanceRepository: harness.governanceRepository,
+    auditRepository: harness.auditRepository,
   });
 
   const server = app.listen(0);
@@ -157,6 +169,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   assert.ok(approval.complianceCheckId);
 
   const approved = harness.service.approveApproval(approval.id, {
+    channelId: "ch_historia",
     decidedBy: "Ana Ribeiro",
     decisionReason: "Roteiro consistente e com CTA pronto.",
   });
@@ -168,6 +181,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   assert.throws(
     () =>
       harness.service.approveApproval(approval.id, {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "Tentativa repetida.",
       }),
@@ -185,6 +199,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   });
 
   const rejected = harness.service.rejectApproval(rejectionTarget.id, {
+    channelId: "ch_curiosidades",
     decidedBy: "Bruno Lima",
     decisionReason: "A pauta precisa de ajuste editorial antes de seguir.",
   });
@@ -199,6 +214,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   });
 
   const changesRequested = harness.service.requestApprovalChanges(changesTarget.id, {
+    channelId: "ch_curiosidades",
     decidedBy: "Bruno Lima",
     decisionReason: "Adicionar detalhes na proxima acao.",
   });
@@ -217,6 +233,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   assert.throws(
     () =>
       harness.service.approveApproval(blocked.id, {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "Bloqueio ignorado.",
       }),
@@ -279,6 +296,7 @@ test("governance service rejects invalid entities, channels and payloads", () =>
   assert.throws(
     () =>
       harness.service.rejectApproval(approval.id, {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "   ",
       }),
@@ -358,7 +376,10 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
   try {
     const createdResponse = await fetch(`${baseUrl}/api/approvals`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "x-request-id": "sprint19-approval-create",
+      },
       body: JSON.stringify({
         channelId: "ch_historia",
         entityType: "script",
@@ -378,12 +399,34 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     assert.ok(createdPayload.data.complianceCheckId);
     assert.ok(createdPayload.meta.requestId);
 
-    const approvedResponse = await fetch(
+    const crossChannelDecisionResponse = await fetch(
       `${baseUrl}/api/approvals/${createdPayload.data.id}/approve`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          channelId: "ch_negocios",
+          decidedBy: "Ana Ribeiro",
+          decisionReason: "Tentativa cross-channel.",
+        }),
+      },
+    );
+    assert.equal(crossChannelDecisionResponse.status, 409);
+    const crossChannelDecisionPayload = (await crossChannelDecisionResponse.json()) as {
+      error: { code: string };
+    };
+    assert.equal(crossChannelDecisionPayload.error.code, "CONFLICT");
+
+    const approvedResponse = await fetch(
+      `${baseUrl}/api/approvals/${createdPayload.data.id}/approve`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-request-id": "sprint19-approval-approve",
+        },
+        body: JSON.stringify({
+          channelId: "ch_historia",
           decidedBy: "Ana Ribeiro",
           decisionReason: "Roteiro consistente e com CTA pronto.",
         }),
@@ -399,7 +442,7 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     assert.equal(approvedPayload.data.decidedBy, "Ana Ribeiro");
 
     const historyResponse = await fetch(
-      `${baseUrl}/api/approvals/${createdPayload.data.id}/history`,
+      `${baseUrl}/api/approvals/${createdPayload.data.id}/history?channelId=ch_historia`,
     );
     assert.equal(historyResponse.status, 200);
     const historyPayload = (await historyResponse.json()) as {
@@ -408,6 +451,20 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     };
     assert.equal(historyPayload.data.length, 1);
     assert.equal(historyPayload.data[0].decision, "approve");
+
+    const crossChannelApprovalResponse = await fetch(
+      `${baseUrl}/api/approvals/${createdPayload.data.id}?channelId=ch_negocios`,
+    );
+    assert.equal(crossChannelApprovalResponse.status, 404);
+    const crossChannelApprovalPayload = (await crossChannelApprovalResponse.json()) as {
+      error: { message: string };
+    };
+    assert.equal(crossChannelApprovalPayload.error.message, "Governance entity not found");
+
+    const missingChannelApprovalResponse = await fetch(
+      `${baseUrl}/api/approvals/${createdPayload.data.id}`,
+    );
+    assert.equal(missingChannelApprovalResponse.status, 400);
 
     const blockedResponse = await fetch(`${baseUrl}/api/approvals`, {
       method: "POST",
@@ -432,6 +489,7 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          channelId: "ch_historia",
           decidedBy: "Ana Ribeiro",
           decisionReason: "Tentativa bloqueada.",
         }),
@@ -456,7 +514,10 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
 
     const complianceResponse = await fetch(`${baseUrl}/api/compliance-checks`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "x-request-id": "sprint19-compliance-create",
+      },
       body: JSON.stringify({
         channelId: "ch_historia",
         entityType: "research_session",
@@ -472,6 +533,56 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     assert.equal(compliancePayload.data.status, "blocked");
     assert.ok(
       compliancePayload.data.blockingFindings.some((finding) => finding.code === "sources_missing"),
+    );
+
+    const crossChannelQualityResponse = await fetch(`${baseUrl}/api/quality-checks`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        channelId: "ch_negocios",
+        entityType: "script",
+        entityId: "sc_01",
+      }),
+    });
+    assert.equal(crossChannelQualityResponse.status, 409);
+
+    const crossChannelQualityDetailResponse = await fetch(
+      `${baseUrl}/api/quality-checks/qc_1?channelId=ch_negocios`,
+    );
+    assert.equal(crossChannelQualityDetailResponse.status, 404);
+
+    const crossChannelComplianceDetailResponse = await fetch(
+      `${baseUrl}/api/compliance-checks/cc_1?channelId=ch_negocios`,
+    );
+    assert.equal(crossChannelComplianceDetailResponse.status, 404);
+
+    const auditLogsResponse = await fetch(`${baseUrl}/api/audit-logs?channelId=ch_historia`);
+    assert.equal(auditLogsResponse.status, 200);
+    const auditLogsPayload = (await auditLogsResponse.json()) as {
+      data: Array<{ action: string; requestId?: string; entityId: string }>;
+    };
+    assert.ok(
+      auditLogsPayload.data.some(
+        (log) =>
+          log.action === "approval.created" &&
+          log.entityId === createdPayload.data.id &&
+          log.requestId === "sprint19-approval-create",
+      ),
+    );
+    assert.ok(
+      auditLogsPayload.data.some(
+        (log) =>
+          log.action === "approval.approved" &&
+          log.entityId === createdPayload.data.id &&
+          log.requestId === "sprint19-approval-approve",
+      ),
+    );
+    assert.ok(
+      auditLogsPayload.data.some(
+        (log) =>
+          log.action === "compliance_check.created" &&
+          log.requestId === "sprint19-compliance-create",
+      ),
     );
 
     const invalidDecisionResponse = await fetch(
@@ -492,7 +603,12 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     };
     assert.equal(invalidDecisionPayload.error.code, "VALIDATION_ERROR");
 
-    const notFoundResponse = await fetch(`${baseUrl}/api/approvals/ap_missing`);
+    const missingChannelResponse = await fetch(`${baseUrl}/api/approvals/ap_missing`);
+    assert.equal(missingChannelResponse.status, 400);
+
+    const notFoundResponse = await fetch(
+      `${baseUrl}/api/approvals/ap_missing?channelId=ch_historia`,
+    );
     assert.equal(notFoundResponse.status, 404);
   } finally {
     await stopServer(server);

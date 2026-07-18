@@ -134,6 +134,7 @@ test("governance frontend clients call the expected endpoints and parse envelope
 
       if (url === "/api/approvals/ap_2/approve" && init?.method === "POST") {
         assert.deepEqual(readBody(init), {
+          channelId: "ch_historia",
           decidedBy: "Ana Ribeiro",
           decisionReason: "Aprovado.",
         });
@@ -174,6 +175,7 @@ test("governance frontend clients call the expected endpoints and parse envelope
 
       if (url === "/api/approvals/ap_2/reject" && init?.method === "POST") {
         assert.deepEqual(readBody(init), {
+          channelId: "ch_historia",
           decidedBy: "Ana Ribeiro",
           decisionReason: "Nao aprovado.",
         });
@@ -210,6 +212,7 @@ test("governance frontend clients call the expected endpoints and parse envelope
 
       if (url === "/api/approvals/ap_2/request-changes" && init?.method === "POST") {
         assert.deepEqual(readBody(init), {
+          channelId: "ch_historia",
           decidedBy: "Ana Ribeiro",
           decisionReason: "Ajustes pendentes.",
         });
@@ -245,7 +248,7 @@ test("governance frontend clients call the expected endpoints and parse envelope
         });
       }
 
-      if (url === "/api/approvals/ap_2/history") {
+      if (url === "/api/approvals/ap_2/history?channelId=ch_historia") {
         return jsonResponse({
           data: [
             {
@@ -427,24 +430,27 @@ test("governance frontend clients call the expected endpoints and parse envelope
       assert.equal(created.data.id, "ap_2");
 
       const approved = await approveApproval("ap_2", {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "Aprovado.",
       });
       assert.equal(approved.data.status, "approved");
 
       const rejected = await rejectApproval("ap_2", {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "Nao aprovado.",
       });
       assert.equal(rejected.data.status, "rejected");
 
       const changesRequested = await requestApprovalChanges("ap_2", {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "Ajustes pendentes.",
       });
       assert.equal(changesRequested.data.status, "changes_requested");
 
-      const history = await getApprovalHistory("ap_2");
+      const history = await getApprovalHistory("ap_2", "ch_historia");
       assert.equal(history.data[0].approvalId, "ap_2");
 
       const qualityChecks = await getQualityChecks({
@@ -490,7 +496,7 @@ test("governance frontend clients call the expected endpoints and parse envelope
       assert.equal(calls[2].url, "/api/approvals/ap_2/approve");
       assert.equal(calls[3].url, "/api/approvals/ap_2/reject");
       assert.equal(calls[4].url, "/api/approvals/ap_2/request-changes");
-      assert.equal(calls[5].url, "/api/approvals/ap_2/history");
+      assert.equal(calls[5].url, "/api/approvals/ap_2/history?channelId=ch_historia");
       assert.equal(
         calls[6].url,
         "/api/quality-checks?channelId=ch_historia&status=passed&riskLevel=blocked&entityType=visual_plan&entityId=vp_01",
@@ -558,6 +564,21 @@ test("governance API clients surface transport errors and timeout semantics", as
         ),
         "Verificacao de qualidade nao encontrada.",
       );
+    },
+  );
+});
+
+test("governance detail clients preserve the active channel scope", async () => {
+  const baseMeta = { requestId: "req_scope", generatedAt: "2026-07-13T03:30:00.000Z" };
+
+  await withFetchStub(
+    async (url) => {
+      assert.equal(url, "/api/approvals/ap_2/history?channelId=ch_historia");
+      return jsonResponse({ data: [], meta: baseMeta });
+    },
+    async () => {
+      const history = await getApprovalHistory("ap_2", "ch_historia");
+      assert.deepEqual(history.data, []);
     },
   );
 });

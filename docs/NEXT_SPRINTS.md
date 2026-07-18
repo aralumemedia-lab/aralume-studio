@@ -22,7 +22,7 @@
 | 5 | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/017-sprint-16-scripts-visual-planning.md` | completed | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido. |
 | 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | completed | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser; E17 permanece parcial. |
 | 7 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/019-sprint-18-render-derived-clips.md` | completed and integrated by PR #30 | not released | Segunda fatia de E17; H17.3 e H17.4 integradas com render, cortes, reload, auditoria e isolamento. |
-| 8 | Sprint 19 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/020-sprint-19-governance-gates.md` | proposed / not started | not released | H18.1, H18.2 e H18.3; primeira fatia recomendada para qualidade, compliance e aprovacao humana. |
+| 8 | Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/020-sprint-19-governance-gates.md` | implemented on branch / PR pending | not released | H18.1, H18.2 e H18.3 implementadas com mutacoes reais, auditoria requestId, reload, isolamento, E2E e screenshots. |
 | 9 | Sprint 20 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/021-sprint-20-assisted-publication.md` | proposed / not started | not released | H18.4; readiness e pacote de publicacao sem auto-send, dependente do gate da Sprint 19. |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
@@ -75,7 +75,7 @@
 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes e claims operaveis |
 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | funcional + frontend + backend + integracao | E16 concluida | narracao e ativos visuais operaveis |
 | Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | funcional + frontend + backend + integracao | Sprint 17 concluida | render e cortes operaveis com reload, auditoria e isolamento |
-| Sprint 19 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | funcional + frontend + backend + governance | E17 concluida | qualidade, compliance e aprovacao humana operaveis |
+| Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | funcional + frontend + backend + governance | E17 concluida | implementada nesta branch; PR/revisao pendentes |
 | Sprint 20 (proposta) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | funcional + frontend + backend + governance | Sprint 19 aceita | readiness e pacote de publicacao assistida sem auto-send |
 | Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | evidence / reaccept | E16, E17, E18, E19 concluidos | novo V1 Acceptance com prova nova no mesmo head |

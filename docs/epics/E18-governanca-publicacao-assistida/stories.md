@@ -2,7 +2,7 @@
 
 ## Sprint sequencing
 
-- Sprint 19 (proposed, not started): H18.1, H18.2 and H18.3. This is the first recommended vertical slice and establishes the governance gates.
+- Sprint 19: H18.1, H18.2 and H18.3 implemented on branch; pending review and merge. This is the first vertical slice and establishes the governance gates.
 - Sprint 20 (proposed, not started): H18.4. This slice starts only after Sprint 19 is accepted and prepares publication without auto-send.
 - Completing a sprint does not automatically complete E18.
 
@@ -12,7 +12,7 @@
 - Objective: inspect quality findings from the frontend and keep them queryable after reload.
 - V1 criterion: V1-11
 - R14 item: R14-11
-- Planned slice: Sprint 19 proposed
+- Planned slice: Sprint 19; implemented on branch, pending review/merge
 - Dependencies: E17; quality-check contracts; review states
 - Priority: P1
 - Acceptance criteria:
@@ -37,13 +37,19 @@
   - The quality state persists through reload.
   - The channel isolation and audit evidence are visible.
 
+## H18.1 status
+
+- Sprint 19 status: implemented on branch; quality mutation, requestId audit correlation and browser evidence are present.
+
 ## H18.2 - Conformidade e direitos operavel pelo frontend
+
+- Sprint 19 status: implemented on branch; blocked compliance, cross-channel rejection and browser evidence are present.
 
 - Actor: compliance reviewer
 - Objective: inspect compliance findings and block unsafe content from the frontend.
 - V1 criterion: V1-12
 - R14 item: R14-12
-- Planned slice: Sprint 19 proposed
+- Planned slice: Sprint 19; implemented on branch, pending review/merge
 - Dependencies: H18.1; compliance contracts; blocked-state rules
 - Priority: P1
 - Acceptance criteria:
@@ -74,7 +80,7 @@
 - Objective: approve, reject or request changes from the frontend and keep the decision history visible.
 - V1 criterion: V1-13
 - R14 item: R14-13
-- Planned slice: Sprint 19 proposed
+- Planned slice: Sprint 19; implemented on branch, pending review/merge
 - Dependencies: H18.2; approval decision contracts; history preservation
 - Priority: P1
 - Acceptance criteria:
@@ -99,6 +105,10 @@
 - DoD:
   - The approval history survives reload.
   - The channel isolation and audit evidence are visible.
+
+## H18.3 status
+
+- Sprint 19 status: implemented on branch; creation, decision, history, requestId audit correlation and browser evidence are present.
 
 ## H18.4 - Publicacao assistida operavel pelo frontend
 

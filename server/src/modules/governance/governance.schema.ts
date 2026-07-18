@@ -71,6 +71,7 @@ export const approvalCreateSchema = z
 
 export const approvalDecisionSchema = z
   .object({
+    channelId: channelIdSchema,
     decidedBy: actorSchema,
     decisionReason: reasonSchema,
   })
@@ -88,11 +89,18 @@ export const approvalListQuerySchema = z
 
 export const approvalIdParamsSchema = z.object({ id: idSchema }).strict();
 
+export const governanceDetailQuerySchema = z
+  .object({
+    channelId: channelIdSchema,
+  })
+  .strict();
+
 export const qualityCheckCreateSchema = z
   .object({
     channelId: channelIdSchema,
     entityType: governanceEntityTypeSchema,
     entityId: idSchema,
+    requestedBy: actorSchema.optional(),
   })
   .strict();
 
@@ -113,6 +121,7 @@ export const complianceCheckCreateSchema = z
     channelId: channelIdSchema,
     entityType: governanceEntityTypeSchema,
     entityId: idSchema,
+    requestedBy: actorSchema.optional(),
   })
   .strict();
 

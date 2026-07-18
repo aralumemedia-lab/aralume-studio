@@ -34,6 +34,7 @@ export function createAuditService(
       const entry: AuditLog = {
         id: log.id ?? `au_${idFactory()}`,
         channelId: log.channelId,
+        requestId: log.requestId,
         actorType: log.actorType,
         actorName: log.actorName,
         action: log.action,
