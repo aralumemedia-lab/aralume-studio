@@ -7,7 +7,7 @@
 - Story: H18.4
 - Criterion: V1-14
 - R14: R14-14
-- Status: implementation in progress on branch; pending review and merge
+- Status: completed and integrated in `main` by PR #33
 - Upstream prerequisite: Sprint 19 governance gates accepted and merged in `main` by PR #32
 
 ## Decision
@@ -85,4 +85,4 @@ Make publication readiness and assisted package preparation operational through 
 - Publication readiness and package preparation are real API mutations.
 - Invalid payloads are rejected before any partial publication job is persisted.
 - Reload, isolation, audit and no-auto-send evidence is reusable for V1-14.
-- E18 remains partial on this branch and may be marked complete only after this gate is reviewed and merged with Sprint 19 integrated.
+- E18 is complete in `main` after this gate was reviewed and merged with Sprint 19 integrated.

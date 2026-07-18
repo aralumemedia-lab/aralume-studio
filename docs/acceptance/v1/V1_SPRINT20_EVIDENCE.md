@@ -20,4 +20,4 @@ This is supplemental implementation evidence only. It does not execute or replac
 
 ## Status rule
 
-The evidence is attached to the Sprint 20 implementation branch and remains pending review/merge. Formal V1 matrix statuses remain unchanged until `R14-REACCEPT` runs with new evidence on its final head.
+The evidence is integrated in `main` by PR #33. Formal V1 matrix statuses remain unchanged until `R14-REACCEPT` runs with new evidence on its final head.

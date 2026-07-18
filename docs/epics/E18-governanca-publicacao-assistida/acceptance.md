@@ -22,7 +22,7 @@ Sprint 19 implementation evidence is available in `main` through `screenshots/sp
 - Human confirmation is required by the API and is persisted with the package.
 - Privacy and allowed metadata are validated; invalid payloads fail before a job is created.
 
-E18 is only complete after both slice gates pass. No V1 Acceptance is executed by either sprint.
+E18 is complete after both slice gates passed and PRs #32 and #33 integrated the two slices in `main`. No V1 Acceptance is executed by either sprint.
 
 ## Positive scenarios
 
@@ -99,7 +99,7 @@ E18 is only complete after both slice gates pass. No V1 Acceptance is executed b
 
 READY FOR E18 COMPLETION only when:
 
-1. The four stories are individually accepted; Sprint 19 is merged and H18.4 is implemented on this branch pending review and merge.
+1. The four stories are individually accepted; Sprint 19 and H18.4 are merged in `main` by PRs #32 and #33.
 2. The frontend no longer masks the primary governance actions behind mocks.
 3. The backend returns persisted and queryable artifacts for the same channel.
 4. Audit evidence is present for the mutating actions.

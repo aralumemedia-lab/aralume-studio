@@ -3,8 +3,8 @@
 ## Sequenciamento
 
 - Sprint 19 mergeada pela PR #32: contratos, frontend, backend, auditoria, testes e evidencias de H18.1-H18.3.
-- Sprint 20 implementada nesta branch: contratos, frontend, backend, auditoria, testes e evidencias de H18.4; revisao e merge pendentes.
-- Tarefas de H18.1-H18.3 executadas; H18.4 executada nesta branch, sem fechar E18 antes do merge.
+- Sprint 20 integrada pela PR #33: contratos, frontend, backend, auditoria, testes e evidencias de H18.4.
+- Tarefas de H18.1-H18.4 executadas; E18 fechado após a revisão e o merge das duas fatias.
 
 ## Contracts
 

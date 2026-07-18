@@ -3,7 +3,7 @@
 ## Sprint sequencing
 
 - Sprint 19: H18.1, H18.2 and H18.3 merged by PR #32. This is the first vertical slice and establishes the governance gates.
-- Sprint 20: H18.4 implemented on branch; review and merge pending. This slice started only after Sprint 19 was accepted and prepares publication without auto-send.
+- Sprint 20: H18.4 implemented and merged by PR #33. This slice started only after Sprint 19 was accepted and prepares publication without auto-send.
 - Completing a sprint does not automatically complete E18.
 
 ## H18.1 - Qualidade tecnica operavel pelo frontend
@@ -116,7 +116,7 @@
 - Objective: prepare a publication draft or readiness package without auto-send.
 - V1 criterion: V1-14
 - R14 item: R14-14
-- Planned slice: Sprint 20; implementation in progress on branch, pending review and merge
+- Planned slice: Sprint 20; implemented and merged by PR #33
 - Dependencies: H18.3; publication target and readiness contracts; approval and compliance gates
 - Priority: P1
 - Acceptance criteria:
@@ -145,4 +145,4 @@
   - The publication package survives reload.
   - The channel isolation and audit evidence are visible.
   - The E2E proves that no external provider call or auto-send occurs.
-- Status: implemented on branch; not integrated until review and merge.
+- Status: completed and integrated in `main` by PR #33.

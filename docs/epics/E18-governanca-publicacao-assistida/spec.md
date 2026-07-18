@@ -5,7 +5,7 @@
 - Epic ID: E18
 - Epic name: Governanca e Publicacao Assistida pelo Frontend
 - Initiative: Remediacao da Operabilidade da V1
-- Status: partial; Sprint 19 merged; Sprint 20 implemented on branch pending review/merge
+- Status: complete and integrated in `main` by PR #33
 - Related criteria: V1-11, V1-12, V1-13, V1-14
 - Upstream dependency: E17
 - Related R14 items: R14-11, R14-12, R14-13, R14-14
@@ -15,8 +15,8 @@
 The E18 scope is split into two vertical slices because publication depends on the quality, compliance and human approval gates, while the current `/publications` surface also contains external YouTube actions that must remain outside this remediation.
 
 - Sprint 19 (merged by PR #32): H18.1, H18.2 and H18.3; V1-11, V1-12 and V1-13; R14-11, R14-12 and R14-13.
-- Sprint 20 (implemented on branch, review pending): H18.4; V1-14; R14-14. This slice prepares a human-confirmed package without auto-send, after Sprint 19.
-- E18 remains incomplete until both slices pass their documented gates. E19 and R14-REACCEPT remain downstream.
+- Sprint 20 (merged by PR #33): H18.4; V1-14; R14-14. This slice prepares a human-confirmed package without auto-send, after Sprint 19.
+- E18 is complete after both slices passed their documented gates. E19 and R14-REACCEPT remain downstream.
 
 ## Actors
 

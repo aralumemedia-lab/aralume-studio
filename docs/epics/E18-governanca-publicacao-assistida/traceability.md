@@ -9,6 +9,6 @@
 
 ## Dependency note
 
-- E17 is integrated in `main` and must remain complete before E18 starts because governance depends on media, render and clip artifacts.
-- Sprint 19 passed and merged before Sprint 20 started; Sprint 20 must pass review and merge before E18 is complete.
+- E17 is integrated in `main` and remains complete because governance depends on media, render and clip artifacts.
+- Sprint 19 passed and merged before Sprint 20 started; Sprint 20 passed review and merged by PR #33, closing E18 in `main`.
 - E19 and `R14-REACCEPT` remain downstream of E18.

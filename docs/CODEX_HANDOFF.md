@@ -122,9 +122,9 @@ recriacao do frontend e limpeza administrativa da S12.
 - CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
 - Sequencia recomendada: Sprint 17, Sprint 18, Sprint 19, Sprint 20, Sprint proposta D, e depois R14-REACCEPT.
-- Proximo passo: revisar e integrar a Sprint 20 desta branch. E17 esta integrado em `main` pela PR #30 e Sprint 19 pela PR #32.
+- Sprint 20 foi revisada e integrada em `main` pela PR #33. E17 esta integrado pela PR #30 e Sprint 19 pela PR #32.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Sprint 19 mergeada pela PR #32: H18.1, H18.2 e H18.3. Sprint 20 implementa H18.4 nesta branch; E19, `R14-REACCEPT`, release, tag e deploy permanecem fora desta execucao.
+- Sprint 19 foi mergeada pela PR #32 e Sprint 20 pela PR #33: H18.1 a H18.4 estao integradas; E19, `R14-REACCEPT`, release, tag e deploy permanecem fora desta execucao.
 
 ## Sprint 15 - formalizacao documental
 
@@ -165,16 +165,16 @@ recriacao do frontend e limpeza administrativa da S12.
 - Gate comprovado no mesmo head: 68 testes, lint, backend check, build, E2E browser, screenshots, reload, auditoria correlacionada e isolamento por canal.
 - V1-09 e V1-10 possuem evidencia nova; nao houve novo V1 Acceptance. E18 e E19 seguem como proximos epicos, e `R14-REACCEPT` permanece final.
 
-## E18 - Sprint 19 integrada / Sprint 20 implementada em revisão
+## E18 - Sprint 19 e Sprint 20 integradas
 
-- Estado: parcial; Sprint 19 integrada pela PR #32; Sprint 20 implementada nesta branch e pendente de revisao/merge.
+- Estado: concluido; Sprint 19 integrada pela PR #32 e Sprint 20 integrada pela PR #33.
 - Primeira fatia recomendada: Sprint 19, spec `docs/specs/020-sprint-19-governance-gates.md`, com H18.1, H18.2 e H18.3 para V1-11, V1-12 e V1-13.
 - Segunda fatia: Sprint 20, spec `docs/specs/021-sprint-20-assisted-publication.md`, com H18.4 para V1-14.
 - Sprint 19 estabelece qualidade, compliance e decisao humana; Sprint 20 prepara readiness ou pacote de publicacao sem auto-send.
-- Dependencia: Sprint 20 iniciou somente apos o gate da Sprint 19. E18 somente fecha apos a revisao e merge das duas fatias.
+- Dependencia: Sprint 20 iniciou somente apos o gate da Sprint 19. E18 foi fechado apos a revisao e merge das duas fatias.
 - Sprint 19 fecha a propagacao de `requestId` para as mutacoes de quality, compliance e approval; Sprint 20 propaga o mesmo requisito nas mutacoes de publicacao.
 - Limite: OAuth, conexao e upload YouTube nao pertencem a H18.4; E19, `R14-REACCEPT`, release, tag e deploy permanecem fora.
-- H18.1, H18.2 e H18.3 estao integradas; H18.4 foi implementada nesta branch e aguarda revisao/merge. V1.0 permanece `NAO ACEITA` e nenhum reaceite foi executado.
+- H18.1 a H18.4 estao integradas em `main`; V1.0 permanece `NAO ACEITA` e nenhum reaceite foi executado.
 
 ## Definition of Done
 

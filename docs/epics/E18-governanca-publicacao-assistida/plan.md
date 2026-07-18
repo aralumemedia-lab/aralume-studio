@@ -2,14 +2,14 @@
 
 ## Decomposicao proposta
 
-O E18 sera executado em duas fatias verticais; a Sprint 19 esta integrada e a Sprint 20 esta implementada nesta branch, pendente de revisao e merge:
+O E18 foi executado em duas fatias verticais; ambas estao integradas em `main` pelas PRs #32 e #33:
 
 | Fatia | Historias | Criterios | Dependencia | Gate |
 | --- | --- | --- | --- | --- |
 | Sprint 19 - Governanca e gates | H18.1, H18.2, H18.3 | V1-11..V1-13 | E17 integrado em main | mergeada pela PR #32; qualidade, compliance e decisao humana reais pelo frontend |
-| Sprint 20 - Publicacao assistida | H18.4 | V1-14 | Sprint 19 mergeada | implementada nesta branch; pacote com confirmacao humana, readiness, reload, isolamento, auditoria e E2E, sem auto-send |
+| Sprint 20 - Publicacao assistida | H18.4 | V1-14 | Sprint 19 mergeada | mergeada pela PR #33; pacote com confirmacao humana, readiness, reload, isolamento, auditoria e E2E, sem auto-send |
 
-Sprint 19 foi a primeira sprint recomendada e esta integrada pela PR #32. A Sprint 20 esta implementada nesta branch, pendente de revisao/merge. Concluir uma sprint nao conclui automaticamente o E18.
+Sprint 19 foi a primeira sprint recomendada e esta integrada pela PR #32. A Sprint 20 foi revisada e integrada pela PR #33. O E18 esta concluido; concluir uma sprint isolada nao conclui automaticamente um epic.
 
 ## Frontend
 
@@ -102,7 +102,7 @@ Sprint 19 foi a primeira sprint recomendada e esta integrada pela PR #32. A Spri
 - Governance actions can still look real while some flows rely on read-only surfaces.
 - Publication readiness can regress into a read-only summary if mutating actions are not tested.
 - The repository is process-local, so restart durability is not part of this epic.
-- H18.4 propagates requestId through publication mutations; the branch must still prove it through review and browser evidence.
+- H18.4 propagates requestId through publication mutations; review and browser evidence are integrated in `main`.
 - Combining all four stories in one sprint would couple independent gates and make the publication E2E depend on unproven upstream decisions.
 
 ## Rollback
