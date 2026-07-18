@@ -169,6 +169,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   assert.ok(approval.complianceCheckId);
 
   const approved = harness.service.approveApproval(approval.id, {
+    channelId: "ch_historia",
     decidedBy: "Ana Ribeiro",
     decisionReason: "Roteiro consistente e com CTA pronto.",
   });
@@ -180,6 +181,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   assert.throws(
     () =>
       harness.service.approveApproval(approval.id, {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "Tentativa repetida.",
       }),
@@ -197,6 +199,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   });
 
   const rejected = harness.service.rejectApproval(rejectionTarget.id, {
+    channelId: "ch_curiosidades",
     decidedBy: "Bruno Lima",
     decisionReason: "A pauta precisa de ajuste editorial antes de seguir.",
   });
@@ -211,6 +214,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   });
 
   const changesRequested = harness.service.requestApprovalChanges(changesTarget.id, {
+    channelId: "ch_curiosidades",
     decidedBy: "Bruno Lima",
     decisionReason: "Adicionar detalhes na proxima acao.",
   });
@@ -229,6 +233,7 @@ test("governance service enforces approvals, quality and compliance rules", () =
   assert.throws(
     () =>
       harness.service.approveApproval(blocked.id, {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "Bloqueio ignorado.",
       }),
@@ -291,6 +296,7 @@ test("governance service rejects invalid entities, channels and payloads", () =>
   assert.throws(
     () =>
       harness.service.rejectApproval(approval.id, {
+        channelId: "ch_historia",
         decidedBy: "Ana Ribeiro",
         decisionReason: "   ",
       }),
@@ -393,6 +399,24 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     assert.ok(createdPayload.data.complianceCheckId);
     assert.ok(createdPayload.meta.requestId);
 
+    const crossChannelDecisionResponse = await fetch(
+      `${baseUrl}/api/approvals/${createdPayload.data.id}/approve`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          channelId: "ch_negocios",
+          decidedBy: "Ana Ribeiro",
+          decisionReason: "Tentativa cross-channel.",
+        }),
+      },
+    );
+    assert.equal(crossChannelDecisionResponse.status, 409);
+    const crossChannelDecisionPayload = (await crossChannelDecisionResponse.json()) as {
+      error: { code: string };
+    };
+    assert.equal(crossChannelDecisionPayload.error.code, "CONFLICT");
+
     const approvedResponse = await fetch(
       `${baseUrl}/api/approvals/${createdPayload.data.id}/approve`,
       {
@@ -402,6 +426,7 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
           "x-request-id": "sprint19-approval-approve",
         },
         body: JSON.stringify({
+          channelId: "ch_historia",
           decidedBy: "Ana Ribeiro",
           decisionReason: "Roteiro consistente e com CTA pronto.",
         }),
@@ -436,6 +461,11 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     };
     assert.equal(crossChannelApprovalPayload.error.message, "Governance entity not found");
 
+    const missingChannelApprovalResponse = await fetch(
+      `${baseUrl}/api/approvals/${createdPayload.data.id}`,
+    );
+    assert.equal(missingChannelApprovalResponse.status, 400);
+
     const blockedResponse = await fetch(`${baseUrl}/api/approvals`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -459,6 +489,7 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          channelId: "ch_historia",
           decidedBy: "Ana Ribeiro",
           decisionReason: "Tentativa bloqueada.",
         }),
@@ -515,6 +546,16 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     });
     assert.equal(crossChannelQualityResponse.status, 409);
 
+    const crossChannelQualityDetailResponse = await fetch(
+      `${baseUrl}/api/quality-checks/qc_1?channelId=ch_negocios`,
+    );
+    assert.equal(crossChannelQualityDetailResponse.status, 404);
+
+    const crossChannelComplianceDetailResponse = await fetch(
+      `${baseUrl}/api/compliance-checks/cc_1?channelId=ch_negocios`,
+    );
+    assert.equal(crossChannelComplianceDetailResponse.status, 404);
+
     const auditLogsResponse = await fetch(`${baseUrl}/api/audit-logs?channelId=ch_historia`);
     assert.equal(auditLogsResponse.status, 200);
     const auditLogsPayload = (await auditLogsResponse.json()) as {
@@ -562,7 +603,12 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
     };
     assert.equal(invalidDecisionPayload.error.code, "VALIDATION_ERROR");
 
-    const notFoundResponse = await fetch(`${baseUrl}/api/approvals/ap_missing`);
+    const missingChannelResponse = await fetch(`${baseUrl}/api/approvals/ap_missing`);
+    assert.equal(missingChannelResponse.status, 400);
+
+    const notFoundResponse = await fetch(
+      `${baseUrl}/api/approvals/ap_missing?channelId=ch_historia`,
+    );
     assert.equal(notFoundResponse.status, 404);
   } finally {
     await stopServer(server);

@@ -28,6 +28,7 @@ export type CreateApprovalInput = Pick<
 };
 
 export type ApprovalDecisionInput = {
+  channelId: string;
   decidedBy: string;
   decisionReason: string;
 };
@@ -40,7 +41,7 @@ export async function getApprovals(
 
 export async function getApproval(
   id: string,
-  channelId?: string,
+  channelId: string,
 ): Promise<ApiSuccess<HumanApproval>> {
   return requestApiEnvelope<ApiSuccess<HumanApproval>>(
     withQuery(`${APPROVALS_PATH}/${id}`, { channelId }),
@@ -88,7 +89,7 @@ export async function requestApprovalChanges(
 
 export async function getApprovalHistory(
   id: string,
-  channelId?: string,
+  channelId: string,
 ): Promise<ApiListSuccess<ApprovalDecision>> {
   return requestApiEnvelope<ApiListSuccess<ApprovalDecision>>(
     withQuery(`${APPROVALS_PATH}/${id}/history`, { channelId }),

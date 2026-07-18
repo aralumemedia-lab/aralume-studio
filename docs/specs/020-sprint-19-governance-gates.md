@@ -60,6 +60,8 @@ Make quality, compliance and human approval operational through the frontend, wi
 - `POST /api/approvals/:id/request-changes`.
 - `GET /api/approvals/:id/history`.
 - Shared API envelopes and sanitized error helpers.
+- Approval detail and history reads require `?channelId=...`; approval decisions require
+  `channelId` in the request body so the backend can reject cross-channel mutation.
 
 ## Acceptance gate
 

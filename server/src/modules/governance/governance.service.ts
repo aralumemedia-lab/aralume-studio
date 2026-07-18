@@ -398,6 +398,8 @@ function decideApproval(
   },
 ): HumanApproval {
   const approval = getRequiredApproval(repository, approvalId);
+  validateChannelExists(channelsRepository, input.channelId);
+  assertSameChannel(approval.channelId, input.channelId, "Approval");
   validateChannelExists(channelsRepository, approval.channelId);
   const target = resolveTarget(
     editorialRepository,

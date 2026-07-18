@@ -181,6 +181,7 @@ export const Route = createFileRoute("/approvals")({
         }
 
         const input = {
+          channelId: selected.channelId,
           decidedBy: operatorName,
           decisionReason: decisionReason.trim(),
         };

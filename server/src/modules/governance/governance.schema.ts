@@ -71,6 +71,7 @@ export const approvalCreateSchema = z
 
 export const approvalDecisionSchema = z
   .object({
+    channelId: channelIdSchema,
     decidedBy: actorSchema,
     decisionReason: reasonSchema,
   })
@@ -90,7 +91,7 @@ export const approvalIdParamsSchema = z.object({ id: idSchema }).strict();
 
 export const governanceDetailQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
   })
   .strict();
 

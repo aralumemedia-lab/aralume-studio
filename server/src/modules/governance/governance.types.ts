@@ -157,6 +157,7 @@ export type ApprovalCreateInput = {
 };
 
 export type ApprovalDecisionInput = {
+  channelId: ID;
   decidedBy: string;
   decisionReason: string;
 };

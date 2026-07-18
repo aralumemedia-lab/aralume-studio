@@ -33,7 +33,7 @@ export async function getQualityChecks(
 
 export async function getQualityCheck(
   id: string,
-  channelId?: string,
+  channelId: string,
 ): Promise<ApiSuccess<QualityCheck>> {
   return requestApiEnvelope<ApiSuccess<QualityCheck>>(
     withQuery(`${QUALITY_CHECKS_PATH}/${id}`, { channelId }),

@@ -35,7 +35,7 @@ export async function getComplianceChecks(
 
 export async function getComplianceCheck(
   id: string,
-  channelId?: string,
+  channelId: string,
 ): Promise<ApiSuccess<ComplianceCheck>> {
   return requestApiEnvelope<ApiSuccess<ComplianceCheck>>(
     withQuery(`${COMPLIANCE_CHECKS_PATH}/${id}`, { channelId }),

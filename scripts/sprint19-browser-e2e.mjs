@@ -121,6 +121,9 @@ async function main() {
       await page.reload();
       await page.waitForLoadState("networkidle");
       await expectText(page, title);
+      await page.getByText(title, { exact: true }).first().click();
+      await expectText(page, "Historico de decisoes");
+      await expectText(page, "approve");
       await setViewport(page, 1792, 1024);
       await capture(page, "approvals-1792-reload.png");
       await assertNoHorizontalOverflow(page);
