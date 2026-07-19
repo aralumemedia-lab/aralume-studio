@@ -4,8 +4,19 @@ import { useState } from "react";
 import { ArrowRight, Bot, ShieldAlert } from "lucide-react";
 import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
-import { getAgentDefinitions, getAgentOfficeSnapshot } from "@/services/api-client";
-import { Card, EmptyState, KpiCard, SectionHeader } from "@/components/ui/data-card";
+import {
+  describeCockpitsApiError,
+  getAgentDefinitions,
+  getAgentOfficeSnapshot,
+} from "@/services/api-client";
+import {
+  Card,
+  EmptyState,
+  ErrorState,
+  KpiCard,
+  LoadingState,
+  SectionHeader,
+} from "@/components/ui/data-card";
 import { AgentStatusBadge, RiskBadge, WorkflowStatusBadge } from "@/components/status/badges";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { CompactTable, type Column } from "@/components/ui/compact-table";
@@ -57,7 +68,10 @@ function AgentOfficePage() {
     queryKey: ["office", activeChannelId],
     queryFn: () => getAgentOfficeSnapshot(activeChannelId),
   });
-  const defsQ = useQuery({ queryKey: ["ags"], queryFn: getAgentDefinitions });
+  const defsQ = useQuery({
+    queryKey: ["agents", activeChannelId],
+    queryFn: () => getAgentDefinitions(activeChannelId),
+  });
   const [selectedAgentRunId, setSelectedAgentRunId] = useState<string | null>(null);
 
   const snap = snapQ.data?.data;
@@ -84,6 +98,20 @@ function AgentOfficePage() {
         title="Escritório de Agentes"
         description={`Cockpit em tempo quase real da fábrica editorial. ${activeChannel ? `Contexto: ${activeChannel.name}.` : "Contexto: todos os canais."}`}
       />
+
+      <div className="px-4 pt-4">
+        {snapQ.isLoading || defsQ.isLoading ? (
+          <LoadingState label="Carregando escritorio de agentes" />
+        ) : snapQ.error || defsQ.error ? (
+          <ErrorState
+            message={describeCockpitsApiError(snapQ.error ?? defsQ.error)}
+            onRetry={() => {
+              void snapQ.refetch();
+              void defsQ.refetch();
+            }}
+          />
+        ) : null}
+      </div>
 
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">

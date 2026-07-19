@@ -93,7 +93,14 @@ export {
   updateVisualPlan,
 } from "./visual-plans-api";
 
-export { getAgentDefinitions, getAgentOfficeSnapshot, getDashboardSummary } from "./mock-api";
+export {
+  describeCockpitsApiError,
+  getAgentDefinitions,
+  getAgentOfficeSnapshot,
+  getDashboardSummary,
+  getWorkflowRun,
+  getWorkflowRuns,
+} from "./cockpits-api";
 
 export {
   createDerivedClip,
@@ -137,7 +144,6 @@ export {
   getRenderJobs,
 } from "./renders-api";
 
-export { getWorkflowRuns } from "./mock-api";
 export {
   createPerformanceMetric,
   describeMetricsApiError,

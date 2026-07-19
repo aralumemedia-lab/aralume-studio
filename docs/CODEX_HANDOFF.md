@@ -121,10 +121,12 @@ recriacao do frontend e limpeza administrativa da S12.
 - Epic 4: E19 - Cockpits Reais e Evidencias Transversais.
 - CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
-- Sequencia recomendada: Sprint 17, Sprint 18, Sprint 19, Sprint 20, Sprint proposta D, e depois R14-REACCEPT.
+- Sequencia vigente: Sprint 17, Sprint 18, Sprint 19, Sprint 20, Sprint 21, e depois R14-REACCEPT.
 - Sprint 20 foi revisada e integrada em `main` pela PR #33. E17 esta integrado pela PR #30 e Sprint 19 pela PR #32.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
 - Sprint 19 foi mergeada pela PR #32 e Sprint 20 pela PR #33: H18.1 a H18.4 estao integradas; E19, `R14-REACCEPT`, release, tag e deploy permanecem fora desta execucao.
+- Sprint 21 formaliza H19.1, H19.2 e H19.3 em uma fatia vertical unica; E19 permanece pendente ate revisao e merge.
+- Sprint 21 implementa os endpoints reais de cockpit, remove o caminho `mock-api` do Dashboard e do Escritorio de Agentes, e gera `docs/acceptance/v1/V1_SPRINT21_EVIDENCE.md` com o runner `node scripts/sprint21-browser-e2e.mjs`. A branch ainda aguarda revisao e PR; E19 nao esta integrado.
 
 ## Sprint 15 - formalizacao documental
 

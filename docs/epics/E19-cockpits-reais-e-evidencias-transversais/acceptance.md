@@ -18,7 +18,7 @@
 ## Channel isolation
 
 - A record created in one channel is not visible in another channel filter.
-- A cross-channel mutation fails and does not create a partial record.
+- A cross-channel workflow read returns sanitized `404` and does not reveal a record.
 - Reload preserves the active channel-scoped view.
 
 ## Loading
@@ -38,7 +38,7 @@
 ## Success
 
 - The UI must show the cockpit data with the active channel context.
-- The UI must show the reusable evidence bundle is ready for replay.
+- The repository must include a reusable evidence bundle ready for replay.
 
 ## Persistence
 
@@ -47,8 +47,7 @@
 
 ## Audit
 
-- Any cockpit mutation must leave a queryable audit record.
-- The audit record must include channelId, entity type, entity ID and request metadata.
+- No cockpit mutation is introduced in Sprint 21. If a future cockpit mutation is added, it must leave a queryable audit record including channelId, entity type, entity ID and request metadata.
 
 ## Accessibility
 

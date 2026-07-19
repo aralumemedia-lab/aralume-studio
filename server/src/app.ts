@@ -60,6 +60,8 @@ import { createMetricsRouter } from "./modules/metrics/metrics.routes.js";
 import { createMetricsService } from "./modules/metrics/metrics.service.js";
 import type { MetricsRepository } from "./modules/metrics/metrics.types.js";
 import { metricsDemoSeed } from "./modules/metrics/metrics.seed.js";
+import { createCockpitsRouter } from "./modules/cockpits/cockpits.routes.js";
+import { createCockpitsService } from "./modules/cockpits/cockpits.service.js";
 
 export type CreateAppOptions = {
   env?: RuntimeEnv;
@@ -208,6 +210,14 @@ export function createApp(options: CreateAppOptions = {}) {
       storageRoot: env.ARALUME_ASSET_STORAGE_ROOT,
     },
   );
+  const cockpitsService = createCockpitsService({
+    channelsRepository,
+    editorialRepository,
+    costsRepository,
+    governanceRepository,
+    publicationsRepository,
+    auditRepository,
+  });
   const app = express();
 
   app.disable("x-powered-by");
@@ -228,6 +238,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use("/api", createCostsRouter(costsService));
   app.use("/api", createAuditRouter(auditService));
   app.use("/api", createMetricsRouter(metricsService));
+  app.use("/api", createCockpitsRouter(cockpitsService));
   app.use(notFoundMiddleware());
   app.use(errorHandlerMiddleware);
 
