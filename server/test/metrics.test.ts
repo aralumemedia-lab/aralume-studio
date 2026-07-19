@@ -115,6 +115,17 @@ test("metrics registration validates content ownership and is idempotent", () =>
     assert.ok(actions.includes("metrics.registered"));
     assert.ok(actions.includes("metrics.idempotent_replay"));
     assert.ok(actions.includes("metrics.rejected"));
+    const metricAuditLogs = harness.auditRepository.listAuditLogs({ channelId: "ch_historia" });
+    assert.equal(
+      metricAuditLogs.find(
+        (entry) => entry.action === "metrics.registered" && entry.entityId === created.metric.id,
+      )?.requestId,
+      "req_metric_1",
+    );
+    assert.equal(
+      metricAuditLogs.every((entry) => entry.metadata?.requestId === undefined),
+      true,
+    );
   } finally {
     harness.cleanup();
   }

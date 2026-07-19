@@ -167,3 +167,15 @@
 5. `R14-REACCEPT` somente depois de E16, E17, E18 e E19.
 
 Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nenhuma sprint seguinte ou `R14-REACCEPT` foi iniciada. V1.0 permanece `NAO ACEITA`.
+
+## Sprint 22 - Remediacao dos findings do reaceite V1
+
+- Epico governante: E15 - Hardening V1.0.
+- Spec normativa: `docs/specs/023-sprint-22-v1-remediation-findings.md`.
+- Branch desta execucao: `codex/sprint-22-v1-remediation-findings`.
+- Estado: formalizada e em execucao; `R14-REACCEPT` continua nao iniciado.
+- Escopo: requestId estruturado em auditoria, auditoria editorial completa, isolamento de detalhes por canal e runners E2E reproduziveis das Sprints 15 a 21.
+- Fora de escopo: novo aceite integral, release, tag, deploy, publicacao externa, banco, migrations e qualquer ampliacao de E16-E19.
+- Evidencia nova: `docs/acceptance/v1/V1_SPRINT22_REMEDIATION_EVIDENCE.md`; evidencias historicas nao serao sobrescritas.
+- Gate: todos os findings materiais do pacote fechados, validacoes verdes, processos sem orfaos e working tree limpo.
+- Proximo gate: `R14-REACCEPT`, somente em execucao posterior e formalmente documentada.

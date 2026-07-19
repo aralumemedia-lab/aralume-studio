@@ -1632,4 +1632,8 @@ Regras normativas:
 - Nenhuma remediacao funcional comeca sem a documentacao desta sequencia.
 - A primeira sprint recomendada foi a Sprint 19; a Sprint 20 iniciou somente apos o gate da Sprint 19.
 - E18 foi concluido apos os gates das duas sprints; Sprint 21 concluiu E19 pela PR #34.
+
+### Sprint 22 - Remediacao dos findings do reaceite
+
+A Sprint 22 e uma unidade tecnica do E15 - Hardening V1.0, governada por `docs/specs/023-sprint-22-v1-remediation-findings.md`. Ela corrige auditoria estruturada, isolamento de leituras editoriais e reproducibilidade dos runners E2E das Sprints 15 a 21. Nao executa o `R14-REACCEPT`, nao altera a matriz historica e nao autoriza release, tag ou deploy.
 - E19 esta evidenciado em `docs/acceptance/v1/V1_SPRINT21_EVIDENCE.md`; `R14-REACCEPT` permanece bloqueado ate a execucao formal do novo aceite.

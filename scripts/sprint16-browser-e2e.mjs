@@ -1,23 +1,31 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { chromium } from "playwright";
+import {
+  evidenceDir,
+  runE2E,
+  spawnCommand,
+  terminateProcesses,
+  waitForHttp,
+} from "./e2e-process-utils.mjs";
 
 const BACKEND_BASE_URL = "http://127.0.0.1:3001";
 const FRONTEND_BASE_URL = "http://127.0.0.1:4173";
-const SCREENSHOT_DIR = path.join(process.cwd(), "screenshots", "sprint-16");
+const SCREENSHOT_DIR = evidenceDir(16);
 
 async function main() {
   await mkdir(SCREENSHOT_DIR, { recursive: true });
 
-  const backend = spawnCommand("npm", ["run", "backend:dev"]);
-  const frontend = spawnCommand("npm", [
-    "run",
+  const backend = spawnCommand(process.execPath, [
+    path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"),
+    "server/src/index.ts",
+  ]);
+  const frontend = spawnCommand(process.execPath, [
+    path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
     "dev",
-    "--",
     "--host",
     "127.0.0.1",
     "--port",
@@ -133,48 +141,8 @@ async function main() {
       await browser.close();
     }
   } finally {
-    backend.kill();
-    frontend.kill();
+    await terminateProcesses([backend, frontend]);
   }
-}
-
-function spawnCommand(command, args) {
-  const child = spawn(command, args, {
-    cwd: process.cwd(),
-    shell: true,
-    stdio: "inherit",
-    env: {
-      ...process.env,
-      ARALUME_ENV: process.env.ARALUME_ENV ?? "test",
-      ARALUME_LOG_LEVEL: process.env.ARALUME_LOG_LEVEL ?? "info",
-    },
-  });
-
-  child.once("exit", (code, signal) => {
-    if (code !== 0 && signal !== "SIGTERM") {
-      console.error(`${command} ${args.join(" ")} exited with code ${code ?? "unknown"}`);
-    }
-  });
-
-  return child;
-}
-
-async function waitForHttp(url) {
-  const started = Date.now();
-  while (Date.now() - started < 120_000) {
-    try {
-      const response = await fetch(url);
-      if (response.ok) {
-        return;
-      }
-    } catch {
-      // keep retrying
-    }
-
-    await delay(1000);
-  }
-
-  throw new Error(`Timed out waiting for ${url}`);
 }
 
 async function apiGet(pathname) {
@@ -402,4 +370,4 @@ async function listScreenshots() {
   return entries.filter((entry) => entry.endsWith(".png")).sort();
 }
 
-await main();
+await runE2E(main);

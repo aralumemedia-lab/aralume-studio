@@ -164,7 +164,7 @@ export const Route = createFileRoute("/approvals")({
 
     const entityQuery = useQuery({
       queryKey: ["approval-entity", selected?.entityType, selected?.entityId],
-      queryFn: () => fetchGovernanceTarget(selected!),
+      queryFn: () => fetchGovernanceTarget(selected!, activeChannelId),
       enabled: !!selected,
     });
 
@@ -910,7 +910,7 @@ function getApproveDisabledReason(
   return null;
 }
 
-async function fetchGovernanceTarget(approval: HumanApproval) {
+async function fetchGovernanceTarget(approval: HumanApproval, channelId?: string) {
   switch (approval.entityType) {
     case "content_idea":
       return getContentIdea(approval.entityId);
@@ -919,9 +919,9 @@ async function fetchGovernanceTarget(approval: HumanApproval) {
     case "research_session":
       return getResearchSession(approval.entityId);
     case "script":
-      return getScript(approval.entityId);
+      return channelId ? getScript(approval.entityId, channelId) : undefined;
     case "visual_plan":
-      return getVisualPlan(approval.entityId);
+      return channelId ? getVisualPlan(approval.entityId, channelId) : undefined;
   }
 }
 

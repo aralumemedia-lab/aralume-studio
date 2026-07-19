@@ -279,6 +279,25 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 4. Sprint 21: E19, R14-T01, R14-T02 e evidencia transversal.
 5. R14-REACCEPT: etapa final apos E16, E17, E18 e E19.
 
+## Sprint 22 - Remediacao dos findings do reaceite
+
+Esta unidade tecnica pertence ao E15 e foi formalizada antes da implementacao. Ela fecha findings materiais observados apos as fatias E16-E19 sem alterar a matriz historica da Sprint 14 e sem executar o `R14-REACCEPT`.
+
+| ID | Tipo | Escopo | Prioridade | Spec | Dependencias |
+| --- | --- | --- | --- | --- | --- |
+| R15-01 | Hardening tecnico | `AuditLog.requestId` estruturado e auditoria de mutacoes editoriais | P0 | `docs/specs/023-sprint-22-v1-remediation-findings.md` | E16, E17, E18 integrados |
+| R15-02 | Seguranca de contexto | Leituras detalhadas e rejeicao cross-channel sanitizada | P0 | mesma spec | contratos editoriais e canal ativo |
+| R15-03 | Evidencia operacional | Runner Sprint 15 e correcoes de runners Sprint 16-21 | P1 | mesma spec | Playwright, backend e frontend locais |
+| R15-04 | Regressao V1 | Reexecucao de V1-03..V1-10 e preservacao de V1-01/V1-02/V1-11..V1-18 | P0 | mesma spec | R15-01 a R15-03 |
+
+### Definition of Done da Sprint 22
+
+- Auditoria de pauta, pesquisa, roteiro, versao, plano visual e cena e consultavel com `requestId` no campo correto.
+- Detalhes editoriais exigem canal ativo e tentativas cross-channel retornam erro sanitizado sem vazamento.
+- Runners Sprints 15-21 tem timeout, assercoes, codigo de saida e teardown verificaveis.
+- Evidencias novas ficam separadas em `docs/acceptance/v1/V1_SPRINT22_REMEDIATION_EVIDENCE.md`.
+- Validacoes da spec passam; nenhum reaceite integral, release, tag ou deploy e executado.
+
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
 - Status: completed, com Sprint 15 e Sprint 16 entregues.
