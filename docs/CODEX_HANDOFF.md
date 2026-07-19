@@ -203,6 +203,19 @@ recriacao do frontend e limpeza administrativa da S12.
 - Limite: nao executar deploy, tag, GitHub Release ou publicacao externa; Sprint 24 e unidade separada.
 - Modelo normativo incorporado: `docs/governance/PROMPT_5_RELEASE.md`; sua presenca formaliza o processo e nao resolve os bloqueadores tecnicos de readiness.
 
+## Handoff - Sprint 24 - Seguranca de entrada e isolamento multicanal
+
+- Estado: formalizada; implementacao iniciada somente apos Spec Review e preflight limpo.
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/025-sprint-24-security-isolation.md`.
+- Branch: `codex/sprint-24-production-security-isolation`.
+- Dependencia: PR #38 integrada em `main`; R14 permanece `V1.0 ACCEPTED` e readiness da release permanece `NOT_READY`.
+- Historias: H24.1 autenticacao inbound fail-closed; H24.2 autorizacao e isolamento; H24.3 protecao de midia; H24.4 limites de upload/importacao; H24.5 auditoria e evidencias negativas.
+- Contrato de identidade: principal derivado de token assinado e validado no backend; identidade, papel e canal nao sao aceitos como autoridade livre do cliente.
+- Bypass: somente harness de testes local explicitamente habilitado, fora de producao; nenhum fallback permissivo no entrypoint produtivo.
+- Fora de escopo: backup/restore, rollback, topologia, ingress, deploy, release, tag, novos fluxos editoriais e correcao ampla dos diagnosticos TypeScript globais.
+- Gate: endpoints operacionais fail-closed, isolamento e midia negativos reproduziveis, limites aplicados, auditoria sanitizada, testes e build aprovados, sem regressao dos fluxos R14.
+
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem

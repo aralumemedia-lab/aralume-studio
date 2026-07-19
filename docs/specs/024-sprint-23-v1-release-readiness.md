@@ -9,7 +9,7 @@
 - Base autorizada: `61d313bdb35dd0228a2bf4f5af3454263f588155`
 - Dependencia concluida: R14 formal, 18/18 `PASS`, `V1.0 ACCEPTED`
 - Estado inicial: release, tag e deploy nao iniciados
-- Proxima unidade, se autorizada: Sprint 24 - implantacao e validacao pos-release
+- Proxima unidade autorizada: Sprint 24 - seguranca de entrada e isolamento multicanal. Implantacao pos-release permanece uma unidade posterior e separada.
 
 ## Objetivo
 
