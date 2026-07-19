@@ -6,10 +6,11 @@ import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { chromium } from "playwright";
+import { evidenceDir, runE2E } from "./e2e-process-utils.mjs";
 
 const BACKEND_BASE_URL = "http://127.0.0.1:3001";
 const FRONTEND_BASE_URL = "http://127.0.0.1:4173";
-const SCREENSHOT_DIR = path.join(process.cwd(), "screenshots", "sprint-19");
+const SCREENSHOT_DIR = evidenceDir(19);
 
 async function main() {
   await rm(SCREENSHOT_DIR, { recursive: true, force: true });
@@ -358,7 +359,4 @@ async function waitForProcessExit(child, timeoutMs) {
   });
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+await runE2E(main);

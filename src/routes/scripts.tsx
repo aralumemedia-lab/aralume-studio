@@ -113,7 +113,7 @@ export const Route = createFileRoute("/scripts")({
     const versionsQuery = useQuery({
       queryKey: ["script-versions", activeChannelId, selectedScriptId],
       enabled: Boolean(activeChannelId && selectedScriptId),
-      queryFn: () => getScriptVersions(selectedScriptId as string),
+      queryFn: () => getScriptVersions(selectedScriptId as string, activeChannelId as string),
     });
 
     const versions = useMemo(

@@ -178,6 +178,18 @@ recriacao do frontend e limpeza administrativa da S12.
 - Limite: OAuth, conexao e upload YouTube nao pertencem a H18.4; E19, `R14-REACCEPT`, release, tag e deploy permanecem fora.
 - H18.1 a H18.4 estao integradas em `main`; V1.0 permanece `NAO ACEITA` e nenhum reaceite foi executado.
 
+## Handoff - Sprint 22
+
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/023-sprint-22-v1-remediation-findings.md`.
+- Branch: `codex/sprint-22-v1-remediation-findings`.
+- Objetivo: remediar findings materiais do reaceite sem executar o `R14-REACCEPT`.
+- Findings: requestId deve ser gravado em `AuditLog.requestId`; mutacoes editoriais devem ser auditadas; detalhes de script, versao, plano visual e cena devem validar o canal ativo; cross-channel deve ser rejeitado com resposta sanitizada; runners E2E 15-21 devem ser reproduziveis, retornar codigo correto e limpar processos.
+- Evidencia nova: `docs/acceptance/v1/V1_SPRINT22_REMEDIATION_EVIDENCE.md`.
+- Nao alterar: matriz historica da Sprint 14, bundles historicos, criterios ja integrados de V1-01/V1-02/V1-11..V1-18, `.env.local`, release, tag, deploy ou historico Git publicado.
+- Validacao de saida: gates tecnicos, testes adicionais de auditoria/isolamento, runners Sprint 15-21, portas/processos sem orfaos e working tree limpo.
+- Proximo passo apos esta unidade: revisao independente e decisao explicita sobre iniciar o `R14-REACCEPT`; esta unidade nao o executa.
+
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem

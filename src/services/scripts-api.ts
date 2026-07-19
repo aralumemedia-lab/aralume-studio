@@ -52,8 +52,8 @@ export async function getScripts(filters: ScriptFilters = {}): Promise<ApiListSu
   return requestApiEnvelope<ApiListSuccess<Script>>(withQuery(SCRIPTS_PATH, filters));
 }
 
-export async function getScript(id: ID): Promise<ApiSuccess<Script>> {
-  return requestApiEnvelope<ApiSuccess<Script>>(`${SCRIPTS_PATH}/${id}`);
+export async function getScript(id: ID, channelId: ID): Promise<ApiSuccess<Script>> {
+  return requestApiEnvelope<ApiSuccess<Script>>(withQuery(`${SCRIPTS_PATH}/${id}`, { channelId }));
 }
 
 export async function createScript(input: CreateScriptInput): Promise<ApiSuccess<Script>> {
@@ -70,8 +70,13 @@ export async function updateScript(id: ID, input: UpdateScriptInput): Promise<Ap
   });
 }
 
-export async function getScriptVersions(id: ID): Promise<ApiListSuccess<ScriptVersion>> {
-  return requestApiEnvelope<ApiListSuccess<ScriptVersion>>(`${SCRIPTS_PATH}/${id}/versions`);
+export async function getScriptVersions(
+  id: ID,
+  channelId: ID,
+): Promise<ApiListSuccess<ScriptVersion>> {
+  return requestApiEnvelope<ApiListSuccess<ScriptVersion>>(
+    withQuery(`${SCRIPTS_PATH}/${id}/versions`, { channelId }),
+  );
 }
 
 export async function createScriptVersion(

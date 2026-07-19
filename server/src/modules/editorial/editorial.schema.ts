@@ -233,6 +233,19 @@ export const scriptIdParamsSchema = z
   })
   .strict();
 
+export const channelScopedDetailQuerySchema = z
+  .object({
+    channelId: channelIdSchema,
+  })
+  .strict();
+
+export const scriptVersionIdParamsSchema = z
+  .object({
+    id: idSchema,
+    versionId: idSchema,
+  })
+  .strict();
+
 export const scriptVersionCreateSchema = z
   .object({
     title: z.string().trim().min(1).max(160).optional(),
@@ -288,6 +301,13 @@ export const visualPlanIdParamsSchema = z
 export const scenePlanListQuerySchema = z
   .object({
     channelId: channelIdSchema,
+  })
+  .strict();
+
+export const visualPlanSceneIdParamsSchema = z
+  .object({
+    id: idSchema,
+    sceneId: idSchema,
   })
   .strict();
 

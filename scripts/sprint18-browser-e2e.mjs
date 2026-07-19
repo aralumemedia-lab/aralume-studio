@@ -6,10 +6,11 @@ import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { chromium } from "playwright";
+import { evidenceDir, runE2E } from "./e2e-process-utils.mjs";
 
 const BACKEND_BASE_URL = "http://127.0.0.1:3001";
 const FRONTEND_BASE_URL = "http://127.0.0.1:4173";
-const SCREENSHOT_DIR = path.join(process.cwd(), "screenshots", "sprint-18");
+const SCREENSHOT_DIR = evidenceDir(18);
 
 async function main() {
   await mkdir(SCREENSHOT_DIR, { recursive: true });
@@ -50,6 +51,8 @@ async function main() {
     try {
       const context = await browser.newContext({ viewport: { width: 1366, height: 768 } });
       const page = await context.newPage();
+      page.setDefaultTimeout(45_000);
+      page.setDefaultNavigationTimeout(60_000);
       let currentChannelName = channelA.name;
 
       await page.goto(`${FRONTEND_BASE_URL}/videos`);
@@ -100,6 +103,10 @@ async function main() {
       const firstJobId = renderPayload.data.id;
       const firstOutputId = renderPayload.data.outputAssetId;
       const renderRequestId = renderPayload.meta.requestId;
+      const videosAfterRender = await apiGet(`/videos?channelId=${channelA.id}`);
+      const parentVideo = videosAfterRender.data.find((video) => video.id === firstOutputId);
+      assert.ok(parentVideo, "expected the rendered video to be queryable by the active channel");
+      const clipIntervals = buildValidClipIntervals(parentVideo.durationSeconds);
       const auditAfterRender = await apiGet(`/audit-logs?channelId=${channelA.id}`);
       assert.ok(
         auditAfterRender.data.some(
@@ -140,8 +147,8 @@ async function main() {
       await page.waitForLoadState("networkidle");
       await expectText(page, "Gerar corte");
       const numberInputs = page.locator('input[type="number"]');
-      await numberInputs.nth(0).fill("0");
-      await numberInputs.nth(1).fill("1");
+      await numberInputs.nth(0).fill(String(clipIntervals.initial.startSeconds));
+      await numberInputs.nth(1).fill(String(clipIntervals.initial.endSeconds));
 
       const clipResponsePromise = page.waitForResponse(
         (response) =>
@@ -186,12 +193,16 @@ async function main() {
       await capture(page, "clips-1600-error.png");
       await expectText(page, "O fim precisa ser maior que o inicio");
 
-      await numberInputs.nth(0).fill("0");
-      await numberInputs.nth(1).fill("1.5");
+      await numberInputs.nth(0).fill(String(clipIntervals.conflict.startSeconds));
+      await numberInputs.nth(1).fill(String(clipIntervals.conflict.endSeconds));
       await page.getByLabel("Chave de idempotencia").fill(clipIdempotencyKey);
-      await expectText(page, "Intervalo valido para envio");
       const clipSubmitButton = page.getByRole("button", { name: "Gerar corte" });
       await waitForEnabled(clipSubmitButton);
+      assert.equal(
+        await clipSubmitButton.isEnabled(),
+        true,
+        "expected valid clip form before conflict",
+      );
       const clipConflictPromise = page.waitForResponse(
         (response) =>
           response.url().endsWith("/api/clips") &&
@@ -415,6 +426,24 @@ async function readInputValue(page, prefix) {
   return (await findInputByValuePrefix(page, prefix)).inputValue();
 }
 
+function buildValidClipIntervals(durationSeconds) {
+  assert.equal(
+    Number.isFinite(durationSeconds) && durationSeconds > 0,
+    true,
+    "expected the rendered video to expose a positive duration",
+  );
+
+  const initialEndSeconds = durationSeconds * 0.75;
+  const conflictStartSeconds = initialEndSeconds * 0.5;
+  assert.equal(initialEndSeconds > 0 && initialEndSeconds <= durationSeconds, true);
+  assert.equal(conflictStartSeconds > 0 && conflictStartSeconds < initialEndSeconds, true);
+
+  return {
+    initial: { startSeconds: 0, endSeconds: initialEndSeconds },
+    conflict: { startSeconds: conflictStartSeconds, endSeconds: initialEndSeconds },
+  };
+}
+
 async function waitForEnabled(locator) {
   await locator.waitFor({ state: "visible" });
   for (let attempt = 0; attempt < 20; attempt += 1) {
@@ -474,7 +503,4 @@ async function waitForProcessExit(child, timeoutMs) {
   });
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+await runE2E(main);

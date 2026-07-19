@@ -45,8 +45,10 @@ export async function getVisualPlans(
   return requestApiEnvelope<ApiListSuccess<VisualPlan>>(withQuery(VISUAL_PLANS_PATH, filters));
 }
 
-export async function getVisualPlan(id: ID): Promise<ApiSuccess<VisualPlan>> {
-  return requestApiEnvelope<ApiSuccess<VisualPlan>>(`${VISUAL_PLANS_PATH}/${id}`);
+export async function getVisualPlan(id: ID, channelId: ID): Promise<ApiSuccess<VisualPlan>> {
+  return requestApiEnvelope<ApiSuccess<VisualPlan>>(
+    withQuery(`${VISUAL_PLANS_PATH}/${id}`, { channelId }),
+  );
 }
 
 export async function getScenePlans(

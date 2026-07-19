@@ -557,10 +557,10 @@ type MetricAuditInput = Omit<AuditLog, "id" | "createdAt" | "actorType" | "actor
 function recordAudit(auditService: AuditService, input: MetricAuditInput): void {
   const { requestId, actorType, actorName, ...audit } = input;
   auditService.recordAuditLog({
+    requestId,
     actorType: actorType ?? "system",
     actorName: actorName ?? "metrics-service",
     ...audit,
-    metadata: { ...(audit.metadata ?? {}), ...(requestId ? { requestId } : {}) },
   });
 }
 

@@ -271,7 +271,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/scripts/sc_1") {
+      if (url === "/api/scripts/sc_1?channelId=ch_1") {
         return jsonResponse({
           data: {
             id: "sc_1",
@@ -292,7 +292,28 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/scripts/sc_1/versions" && !init?.method) {
+      if (url === "/api/scripts/sc_1" && init?.method === "PATCH") {
+        return jsonResponse({
+          data: {
+            id: "sc_1",
+            channelId: "ch_1",
+            contentId: "idea_1",
+            title: "Roteiro editado",
+            status: "script",
+            currentVersionId: "scv_2",
+            estimatedDurationSeconds: 620,
+            hook: "Hook",
+            promise: "Promise",
+            cta: "CTA",
+            riskLevel: "ok",
+            createdAt: "2026-07-13T03:30:00.000Z",
+            updatedAt: "2026-07-13T03:30:01.000Z",
+          },
+          meta: baseMeta,
+        });
+      }
+
+      if (url === "/api/scripts/sc_1/versions?channelId=ch_1" && !init?.method) {
         return jsonResponse({ data: [], meta: { ...baseMeta, total: 0, page: 1, pageSize: 0 } });
       }
 
@@ -358,7 +379,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/visual-plans/vp_1") {
+      if (url === "/api/visual-plans/vp_1?channelId=ch_1") {
         return jsonResponse({
           data: {
             id: "vp_1",
@@ -372,6 +393,25 @@ test("editorial frontend services hit the expected API endpoints", async () => {
             visualStyle: "Cinematografico",
             createdAt: "2026-07-13T03:30:00.000Z",
             updatedAt: "2026-07-13T03:30:00.000Z",
+          },
+          meta: baseMeta,
+        });
+      }
+
+      if (url === "/api/visual-plans/vp_1" && init?.method === "PATCH") {
+        return jsonResponse({
+          data: {
+            id: "vp_1",
+            channelId: "ch_1",
+            contentId: "idea_1",
+            scriptVersionId: "scv_2",
+            title: "Plano editado",
+            status: "visual_plan",
+            sceneCount: 4,
+            estimatedDurationSeconds: 620,
+            visualStyle: "Cinematografico",
+            createdAt: "2026-07-13T03:30:00.000Z",
+            updatedAt: "2026-07-13T03:30:01.000Z",
           },
           meta: baseMeta,
         });
@@ -462,9 +502,9 @@ test("editorial frontend services hit the expected API endpoints", async () => {
           changeSummary: "Inicial",
         },
       });
-      await getScript("sc_1");
+      await getScript("sc_1", "ch_1");
       await updateScript("sc_1", { title: "Roteiro editado" });
-      await getScriptVersions("sc_1");
+      await getScriptVersions("sc_1", "ch_1");
       await createScriptVersion("sc_1", {
         versionNumber: 2,
         narrationText: "Texto",
@@ -482,7 +522,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         estimatedDurationSeconds: 620,
         visualStyle: "Cinematografico",
       });
-      await getVisualPlan("vp_1");
+      await getVisualPlan("vp_1", "ch_1");
       await updateVisualPlan("vp_1", { title: "Plano editado" });
       await getScenePlans("vp_1", "ch_1");
       await createScenePlan("vp_1", {

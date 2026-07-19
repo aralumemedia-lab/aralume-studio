@@ -87,19 +87,23 @@ export type EditorialService = {
     requestId?: string,
   ): ClaimEvidence;
   listScripts(filters?: ScriptFilters): Script[];
-  getScript(id: ID): Script;
-  createScript(input: ScriptCreateInput): Script;
-  updateScript(id: ID, input: ScriptPatchInput): Script;
+  getScript(id: ID, channelId?: ID): Script;
+  createScript(input: ScriptCreateInput, requestId?: string): Script;
+  updateScript(id: ID, input: ScriptPatchInput, requestId?: string): Script;
   listScriptVersions(filters?: { channelId?: ID; scriptId?: ID }): ScriptVersion[];
-  getScriptVersion(id: ID): ScriptVersion;
-  createScriptVersion(scriptId: ID, input: ScriptVersionCreateInput): ScriptVersion;
+  getScriptVersion(id: ID, channelId?: ID): ScriptVersion;
+  createScriptVersion(
+    scriptId: ID,
+    input: ScriptVersionCreateInput,
+    requestId?: string,
+  ): ScriptVersion;
   listVisualPlans(filters?: VisualPlanFilters): VisualPlan[];
-  getVisualPlan(id: ID): VisualPlan;
-  createVisualPlan(input: VisualPlanCreateInput): VisualPlan;
-  updateVisualPlan(id: ID, input: VisualPlanPatchInput): VisualPlan;
+  getVisualPlan(id: ID, channelId?: ID): VisualPlan;
+  createVisualPlan(input: VisualPlanCreateInput, requestId?: string): VisualPlan;
+  updateVisualPlan(id: ID, input: VisualPlanPatchInput, requestId?: string): VisualPlan;
   listScenePlans(filters?: { channelId?: ID; visualPlanId?: ID }): ScenePlan[];
-  getScenePlan(id: ID): ScenePlan;
-  createScenePlan(visualPlanId: ID, input: ScenePlanCreateInput): ScenePlan;
+  getScenePlan(id: ID, channelId?: ID): ScenePlan;
+  createScenePlan(visualPlanId: ID, input: ScenePlanCreateInput, requestId?: string): ScenePlan;
 };
 
 export function createEditorialService(
@@ -375,11 +379,11 @@ export function createEditorialService(
       return repository.listScripts({ ...filters, channelId });
     },
 
-    getScript(id) {
-      return getRequiredScript(repository, id);
+    getScript(id, channelId) {
+      return getRequiredScript(repository, id, channelId);
     },
 
-    createScript(input) {
+    createScript(input, requestId) {
       const parsed = scriptCreateSchema.parse(input);
       assertChannelExists(channelsRepository, parsed.channelId);
       const contentIdea = getRequiredContentIdea(repository, parsed.contentId);
@@ -421,11 +425,38 @@ export function createEditorialService(
       repository.upsertScript(script);
       repository.upsertScriptVersion(initialVersion);
       advanceIdeaStage(repository, contentIdea, "script", now);
+      recordAudit(auditService, {
+        requestId,
+        channelId: script.channelId,
+        actorType: "user",
+        actorName: "Aralume Studio",
+        action: "script.created",
+        entityType: "Script",
+        entityId: script.id,
+        status: "success",
+        message: "Script created.",
+        metadata: { contentId: script.contentId, title: script.title },
+      });
+      recordAudit(auditService, {
+        requestId,
+        channelId: initialVersion.channelId,
+        actorType: "user",
+        actorName: "Aralume Studio",
+        action: "script_version.created",
+        entityType: "ScriptVersion",
+        entityId: initialVersion.id,
+        status: "success",
+        message: "Initial script version created.",
+        metadata: {
+          scriptId: initialVersion.scriptId,
+          versionNumber: initialVersion.versionNumber,
+        },
+      });
 
       return script;
     },
 
-    updateScript(id, input) {
+    updateScript(id, input, requestId) {
       const existing = getRequiredScript(repository, id);
       const parsed = scriptPatchSchema.parse(input);
       const now = toIso(clock());
@@ -444,24 +475,34 @@ export function createEditorialService(
         next.status === "blocked" ? "blocked" : next.status,
         now,
       );
+      recordAudit(auditService, {
+        requestId,
+        channelId: next.channelId,
+        actorType: "user",
+        actorName: "Aralume Studio",
+        action: "script.updated",
+        entityType: "Script",
+        entityId: next.id,
+        status: "success",
+        message: "Script updated.",
+        metadata: { title: next.title, status: next.status },
+      });
       return next;
     },
 
     listScriptVersions(filters = {}) {
       const channelId = validateChannelFilter(channelsRepository, filters.channelId);
+      if (channelId && filters.scriptId) {
+        getRequiredScript(repository, filters.scriptId, channelId);
+      }
       return repository.listScriptVersions({ ...filters, channelId });
     },
 
-    getScriptVersion(id) {
-      const found = repository.getScriptVersion(id);
-      if (!found) {
-        throw notFound("Script version not found", { id });
-      }
-
-      return found;
+    getScriptVersion(id, channelId) {
+      return getRequiredScriptVersion(repository, id, channelId);
     },
 
-    createScriptVersion(scriptId, input) {
+    createScriptVersion(scriptId, input, requestId) {
       const script = getRequiredScript(repository, scriptId);
       const contentIdea = getRequiredContentIdea(repository, script.contentId);
       const parsed = scriptVersionCreateSchema.parse(input);
@@ -500,6 +541,18 @@ export function createEditorialService(
         updatedAt: now,
       });
       advanceIdeaStage(repository, contentIdea, "script", now);
+      recordAudit(auditService, {
+        requestId,
+        channelId: version.channelId,
+        actorType: "user",
+        actorName: "Aralume Studio",
+        action: "script_version.created",
+        entityType: "ScriptVersion",
+        entityId: version.id,
+        status: "success",
+        message: "Script version created.",
+        metadata: { scriptId: version.scriptId, versionNumber: version.versionNumber },
+      });
 
       return version;
     },
@@ -509,16 +562,11 @@ export function createEditorialService(
       return repository.listVisualPlans({ ...filters, channelId });
     },
 
-    getVisualPlan(id) {
-      const found = repository.getVisualPlan(id);
-      if (!found) {
-        throw notFound("Visual plan not found", { id });
-      }
-
-      return found;
+    getVisualPlan(id, channelId) {
+      return getRequiredVisualPlan(repository, id, channelId);
     },
 
-    createVisualPlan(input) {
+    createVisualPlan(input, requestId) {
       const parsed = visualPlanCreateSchema.parse(input);
       assertChannelExists(channelsRepository, parsed.channelId);
 
@@ -546,10 +594,26 @@ export function createEditorialService(
 
       repository.upsertVisualPlan(plan);
       advanceIdeaStage(repository, contentIdea, "visual_plan", now);
+      recordAudit(auditService, {
+        requestId,
+        channelId: plan.channelId,
+        actorType: "user",
+        actorName: "Aralume Studio",
+        action: "visual_plan.created",
+        entityType: "VisualPlan",
+        entityId: plan.id,
+        status: "success",
+        message: "Visual plan created.",
+        metadata: {
+          contentId: plan.contentId,
+          scriptVersionId: plan.scriptVersionId,
+          title: plan.title,
+        },
+      });
       return plan;
     },
 
-    updateVisualPlan(id, input) {
+    updateVisualPlan(id, input, requestId) {
       const existing = getRequiredVisualPlan(repository, id);
       const parsed = visualPlanPatchSchema.parse(input);
       const now = toIso(clock());
@@ -568,6 +632,18 @@ export function createEditorialService(
         next.status === "blocked" ? "blocked" : next.status,
         now,
       );
+      recordAudit(auditService, {
+        requestId,
+        channelId: next.channelId,
+        actorType: "user",
+        actorName: "Aralume Studio",
+        action: "visual_plan.updated",
+        entityType: "VisualPlan",
+        entityId: next.id,
+        status: "success",
+        message: "Visual plan updated.",
+        metadata: { title: next.title, status: next.status },
+      });
       return next;
     },
 
@@ -576,16 +652,11 @@ export function createEditorialService(
       return repository.listScenePlans({ ...filters, channelId });
     },
 
-    getScenePlan(id) {
-      const found = repository.getScenePlan(id);
-      if (!found) {
-        throw notFound("Scene plan not found", { id });
-      }
-
-      return found;
+    getScenePlan(id, channelId) {
+      return getRequiredScenePlan(repository, id, channelId);
     },
 
-    createScenePlan(visualPlanId, input) {
+    createScenePlan(visualPlanId, input, requestId) {
       const plan = getRequiredVisualPlan(repository, visualPlanId);
       const parsed = scenePlanCreateSchema.parse(input);
       const { channelId: sceneChannelId, ...sceneData } = parsed;
@@ -620,6 +691,18 @@ export function createEditorialService(
         ...plan,
         sceneCount: Math.max(plan.sceneCount, parsed.order),
         updatedAt: now,
+      });
+      recordAudit(auditService, {
+        requestId,
+        channelId: scene.channelId,
+        actorType: "user",
+        actorName: "Aralume Studio",
+        action: "scene_plan.created",
+        entityType: "ScenePlan",
+        entityId: scene.id,
+        status: "success",
+        message: "Scene plan created.",
+        metadata: { visualPlanId: scene.visualPlanId, order: scene.order, title: scene.title },
       });
       return scene;
     },
@@ -817,7 +900,7 @@ function getRequiredResearchSource(repository: EditorialRepository, id: ID): Res
   return found;
 }
 
-function getRequiredScript(repository: EditorialRepository, id: ID): Script {
+function getRequiredScript(repository: EditorialRepository, id: ID, channelId?: ID): Script {
   const parsed = idSchema.safeParse(id);
   if (!parsed.success) {
     throw validation("Invalid script id", { id });
@@ -827,11 +910,18 @@ function getRequiredScript(repository: EditorialRepository, id: ID): Script {
   if (!found) {
     throw notFound("Script not found", { id });
   }
+  if (channelId && found.channelId !== channelId) {
+    throw notFound("Script not found", { id });
+  }
 
   return found;
 }
 
-function getRequiredScriptVersion(repository: EditorialRepository, id: ID): ScriptVersion {
+function getRequiredScriptVersion(
+  repository: EditorialRepository,
+  id: ID,
+  channelId?: ID,
+): ScriptVersion {
   const parsed = idSchema.safeParse(id);
   if (!parsed.success) {
     throw validation("Invalid script version id", { id });
@@ -841,11 +931,18 @@ function getRequiredScriptVersion(repository: EditorialRepository, id: ID): Scri
   if (!found) {
     throw notFound("Script version not found", { id });
   }
+  if (channelId && found.channelId !== channelId) {
+    throw notFound("Script version not found", { id });
+  }
 
   return found;
 }
 
-function getRequiredVisualPlan(repository: EditorialRepository, id: ID): VisualPlan {
+function getRequiredVisualPlan(
+  repository: EditorialRepository,
+  id: ID,
+  channelId?: ID,
+): VisualPlan {
   const parsed = idSchema.safeParse(id);
   if (!parsed.success) {
     throw validation("Invalid visual plan id", { id });
@@ -854,6 +951,26 @@ function getRequiredVisualPlan(repository: EditorialRepository, id: ID): VisualP
   const found = repository.getVisualPlan(id);
   if (!found) {
     throw notFound("Visual plan not found", { id });
+  }
+  if (channelId && found.channelId !== channelId) {
+    throw notFound("Visual plan not found", { id });
+  }
+
+  return found;
+}
+
+function getRequiredScenePlan(repository: EditorialRepository, id: ID, channelId?: ID): ScenePlan {
+  const parsed = idSchema.safeParse(id);
+  if (!parsed.success) {
+    throw validation("Invalid scene plan id", { id });
+  }
+
+  const found = repository.getScenePlan(id);
+  if (!found) {
+    throw notFound("Scene plan not found", { id });
+  }
+  if (channelId && found.channelId !== channelId) {
+    throw notFound("Scene plan not found", { id });
   }
 
   return found;
@@ -908,7 +1025,7 @@ function recordAudit(auditService: AuditService | undefined, input: MutationAudi
 
   const { requestId, ...audit } = input;
   auditService.recordAuditLog({
+    requestId,
     ...audit,
-    metadata: { ...(audit.metadata ?? {}), ...(requestId ? { requestId } : {}) },
   });
 }

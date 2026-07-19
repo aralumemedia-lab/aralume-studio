@@ -107,7 +107,7 @@ export const Route = createFileRoute("/compliance")({
 
     const entityQuery = useQuery({
       queryKey: ["compliance-entity", selected?.entityType, selected?.entityId],
-      queryFn: () => fetchGovernanceTarget(selected!),
+      queryFn: () => fetchGovernanceTarget(selected!, activeChannelId),
       enabled: !!selected,
     });
 
@@ -500,7 +500,7 @@ function describeEntityError(entityType: GovernanceEntityType, error: unknown): 
   }
 }
 
-async function fetchGovernanceTarget(check: ComplianceCheck) {
+async function fetchGovernanceTarget(check: ComplianceCheck, channelId?: string) {
   switch (check.entityType) {
     case "content_idea":
       return getContentIdea(check.entityId);
@@ -509,8 +509,8 @@ async function fetchGovernanceTarget(check: ComplianceCheck) {
     case "research_session":
       return getResearchSession(check.entityId);
     case "script":
-      return getScript(check.entityId);
+      return channelId ? getScript(check.entityId, channelId) : undefined;
     case "visual_plan":
-      return getVisualPlan(check.entityId);
+      return channelId ? getVisualPlan(check.entityId, channelId) : undefined;
   }
 }

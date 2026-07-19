@@ -116,7 +116,7 @@ function IdeasPage() {
 
       const payload = formToIdeaPayload(formState, activeChannelId);
       return selectedIdea
-        ? updateContentIdea(selectedIdea.id, payload)
+        ? updateContentIdea(selectedIdea.id, omitChannelId(payload))
         : createContentIdea(payload);
     },
     onSuccess: async (response) => {
@@ -515,6 +515,10 @@ function formToIdeaPayload(form: IdeaFormState, channelId: string) {
     riskLevel: form.riskLevel,
     status: form.status,
   };
+}
+
+function omitChannelId<T extends { channelId: string }>({ channelId: _channelId, ...patch }: T) {
+  return patch;
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {

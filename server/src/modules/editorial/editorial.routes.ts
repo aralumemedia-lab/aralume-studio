@@ -5,6 +5,7 @@ import { AppError } from "../../http/errors.js";
 import { createListSuccessResponse, createSuccessResponse } from "../../http/response.js";
 import {
   claimEvidenceCreateSchema,
+  channelScopedDetailQuerySchema,
   contentIdeaIdParamsSchema,
   contentIdeaListQuerySchema,
   contentIdeaPatchSchema,
@@ -18,6 +19,7 @@ import {
   researchSourceCreateSchema,
   scriptCreateSchema,
   scriptIdParamsSchema,
+  scriptVersionIdParamsSchema,
   scriptListQuerySchema,
   scriptPatchSchema,
   scriptVersionCreateSchema,
@@ -27,6 +29,7 @@ import {
   visualPlanPatchSchema,
   scenePlanListQuerySchema,
   scenePlanCreateSchema,
+  visualPlanSceneIdParamsSchema,
 } from "./editorial.schema.js";
 import type { EditorialService } from "./editorial.service.js";
 
@@ -122,33 +125,54 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.post("/scripts", (req, res) => {
     const body = parseBody(scriptCreateSchema, req.body);
-    const created = service.createScript(body);
+    const created = service.createScript(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.get("/scripts/:id", (req, res) => {
     const params = parseParams(scriptIdParamsSchema, req.params);
-    const found = service.getScript(params.id);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const found = service.getScript(params.id, query.channelId);
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 
   router.patch("/scripts/:id", (req, res) => {
     const params = parseParams(scriptIdParamsSchema, req.params);
     const body = parseBody(scriptPatchSchema, req.body);
-    const updated = service.updateScript(params.id, body);
+    const updated = service.updateScript(params.id, body, getRequestId(res));
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.get("/scripts/:id/versions", (req, res) => {
     const params = parseParams(scriptIdParamsSchema, req.params);
-    const versions = service.listScriptVersions({ scriptId: params.id });
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const versions = service.listScriptVersions({
+      scriptId: params.id,
+      channelId: query.channelId,
+    });
     res.json(createListSuccessResponse(versions, { requestId: getRequestId(res) }));
+  });
+
+  router.get("/scripts/:id/versions/:versionId", (req, res) => {
+    const params = parseParams(scriptVersionIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const script = service.getScript(params.id, query.channelId);
+    const version = service.getScriptVersion(params.versionId, query.channelId);
+    if (version.scriptId !== script.id) {
+      throw new AppError({
+        code: "NOT_FOUND",
+        status: 404,
+        message: "Script version not found",
+        details: { id: params.versionId },
+      });
+    }
+    res.json(createSuccessResponse(version, { requestId: getRequestId(res) }));
   });
 
   router.post("/scripts/:id/versions", (req, res) => {
     const params = parseParams(scriptIdParamsSchema, req.params);
     const body = parseBody(scriptVersionCreateSchema, req.body);
-    const created = service.createScriptVersion(params.id, body);
+    const created = service.createScriptVersion(params.id, body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -160,44 +184,53 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.post("/visual-plans", (req, res) => {
     const body = parseBody(visualPlanCreateSchema, req.body);
-    const created = service.createVisualPlan(body);
+    const created = service.createVisualPlan(body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.get("/visual-plans/:id", (req, res) => {
     const params = parseParams(visualPlanIdParamsSchema, req.params);
-    const found = service.getVisualPlan(params.id);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const found = service.getVisualPlan(params.id, query.channelId);
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 
   router.patch("/visual-plans/:id", (req, res) => {
     const params = parseParams(visualPlanIdParamsSchema, req.params);
     const body = parseBody(visualPlanPatchSchema, req.body);
-    const updated = service.updateVisualPlan(params.id, body);
+    const updated = service.updateVisualPlan(params.id, body, getRequestId(res));
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.get("/visual-plans/:id/scenes", (req, res) => {
     const params = parseParams(visualPlanIdParamsSchema, req.params);
     const query = parseQuery(scenePlanListQuerySchema, req.query);
-    const plan = service.getVisualPlan(params.id);
-    if (plan.channelId !== query.channelId) {
-      throw new AppError({
-        code: "NOT_FOUND",
-        status: 404,
-        message: "Visual plan not found",
-        details: { id: params.id },
-      });
-    }
+    service.getVisualPlan(params.id, query.channelId);
 
     const items = service.listScenePlans({ channelId: query.channelId, visualPlanId: params.id });
     res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
   });
 
+  router.get("/visual-plans/:id/scenes/:sceneId", (req, res) => {
+    const params = parseParams(visualPlanSceneIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const plan = service.getVisualPlan(params.id, query.channelId);
+    const scene = service.getScenePlan(params.sceneId, query.channelId);
+    if (scene.visualPlanId !== plan.id) {
+      throw new AppError({
+        code: "NOT_FOUND",
+        status: 404,
+        message: "Scene plan not found",
+        details: { id: params.sceneId },
+      });
+    }
+    res.json(createSuccessResponse(scene, { requestId: getRequestId(res) }));
+  });
+
   router.post("/visual-plans/:id/scenes", (req, res) => {
     const params = parseParams(visualPlanIdParamsSchema, req.params);
     const body = parseBody(scenePlanCreateSchema, req.body);
-    const created = service.createScenePlan(params.id, body);
+    const created = service.createScenePlan(params.id, body, getRequestId(res));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 

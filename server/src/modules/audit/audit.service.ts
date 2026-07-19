@@ -31,10 +31,16 @@ export function createAuditService(
 
     recordAuditLog(log) {
       const now = log.createdAt ?? clock().toISOString();
+      const metadata = log.metadata ? { ...log.metadata } : undefined;
+      const legacyRequestId =
+        typeof metadata?.requestId === "string" ? metadata.requestId : undefined;
+      if (metadata) {
+        delete metadata.requestId;
+      }
       const entry: AuditLog = {
         id: log.id ?? `au_${idFactory()}`,
         channelId: log.channelId,
-        requestId: log.requestId,
+        requestId: log.requestId ?? legacyRequestId,
         actorType: log.actorType,
         actorName: log.actorName,
         action: log.action,
@@ -42,7 +48,7 @@ export function createAuditService(
         entityId: log.entityId,
         status: log.status,
         message: log.message,
-        metadata: log.metadata,
+        metadata: metadata && Object.keys(metadata).length > 0 ? metadata : undefined,
         createdAt: now,
       };
 
