@@ -103,6 +103,10 @@ async function main() {
       const firstJobId = renderPayload.data.id;
       const firstOutputId = renderPayload.data.outputAssetId;
       const renderRequestId = renderPayload.meta.requestId;
+      const videosAfterRender = await apiGet(`/videos?channelId=${channelA.id}`);
+      const parentVideo = videosAfterRender.data.find((video) => video.id === firstOutputId);
+      assert.ok(parentVideo, "expected the rendered video to be queryable by the active channel");
+      const clipIntervals = buildValidClipIntervals(parentVideo.durationSeconds);
       const auditAfterRender = await apiGet(`/audit-logs?channelId=${channelA.id}`);
       assert.ok(
         auditAfterRender.data.some(
@@ -143,8 +147,8 @@ async function main() {
       await page.waitForLoadState("networkidle");
       await expectText(page, "Gerar corte");
       const numberInputs = page.locator('input[type="number"]');
-      await numberInputs.nth(0).fill("0");
-      await numberInputs.nth(1).fill("1");
+      await numberInputs.nth(0).fill(String(clipIntervals.initial.startSeconds));
+      await numberInputs.nth(1).fill(String(clipIntervals.initial.endSeconds));
 
       const clipResponsePromise = page.waitForResponse(
         (response) =>
@@ -189,8 +193,8 @@ async function main() {
       await capture(page, "clips-1600-error.png");
       await expectText(page, "O fim precisa ser maior que o inicio");
 
-      await numberInputs.nth(0).fill("0");
-      await numberInputs.nth(1).fill("1.5");
+      await numberInputs.nth(0).fill(String(clipIntervals.conflict.startSeconds));
+      await numberInputs.nth(1).fill(String(clipIntervals.conflict.endSeconds));
       await page.getByLabel("Chave de idempotencia").fill(clipIdempotencyKey);
       const clipSubmitButton = page.getByRole("button", { name: "Gerar corte" });
       await waitForEnabled(clipSubmitButton);
@@ -420,6 +424,24 @@ async function findInputByValuePrefix(page, prefix) {
 
 async function readInputValue(page, prefix) {
   return (await findInputByValuePrefix(page, prefix)).inputValue();
+}
+
+function buildValidClipIntervals(durationSeconds) {
+  assert.equal(
+    Number.isFinite(durationSeconds) && durationSeconds > 0,
+    true,
+    "expected the rendered video to expose a positive duration",
+  );
+
+  const initialEndSeconds = durationSeconds * 0.75;
+  const conflictStartSeconds = initialEndSeconds * 0.5;
+  assert.equal(initialEndSeconds > 0 && initialEndSeconds <= durationSeconds, true);
+  assert.equal(conflictStartSeconds > 0 && conflictStartSeconds < initialEndSeconds, true);
+
+  return {
+    initial: { startSeconds: 0, endSeconds: initialEndSeconds },
+    conflict: { startSeconds: conflictStartSeconds, endSeconds: initialEndSeconds },
+  };
 }
 
 async function waitForEnabled(locator) {
