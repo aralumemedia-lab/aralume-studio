@@ -262,7 +262,7 @@ export const Route = createFileRoute("/production")({
 
     const createSceneMutation = useMutation({
       mutationFn: async () => {
-        if (!activeChannelId || !selectedVisualPlan) {
+        if (!selectedVisualPlan) {
           throw new Error("Selecione um plano visual antes de adicionar cenas.");
         }
 

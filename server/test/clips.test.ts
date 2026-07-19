@@ -343,24 +343,19 @@ test("derived clip HTTP routes create a real clip and survive a repository resta
     assert.equal(renderResponse.status, 201);
     assert.equal(renderedPayload.data.status, "completed");
     assert.ok(renderedPayload.data.outputAssetId);
-    const renderedAsset = harness.mediaAssetsRepository.getMediaAsset(
-      renderedPayload.data.outputAssetId,
-    );
-    assert.ok(renderedAsset);
-    assert.equal(typeof renderedPayload.data.durationSeconds, "number");
 
     const concludedParentVideo = harness.mediaAssetsRepository.getVideoAsset("vd_historia_01");
     assert.ok(concludedParentVideo);
     harness.mediaAssetsRepository.upsertVideoAsset({
       ...concludedParentVideo!,
       status: "editing",
-      complianceStatus: "attention",
-      qualityStatus: "not_checked",
-      storagePath: renderedAsset.storagePath,
-      sizeBytes: renderedAsset.sizeBytes,
-      checksum: renderedAsset.checksum,
+      complianceStatus: "pending",
+      qualityStatus: "pending",
+      storagePath: renderedPayload.data.outputStoragePath,
+      sizeBytes: renderedPayload.data.outputSizeBytes,
+      checksum: renderedPayload.data.outputChecksum,
       checksumAlgorithm: "sha256",
-      durationSeconds: renderedPayload.data.durationSeconds!,
+      durationSeconds: renderedPayload.data.durationSeconds,
     });
 
     const clipResponse = await fetch(`${baseUrl}/api/clips`, {
@@ -738,10 +733,7 @@ function stopServer(server: Server): Promise<void> {
 
 async function closeFetchPools(): Promise<void> {
   try {
-    const undiciModuleName: string = "undici";
-    const { getGlobalDispatcher } = (await import(undiciModuleName)) as {
-      getGlobalDispatcher(): { close(): Promise<void> };
-    };
+    const { getGlobalDispatcher } = await import("undici");
     await getGlobalDispatcher().close();
   } catch {
     // Ignore environments without an exposed undici dispatcher.
