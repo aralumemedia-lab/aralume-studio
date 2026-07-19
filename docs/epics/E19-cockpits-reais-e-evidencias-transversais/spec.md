@@ -5,7 +5,7 @@
 - Epic ID: E19
 - Epic name: Cockpits Reais e Evidencias Transversais
 - Initiative: Remediacao da Operabilidade da V1
-- Status: proposed / not started
+- Status: completed and integrated by PR #34
 - Related technical items: R14-T01, R14-T02
 - Upstream dependency: E16, E17, E18
 

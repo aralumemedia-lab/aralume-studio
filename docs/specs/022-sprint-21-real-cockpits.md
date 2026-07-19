@@ -6,7 +6,7 @@
 - Epic: E19 - Cockpits Reais e Evidencias Transversais
 - Stories: H19.1, H19.2, H19.3
 - Technical items: R14-T01, R14-T02
-- Status: implementation in progress on branch; pending review and merge
+- Status: completed and integrated by PR #34
 - Baseline: `main = origin/main = 2b47cf25e2c74f576ef58bc54620ea645d1c00bf`
 - Upstream dependency: E16, E17 and E18 completed in `main`
 
@@ -49,7 +49,7 @@ The frontend must receive API data only. The backend may project cockpit records
 - Both routes expose loading, empty, error and success states.
 - The browser runner reproduces the same data bootstrap and screenshot matrix on the same head.
 - No cockpit mutation is introduced; therefore no new audit event is required by this sprint.
-- E19 remains pending until review and merge; `R14-REACCEPT` remains downstream.
+- E19 is complete in `main`; `R14-REACCEPT` remains downstream and has not started.
 
 ## Evidence
 
@@ -72,4 +72,4 @@ The frontend must receive API data only. The backend may project cockpit records
 - Backend, frontend, browser and visual evidence pass.
 - Mock imports are absent from the dashboard and agent-office main paths.
 - Reload, isolation and error evidence is reusable for `R14-REACCEPT`.
-- E19 is documented as implemented on the branch, not integrated before merge.
+- E19 is documented as implemented and integrated by PR #34; no V1 reaccept was executed.

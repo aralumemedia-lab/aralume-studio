@@ -9,4 +9,4 @@
 ## Dependency note
 
 - E19 only starts after E16, E17 and E18 because the cockpit evidence needs the product surfaces already stabilized.
-- Sprint 21 implements all three stories as one vertical slice; E19 remains pending until review and merge.
+- Sprint 21 implemented all three stories as one vertical slice; E19 was integrated by PR #34.
