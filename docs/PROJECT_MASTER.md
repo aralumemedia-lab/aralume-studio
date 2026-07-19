@@ -1636,4 +1636,11 @@ Regras normativas:
 ### Sprint 22 - Remediacao dos findings do reaceite
 
 A Sprint 22 e uma unidade tecnica do E15 - Hardening V1.0, governada por `docs/specs/023-sprint-22-v1-remediation-findings.md`. Ela corrige auditoria estruturada, isolamento de leituras editoriais e reproducibilidade dos runners E2E das Sprints 15 a 21. Nao executa o `R14-REACCEPT`, nao altera a matriz historica e nao autoriza release, tag ou deploy.
+
 - E19 esta evidenciado em `docs/acceptance/v1/V1_SPRINT21_EVIDENCE.md`; `R14-REACCEPT` permanece bloqueado ate a execucao formal do novo aceite.
+
+### R14 concluido e Sprint 23 - Release Readiness
+
+O R14 foi concluido e integrado pela PR #37 com `V1.0 ACCEPTED` e 18/18 criterios `PASS`. O SHA funcional aceito e `d2b53c9e7bfe15c8116c07375ca4b604fce03e97`; o merge documental e `61d313bdb35dd0228a2bf4f5af3454263f588155`.
+
+A Sprint 23 permanece vinculada ao E15 - Hardening V1.0 e e governada por `docs/specs/024-sprint-23-v1-release-readiness.md`. Ela prepara a release 1.0.0, valida seguranca, configuracao, persistencia, backup, rollback, observabilidade e quality gates, mas nao executa deploy, tag ou GitHub Release. Uma eventual Sprint 24 de implantacao exige autorizacao e unidade separadas.

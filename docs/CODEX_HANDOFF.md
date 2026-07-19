@@ -190,6 +190,19 @@ recriacao do frontend e limpeza administrativa da S12.
 - Validacao de saida: gates tecnicos, testes adicionais de auditoria/isolamento, runners Sprint 15-21, portas/processos sem orfaos e working tree limpo.
 - Proximo passo apos esta unidade: revisao independente e decisao explicita sobre iniciar o `R14-REACCEPT`; esta unidade nao o executa.
 
+## Handoff - R14 aceito e Sprint 23
+
+- R14 formal concluido: `V1.0 ACCEPTED`, 18/18 `PASS`.
+- SHA funcional avaliado: `d2b53c9e7bfe15c8116c07375ca4b604fce03e97`.
+- PR documental #37 integrada pelo merge commit `61d313bdb35dd0228a2bf4f5af3454263f588155`.
+- Sprint atual: Sprint 23 - V1.0 Release Readiness e Hardening de Producao.
+- Epico: E15 - Hardening V1.0.
+- Spec: `docs/specs/024-sprint-23-v1-release-readiness.md`.
+- Branch: `codex/sprint-23-v1-release-readiness`.
+- Entrega: inventario de release, seguranca/configuracao, backup/restore, deploy/rollback, observabilidade, gates e decisao de readiness.
+- Limite: nao executar deploy, tag, GitHub Release ou publicacao externa; Sprint 24 e unidade separada.
+- Modelo normativo incorporado: `docs/governance/PROMPT_5_RELEASE.md`; sua presenca formaliza o processo e nao resolve os bloqueadores tecnicos de readiness.
+
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
