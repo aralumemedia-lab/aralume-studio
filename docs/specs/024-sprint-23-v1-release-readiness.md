@@ -36,7 +36,7 @@ O resultado deve ser exatamente um destes:
 - ADRs de provedores autorizados e metricas controladas
 - Prompt autorizado da Sprint 23 anexado a execucao
 
-`PROMPT_5_RELEASE.md` foi solicitado como fonte, mas nao existe no repositorio nem nos anexos disponiveis no preflight. Esta ausencia deve ser registrada como lacuna documental; ela nao autoriza inferir conteudo adicional nem ampliar o escopo.
+O modelo normativo `PROMPT_5_RELEASE.md` foi incorporado em `docs/governance/PROMPT_5_RELEASE.md` a partir do material de governanca fornecido. Sua presenca corrige a lacuna documental, mas nao resolve os bloqueadores tecnicos nem autoriza release ou deploy.
 
 ## Historias incluidas
 

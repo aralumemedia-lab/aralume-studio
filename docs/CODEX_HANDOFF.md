@@ -201,7 +201,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - Branch: `codex/sprint-23-v1-release-readiness`.
 - Entrega: inventario de release, seguranca/configuracao, backup/restore, deploy/rollback, observabilidade, gates e decisao de readiness.
 - Limite: nao executar deploy, tag, GitHub Release ou publicacao externa; Sprint 24 e unidade separada.
-- Lacuna conhecida: `PROMPT_5_RELEASE.md` nao foi encontrado; o prompt anexado da Sprint 23 e a diretiva autorizada disponivel.
+- Modelo normativo incorporado: `docs/governance/PROMPT_5_RELEASE.md`; sua presenca formaliza o processo e nao resolve os bloqueadores tecnicos de readiness.
 
 ## Definition of Done
 

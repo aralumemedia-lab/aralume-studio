@@ -10,7 +10,7 @@ Functional baseline: `d2b53c9e7bfe15c8116c07375ca4b604fce03e97` — V1.0 remains
 
 - Readiness branch: `codex/sprint-23-v1-release-readiness`.
 - Starting functional baseline: `61d313bdb35dd0228a2bf4f5af3454263f588155`.
-- No production endpoint, real secret, deployment manifest, `PROMPT_5_RELEASE`, or approved recovery target was supplied.
+- No production endpoint, real secret, deployment manifest, or approved recovery target was supplied. The normative `PROMPT_5_RELEASE` model is now incorporated at `docs/governance/PROMPT_5_RELEASE.md`.
 - The security scan reviewed immutable revision `61d313bdb35dd0228a2bf4f5af3454263f588155`; its canonical report and ledgers are retained in the local Codex scan artifact directory and were not copied into product source.
 - No historical acceptance matrix or evidence directory was overwritten.
 
@@ -65,7 +65,7 @@ The repository-wide Codex Security review produced 42 reportable candidate findi
 2. Resolve the 55 deferred security rows with discovery, validation and attack-path receipts.
 3. Define and test production configuration, secret injection, readiness, observability, backup/restore, and rollback without exposing secret values.
 4. Disposition the two moderate and one low transitive dependency advisories reported by `bun audit`.
-5. Provide or formally close the missing `PROMPT_5_RELEASE` artifact.
+5. Treat the incorporated `PROMPT_5_RELEASE` model as governance only; it does not substitute for technical remediation or production evidence.
 
 ## Operational closure
 
