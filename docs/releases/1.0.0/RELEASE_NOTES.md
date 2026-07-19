@@ -8,7 +8,7 @@ This release unit records the formally accepted V1 functional baseline (`d2b53c9
 
 - V1.0 acceptance R14: 18/18 criteria passed.
 - Sprint 22 remediation: audit request IDs, editorial audit coverage, channel isolation, and E2E runner corrections.
-- Sprint 23 engineering gates: global TypeScript check, lint, backend check, official tests, build, and dependency audit recorded.
+- Sprint 23 engineering gates: lint, backend check, official tests, and build passed; the global TypeScript check was recorded as FAIL with exit code 2 and 18 pre-existing diagnostics, and the dependency audit remains a blocking follow-up.
 
 ## Release blockers
 
@@ -17,5 +17,6 @@ This release unit records the formally accepted V1 functional baseline (`d2b53c9
 - `/health` is process-liveness only and does not establish storage, media-tool, or integration readiness.
 - Security review retains deferred coverage for 55 ranked source rows; deferred is not safe/approved.
 - Dependency audit reports 2 moderate and 1 low transitive advisories; remediation/waiver is not recorded.
+- Global TypeScript check returns 18 pre-existing diagnostics on the accepted functional baseline; correction is required in a separate functional sprint/PR before production release.
 
 V1 acceptance remains valid as a functional acceptance of the evaluated SHA. It is not a production deployment authorization.

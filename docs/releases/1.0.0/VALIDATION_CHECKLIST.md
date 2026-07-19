@@ -7,7 +7,7 @@ Status: **NOT READY**
 - [x] `git diff --check`
 - [x] lint
 - [x] backend typecheck
-- [x] frontend/global `npx tsc --noEmit`
+- [ ] frontend/global `npx tsc --noEmit` — FAIL, exit code 2, 18 pre-existing diagnostics; branch output exactly matches `origin/main`
 - [x] official test suite
 - [x] build
 - [x] dependency audit captured
@@ -16,6 +16,10 @@ Status: **NOT READY**
 - [ ] rollback drill
 - [ ] authenticated ingress and API authorization test
 - [ ] readiness/metrics/alerts test
+
+### Global TypeScript condition
+
+The command `npx tsc --noEmit` returns exit code 2 with 18 diagnostics on both the Sprint 23 branch and `origin/main`. The errors affect test fixtures, mocks, and frontend typing; they were not introduced or aggravated by this documentation PR. They must be corrected in a separate functional sprint and PR before production release. No risk acceptance is recorded here.
 
 ## Security and runtime gates
 

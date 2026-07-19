@@ -20,7 +20,7 @@ Functional baseline: `d2b53c9e7bfe15c8116c07375ca4b604fce03e97` — V1.0 remains
 | --- | --- |
 | `git diff --check` | PASS |
 | `npm run lint` | PASS |
-| `npx tsc --noEmit` | PASS after safe mechanical type corrections; no diagnostics remain |
+| `npx tsc --noEmit` | FAIL — exit code 2; 18 diagnostics (branch and `origin/main`) |
 | `npm run backend:check` | PASS |
 | `npm test` | PASS — 78/78 |
 | Targeted audit, isolation, media, render, publication and YouTube tests | PASS — 21/21 |
@@ -29,7 +29,31 @@ Functional baseline: `d2b53c9e7bfe15c8116c07375ca4b604fce03e97` — V1.0 remains
 | `bun audit` | BLOCKING FOLLOW-UP — 3 transitive advisories: 2 moderate, 1 low |
 | Secret-pattern inspection | No hardcoded secret pattern found |
 
-The type corrections are limited to a missing input type field, test fixture typing, mock required fields, and UI payload/category typing. They do not add product behavior or weaken assertions.
+The reviewed documentation PR contains no type corrections. The 18 diagnostics are pre-existing in `origin/main`; the branch and baseline outputs are exactly equivalent, so this PR neither introduces nor aggravates them.
+
+### Global TypeScript diagnostics
+
+Command executed: `npx tsc --noEmit`.
+
+| State | Exit code | Diagnostics | Comparison |
+| --- | ---: | ---: | --- |
+| `codex/sprint-23-v1-release-readiness` at `a7766bb56eb8a8bef2bc239fde5737f8b94def95` | 2 | 18 | Reproduced |
+| `origin/main` at `61d313bdb35dd0228a2bf4f5af3454263f588155` | 2 | 18 | Exactly equivalent |
+
+Affected files and categories:
+
+| File | Count | Category |
+| --- | ---: | --- |
+| `server/test/clips.test.ts` | 6 | Test fixture status/RenderJob typing and missing `undici` declarations |
+| `server/test/editorial.test.ts` | 4 | Test input includes `channelId` absent from `ScenePlanCreateInput` |
+| `server/test/metrics.test.ts` | 1 | Test fixture tuple inference incompatible with `PerformanceMetric` |
+| `src/mocks/mock-metrics.ts` | 4 | Mock `PublicationJob` missing required fields |
+| `src/routes/media-assets.tsx` | 2 | Frontend payload `category`/`title` typing |
+| `src/routes/production.tsx` | 1 | Frontend optional visual-plan value typing |
+
+Technical impact: the global TypeScript contract is not clean at the reviewed functional baseline. The diagnostics are outside the documentary scope of this PR, but they remain a residual engineering risk and a release-readiness blocker.
+
+Production condition: all 18 diagnostics must be corrected and validated in a separate functional sprint and PR before productive release. No risk acceptance is created by this document update.
 
 ## E2E runners
 
