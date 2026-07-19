@@ -2,6 +2,8 @@
 
 ## Contracts
 
+- Sprint 21 contract decision: use real backend cockpit projections over existing repositories; do not expose frontend mock data.
+
 - Reconcile cockpit payloads with the current `src/contracts/types.ts` models.
 - Keep the API envelope and error codes unchanged.
 - Confirm the cockpit data contracts before any implementation branch.
@@ -28,12 +30,12 @@
 
 ## Audit
 
-- Record cockpit mutations with requestId, channelId, entityType, entityId, actor and action.
+- No cockpit mutation is in scope. Preserve the existing audit query surface; any future mutation must record requestId, channelId, entityType, entityId, actor and action.
 
 ## Tests
 
 - Add or extend route and service tests for dashboard and agent-office.
-- Add browser E2E coverage for create, reload, isolation, duplicate and invalid payload scenarios.
+- Add browser E2E coverage for reload, isolation, loading, empty, error and success scenarios.
 - Add screenshot coverage at all required viewports.
 - Add the reusable evidence replay for the final acceptance.
 

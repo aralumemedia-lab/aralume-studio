@@ -2,11 +2,13 @@
 
 ## Frontend
 
+- Sprint 21 is a single vertical slice covering H19.1, H19.2 and H19.3.
+
 - `/dashboard`
-  - Replace cockpit mock imports with real API data.
+  - Replace cockpit mock imports with real API data from Sprint 21 endpoints.
   - Keep list, detail and error states channel-scoped.
 - `/agent-office`
-  - Replace cockpit mock imports with real API data.
+  - Replace cockpit mock imports with real API data from Sprint 21 endpoints.
   - Keep snapshot, queue and handoff states channel-scoped.
 - Browser evidence
   - Make the dashboard and agent-office evidence reusable for the final reaccept.
@@ -44,7 +46,7 @@
 ## Tests
 
 - Add or extend route and service tests for dashboard and agent-office.
-- Add browser E2E coverage for create, reload, isolation, loading, empty, error and success states.
+- Add browser E2E coverage for reload, isolation, loading, empty, error and success states; cockpit APIs remain read-only in this sprint.
 - Add screenshot coverage at all required viewports.
 - Add the reusable evidence sweep for the final acceptance.
 

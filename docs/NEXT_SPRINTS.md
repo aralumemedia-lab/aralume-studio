@@ -77,7 +77,7 @@
 | Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | funcional + frontend + backend + integracao | Sprint 17 concluida | render e cortes operaveis com reload, auditoria e isolamento |
 | Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | funcional + frontend + backend + governance | E17 concluida | mergeada pela PR #32 |
 | Sprint 20 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | funcional + frontend + backend + governance | Sprint 19 aceita | mergeada pela PR #33; pacote com confirmacao humana e sem auto-send |
-| Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
+| Sprint 21 (em implementacao) | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
 | Gate final | R14-REACCEPT | V1-01..V1-18 | evidence / reaccept | E16, E17, E18, E19 concluidos | novo V1 Acceptance com prova nova no mesmo head |
 
 ## Condicoes para iniciar R14-REACCEPT
@@ -163,7 +163,7 @@
 1. Sprint 19 mergeada: governanca e gates.
 2. Sprint 20 mergeada pela PR #33: publicacao assistida sem auto-send.
 3. E18 concluido apos os dois gates.
-4. Sprint proposta D: E19, R14-T01 e R14-T02.
+4. Sprint 21: E19, R14-T01 e R14-T02.
 5. `R14-REACCEPT` somente depois de E16, E17, E18 e E19.
 
-Sprint 20 está integrada pela PR #33. Nenhuma sprint seguinte foi iniciada. V1.0 permanece `NAO ACEITA`.
+Sprint 21 está formalizada e em implementação nesta branch. Nenhuma sprint seguinte foi iniciada. V1.0 permanece `NAO ACEITA`.

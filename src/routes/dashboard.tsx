@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/layout/AppShell";
 import { useChannelContext } from "@/components/aralume/channel-context-state";
 import {
   getAuditLogs,
+  describeCockpitsApiError,
   getDashboardSummary,
   getApprovals,
   getPerformanceMetrics,
@@ -22,7 +23,14 @@ import {
   getPublicationJobs,
   getWorkflowRuns,
 } from "@/services/api-client";
-import { Card, EmptyState, KpiCard, SectionHeader } from "@/components/ui/data-card";
+import {
+  Card,
+  EmptyState,
+  ErrorState,
+  KpiCard,
+  LoadingState,
+  SectionHeader,
+} from "@/components/ui/data-card";
 import { formatCurrencyCents, formatDateTime, formatNumber, formatRelative } from "@/lib/format";
 import { CompactTable, type Column } from "@/components/ui/compact-table";
 import {
@@ -119,6 +127,20 @@ function DashboardPage() {
           </>
         }
       />
+
+      <div className="px-6 pt-4">
+        {summaryQ.isLoading || workflowsQ.isLoading ? (
+          <LoadingState label="Carregando dados operacionais" />
+        ) : summaryQ.error || workflowsQ.error ? (
+          <ErrorState
+            message={describeCockpitsApiError(summaryQ.error ?? workflowsQ.error)}
+            onRetry={() => {
+              void summaryQ.refetch();
+              void workflowsQ.refetch();
+            }}
+          />
+        ) : null}
+      </div>
 
       <div className="p-6 space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">

@@ -5,23 +5,23 @@ normativos das sprints.
 
 ## Catalogo de epicos
 
-| ID | Epico | Objetivo | Status | Gate | Dependencias |
-| --- | --- | --- | --- | --- | --- |
-| E10 | Renderizacao Controlada | Entregar renderizacao de video controlada e auditavel. | completed | Video curto de teste com logs, custo e validacao. | - |
-| E11 | Cortes Derivados Controlados | Entregar cortes persistentes e vinculados ao video principal. | completed | Pelo menos um corte valido vinculado. | - |
-| E12 | Publicacao Assistida | Preparar publicacao com aprovacao, compliance e sem envio automatico. | completed | Pacote pronto sem envio externo automatico. | E10, E11 |
-| E13 | Integracoes Reais Autorizadas | Conectar provedores com governanca, autorizacao e seguranca. | completed | Integracao oficial sem segredo e com destino server-side comprovado. | E12; ADR 002; PR #22 |
-| E14 | Metricas e Aprendizado | Fechar o ciclo com metricas por canal e recomendacoes assistidas. | completed | Metricas geram recomendacao editorial por canal. | E13 concluido; PR #23 mergeada |
-| E15 | Hardening V1.0 | Consolidar a base operacional demonstravel para V1.0. | completed | Gate de aceite executado; veredito binario `V1.0 NÃƒÆ’O ACEITA`; remediacao formalizada abaixo. | E13 e E14 concluidos |
+| ID  | Epico                         | Objetivo                                                              | Status    | Gate                                                                                            | Dependencias                   |
+| --- | ----------------------------- | --------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------- | ------------------------------ |
+| E10 | Renderizacao Controlada       | Entregar renderizacao de video controlada e auditavel.                | completed | Video curto de teste com logs, custo e validacao.                                               | -                              |
+| E11 | Cortes Derivados Controlados  | Entregar cortes persistentes e vinculados ao video principal.         | completed | Pelo menos um corte valido vinculado.                                                           | -                              |
+| E12 | Publicacao Assistida          | Preparar publicacao com aprovacao, compliance e sem envio automatico. | completed | Pacote pronto sem envio externo automatico.                                                     | E10, E11                       |
+| E13 | Integracoes Reais Autorizadas | Conectar provedores com governanca, autorizacao e seguranca.          | completed | Integracao oficial sem segredo e com destino server-side comprovado.                            | E12; ADR 002; PR #22           |
+| E14 | Metricas e Aprendizado        | Fechar o ciclo com metricas por canal e recomendacoes assistidas.     | completed | Metricas geram recomendacao editorial por canal.                                                | E13 concluido; PR #23 mergeada |
+| E15 | Hardening V1.0                | Consolidar a base operacional demonstravel para V1.0.                 | completed | Gate de aceite executado; veredito binario `V1.0 NÃƒÆ’O ACEITA`; remediacao formalizada abaixo. | E13 e E14 concluidos           |
 
 ## Sprints formalizadas
 
-| Sprint | Nome | Epico | Spec | Estado | Observacao |
-| --- | --- | --- | --- | --- | --- |
-| S11 | Publicacao Assistida | E12 | `docs/specs/011-publication-assisted.md` | completed | PR #19 mergeado. |
-| S12 | Integracoes Reais Autorizadas | E13 | `docs/specs/015-authorized-real-integrations.md` | completed | PR #22; validacao real concluida em 2026-07-15. |
-| S13 | Metricas e Aprendizado | E14 | `docs/specs/014-metrics-learning.md` | completed | PR #23 mergeada por merge commit `9b89d1be04e7a6e319efb9a957282097c4854f31`. |
-| S14 | V1 Acceptance | E15 | `docs/specs/012-v1-acceptance.md` | completed | Gate concluido com veredito `V1.0 NÃƒÆ’O ACEITA`; 13 criterios pendentes; PR #24 documental. |
+| Sprint | Nome                          | Epico | Spec                                             | Estado    | Observacao                                                                                   |
+| ------ | ----------------------------- | ----- | ------------------------------------------------ | --------- | -------------------------------------------------------------------------------------------- |
+| S11    | Publicacao Assistida          | E12   | `docs/specs/011-publication-assisted.md`         | completed | PR #19 mergeado.                                                                             |
+| S12    | Integracoes Reais Autorizadas | E13   | `docs/specs/015-authorized-real-integrations.md` | completed | PR #22; validacao real concluida em 2026-07-15.                                              |
+| S13    | Metricas e Aprendizado        | E14   | `docs/specs/014-metrics-learning.md`             | completed | PR #23 mergeada por merge commit `9b89d1be04e7a6e319efb9a957282097c4854f31`.                 |
+| S14    | V1 Acceptance                 | E15   | `docs/specs/012-v1-acceptance.md`                | completed | Gate concluido com veredito `V1.0 NÃƒÆ’O ACEITA`; 13 criterios pendentes; PR #24 documental. |
 
 ## Historias da Sprint 11
 
@@ -66,37 +66,37 @@ aplicacao automatica de recomendacoes, migrations SQL, hardening e V1 Acceptance
 Esta secao consolida a sequencia apos a Sprint 14 e formaliza a remediacao completa do E16.
 Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 
-| Sequencia | Epic | Criterios V1 | Itens R14 | Tipo principal | Saida esperada |
-| --- | --- | --- | --- | --- | --- |
-| Sprint 15 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04 | funcional + frontend + UX | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend |
-| Sprint 16 (entregue) | E16 - Pipeline Editorial Operavel pelo Frontend | V1-05, V1-06 | R14-05, R14-06 | funcional + frontend + UX | roteiro versionado, versoes e plano visual com cenas operaveis no frontend |
-| Sprint 17 (entregue pela PR #28) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08 | R14-07, R14-08 | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento |
-| Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10 | R14-09, R14-10 | funcional + frontend + backend + integracao | render e cortes operaveis no frontend com reload, auditoria e isolamento |
-| Sprint 19 (mergeada pela PR #32) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13 | funcional + frontend + backend + governance | qualidade, compliance e aprovacao humana operaveis no frontend |
-| Sprint 20 (entregue pela PR #33) | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | R14-14 | funcional + frontend + backend + governance | pacote de publicacao com confirmacao humana, readiness e sem auto-send |
-| Sprint proposta D | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | R14-T01, R14-T02 | technical + evidence + QA | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
-| Final gate | R14-REACCEPT | V1-01..V1-18 | R14-02..R14-14, R14-T01, R14-T02 | evidence / reaccept | novo V1 Acceptance com prova nova no mesmo head |
+| Sequencia                                 | Epic                                                   | Criterios V1        | Itens R14                        | Tipo principal                              | Saida esperada                                                                                      |
+| ----------------------------------------- | ------------------------------------------------------ | ------------------- | -------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Sprint 15 (entregue)                      | E16 - Pipeline Editorial Operavel pelo Frontend        | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04           | funcional + frontend + UX                   | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend                           |
+| Sprint 16 (entregue)                      | E16 - Pipeline Editorial Operavel pelo Frontend        | V1-05, V1-06        | R14-05, R14-06                   | funcional + frontend + UX                   | roteiro versionado, versoes e plano visual com cenas operaveis no frontend                          |
+| Sprint 17 (entregue pela PR #28)          | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08        | R14-07, R14-08                   | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento                  |
+| Sprint 18 (entregue pela PR #30)          | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10        | R14-09, R14-10                   | funcional + frontend + backend + integracao | render e cortes operaveis no frontend com reload, auditoria e isolamento                            |
+| Sprint 19 (mergeada pela PR #32)          | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13           | funcional + frontend + backend + governance | qualidade, compliance e aprovacao humana operaveis no frontend                                      |
+| Sprint 20 (entregue pela PR #33)          | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-14               | R14-14                           | funcional + frontend + backend + governance | pacote de publicacao com confirmacao humana, readiness e sem auto-send                              |
+| Sprint 21 (em implementacao nesta branch) | E19 - Cockpits Reais e Evidencias Transversais         | R14-T01, R14-T02    | R14-T01, R14-T02                 | technical + evidence + QA                   | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis; pendente de revisao e merge |
+| Final gate                                | R14-REACCEPT                                           | V1-01..V1-18        | R14-02..R14-14, R14-T01, R14-T02 | evidence / reaccept                         | novo V1 Acceptance com prova nova no mesmo head                                                     |
 
 ## Mapa de criterio para remediacao
 
-| Criterio V1 | R14 | Epic | Sprint sugerida |
-| --- | --- | --- | --- |
-| V1-02 | R14-02 | E16 | Sprint 15 |
-| V1-03 | R14-03 | E16 | Sprint 15 |
-| V1-04 | R14-04 | E16 | Sprint 15 |
-| V1-05 | R14-05 | E16 | Sprint 16 |
-| V1-06 | R14-06 | E16 | Sprint 16 |
-| V1-07 | R14-07 | E17 | Sprint 17 |
-| V1-08 | R14-08 | E17 | Sprint 17 |
-| V1-09 | R14-09 | E17 | Sprint 18 |
-| V1-10 | R14-10 | E17 | Sprint 18 |
-| V1-11 | R14-11 | E18 | Sprint 19 |
-| V1-12 | R14-12 | E18 | Sprint 19 |
-| V1-13 | R14-13 | E18 | Sprint 19 |
-| V1-14 | R14-14 | E18 | Sprint 20 |
-| Dashboard real | R14-T01 | E19 | Sprint proposta D |
-| Escritorio de Agentes real | R14-T02 | E19 | Sprint proposta D |
-| Reaccept final | R14-REACCEPT | final gate | after Sprint D |
+| Criterio V1                | R14          | Epic       | Sprint sugerida |
+| -------------------------- | ------------ | ---------- | --------------- |
+| V1-02                      | R14-02       | E16        | Sprint 15       |
+| V1-03                      | R14-03       | E16        | Sprint 15       |
+| V1-04                      | R14-04       | E16        | Sprint 15       |
+| V1-05                      | R14-05       | E16        | Sprint 16       |
+| V1-06                      | R14-06       | E16        | Sprint 16       |
+| V1-07                      | R14-07       | E17        | Sprint 17       |
+| V1-08                      | R14-08       | E17        | Sprint 17       |
+| V1-09                      | R14-09       | E17        | Sprint 18       |
+| V1-10                      | R14-10       | E17        | Sprint 18       |
+| V1-11                      | R14-11       | E18        | Sprint 19       |
+| V1-12                      | R14-12       | E18        | Sprint 19       |
+| V1-13                      | R14-13       | E18        | Sprint 19       |
+| V1-14                      | R14-14       | E18        | Sprint 20       |
+| Dashboard real             | R14-T01      | E19        | Sprint 21       |
+| Escritorio de Agentes real | R14-T02      | E19        | Sprint 21       |
+| Reaccept final             | R14-REACCEPT | final gate | after Sprint 21 |
 
 ## Observacoes
 
@@ -111,24 +111,24 @@ Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 
 Esta secao transforma os 13 criterios `FAIL`/`NOT PROVEN` e os dois cockpits mockados em trabalho planejavel. Ela nao inicia sprint, nao autoriza implementacao e nao altera o veredito da V1.0. A Sprint 15 e a Sprint 16 foram executadas e E16 esta concluido.
 
-| ID | Tipo | Criterio / superficie | Grupo | Prioridade | Dependencias |
-| --- | --- | --- | --- | --- | --- |
-| R14-02 | Historia funcional | V1-02 Perfil editorial | A Ã¢â‚¬â€ Pipeline editorial | P1 | V1-01 |
-| R14-03 | Historia funcional | V1-03 Pauta | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-02 |
-| R14-04 | Historia funcional | V1-04 Pesquisa/fontes | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-03 |
-| R14-05 | Historia funcional | V1-05 Roteiro versionado | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-04 |
-| R14-06 | Historia funcional | V1-06 Plano visual/cenas | A Ã¢â‚¬â€ Pipeline editorial | P1 | R14-05 |
-| R14-07 | Historia funcional | V1-07 Narracao autorizada | B Ã¢â‚¬â€ Midia e producao | P1 | R14-06 |
-| R14-08 | Historia funcional | V1-08 Ativos rastreaveis | B Ã¢â‚¬â€ Midia e producao | P1 | R14-07 |
-| R14-09 | Historia funcional | V1-09 Render controlado | B Ã¢â‚¬â€ Midia e producao | P1 | R14-08 |
-| R14-10 | Historia funcional | V1-10 Corte derivado | B Ã¢â‚¬â€ Midia e producao | P1 | R14-09 |
-| R14-11 | Historia funcional | V1-11 Qualidade | C Ã¢â‚¬â€ Governanca | P1 | R14-09, R14-10 |
-| R14-12 | Historia funcional | V1-12 Conformidade | C Ã¢â‚¬â€ Governanca | P1 | R14-08, R14-11 |
-| R14-13 | Historia funcional | V1-13 Aprovacao humana | C Ã¢â‚¬â€ Governanca | P1 | R14-11, R14-12 |
-| R14-14 | Historia funcional | V1-14 Publicacao assistida | C Ã¢â‚¬â€ Governanca | P1 | R14-13 |
-| R14-T01 | Tarefa tecnica | Dashboard real | D Ã¢â‚¬â€ Cockpits reais | P0 | APIs reais de custos, metricas, auditoria e workflows |
-| R14-T02 | Tarefa tecnica | Escritorio de Agentes real | D Ã¢â‚¬â€ Cockpits reais | P0 | Contratos reais de agentes, workflows e handoffs |
-| R14-REACCEPT | Tarefa tecnica | Nova execucao V1 Acceptance | E Ã¢â‚¬â€ Reaceite | P1 | R14-02 a R14-14, R14-T01 e R14-T02 |
+| ID           | Tipo               | Criterio / superficie       | Grupo                        | Prioridade | Dependencias                                          |
+| ------------ | ------------------ | --------------------------- | ---------------------------- | ---------- | ----------------------------------------------------- |
+| R14-02       | Historia funcional | V1-02 Perfil editorial      | A Ã¢â‚¬â€ Pipeline editorial | P1         | V1-01                                                 |
+| R14-03       | Historia funcional | V1-03 Pauta                 | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-02                                                |
+| R14-04       | Historia funcional | V1-04 Pesquisa/fontes       | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-03                                                |
+| R14-05       | Historia funcional | V1-05 Roteiro versionado    | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-04                                                |
+| R14-06       | Historia funcional | V1-06 Plano visual/cenas    | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-05                                                |
+| R14-07       | Historia funcional | V1-07 Narracao autorizada   | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-06                                                |
+| R14-08       | Historia funcional | V1-08 Ativos rastreaveis    | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-07                                                |
+| R14-09       | Historia funcional | V1-09 Render controlado     | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-08                                                |
+| R14-10       | Historia funcional | V1-10 Corte derivado        | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-09                                                |
+| R14-11       | Historia funcional | V1-11 Qualidade             | C Ã¢â‚¬â€ Governanca         | P1         | R14-09, R14-10                                        |
+| R14-12       | Historia funcional | V1-12 Conformidade          | C Ã¢â‚¬â€ Governanca         | P1         | R14-08, R14-11                                        |
+| R14-13       | Historia funcional | V1-13 Aprovacao humana      | C Ã¢â‚¬â€ Governanca         | P1         | R14-11, R14-12                                        |
+| R14-14       | Historia funcional | V1-14 Publicacao assistida  | C Ã¢â‚¬â€ Governanca         | P1         | R14-13                                                |
+| R14-T01      | Tarefa tecnica     | Dashboard real              | D Ã¢â‚¬â€ Cockpits reais     | P0         | APIs reais de custos, metricas, auditoria e workflows |
+| R14-T02      | Tarefa tecnica     | Escritorio de Agentes real  | D Ã¢â‚¬â€ Cockpits reais     | P0         | Contratos reais de agentes, workflows e handoffs      |
+| R14-REACCEPT | Tarefa tecnica     | Nova execucao V1 Acceptance | E Ã¢â‚¬â€ Reaceite           | P1         | R14-02 a R14-14, R14-T01 e R14-T02                    |
 
 ### Definition of Ready comum
 
@@ -276,7 +276,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 1. Sprint 19: H18.1, H18.2 e H18.3, mergeada pela PR #32, cobrindo V1-11 a V1-13 e R14-11 a R14-13.
 2. Sprint 20: H18.4, entregue pela PR #33, cobrindo V1-14 e R14-14 apos o gate da Sprint 19.
 3. E18 foi concluido depois das duas fatias, com auditoria correlacionada por requestId e sem auto-send externo.
-4. E19: R14-T01 e R14-T02.
+4. Sprint 21: E19, R14-T01, R14-T02 e evidencia transversal.
 5. R14-REACCEPT: etapa final apos E16, E17, E18 e E19.
 
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
