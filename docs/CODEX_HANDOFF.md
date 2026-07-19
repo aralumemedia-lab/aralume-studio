@@ -125,8 +125,8 @@ recriacao do frontend e limpeza administrativa da S12.
 - Sprint 20 foi revisada e integrada em `main` pela PR #33. E17 esta integrado pela PR #30 e Sprint 19 pela PR #32.
 - Gate final: R14-REACCEPT somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
 - Sprint 19 foi mergeada pela PR #32 e Sprint 20 pela PR #33: H18.1 a H18.4 estao integradas; E19, `R14-REACCEPT`, release, tag e deploy permanecem fora desta execucao.
-- Sprint 21 formaliza H19.1, H19.2 e H19.3 em uma fatia vertical unica; E19 permanece pendente ate revisao e merge.
-- Sprint 21 implementa os endpoints reais de cockpit, remove o caminho `mock-api` do Dashboard e do Escritorio de Agentes, e gera `docs/acceptance/v1/V1_SPRINT21_EVIDENCE.md` com o runner `node scripts/sprint21-browser-e2e.mjs`. A branch ainda aguarda revisao e PR; E19 nao esta integrado.
+- Sprint 21 formalizou H19.1, H19.2 e H19.3 em uma fatia vertical unica e foi mergeada pela PR #34; E19 esta concluido em `main`.
+- Sprint 21 implementou os endpoints reais de cockpit, removeu o caminho `mock-api` do Dashboard e do Escritorio de Agentes, e gerou `docs/acceptance/v1/V1_SPRINT21_EVIDENCE.md` com o runner `node scripts/sprint21-browser-e2e.mjs`.
 
 ## Sprint 15 - formalizacao documental
 
@@ -150,7 +150,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - Itens R14: R14-07 e R14-08.
 - Sequencia: primeira fatia funcional do E17, sem render nem cortes.
 - Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
-- Pendente: E18, E19 e `R14-REACCEPT` continuam pendentes.
+- Pendente: `R14-REACCEPT` continua pendente; E19 foi concluido pela PR #34.
 - Evidencia reproduzivel: `node scripts/sprint17-browser-e2e.mjs` e `screenshots/sprint-17/`.
 - Produto: E17 completo e integrado em `main` pela PR #30; V1.0 continua `NAO ACEITA`; nenhum reaceite ou release executado.
 

@@ -3,7 +3,7 @@
 ## H19.1 - Dashboard real
 
 - Sprint: Sprint 21
-- Status: implemented on branch; pending review and merge
+- Status: completed and integrated by PR #34
 
 - Actor: operator
 - Objective: open `/dashboard` and see real channel-scoped operational data instead of mock-api output.
@@ -34,7 +34,7 @@
 ## H19.2 - Escritorio de agentes real
 
 - Sprint: Sprint 21
-- Status: implemented on branch; pending review and merge
+- Status: completed and integrated by PR #34
 
 - Actor: operator
 - Objective: open `/agent-office` and see real workflow, handoff and queue data instead of mock-api output.
@@ -65,7 +65,7 @@
 ## H19.3 - Evidencia transversal para o reaccept
 
 - Sprint: Sprint 21
-- Status: implemented on branch; pending review and merge
+- Status: completed and integrated by PR #34
 
 - Actor: product owner tecnico / revisor tecnico
 - Objective: reuse the same browser sweep, screenshots and data bootstrap for the final V1 reaccept.

@@ -5,6 +5,7 @@ This supplemental bundle records Sprint 21 evidence for E19. It does not change 
 ## Head and procedure
 
 - Branch: `codex/sprint-21-real-cockpits-e-evidencias-transversais`
+- Integrated by PR #34 with merge commit `0a7a79e93a5fdf5c8262e09b8828110cdca227f1`
 - Baseline: `main = origin/main = 2b47cf25e2c74f576ef58bc54620ea645d1c00bf`
 - Runner: `node scripts/sprint21-browser-e2e.mjs`
 - Backend: `tsx server/src/index.ts`, `ARALUME_ENV=test`, temporary process-local storage

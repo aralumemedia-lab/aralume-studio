@@ -1,6 +1,6 @@
 # E19 - Cockpits Reais e Evidencias Transversais
 
-- Status: implementation in progress on branch; pending review and merge
+- Status: completed and integrated by PR #34
 - Epic name: Cockpits Reais e Evidencias Transversais
 - Initiative: Remediacao da Operabilidade da V1
 - Priority: P0
@@ -22,9 +22,9 @@ Labels used below: `implemented`, `partial`, `only backend`, `only mock`, `absen
 
 | Capability | Frontend state | Backend state | Contracts | Persistence | Audit | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| Dashboard real / R14-T01 | implementation in Sprint 21 | real repository projection | implemented | same-process reload | existing read-only audit data | API and browser evidence pending review |
-| Agent Office real / R14-T02 | implementation in Sprint 21 | real repository projection | implemented | same-process reload | no new mutation in this sprint | API and browser evidence pending review |
-| Evidence harness | implementation in Sprint 21 | n/a | reusable runner contract | controlled process | n/a | screenshot and replay evidence pending review |
+| Dashboard real / R14-T01 | implemented in Sprint 21 | real repository projection | implemented | same-process reload | existing read-only audit data | API and browser evidence in E-13 |
+| Agent Office real / R14-T02 | implemented in Sprint 21 | real repository projection | implemented | same-process reload | no new mutation in this sprint | API and browser evidence in E-13 |
+| Evidence harness | implemented in Sprint 21 | n/a | reusable runner contract | controlled process | n/a | screenshot and replay evidence in E-13 |
 
 ## V1 criteria covered
 
