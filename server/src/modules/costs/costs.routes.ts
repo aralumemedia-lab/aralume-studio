@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import { z } from "zod";
 
 import { AppError } from "../../http/errors.js";
+import { getTrustedAuditActor } from "../../http/auth.js";
 import { createListSuccessResponse, createSuccessResponse } from "../../http/response.js";
 import {
   channelIdParamsSchema,
@@ -57,7 +58,11 @@ export function createCostsRouter(service: CostsService): Router {
 
   router.patch("/operational-modes/global", (req, res) => {
     const body = parseBody(policyUpdateSchema, req.body);
-    const updated = service.updateGlobalOperationalModePolicy(body, getActor(req));
+    const updated = service.updateGlobalOperationalModePolicy(
+      body,
+      getTrustedAuditActor(req),
+      getRequestId(res),
+    );
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
@@ -67,14 +72,19 @@ export function createCostsRouter(service: CostsService): Router {
     const updated = service.updateChannelOperationalModePolicy(
       params.channelId,
       body,
-      getActor(req),
+      getTrustedAuditActor(req),
+      getRequestId(res),
     );
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.post("/operational-modes/evaluate", (req, res) => {
     const body = parseBody(operationalActionEvaluationSchema, req.body);
-    const decision = service.evaluateOperationalAction(body);
+    const decision = service.evaluateOperationalAction(
+      body,
+      getTrustedAuditActor(req),
+      getRequestId(res),
+    );
 
     if (!decision.allowed) {
       const errorCode =
@@ -147,11 +157,6 @@ function validationError(message: string, issues: z.ZodIssue[]) {
       issues: formatValidationIssues(issues),
     },
   });
-}
-
-function getActor(req: { header(name: string): string | undefined }): string | undefined {
-  const actor = req.header("x-aralume-actor");
-  return actor?.trim() || undefined;
 }
 
 function getRequestId(res: Response): string {

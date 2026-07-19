@@ -3,6 +3,7 @@ import express from "express";
 import { loadEnv, type RuntimeEnv } from "./env.js";
 import {
   errorHandlerMiddleware,
+  jsonDepthMiddleware,
   jsonParserMiddleware,
   notFoundMiddleware,
   requestContextMiddleware,
@@ -234,6 +235,7 @@ export function createApp(options: CreateAppOptions = {}) {
     }),
   );
   app.use(jsonParserMiddleware());
+  app.use(jsonDepthMiddleware());
   app.get("/health", createHealthHandler(env));
   app.use("/api", createAuthorizationMiddleware(auditRepository));
   app.use("/api/channels", createChannelsRouter(channelsService));

@@ -38,12 +38,14 @@ Fechar os controles de entrada e isolamento que impedem a preparacao produtiva: 
 
 - Media assets, validacao de storage/integridade, usos, videos, renders, cortes, arquivos de cortes e importacoes usam a mesma fronteira de autenticacao/autorizacao.
 - O ativo de entrada deve existir no canal autorizado; referencias e paths arbitrarios sao rejeitados.
+- Um ativo marcado como `available` somente e persistido apos confirmar arquivo regular, nao-symlink, existencia, tamanho real, checksum e tipo real compativel com MIME/extensao declarados.
 - Downloads e leituras de arquivo verificam canal, status, storage root e arquivo regular antes de responder.
 - Erros de acesso cross-channel sao sanitizados e nao retornam paths internos ou ids de objetos de outros canais.
 
 ### H24.4 - Limites de upload e importacao
 
 - O parser JSON aplica limite de corpo; schemas aplicam limites de itens, strings, MIME, extensao, path e campos obrigatorios.
+- A travessia iterativa aplica `MAX_JSON_DEPTH=32` a objetos e arrays antes de validacao de dominio ou persistencia; payloads acima do limite falham com resposta sanitizada.
 - Importacao de storage aceita somente path relativo normalizado sob o root autorizado e sob o prefixo do canal.
 - Arquivos devem ser regulares, existir, ter tamanho dentro do limite, MIME/extensao permitidos e metadados tecnicos validaveis.
 - Duplicatas, traversal, storage cross-channel, payload excessivo e quantidade excessiva de itens falham com resposta sanitizada.
@@ -52,6 +54,7 @@ Fechar os controles de entrada e isolamento que impedem a preparacao produtiva: 
 ### H24.5 - Auditoria e evidencia negativa
 
 - Decisoes relevantes registram `requestId`, ator, papel, `channelId`, acao, recurso, resultado, motivo sanitizado e timestamp.
+- O ator auditavel e derivado exclusivamente do principal autenticado validado; campos declarativos como `decidedBy` e headers de ator nao substituem a identidade persistida.
 - Tokens, cookies, segredos, credenciais e paths sensiveis nao entram no log.
 - Testes cobrem ausencia/invalidade de identidade, permissao insuficiente, canal divergente, IDOR, midia cross-channel, arquivo nao autorizado, traversal, MIME/extensao, payload e quantidade.
 - Testes positivos preservam operacoes autorizadas no canal correto e os fluxos R14 ja aceitos.

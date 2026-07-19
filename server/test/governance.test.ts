@@ -440,7 +440,7 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
       meta: { requestId: string };
     };
     assert.equal(approvedPayload.data.status, "approved");
-    assert.equal(approvedPayload.data.decidedBy, "Ana Ribeiro");
+    assert.equal(approvedPayload.data.decidedBy, "test-harness");
 
     const historyResponse = await fetch(
       `${baseUrl}/api/approvals/${createdPayload.data.id}/history?channelId=ch_historia`,
@@ -491,7 +491,7 @@ test("governance HTTP routes expose envelopes and domain errors", async () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           channelId: "ch_historia",
-          decidedBy: "Ana Ribeiro",
+          decidedBy: "attacker",
           decisionReason: "Tentativa bloqueada.",
         }),
       },

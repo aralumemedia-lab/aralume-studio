@@ -21,19 +21,28 @@
 
 ## Validações reproduzíveis
 
-| Comando                             | Resultado                                            |
-| ----------------------------------- | ---------------------------------------------------- |
-| `git diff --check`                  | PASS                                                 |
-| `npm run lint`                      | PASS                                                 |
-| `npm run backend:check`             | PASS                                                 |
-| `npm test`                          | PASS — 89/89                                         |
-| `npm run build`                     | PASS                                                 |
-| `npx tsc --noEmit` na branch        | FAIL — exit code 2; 14 diagnósticos restantes        |
-| `npx tsc --noEmit` em `origin/main` | FAIL — exit code 2; 18 diagnósticos preexistentes    |
-| `npm audit --audit-level=high`      | NÃO EXECUTÁVEL — repositório não possui lockfile npm |
-| inspeção de segredos com `rg`       | PASS — nenhum padrão sensível encontrado             |
+| Comando                             | Resultado                                           |
+| ----------------------------------- | --------------------------------------------------- |
+| `git diff --check`                  | PASS                                                |
+| `npm run lint`                      | PASS                                                |
+| `npm run backend:check`             | PASS                                                |
+| `npm test`                          | PASS — 91/91                                        |
+| `npm run build`                     | PASS                                                |
+| `npx tsc --noEmit` na branch        | FAIL — exit code 2; 14 diagnósticos restantes       |
+| `npx tsc --noEmit` em `origin/main` | FAIL — exit code 2; 18 diagnósticos preexistentes   |
+| `bun audit`                         | FAIL — 3 advisories transitivos (1 low, 2 moderate) |
+| inspeção de segredos com `rg`       | PASS — nenhum padrão sensível encontrado            |
 
 Os quatro diagnósticos de `ScenePlanCreateInput.channelId` foram diretamente tocados pela exigência de escopo da Sprint 24 e corrigidos. Os 14 restantes permanecem equivalentes ao baseline nas áreas de `server/test/clips.test.ts`, `server/test/metrics.test.ts`, `src/mocks/mock-metrics.ts`, `src/routes/media-assets.tsx` e `src/routes/production.tsx`; não foram ampliados pela sprint.
+
+## Correções dos findings da revisão independente
+
+- Identidade de auditoria: `decidedBy`, `x-aralume-actor` e campos equivalentes deixaram de ser fontes de identidade confiável. Governança e políticas usam o principal autenticado (`test-harness` somente nos testes locais) e propagam o `requestId` diretamente para `AuditLog.requestId`, com papel e identificador do ator apenas em metadata sanitizada.
+- Registro de mídia: estados `available` exigem arquivo regular existente, não-symlink, dentro do storage root e do namespace do canal, tamanho real, checksum real e assinatura de conteúdo compatível com MIME/extensão. Rejeições não persistem ativo nem auditoria falsa de sucesso.
+- Profundidade JSON: `MAX_JSON_DEPTH=32` é aplicado por travessia iterativa sobre objetos e arrays. Payloads no limite são aceitos; acima do limite, inclusive 1.200 níveis, retornam `413 VALIDATION_ERROR` sem stack trace e sem persistência.
+- O runner da Sprint 17 passou a criar fixtures reais e determinísticas no storage temporário para preservar a validação de ativos `available`; isso não altera o escopo funcional da sprint.
+
+Testes focados dos três findings passaram: identidade forjada em decisão e política, requestId de eventos de política, arquivo inexistente/diretório/conteúdo/tamanho/checksum cross-channel e traversal iterativo abaixo/no/acima do limite com arrays e 1.200 níveis.
 
 Testes específicos executados incluem autenticação ausente/inválida, identidade fornecida pelo cliente, papel sem permissão, canal ausente/divergente, leituras cross-channel, payload acima do limite, auditoria sanitizada, MIME/extensão incompatíveis, traversal, storage cross-channel e importação inválida. O teste editorial de regressão também preservou criação, alteração, versões, planos visuais e cenas no canal correto.
 
@@ -53,7 +62,7 @@ Após os runners:
 
 - A release 1.0.0 continua `NOT_READY`. Autenticação/isolation foram endurecidas, mas backup/restore, rollback, observabilidade produtiva, topologia/ingress e advisories de dependências continuam fora desta sprint.
 - Os 14 diagnósticos globais restantes devem ser tratados em sprint e PR funcional próprias antes da liberação produtiva; não há aceite formal de risco nesta unidade.
-- A ausência de lockfile impede auditoria automatizada via `npm audit`; uma unidade de dependências deve fornecer lockfile e executar o gate correspondente.
+- O projeto usa Bun e possui `bun.lock`; `bun audit` foi executado e retornou 3 advisories transitivos (1 low, 2 moderate). `bun pm scan` continua indisponível por ausência de scanner configurado, sem alteração de lockfile. A correção de dependências permanece em unidade própria.
 - O bypass de teste não é uma credencial de produção e não deve ser habilitado fora de execução local explicitamente marcada.
 
 ## Decisão

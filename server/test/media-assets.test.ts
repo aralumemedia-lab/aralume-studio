@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { once } from "node:events";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
@@ -147,7 +148,7 @@ test("media assets service enforces storage safety, cross-channel isolation and 
     origin: "generated",
     provenance: "Created internally",
     licenseStatus: "confirmed",
-    status: "available",
+    status: "pending",
     riskLevel: "ok",
     costActualCents: 250,
     providerName: "Aralume TTS",
@@ -236,7 +237,7 @@ test("media assets create and update narration with queryable audit state", () =
     origin: "generated",
     provenance: "Created by the controlled persistence test.",
     licenseStatus: "confirmed",
-    status: "available",
+    status: "pending",
     riskLevel: "ok",
     costActualCents: 0,
     providerName: "Aralume TTS",
@@ -259,6 +260,90 @@ test("media assets create and update narration with queryable audit state", () =
       .listAuditLogs({ channelId: "ch_negocios" })
       .some((log) => log.action === "media_asset.updated"),
   );
+});
+
+test("available media registration validates the real file and leaves no rejected asset", () => {
+  const storageRoot = mkdtempSync(path.join(os.tmpdir(), "aralume-media-validation-"));
+  const channelsRepository = createChannelsRepository(channelDemoSeed);
+  const mediaAssetsRepository = createMediaAssetsRepository();
+  const auditRepository = createAuditRepository();
+  const file = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+    "base64",
+  );
+  const relativePath = "ch_historia/image/validated.png";
+  const absolutePath = path.join(storageRoot, relativePath);
+  mkdirSync(path.dirname(absolutePath), { recursive: true });
+  writeFileSync(absolutePath, file);
+  mkdirSync(path.join(storageRoot, "ch_historia", "image", "directory.png"), {
+    recursive: true,
+  });
+  const checksum = createHash("sha256").update(file).digest("hex");
+
+  const service = createMediaAssetsService(
+    mediaAssetsRepository,
+    { channelsRepository, auditRepository },
+    { storageRoot },
+  );
+  const baseInput = {
+    channelId: "ch_historia",
+    type: "image" as const,
+    category: "visual" as const,
+    name: "Validated image",
+    title: "Validated image",
+    description: "Real fixture used by the security regression test.",
+    mimeType: "image/png",
+    extension: "png",
+    sizeBytes: file.length,
+    checksum,
+    storagePath: relativePath,
+    origin: "generated" as const,
+    provenance: "Deterministic security fixture.",
+    licenseStatus: "confirmed" as const,
+    status: "available" as const,
+    riskLevel: "ok" as const,
+    costActualCents: 0,
+  };
+
+  try {
+    const created = service.createMediaAsset(baseInput, "req_media_valid");
+    assert.equal(created.status, "available");
+    assert.equal(created.integrity?.observedSizeBytes, file.length);
+    assert.equal(created.integrity?.observedChecksum, checksum);
+    assert.equal(created.integrity?.checksumMatches, true);
+    assert.equal(created.integrity?.sizeMatches, true);
+
+    for (const invalidInput of [
+      { ...baseInput, storagePath: "ch_historia/image/missing.png" },
+      { ...baseInput, name: "Directory", storagePath: "ch_historia/image/directory.png" },
+      { ...baseInput, name: "Wrong MIME", mimeType: "image/jpeg", extension: "jpg" },
+      { ...baseInput, name: "Wrong size", sizeBytes: file.length + 1 },
+      { ...baseInput, name: "Wrong checksum", checksum: "f".repeat(64) },
+      { ...baseInput, name: "Cross channel", storagePath: "ch_curiosidades/image/other.png" },
+    ]) {
+      assert.throws(
+        () => service.createMediaAsset(invalidInput, "req_media_rejected"),
+        (error) => error instanceof AppError && error.status === 400,
+      );
+    }
+
+    assert.equal(mediaAssetsRepository.listMediaAssets({ channelId: "ch_historia" }).length, 1);
+    const rejectedAudits = auditRepository
+      .listAuditLogs({ channelId: "ch_historia" })
+      .filter((log) => log.action === "media_asset.registration_rejected");
+    assert.equal(rejectedAudits.length, 6);
+    assert.equal(
+      auditRepository
+        .listAuditLogs({ channelId: "ch_historia" })
+        .some(
+          (log) =>
+            log.action === "media_asset.registered" && log.requestId === "req_media_rejected",
+        ),
+      false,
+    );
+  } finally {
+    rmSync(storageRoot, { recursive: true, force: true });
+  }
 });
 
 test("media assets HTTP routes keep channel context explicit and reject invalid storage paths", async () => {
@@ -357,7 +442,7 @@ test("media assets HTTP create and patch routes remain queryable in the active p
     origin: "generated",
     provenance: "Created by HTTP route test.",
     licenseStatus: "known",
-    status: "available",
+    status: "pending",
     riskLevel: "ok",
     costActualCents: 0,
   };

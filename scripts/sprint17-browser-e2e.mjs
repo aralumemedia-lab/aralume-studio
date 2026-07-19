@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import os from "node:os";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { chromium } from "playwright";
@@ -13,11 +15,27 @@ const SCREENSHOT_DIR = evidenceDir(17);
 
 async function main() {
   await mkdir(SCREENSHOT_DIR, { recursive: true });
+  const storageRoot = path.join(os.tmpdir(), `aralume-sprint17-${Date.now()}`);
+  await mkdir(storageRoot, { recursive: true });
+  const narrationFixture = await writeFixture(
+    storageRoot,
+    "ch_historia/narration/sprint17-narration.wav",
+    createWavFixture(),
+  );
+  const visualFixture = await writeFixture(
+    storageRoot,
+    "ch_historia/image/sprint17-visual.png",
+    Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  );
 
-  const backend = spawnCommand(process.execPath, [
-    path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"),
-    "server/src/index.ts",
-  ]);
+  const backend = spawnCommand(
+    process.execPath,
+    [path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"), "server/src/index.ts"],
+    { ARALUME_ASSET_STORAGE_ROOT: storageRoot },
+  );
   const frontend = spawnCommand(process.execPath, [
     path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
     "dev",
@@ -85,9 +103,9 @@ async function main() {
       await createNarrationAsset(page, {
         name: narrationName,
         title: narrationName,
-        storagePath: `ch_historia/narration/${suffix}.wav`,
-        checksum: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        sizeBytes: "2048",
+        storagePath: "ch_historia/narration/sprint17-narration.wav",
+        checksum: narrationFixture.checksum,
+        sizeBytes: String(narrationFixture.sizeBytes),
         costActualCents: "0",
         provenance: "Controlled narration asset created by the Sprint 17 runner.",
         providerName: "Aralume TTS",
@@ -112,15 +130,15 @@ async function main() {
         name: visualName,
         title: visualName,
         description: "Controlled visual asset created by the Sprint 17 runner.",
-        storagePath: `ch_historia/image/${suffix}.png`,
+        storagePath: "ch_historia/image/sprint17-visual.png",
         provenance: "Controlled visual asset with provenance and integrity metadata.",
         origin: "generated",
         licenseStatus: "known",
         licenseName: "",
         mimeType: "image/png",
         extension: "png",
-        sizeBytes: "4096",
-        checksum: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        sizeBytes: String(visualFixture.sizeBytes),
+        checksum: visualFixture.checksum,
         providerName: "Aralume Vision",
         modelName: "img-v2",
         prompt: "Frame de referencia para a Sprint 17.",
@@ -271,10 +289,11 @@ async function main() {
   } finally {
     await terminateProcess(frontend);
     await terminateProcess(backend);
+    await rm(storageRoot, { recursive: true, force: true });
   }
 }
 
-function spawnCommand(command, args) {
+function spawnCommand(command, args, extraEnv = {}) {
   const child = spawn(command, args, {
     cwd: process.cwd(),
     shell: false,
@@ -285,10 +304,39 @@ function spawnCommand(command, args) {
       ARALUME_ENV: process.env.ARALUME_ENV ?? "test",
       ARALUME_LOG_LEVEL: process.env.ARALUME_LOG_LEVEL ?? "info",
       ARALUME_AUTH_TEST_BYPASS: "true",
+      ...extraEnv,
     },
   });
 
   return child;
+}
+
+async function writeFixture(storageRoot, relativePath, contents) {
+  const absolutePath = path.join(storageRoot, ...relativePath.split("/"));
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, contents);
+  return {
+    sizeBytes: contents.length,
+    checksum: createHash("sha256").update(contents).digest("hex"),
+  };
+}
+
+function createWavFixture() {
+  const buffer = Buffer.alloc(44);
+  buffer.write("RIFF", 0, "ascii");
+  buffer.writeUInt32LE(36, 4);
+  buffer.write("WAVE", 8, "ascii");
+  buffer.write("fmt ", 12, "ascii");
+  buffer.writeUInt32LE(16, 16);
+  buffer.writeUInt16LE(1, 20);
+  buffer.writeUInt16LE(1, 22);
+  buffer.writeUInt32LE(8_000, 24);
+  buffer.writeUInt32LE(16_000, 28);
+  buffer.writeUInt16LE(2, 32);
+  buffer.writeUInt16LE(16, 34);
+  buffer.write("data", 36, "ascii");
+  buffer.writeUInt32LE(0, 40);
+  return buffer;
 }
 
 async function waitForHttp(url) {

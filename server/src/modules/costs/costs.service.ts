@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { AppError } from "../../http/errors.js";
+import type { AuditActorContext } from "../audit/audit.types.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
 import {
   buildCostChannelSummary,
@@ -222,26 +223,42 @@ export function createCostsService(
       };
     },
 
-    updateGlobalOperationalModePolicy(input, actor) {
+    updateGlobalOperationalModePolicy(input, actor, requestId) {
       const now = clock().toISOString();
       const previous = repository.getGlobalOperationalModePolicy();
       const next = buildUpdatedPolicy(previous, input, "global", undefined, now, idFactory);
       repository.upsertOperationalModePolicy(next);
-      recordPolicyAuditEvents(dependencies.auditRepository, previous, next, actor, now, idFactory);
+      recordPolicyAuditEvents(
+        dependencies.auditRepository,
+        previous,
+        next,
+        actor,
+        requestId,
+        now,
+        idFactory,
+      );
       return next;
     },
 
-    updateChannelOperationalModePolicy(channelId, input, actor) {
+    updateChannelOperationalModePolicy(channelId, input, actor, requestId) {
       validateChannelExists(dependencies.channelsRepository, channelId);
       const now = clock().toISOString();
       const previous = repository.getChannelOperationalModePolicy(channelId);
       const next = buildUpdatedPolicy(previous, input, "channel", channelId, now, idFactory);
       repository.upsertOperationalModePolicy(next);
-      recordPolicyAuditEvents(dependencies.auditRepository, previous, next, actor, now, idFactory);
+      recordPolicyAuditEvents(
+        dependencies.auditRepository,
+        previous,
+        next,
+        actor,
+        requestId,
+        now,
+        idFactory,
+      );
       return next;
     },
 
-    evaluateOperationalAction(input) {
+    evaluateOperationalAction(input, actor, requestId) {
       validateChannelExists(dependencies.channelsRepository, input.channelId);
       const now = clock().toISOString();
       const policyContext = resolvePolicyContext(
@@ -269,7 +286,8 @@ export function createCostsService(
       recordDecisionAudit(
         dependencies.auditRepository,
         decision,
-        input.actor,
+        actor,
+        requestId,
         now,
         summary,
         idFactory,
@@ -531,12 +549,13 @@ function recordPolicyAuditEvents(
   auditRepository: CostsDependencies["auditRepository"],
   previous: OperationalModePolicy | undefined,
   next: OperationalModePolicy,
-  actor: string | undefined,
+  actor: AuditActorContext | undefined,
+  requestId: string | undefined,
   now: string,
   idFactory: () => string,
 ): void {
-  const actorName = actor?.trim().length ? actor.trim() : "Aralume Core";
-  const actorType = actor?.trim().length ? "user" : "system";
+  const actorName = actor?.actorName ?? "Aralume Core";
+  const actorType = actor ? "user" : "system";
   const changedFields = previous ? diffPolicyFields(previous, next) : Object.keys(next);
   if (changedFields.length === 0) {
     return;
@@ -544,12 +563,15 @@ function recordPolicyAuditEvents(
 
   const baseLog = {
     channelId: next.channelId,
+    requestId,
     actorType: actorType as "user" | "system",
     actorName,
     entityType: "OperationalModePolicy",
     entityId: next.id,
     metadata: {
       scope: next.scope,
+      actorId: actor?.actorId,
+      role: actor?.role,
       channelId: next.channelId,
       changedFields,
       mode: next.mode,
@@ -611,7 +633,8 @@ function diffPolicyFields(previous: OperationalModePolicy, next: OperationalMode
 function recordDecisionAudit(
   auditRepository: CostsDependencies["auditRepository"],
   decision: OperationalModeDecision,
-  actor: string | undefined,
+  actor: AuditActorContext | undefined,
+  requestId: string | undefined,
   now: string,
   snapshot: {
     budgetConfigured: boolean;
@@ -621,8 +644,8 @@ function recordDecisionAudit(
   },
   idFactory: () => string,
 ): void {
-  const actorName = actor?.trim().length ? actor.trim() : "Aralume Core";
-  const actorType = actor?.trim().length ? "user" : "system";
+  const actorName = actor?.actorName ?? "Aralume Core";
+  const actorType = actor ? "user" : "system";
   const action = decision.allowed
     ? "operational_mode.decision_allowed"
     : decision.decisionCode === "BUDGET_LIMIT_REACHED"
@@ -634,6 +657,7 @@ function recordDecisionAudit(
   recordAuditLog(auditRepository, {
     id: `au_${idFactory()}`,
     channelId: decision.channelId,
+    requestId,
     actorType: actorType as "user" | "system",
     actorName,
     action,
@@ -642,6 +666,8 @@ function recordDecisionAudit(
     status: decision.allowed ? "success" : "warning",
     message: decision.reason,
     metadata: {
+      actorId: actor?.actorId,
+      role: actor?.role,
       action: decision.action,
       decisionCode: decision.decisionCode,
       allowed: decision.allowed,

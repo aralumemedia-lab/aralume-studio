@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { AppError } from "./errors.js";
 import type { RuntimeEnv } from "../env.js";
-import type { AuditRepository } from "../modules/audit/audit.types.js";
+import type { AuditActorContext, AuditRepository } from "../modules/audit/audit.types.js";
 
 export const authRoleValues = ["owner", "editor", "operator", "reviewer", "viewer"] as const;
 
@@ -179,6 +179,24 @@ export function createAuthorizationMiddleware(auditRepository: AuditRepository):
 
 export function hasPermission(role: AuthRole, permission: AuthPermission): boolean {
   return permissionMatrix[role].includes(permission);
+}
+
+export function getAuthenticatedPrincipal(req: Request): AuthPrincipal {
+  const principal = req.auth;
+  if (!principal) {
+    throw unauthorized();
+  }
+
+  return principal;
+}
+
+export function getTrustedAuditActor(req: Request): AuditActorContext {
+  const principal = getAuthenticatedPrincipal(req);
+  return {
+    actorId: principal.sub,
+    actorName: principal.sub,
+    role: principal.role,
+  };
 }
 
 function parseBearerPrincipal(
@@ -357,6 +375,7 @@ function recordAuthDecision(
     status,
     message: status === "success" ? "Authorized request." : "Request rejected by security policy.",
     metadata: {
+      actorId: principal?.sub,
       role: principal?.role,
       decision: reason,
     },

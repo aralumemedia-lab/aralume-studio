@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { existsSync, lstatSync } from "node:fs";
+import { existsSync, lstatSync, realpathSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { AppError } from "../../http/errors.js";
@@ -8,6 +8,7 @@ import { isMimeExtensionPairAllowed, MAX_MEDIA_ASSET_SIZE_BYTES } from "./media-
 import {
   buildInternalUri,
   checksumFile,
+  detectFileMimeType,
   normalizeRelativeStoragePath,
   probeVideoFile,
   readFileSizeBytes,
@@ -112,7 +113,24 @@ export function createMediaAssetsService(
         const now = clock().toISOString();
         const assetId = `ma_${idFactory()}`;
         const internalUri = buildInternalUri(input.channelId, assetId);
-        const integrity = buildIntegrity(input.checksum, input.sizeBytes, now);
+        const fileValidation =
+          input.status === "available"
+            ? validateAvailableMediaFile(
+                storageRoot,
+                storageValidation.normalizedStoragePath,
+                input.mimeType,
+                input.extension,
+                input.sizeBytes,
+                input.checksum,
+              )
+            : undefined;
+        const integrity = buildIntegrity(
+          input.checksum,
+          input.sizeBytes,
+          now,
+          undefined,
+          fileValidation,
+        );
         assertUsableState(input.status, input.origin, input.licenseStatus, integrity);
 
         const asset: MediaAssetBase = {
@@ -233,13 +251,31 @@ export function createMediaAssetsService(
         assertMediaAssetSize(nextSizeBytes);
         const nextMimeType = input.mimeType?.trim() ?? existing.mimeType;
         const nextExtension = input.extension?.trim().toLowerCase() ?? existing.extension;
+        const nextStatus = input.status ?? existing.status;
         if (!isMimeExtensionPairAllowed(nextMimeType, nextExtension)) {
           throw validation("MIME type and extension are incompatible", {
             mimeType: nextMimeType,
             extension: nextExtension,
           });
         }
-        const nextIntegrity = buildIntegrity(nextChecksum, nextSizeBytes, now, existing.integrity);
+        const fileValidation =
+          nextStatus === "available"
+            ? validateAvailableMediaFile(
+                storageRoot,
+                nextStoragePath,
+                nextMimeType,
+                nextExtension,
+                nextSizeBytes,
+                nextChecksum,
+              )
+            : undefined;
+        const nextIntegrity = buildIntegrity(
+          nextChecksum,
+          nextSizeBytes,
+          now,
+          existing.integrity,
+          fileValidation,
+        );
         const next: MediaAssetBase = {
           ...existing,
           ...input,
@@ -255,7 +291,7 @@ export function createMediaAssetsService(
           provenance: input.provenance?.trim() ?? existing.provenance,
           licenseStatus: input.licenseStatus ?? existing.licenseStatus,
           licenseName: input.licenseName?.trim() ?? existing.licenseName,
-          status: input.status ?? existing.status,
+          status: nextStatus,
           riskLevel: input.riskLevel ?? existing.riskLevel,
           costActualCents: input.costActualCents ?? existing.costActualCents,
           providerName: input.providerName?.trim() ?? existing.providerName,
@@ -809,6 +845,70 @@ function validateStorageReferenceInternal(
   };
 }
 
+type ValidatedMediaFile = {
+  observedChecksum: string;
+  observedSizeBytes: number;
+};
+
+function validateAvailableMediaFile(
+  storageRoot: string,
+  normalizedStoragePath: string,
+  declaredMimeType: string,
+  declaredExtension: string,
+  declaredSizeBytes: number,
+  declaredChecksum: string,
+): ValidatedMediaFile {
+  const resolution = resolveAbsoluteStoragePath(storageRoot, normalizedStoragePath);
+  let fileStats: ReturnType<typeof statSync>;
+  try {
+    const linkStats = lstatSync(resolution.absolutePath);
+    if (linkStats.isSymbolicLink() || !linkStats.isFile()) {
+      throw validation("Media asset file validation failed", { reason: "MEDIA_FILE_INVALID" });
+    }
+    fileStats = statSync(resolution.absolutePath);
+    const realRoot = realpathSync(storageRoot);
+    const realFile = realpathSync(resolution.absolutePath);
+    const relative = path.relative(realRoot, realFile);
+    if (relative.startsWith("..") || path.isAbsolute(relative)) {
+      throw validation("Media asset file validation failed", { reason: "MEDIA_FILE_OUTSIDE_ROOT" });
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw validation("Media asset file validation failed", { reason: "MEDIA_FILE_UNAVAILABLE" });
+  }
+
+  const actualExtension = path.posix.extname(normalizedStoragePath).slice(1).toLowerCase();
+  if (actualExtension !== declaredExtension.trim().toLowerCase().replace(/^\./, "")) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_EXTENSION_MISMATCH" });
+  }
+
+  const actualMimeType = detectFileMimeType(resolution.absolutePath);
+  if (!actualMimeType || !mimeTypesMatch(actualMimeType, declaredMimeType)) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_MIME_MISMATCH" });
+  }
+  if (fileStats.size !== declaredSizeBytes) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_SIZE_MISMATCH" });
+  }
+
+  const observedChecksum = checksumFile(resolution.absolutePath);
+  if (observedChecksum !== declaredChecksum.trim().toLowerCase()) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_CHECKSUM_MISMATCH" });
+  }
+
+  return {
+    observedChecksum,
+    observedSizeBytes: fileStats.size,
+  };
+}
+
+function mimeTypesMatch(actualMimeType: string, declaredMimeType: string): boolean {
+  const actual = actualMimeType.trim().toLowerCase();
+  const declared = declaredMimeType.trim().toLowerCase();
+  return actual === declared || (actual === "audio/wav" && declared === "audio/x-wav");
+}
+
 function assertStoragePathMatchesChannel(channelId: string, storagePath: string): void {
   const [pathChannelId, ...segments] = storagePath.split("/");
   if (pathChannelId !== channelId || segments.length < 2) {
@@ -824,16 +924,17 @@ function buildIntegrity(
   sizeBytes: number,
   now: string,
   existing?: MediaAssetBase["integrity"],
+  fileValidation?: ValidatedMediaFile,
 ) {
   return {
     checksumAlgorithm: existing?.checksumAlgorithm ?? "sha256",
     checksum,
     sizeBytes,
     lastValidatedAt: now,
-    observedChecksum: existing?.observedChecksum,
-    observedSizeBytes: existing?.observedSizeBytes,
-    checksumMatches: existing?.checksumMatches,
-    sizeMatches: existing?.sizeMatches,
+    observedChecksum: fileValidation?.observedChecksum ?? existing?.observedChecksum,
+    observedSizeBytes: fileValidation?.observedSizeBytes ?? existing?.observedSizeBytes,
+    checksumMatches: fileValidation ? true : existing?.checksumMatches,
+    sizeMatches: fileValidation ? true : existing?.sizeMatches,
   };
 }
 

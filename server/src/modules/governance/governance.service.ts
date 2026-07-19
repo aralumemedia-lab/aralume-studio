@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import { AppError } from "../../http/errors.js";
 import type { AuditService } from "../audit/audit.service.js";
+import type { AuditActorContext } from "../audit/audit.types.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
 import type {
   ClaimEvidence,
@@ -62,21 +63,44 @@ export type CreateGovernanceServiceOptions = {
 export type GovernanceService = {
   listApprovals(filters?: ApprovalFilters): HumanApproval[];
   getApproval(id: string, channelId?: string): HumanApproval;
-  createApproval(input: ApprovalCreateInput, requestId?: string): HumanApproval;
-  approveApproval(id: string, input: ApprovalDecisionInput, requestId?: string): HumanApproval;
-  rejectApproval(id: string, input: ApprovalDecisionInput, requestId?: string): HumanApproval;
+  createApproval(
+    input: ApprovalCreateInput,
+    requestId?: string,
+    actor?: AuditActorContext,
+  ): HumanApproval;
+  approveApproval(
+    id: string,
+    input: ApprovalDecisionInput,
+    requestId?: string,
+    actor?: AuditActorContext,
+  ): HumanApproval;
+  rejectApproval(
+    id: string,
+    input: ApprovalDecisionInput,
+    requestId?: string,
+    actor?: AuditActorContext,
+  ): HumanApproval;
   requestApprovalChanges(
     id: string,
     input: ApprovalDecisionInput,
     requestId?: string,
+    actor?: AuditActorContext,
   ): HumanApproval;
   getApprovalHistory(id: string, channelId?: string): ApprovalDecision[];
   listQualityChecks(filters?: QualityCheckFilters): QualityCheck[];
   getQualityCheck(id: string, channelId?: string): QualityCheck;
-  createQualityCheck(input: QualityCheckCreateInput, requestId?: string): QualityCheck;
+  createQualityCheck(
+    input: QualityCheckCreateInput,
+    requestId?: string,
+    actor?: AuditActorContext,
+  ): QualityCheck;
   listComplianceChecks(filters?: ComplianceCheckFilters): ComplianceCheck[];
   getComplianceCheck(id: string, channelId?: string): ComplianceCheck;
-  createComplianceCheck(input: ComplianceCheckCreateInput, requestId?: string): ComplianceCheck;
+  createComplianceCheck(
+    input: ComplianceCheckCreateInput,
+    requestId?: string,
+    actor?: AuditActorContext,
+  ): ComplianceCheck;
 };
 
 type ResolvedTarget = {
@@ -155,8 +179,9 @@ export function createGovernanceService(
       return getRequiredApproval(repository, id, channelId);
     },
 
-    createApproval(input, requestId) {
+    createApproval(input, requestId, actor) {
       const parsed = approvalCreateSchema.parse(input);
+      const actorName = actor?.actorName ?? parsed.requestedBy;
       validateChannelExists(channelsRepository, parsed.channelId);
       const target = resolveTarget(
         editorialRepository,
@@ -172,7 +197,8 @@ export function createGovernanceService(
         target,
         auditService,
         requestId,
-        parsed.requestedBy,
+        actorName,
+        actor,
       );
       const complianceCheck = ensureCurrentComplianceCheck(
         repository,
@@ -182,7 +208,8 @@ export function createGovernanceService(
         target,
         auditService,
         requestId,
-        parsed.requestedBy,
+        actorName,
+        actor,
       );
       const now = toIso(clock());
       const initialStatus = isApprovalBlocked(qualityCheck, complianceCheck)
@@ -198,7 +225,7 @@ export function createGovernanceService(
         riskLevel: deriveApprovalRisk(target.relatedRiskLevel, qualityCheck, complianceCheck),
         summary: parsed.summary ?? buildApprovalSummary(target, qualityCheck, complianceCheck),
         requestedAt: now,
-        requestedBy: parsed.requestedBy,
+        requestedBy: actorName,
         createdAt: now,
         updatedAt: now,
         targetSnapshot: target.targetSnapshot,
@@ -211,6 +238,7 @@ export function createGovernanceService(
         requestId,
         channelId: approval.channelId,
         actorName: approval.requestedBy,
+        actor,
         action: "approval.created",
         entityType: "human_approval",
         entityId: approval.id,
@@ -223,7 +251,7 @@ export function createGovernanceService(
       return approval;
     },
 
-    approveApproval(id, input, requestId) {
+    approveApproval(id, input, requestId, actor) {
       return decideApproval(
         repository,
         editorialRepository,
@@ -233,6 +261,7 @@ export function createGovernanceService(
         id,
         auditService,
         requestId,
+        actor,
         {
           ...approvalDecisionSchema.parse(input),
           decision: "approve",
@@ -240,7 +269,7 @@ export function createGovernanceService(
       );
     },
 
-    rejectApproval(id, input, requestId) {
+    rejectApproval(id, input, requestId, actor) {
       return decideApproval(
         repository,
         editorialRepository,
@@ -250,6 +279,7 @@ export function createGovernanceService(
         id,
         auditService,
         requestId,
+        actor,
         {
           ...approvalDecisionSchema.parse(input),
           decision: "reject",
@@ -257,7 +287,7 @@ export function createGovernanceService(
       );
     },
 
-    requestApprovalChanges(id, input, requestId) {
+    requestApprovalChanges(id, input, requestId, actor) {
       return decideApproval(
         repository,
         editorialRepository,
@@ -267,6 +297,7 @@ export function createGovernanceService(
         id,
         auditService,
         requestId,
+        actor,
         {
           ...approvalDecisionSchema.parse(input),
           decision: "request_changes",
@@ -289,8 +320,9 @@ export function createGovernanceService(
       return getRequiredQualityCheck(repository, id, channelId);
     },
 
-    createQualityCheck(input, requestId) {
+    createQualityCheck(input, requestId, actor) {
       const parsed = qualityCheckCreateSchema.parse(input);
+      const actorName = actor?.actorName ?? parsed.requestedBy ?? "Aralume Core";
       validateChannelExists(channelsRepository, parsed.channelId);
       const target = resolveTarget(
         editorialRepository,
@@ -321,7 +353,8 @@ export function createGovernanceService(
       recordGovernanceAudit(auditService, {
         requestId,
         channelId: check.channelId,
-        actorName: parsed.requestedBy ?? "Aralume Core",
+        actorName,
+        actor,
         action: "quality_check.created",
         entityType: "quality_check",
         entityId: check.id,
@@ -341,8 +374,9 @@ export function createGovernanceService(
       return getRequiredComplianceCheck(repository, id, channelId);
     },
 
-    createComplianceCheck(input, requestId) {
+    createComplianceCheck(input, requestId, actor) {
       const parsed = complianceCheckCreateSchema.parse(input);
+      const actorName = actor?.actorName ?? parsed.requestedBy ?? "Aralume Core";
       validateChannelExists(channelsRepository, parsed.channelId);
       const target = resolveTarget(
         editorialRepository,
@@ -372,7 +406,8 @@ export function createGovernanceService(
       recordGovernanceAudit(auditService, {
         requestId,
         channelId: check.channelId,
-        actorName: parsed.requestedBy ?? "Aralume Core",
+        actorName,
+        actor,
         action: "compliance_check.created",
         entityType: "compliance_check",
         entityId: check.id,
@@ -393,6 +428,7 @@ function decideApproval(
   approvalId: string,
   auditService: AuditService | undefined,
   requestId: string | undefined,
+  actor: AuditActorContext | undefined,
   input: ApprovalDecisionInput & {
     decision: "approve" | "reject" | "request_changes";
   },
@@ -415,7 +451,8 @@ function decideApproval(
     target,
     auditService,
     requestId,
-    input.decidedBy,
+    actor?.actorName ?? input.decidedBy,
+    actor,
   );
   const complianceCheck = ensureCurrentComplianceCheck(
     repository,
@@ -425,7 +462,8 @@ function decideApproval(
     target,
     auditService,
     requestId,
-    input.decidedBy,
+    actor?.actorName ?? input.decidedBy,
+    actor,
   );
   const now = toIso(clock());
 
@@ -438,7 +476,7 @@ function decideApproval(
     status: nextStatus,
     riskLevel: deriveApprovalRisk(target.relatedRiskLevel, qualityCheck, complianceCheck),
     decidedAt: now,
-    decidedBy: input.decidedBy,
+    decidedBy: actor?.actorName ?? input.decidedBy,
     decisionReason: input.decisionReason,
     updatedAt: now,
     targetSnapshot: target.targetSnapshot,
@@ -455,7 +493,7 @@ function decideApproval(
     nextStatus,
     decision: input.decision,
     justification: input.decisionReason,
-    actor: input.decidedBy,
+    actor: actor?.actorName ?? input.decidedBy,
     decidedAt: now,
     createdAt: now,
   });
@@ -463,7 +501,8 @@ function decideApproval(
   recordGovernanceAudit(auditService, {
     requestId,
     channelId: updated.channelId,
-    actorName: input.decidedBy,
+    actorName: actor?.actorName ?? input.decidedBy,
+    actor,
     action: `approval.${
       input.decision === "approve"
         ? "approved"
@@ -541,6 +580,7 @@ function ensureCurrentQualityCheck(
   auditService: AuditService | undefined,
   requestId: string | undefined,
   actorName: string,
+  actor?: AuditActorContext,
 ): QualityCheck {
   const existing = repository
     .listQualityChecks({
@@ -560,6 +600,7 @@ function ensureCurrentQualityCheck(
     requestId,
     channelId: created.channelId,
     actorName,
+    actor,
     action: "quality_check.created",
     entityType: "quality_check",
     entityId: created.id,
@@ -578,6 +619,7 @@ function ensureCurrentComplianceCheck(
   auditService: AuditService | undefined,
   requestId: string | undefined,
   actorName: string,
+  actor?: AuditActorContext,
 ): ComplianceCheck {
   const existing = repository
     .listComplianceChecks({
@@ -597,6 +639,7 @@ function ensureCurrentComplianceCheck(
     requestId,
     channelId: created.channelId,
     actorName,
+    actor,
     action: "compliance_check.created",
     entityType: "compliance_check",
     entityId: created.id,
@@ -1612,6 +1655,7 @@ function recordGovernanceAudit(
     entityId: string;
     status: "success" | "warning" | "failed";
     message: string;
+    actor?: AuditActorContext;
   },
 ): void {
   if (!auditService) {
@@ -1621,13 +1665,14 @@ function recordGovernanceAudit(
   auditService.recordAuditLog({
     requestId: input.requestId,
     channelId: input.channelId,
-    actorType: input.actorName === "Aralume Core" ? "system" : "user",
-    actorName: input.actorName,
+    actorType: input.actor ? "user" : input.actorName === "Aralume Core" ? "system" : "user",
+    actorName: input.actor?.actorName ?? input.actorName,
     action: input.action,
     entityType: input.entityType,
     entityId: input.entityId,
     status: input.status,
     message: input.message,
+    metadata: input.actor ? { actorId: input.actor.actorId, role: input.actor.role } : undefined,
   });
 }
 

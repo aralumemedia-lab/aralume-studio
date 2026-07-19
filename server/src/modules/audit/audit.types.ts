@@ -4,6 +4,12 @@ export type ISODate = string;
 export type AuditActorType = "user" | "agent" | "system";
 export type AuditStatus = "success" | "warning" | "failed";
 
+export type AuditActorContext = {
+  actorId: string;
+  actorName: string;
+  role: string;
+};
+
 export type AuditLog = {
   id: ID;
   channelId?: ID;
