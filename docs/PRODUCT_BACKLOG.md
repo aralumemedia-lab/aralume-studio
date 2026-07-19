@@ -66,16 +66,16 @@ aplicacao automatica de recomendacoes, migrations SQL, hardening e V1 Acceptance
 Esta secao consolida a sequencia apos a Sprint 14 e formaliza a remediacao completa do E16.
 Sprint 15 e Sprint 16 foram executadas nesta trilha de remediacao.
 
-| Sequencia                                 | Epic                                                   | Criterios V1        | Itens R14                        | Tipo principal                              | Saida esperada                                                                                      |
-| ----------------------------------------- | ------------------------------------------------------ | ------------------- | -------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Sprint 15 (entregue)                      | E16 - Pipeline Editorial Operavel pelo Frontend        | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04           | funcional + frontend + UX                   | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend                           |
-| Sprint 16 (entregue)                      | E16 - Pipeline Editorial Operavel pelo Frontend        | V1-05, V1-06        | R14-05, R14-06                   | funcional + frontend + UX                   | roteiro versionado, versoes e plano visual com cenas operaveis no frontend                          |
-| Sprint 17 (entregue pela PR #28)          | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08        | R14-07, R14-08                   | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento                  |
-| Sprint 18 (entregue pela PR #30)          | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10        | R14-09, R14-10                   | funcional + frontend + backend + integracao | render e cortes operaveis no frontend com reload, auditoria e isolamento                            |
-| Sprint 19 (mergeada pela PR #32)          | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13           | funcional + frontend + backend + governance | qualidade, compliance e aprovacao humana operaveis no frontend                                      |
-| Sprint 20 (entregue pela PR #33)          | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-14               | R14-14                           | funcional + frontend + backend + governance | pacote de publicacao com confirmacao humana, readiness e sem auto-send                              |
-| Sprint 21 (mergeada pela PR #34)          | E19 - Cockpits Reais e Evidencias Transversais         | R14-T01, R14-T02    | R14-T01, R14-T02                 | technical + evidence + QA                   | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis; E19 concluido em `main`      |
-| Final gate                                | R14-REACCEPT                                           | V1-01..V1-18        | R14-02..R14-14, R14-T01, R14-T02 | evidence / reaccept                         | novo V1 Acceptance com prova nova no mesmo head                                                     |
+| Sequencia                        | Epic                                                   | Criterios V1        | Itens R14                        | Tipo principal                              | Saida esperada                                                                                  |
+| -------------------------------- | ------------------------------------------------------ | ------------------- | -------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Sprint 15 (entregue)             | E16 - Pipeline Editorial Operavel pelo Frontend        | V1-02, V1-03, V1-04 | R14-02, R14-03, R14-04           | funcional + frontend + UX                   | perfil editorial, pautas, pesquisa, fontes e claims operaveis no frontend                       |
+| Sprint 16 (entregue)             | E16 - Pipeline Editorial Operavel pelo Frontend        | V1-05, V1-06        | R14-05, R14-06                   | funcional + frontend + UX                   | roteiro versionado, versoes e plano visual com cenas operaveis no frontend                      |
+| Sprint 17 (entregue pela PR #28) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07, V1-08        | R14-07, R14-08                   | funcional + frontend + backend + integracao | narracao e ativos visuais operaveis no frontend com reload, auditoria e isolamento              |
+| Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09, V1-10        | R14-09, R14-10                   | funcional + frontend + backend + integracao | render e cortes operaveis no frontend com reload, auditoria e isolamento                        |
+| Sprint 19 (mergeada pela PR #32) | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-11, V1-12, V1-13 | R14-11, R14-12, R14-13           | funcional + frontend + backend + governance | qualidade, compliance e aprovacao humana operaveis no frontend                                  |
+| Sprint 20 (entregue pela PR #33) | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-14               | R14-14                           | funcional + frontend + backend + governance | pacote de publicacao com confirmacao humana, readiness e sem auto-send                          |
+| Sprint 21 (mergeada pela PR #34) | E19 - Cockpits Reais e Evidencias Transversais         | R14-T01, R14-T02    | R14-T01, R14-T02                 | technical + evidence + QA                   | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis; E19 concluido em `main` |
+| Final gate                       | R14-REACCEPT                                           | V1-01..V1-18        | R14-02..R14-14, R14-T01, R14-T02 | evidence / reaccept                         | novo V1 Acceptance com prova nova no mesmo head                                                 |
 
 ## Mapa de criterio para remediacao
 
@@ -283,12 +283,12 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 
 Esta unidade tecnica pertence ao E15 e foi formalizada antes da implementacao. Ela fecha findings materiais observados apos as fatias E16-E19 sem alterar a matriz historica da Sprint 14 e sem executar o `R14-REACCEPT`.
 
-| ID | Tipo | Escopo | Prioridade | Spec | Dependencias |
-| --- | --- | --- | --- | --- | --- |
-| R15-01 | Hardening tecnico | `AuditLog.requestId` estruturado e auditoria de mutacoes editoriais | P0 | `docs/specs/023-sprint-22-v1-remediation-findings.md` | E16, E17, E18 integrados |
-| R15-02 | Seguranca de contexto | Leituras detalhadas e rejeicao cross-channel sanitizada | P0 | mesma spec | contratos editoriais e canal ativo |
-| R15-03 | Evidencia operacional | Runner Sprint 15 e correcoes de runners Sprint 16-21 | P1 | mesma spec | Playwright, backend e frontend locais |
-| R15-04 | Regressao V1 | Reexecucao de V1-03..V1-10 e preservacao de V1-01/V1-02/V1-11..V1-18 | P0 | mesma spec | R15-01 a R15-03 |
+| ID     | Tipo                  | Escopo                                                               | Prioridade | Spec                                                  | Dependencias                          |
+| ------ | --------------------- | -------------------------------------------------------------------- | ---------- | ----------------------------------------------------- | ------------------------------------- |
+| R15-01 | Hardening tecnico     | `AuditLog.requestId` estruturado e auditoria de mutacoes editoriais  | P0         | `docs/specs/023-sprint-22-v1-remediation-findings.md` | E16, E17, E18 integrados              |
+| R15-02 | Seguranca de contexto | Leituras detalhadas e rejeicao cross-channel sanitizada              | P0         | mesma spec                                            | contratos editoriais e canal ativo    |
+| R15-03 | Evidencia operacional | Runner Sprint 15 e correcoes de runners Sprint 16-21                 | P1         | mesma spec                                            | Playwright, backend e frontend locais |
+| R15-04 | Regressao V1          | Reexecucao de V1-03..V1-10 e preservacao de V1-01/V1-02/V1-11..V1-18 | P0         | mesma spec                                            | R15-01 a R15-03                       |
 
 ### Definition of Done da Sprint 22
 
@@ -297,6 +297,25 @@ Esta unidade tecnica pertence ao E15 e foi formalizada antes da implementacao. E
 - Runners Sprints 15-21 tem timeout, assercoes, codigo de saida e teardown verificaveis.
 - Evidencias novas ficam separadas em `docs/acceptance/v1/V1_SPRINT22_REMEDIATION_EVIDENCE.md`.
 - Validacoes da spec passam; nenhum reaceite integral, release, tag ou deploy e executado.
+
+## Sprint 23 - V1.0 Release Readiness e Hardening de Producao
+
+O R14 foi concluido com 18/18 criterios `PASS` e integrado pela PR #37. A Sprint 23 permanece no E15 e prepara uma decisao de readiness sem deploy.
+
+| ID      | Tipo                    | Escopo                                              | Prioridade | Spec                                               | Dependencias     |
+| ------- | ----------------------- | --------------------------------------------------- | ---------- | -------------------------------------------------- | ---------------- |
+| RR23-01 | Release governance      | Inventario e documentos da release 1.0.0            | P0         | `docs/specs/024-sprint-23-v1-release-readiness.md` | R14 aceito       |
+| RR23-02 | Security hardening      | Segredos, auth, storage, integracoes e dependencias | P0         | mesma spec                                         | RR23-01          |
+| RR23-03 | Resiliencia operacional | Backup, restore, deploy, rollback e observabilidade | P0         | mesma spec                                         | RR23-01          |
+| RR23-04 | Quality/readiness       | Gates, smoke, runners e decisao formal              | P0         | mesma spec                                         | RR23-02, RR23-03 |
+
+### Definition of Done da Sprint 23
+
+- Cinco documentos em `docs/releases/1.0.0/` completos, com relatorio pos-release apenas como template.
+- Configuracao, persistencia, backup, rollback, seguranca e observabilidade avaliados.
+- Quality gates e smoke tests registrados sem enfraquecimento.
+- Nenhum blocker de producao ocultado e nenhuma release/tag/deploy executada.
+- PR exclusiva pronta para revisao; Sprint 24 continua separada.
 
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 

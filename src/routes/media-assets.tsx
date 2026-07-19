@@ -36,6 +36,7 @@ import type {
   MediaAssetStatus,
   MediaAssetType,
 } from "@/contracts/types";
+import type { CreateMediaAssetInput } from "@/services/media-assets-api";
 import {
   createMediaAsset,
   describeMediaAssetsApiError,
@@ -1054,13 +1055,13 @@ function typeDefaults(
   };
 }
 
-function buildPayload(draft: AssetDraft, channelId: string) {
+function buildPayload(draft: AssetDraft, channelId: string): CreateMediaAssetInput {
   return {
     channelId,
     type: draft.type,
     category: deriveCategory(draft.type),
     name: draft.name.trim(),
-    title: draft.title.trim() || undefined,
+    title: draft.title.trim() || draft.name.trim(),
     description: draft.description.trim(),
     mimeType: draft.mimeType.trim(),
     extension: draft.extension.trim().replace(/^\./, ""),
@@ -1111,7 +1112,7 @@ function assetToDraft(asset: MediaAssetBase): AssetDraft {
   };
 }
 
-function deriveCategory(type: MediaAssetType) {
+function deriveCategory(type: MediaAssetType): CreateMediaAssetInput["category"] {
   if (type === "narration") {
     return "audio";
   }

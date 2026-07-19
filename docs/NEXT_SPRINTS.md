@@ -13,17 +13,17 @@
 
 ## Fila operacional
 
-| Ordem | Sprint | Epico | Spec normativa | Estado | Liberacao | Dependencias |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Sprint 12 | E13 - Integracoes Reais Autorizadas | `docs/specs/015-authorized-real-integrations.md` | completed | released | PR #22 mergeado; OAuth com dois escopos, descoberta, selecao, upload privado/nao listado, consulta, replay idempotente, isolamento e revogacao validados. |
-| 2 | Sprint 13 | E14 - Metricas e Aprendizado | `docs/specs/014-metrics-learning.md` | completed | released | PR #23 mergeada em `9b89d1be04e7a6e319efb9a957282097c4854f31`; gate E14 atendido. |
-| 3 | Sprint 14 | E15 - Hardening V1.0 | `docs/specs/012-v1-acceptance.md` | completed | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta. |
-| 4 | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed | not released | PR #26 entregou H16.0, H16.1 e H16.2; a fatia complementar da Sprint 16 concluiu H16.3 e H16.4. |
-| 5 | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend | `docs/specs/017-sprint-16-scripts-visual-planning.md` | completed | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido. |
-| 6 | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md` | completed | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser. |
-| 7 | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/019-sprint-18-render-derived-clips.md` | completed and integrated by PR #30 | not released | Segunda fatia de E17; H17.3 e H17.4 integradas com render, cortes, reload, auditoria e isolamento. |
-| 8 | Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/020-sprint-19-governance-gates.md` | merged in PR #32 | not released | H18.1, H18.2 e H18.3 concluidas com mutacoes reais, auditoria requestId, reload, isolamento, E2E e screenshots. |
-| 9 | Sprint 20 | E18 - Governanca e Publicacao Assistida pelo Frontend | `docs/specs/021-sprint-20-assisted-publication.md` | merged in PR #33 | not released | H18.4; pacote de publicacao com confirmacao humana, readiness e sem auto-send. |
+| Ordem | Sprint    | Epico                                                  | Spec normativa                                                 | Estado                             | Liberacao    | Dependencias                                                                                                                                              |
+| ----- | --------- | ------------------------------------------------------ | -------------------------------------------------------------- | ---------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | Sprint 12 | E13 - Integracoes Reais Autorizadas                    | `docs/specs/015-authorized-real-integrations.md`               | completed                          | released     | PR #22 mergeado; OAuth com dois escopos, descoberta, selecao, upload privado/nao listado, consulta, replay idempotente, isolamento e revogacao validados. |
+| 2     | Sprint 13 | E14 - Metricas e Aprendizado                           | `docs/specs/014-metrics-learning.md`                           | completed                          | released     | PR #23 mergeada em `9b89d1be04e7a6e319efb9a957282097c4854f31`; gate E14 atendido.                                                                         |
+| 3     | Sprint 14 | E15 - Hardening V1.0                                   | `docs/specs/012-v1-acceptance.md`                              | completed                          | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta.                                           |
+| 4     | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend        | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed                          | not released | PR #26 entregou H16.0, H16.1 e H16.2; a fatia complementar da Sprint 16 concluiu H16.3 e H16.4.                                                           |
+| 5     | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend        | `docs/specs/017-sprint-16-scripts-visual-planning.md`          | completed                          | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido.                                                                                                  |
+| 6     | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md`           | completed                          | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser.                                                            |
+| 7     | Sprint 18 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/019-sprint-18-render-derived-clips.md`             | completed and integrated by PR #30 | not released | Segunda fatia de E17; H17.3 e H17.4 integradas com render, cortes, reload, auditoria e isolamento.                                                        |
+| 8     | Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend  | `docs/specs/020-sprint-19-governance-gates.md`                 | merged in PR #32                   | not released | H18.1, H18.2 e H18.3 concluidas com mutacoes reais, auditoria requestId, reload, isolamento, E2E e screenshots.                                           |
+| 9     | Sprint 20 | E18 - Governanca e Publicacao Assistida pelo Frontend  | `docs/specs/021-sprint-20-assisted-publication.md`             | merged in PR #33                   | not released | H18.4; pacote de publicacao com confirmacao humana, readiness e sem auto-send.                                                                            |
 
 ## Sprint 12 - Integracoes Reais Autorizadas
 
@@ -37,16 +37,16 @@
 
 ## Sprint 13 - Metricas e Aprendizado
 
-| Campo | Valor |
-| --- | --- |
-| Numero | Sprint 13 |
-| Epic principal | E14 - Metricas e Aprendizado |
-| Spec governante | `docs/specs/014-metrics-learning.md` |
-| Objetivo | Registrar metricas por canal e gerar aprendizado editorial assistido sem antecipar V1 Acceptance. |
-| Estado | completed |
-| Gate de inicio | Atendido: S12 encerrada; metricas controladas, contratos, canais, isolamento e regra de recomendacao formalizados. |
-| Historias | H14.1 registro; H14.2 consulta/agregacao; H14.3 aprendizado assistido; H14.4 dashboard real. |
-| Fora de escopo | Analytics/OAuth novo, scraping, novos provedores, IA externa, aplicacao automatica, hardening e V1 Acceptance. |
+| Campo             | Valor                                                                                                                                           |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Numero            | Sprint 13                                                                                                                                       |
+| Epic principal    | E14 - Metricas e Aprendizado                                                                                                                    |
+| Spec governante   | `docs/specs/014-metrics-learning.md`                                                                                                            |
+| Objetivo          | Registrar metricas por canal e gerar aprendizado editorial assistido sem antecipar V1 Acceptance.                                               |
+| Estado            | completed                                                                                                                                       |
+| Gate de inicio    | Atendido: S12 encerrada; metricas controladas, contratos, canais, isolamento e regra de recomendacao formalizados.                              |
+| Historias         | H14.1 registro; H14.2 consulta/agregacao; H14.3 aprendizado assistido; H14.4 dashboard real.                                                    |
+| Fora de escopo    | Analytics/OAuth novo, scraping, novos provedores, IA externa, aplicacao automatica, hardening e V1 Acceptance.                                  |
 | Gate de conclusao | Atendido: metricas persistidas geram recomendacao editorial por canal, com procedencia, auditoria, evidencias e frontend real; PR #23 mergeada. |
 
 ## Sprint 14 - V1 Acceptance
@@ -70,15 +70,15 @@
 
 ## Proposta de remediacao consolidada
 
-| Ordem | Epic | Escopo principal | Tipo | Dependencias | Resultado esperado |
-| --- | --- | --- | --- | --- | --- |
-| Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend | V1-02 a V1-04 | funcional + frontend + UX | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes e claims operaveis |
-| Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08 | funcional + frontend + backend + integracao | E16 concluida | narracao e ativos visuais operaveis |
-| Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10 | funcional + frontend + backend + integracao | Sprint 17 concluida | render e cortes operaveis com reload, auditoria e isolamento |
-| Sprint 19 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-11 a V1-13 | funcional + frontend + backend + governance | E17 concluida | mergeada pela PR #32 |
-| Sprint 20 | E18 - Governanca e Publicacao Assistida pelo Frontend | V1-14 | funcional + frontend + backend + governance | Sprint 19 aceita | mergeada pela PR #33; pacote com confirmacao humana e sem auto-send |
-| Sprint 21 (mergeada pela PR #34) | E19 - Cockpits Reais e Evidencias Transversais | R14-T01, R14-T02 | technical + evidence + QA | E16, E17 e E18 concluidos | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
-| Gate final | R14-REACCEPT | V1-01..V1-18 | evidence / reaccept | E16, E17, E18, E19 concluidos | novo V1 Acceptance com prova nova no mesmo head |
+| Ordem                            | Epic                                                   | Escopo principal | Tipo                                        | Dependencias                                          | Resultado esperado                                                     |
+| -------------------------------- | ------------------------------------------------------ | ---------------- | ------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- |
+| Sprint 15                        | E16 - Pipeline Editorial Operavel pelo Frontend        | V1-02 a V1-04    | funcional + frontend + UX                   | E16 depende do canal ativo e dos contratos editoriais | perfil editorial, pauta, pesquisa, fontes e claims operaveis           |
+| Sprint 17                        | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-07 a V1-08    | funcional + frontend + backend + integracao | E16 concluida                                         | narracao e ativos visuais operaveis                                    |
+| Sprint 18 (entregue pela PR #30) | E17 - Pipeline Midia e Producao Operavel pelo Frontend | V1-09 a V1-10    | funcional + frontend + backend + integracao | Sprint 17 concluida                                   | render e cortes operaveis com reload, auditoria e isolamento           |
+| Sprint 19                        | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-11 a V1-13    | funcional + frontend + backend + governance | E17 concluida                                         | mergeada pela PR #32                                                   |
+| Sprint 20                        | E18 - Governanca e Publicacao Assistida pelo Frontend  | V1-14            | funcional + frontend + backend + governance | Sprint 19 aceita                                      | mergeada pela PR #33; pacote com confirmacao humana e sem auto-send    |
+| Sprint 21 (mergeada pela PR #34) | E19 - Cockpits Reais e Evidencias Transversais         | R14-T01, R14-T02 | technical + evidence + QA                   | E16, E17 e E18 concluidos                             | dashboard e escritorio de agentes reais, mais evidencias reutilizaveis |
+| Gate final                       | R14-REACCEPT                                           | V1-01..V1-18     | evidence / reaccept                         | E16, E17, E18, E19 concluidos                         | novo V1 Acceptance com prova nova no mesmo head                        |
 
 ## Condicoes para iniciar R14-REACCEPT
 
@@ -179,3 +179,15 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Evidencia nova: `docs/acceptance/v1/V1_SPRINT22_REMEDIATION_EVIDENCE.md`; evidencias historicas nao serao sobrescritas.
 - Gate: todos os findings materiais do pacote fechados, validacoes verdes, processos sem orfaos e working tree limpo.
 - Proximo gate: `R14-REACCEPT`, somente em execucao posterior e formalmente documentada.
+
+## R14 concluido e Sprint 23 - V1.0 Release Readiness
+
+- R14 foi concluido e integrado pela PR #37; `V1.0 ACCEPTED` com 18/18 criterios `PASS`.
+- SHA funcional aceito: `d2b53c9e7bfe15c8116c07375ca4b604fce03e97`.
+- Merge documental R14: `61d313bdb35dd0228a2bf4f5af3454263f588155`.
+- Proxima unidade: Sprint 23, ainda sob E15 - Hardening V1.0.
+- Spec normativa: `docs/specs/024-sprint-23-v1-release-readiness.md`.
+- Branch: `codex/sprint-23-v1-release-readiness`.
+- Objetivo: decidir readiness de producao e preparar planos de deploy/rollback sem executar deploy, tag ou release.
+- Gate de saida: `READY_FOR_PRODUCTION_DEPLOYMENT`, `READY_WITH_CONDITIONS` ou `NOT_READY` com evidencia reproduzivel.
+- Sprint 24 somente pode iniciar implantacao apos revisao e merge da unidade de readiness e autorizacao separada.

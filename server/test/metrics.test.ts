@@ -237,22 +237,25 @@ test("metrics summary generates a reproducible recommendation and keeps channels
 });
 
 test("metrics summary does not recommend without a comparable baseline", () => {
-  const seed: PerformanceMetric[] = [
+  const metricSeeds: Array<[string, PerformanceMetric["platform"], string, number]> = [
     ["current-youtube-1", "youtube", "idea_06", 0.65],
     ["current-youtube-2", "youtube", "idea_02", 0.62],
     ["current-tiktok-1", "tiktok", "idea_06", 0.3],
     ["current-tiktok-2", "tiktok", "idea_02", 0.25],
-  ].map(([id, platform, contentId, completionRate]) => ({
-    ...baseInput,
-    id,
-    platform,
-    contentId,
-    completionRate: Number(completionRate),
-    idempotencyKey: `seed:${id}`,
-    createdAt: baseInput.capturedAt,
-    updatedAt: baseInput.capturedAt,
-    validationStatus: "validated",
-  }));
+  ];
+  const seed: PerformanceMetric[] = [...metricSeeds].map(
+    ([id, platform, contentId, completionRate]) => ({
+      ...baseInput,
+      id,
+      platform,
+      contentId,
+      completionRate: Number(completionRate),
+      idempotencyKey: `seed:${id}`,
+      createdAt: baseInput.capturedAt,
+      updatedAt: baseInput.capturedAt,
+      validationStatus: "validated",
+    }),
+  );
   const harness = createHarness(seed);
   try {
     const summary = harness.service.summarize({ channelId: "ch_historia" }, "req_no_baseline");
