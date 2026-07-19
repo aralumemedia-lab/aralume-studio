@@ -96,6 +96,9 @@ async function main() {
       await page.unroute("**/api/dashboard/summary*");
       await selectChannel(page, channelB.name, channelA.name, false);
       await page.waitForLoadState("networkidle");
+      await setViewport(page, 1920, 1080);
+      await capture(page, "dashboard-1920-isolation.png");
+      await assertNoHorizontalOverflow(page);
 
       await page.goto(`${FRONTEND}/agent-office`);
       await page.waitForLoadState("networkidle");
