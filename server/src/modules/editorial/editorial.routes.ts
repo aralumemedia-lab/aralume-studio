@@ -50,14 +50,16 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.get("/content-ideas/:id", (req, res) => {
     const params = parseParams(contentIdeaIdParamsSchema, req.params);
-    const found = service.getContentIdea(params.id);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const found = service.getContentIdea(params.id, query.channelId);
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 
   router.patch("/content-ideas/:id", (req, res) => {
     const params = parseParams(contentIdeaIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
     const body = parseBody(contentIdeaPatchSchema, req.body);
-    const updated = service.updateContentIdea(params.id, body, getRequestId(res));
+    const updated = service.updateContentIdea(params.id, body, getRequestId(res), query.channelId);
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
@@ -69,7 +71,8 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.get("/production-items/:id", (req, res) => {
     const params = parseIdParam(req.params);
-    const item = service.getProductionItem(params.id);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const item = service.getProductionItem(params.id, query.channelId);
     res.json(createSuccessResponse(item, { requestId: getRequestId(res) }));
   });
 
@@ -87,33 +90,56 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.get("/research-sessions/:id", (req, res) => {
     const params = parseParams(researchSessionIdParamsSchema, req.params);
-    const found = service.getResearchSession(params.id);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    const found = service.getResearchSession(params.id, query.channelId);
     res.json(createSuccessResponse(found, { requestId: getRequestId(res) }));
   });
 
   router.get("/research-sessions/:id/sources", (req, res) => {
     const params = parseParams(researchSessionIdParamsSchema, req.params);
-    const items = service.listResearchSources({ researchSessionId: params.id });
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    service.getResearchSession(params.id, query.channelId);
+    const items = service.listResearchSources({
+      researchSessionId: params.id,
+      channelId: query.channelId,
+    });
     res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
   });
 
   router.post("/research-sessions/:id/sources", (req, res) => {
     const params = parseParams(researchSessionIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
     const body = parseBody(researchSourceCreateSchema, req.body);
-    const created = service.createResearchSource(params.id, body, getRequestId(res));
+    const created = service.createResearchSource(
+      params.id,
+      body,
+      getRequestId(res),
+      query.channelId,
+    );
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.get("/research-sessions/:id/claims", (req, res) => {
     const params = parseParams(researchSessionIdParamsSchema, req.params);
-    const items = service.listClaimEvidence({ researchSessionId: params.id });
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
+    service.getResearchSession(params.id, query.channelId);
+    const items = service.listClaimEvidence({
+      researchSessionId: params.id,
+      channelId: query.channelId,
+    });
     res.json(createListSuccessResponse(items, { requestId: getRequestId(res) }));
   });
 
   router.post("/research-sessions/:id/claims", (req, res) => {
     const params = parseParams(researchSessionIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
     const body = parseBody(claimEvidenceCreateSchema, req.body);
-    const created = service.createClaimEvidence(params.id, body, getRequestId(res));
+    const created = service.createClaimEvidence(
+      params.id,
+      body,
+      getRequestId(res),
+      query.channelId,
+    );
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -138,8 +164,9 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.patch("/scripts/:id", (req, res) => {
     const params = parseParams(scriptIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
     const body = parseBody(scriptPatchSchema, req.body);
-    const updated = service.updateScript(params.id, body, getRequestId(res));
+    const updated = service.updateScript(params.id, body, getRequestId(res), query.channelId);
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
@@ -171,8 +198,14 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.post("/scripts/:id/versions", (req, res) => {
     const params = parseParams(scriptIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
     const body = parseBody(scriptVersionCreateSchema, req.body);
-    const created = service.createScriptVersion(params.id, body, getRequestId(res));
+    const created = service.createScriptVersion(
+      params.id,
+      body,
+      getRequestId(res),
+      query.channelId,
+    );
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -197,8 +230,9 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.patch("/visual-plans/:id", (req, res) => {
     const params = parseParams(visualPlanIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
     const body = parseBody(visualPlanPatchSchema, req.body);
-    const updated = service.updateVisualPlan(params.id, body, getRequestId(res));
+    const updated = service.updateVisualPlan(params.id, body, getRequestId(res), query.channelId);
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
@@ -229,8 +263,9 @@ export function createEditorialRouter(service: EditorialService): Router {
 
   router.post("/visual-plans/:id/scenes", (req, res) => {
     const params = parseParams(visualPlanIdParamsSchema, req.params);
+    const query = parseQuery(channelScopedDetailQuerySchema, req.query);
     const body = parseBody(scenePlanCreateSchema, req.body);
-    const created = service.createScenePlan(params.id, body, getRequestId(res));
+    const created = service.createScenePlan(params.id, body, getRequestId(res), query.channelId);
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 

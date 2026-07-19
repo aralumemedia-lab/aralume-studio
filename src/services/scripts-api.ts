@@ -63,8 +63,12 @@ export async function createScript(input: CreateScriptInput): Promise<ApiSuccess
   });
 }
 
-export async function updateScript(id: ID, input: UpdateScriptInput): Promise<ApiSuccess<Script>> {
-  return requestApiEnvelope<ApiSuccess<Script>>(`${SCRIPTS_PATH}/${id}`, {
+export async function updateScript(
+  id: ID,
+  channelId: ID,
+  input: UpdateScriptInput,
+): Promise<ApiSuccess<Script>> {
+  return requestApiEnvelope<ApiSuccess<Script>>(withQuery(`${SCRIPTS_PATH}/${id}`, { channelId }), {
     method: "PATCH",
     body: JSON.stringify(input),
   });
@@ -81,12 +85,16 @@ export async function getScriptVersions(
 
 export async function createScriptVersion(
   id: ID,
+  channelId: ID,
   input: CreateScriptVersionInput,
 ): Promise<ApiSuccess<ScriptVersion>> {
-  return requestApiEnvelope<ApiSuccess<ScriptVersion>>(`${SCRIPTS_PATH}/${id}/versions`, {
-    method: "POST",
-    body: JSON.stringify(input),
-  });
+  return requestApiEnvelope<ApiSuccess<ScriptVersion>>(
+    withQuery(`${SCRIPTS_PATH}/${id}/versions`, { channelId }),
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function describeScriptsApiError(error: unknown) {

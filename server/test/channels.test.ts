@@ -29,6 +29,7 @@ function createHarness(): Harness {
 async function startServer(repository = createChannelsRepository([])) {
   const logLines: string[] = [];
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",

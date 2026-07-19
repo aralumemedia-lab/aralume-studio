@@ -913,11 +913,11 @@ function getApproveDisabledReason(
 async function fetchGovernanceTarget(approval: HumanApproval, channelId?: string) {
   switch (approval.entityType) {
     case "content_idea":
-      return getContentIdea(approval.entityId);
+      return channelId ? getContentIdea(approval.entityId, channelId) : undefined;
     case "production_item":
-      return getProductionItem(approval.entityId);
+      return channelId ? getProductionItem(approval.entityId, channelId) : undefined;
     case "research_session":
-      return getResearchSession(approval.entityId);
+      return channelId ? getResearchSession(approval.entityId, channelId) : undefined;
     case "script":
       return channelId ? getScript(approval.entityId, channelId) : undefined;
     case "visual_plan":

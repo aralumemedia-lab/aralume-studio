@@ -365,6 +365,7 @@ test("render HTTP routes create a real job and surface the rendered video for th
 
   const harness = createHttpHarness(ffmpegPath);
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",

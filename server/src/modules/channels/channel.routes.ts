@@ -15,8 +15,14 @@ import type { ChannelsService } from "./channel.service.js";
 export function createChannelsRouter(service: ChannelsService): Router {
   const router = Router();
 
-  router.get("/", (_req, res) => {
-    const channels = service.listChannels();
+  router.get("/", (req, res) => {
+    const principal = req.auth;
+    const channels = service
+      .listChannels()
+      .filter(
+        (channel) =>
+          principal?.channelIds.includes("*") || principal?.channelIds.includes(channel.id),
+      );
     res.json(
       createListSuccessResponse(channels, {
         requestId: getRequestId(res),

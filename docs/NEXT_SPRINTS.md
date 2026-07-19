@@ -203,3 +203,5 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Fora de escopo: backup, restore, rollback, topologia produtiva, ingress, deploy, release, tag, novos requisitos editoriais e correcao ampla dos diagnosticos TypeScript globais.
 - Gate de saida: autenticacao fail-closed, autorizacao negativa reproduzivel, isolamento cross-channel comprovado, limites verificaveis, auditoria sanitizada, testes e build aprovados.
 - Dependencia: Sprint 23 integrada pela PR #38 com readiness `NOT_READY`; nenhuma unidade de release pode iniciar antes de novo readiness independente.
+- Evidencia: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 89/89 testes oficiais, runners 15-21 executados com exit code 0 e 56 screenshots novas.
+- Estado de saida: implementacao concluida, `READY_FOR_REVIEW`; PR exclusiva deve permanecer em draft ate revisao independente. Readiness da release continua `NOT_READY`.

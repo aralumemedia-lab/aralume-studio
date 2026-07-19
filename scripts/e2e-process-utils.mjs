@@ -17,6 +17,7 @@ export function spawnCommand(command, args, extraEnv = {}) {
       ...process.env,
       ARALUME_ENV: process.env.ARALUME_ENV ?? "test",
       ARALUME_LOG_LEVEL: process.env.ARALUME_LOG_LEVEL ?? "info",
+      ARALUME_AUTH_TEST_BYPASS: process.env.ARALUME_AUTH_TEST_BYPASS ?? "true",
       ...extraEnv,
     },
   });

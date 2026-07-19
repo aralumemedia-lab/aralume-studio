@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { AppError } from "../../http/errors.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
+import { isMimeExtensionPairAllowed, MAX_MEDIA_ASSET_SIZE_BYTES } from "./media-assets.schema.js";
 import {
   buildInternalUri,
   checksumFile,
@@ -95,7 +96,14 @@ export function createMediaAssetsService(
     createMediaAsset(input, requestId) {
       try {
         assertChannelExists(dependencies.channelsRepository, input.channelId);
-        const validation = validateStorageReferenceInternal(
+        assertMediaAssetSize(input.sizeBytes);
+        if (!isMimeExtensionPairAllowed(input.mimeType, input.extension)) {
+          throw validation("MIME type and extension are incompatible", {
+            mimeType: input.mimeType,
+            extension: input.extension,
+          });
+        }
+        const storageValidation = validateStorageReferenceInternal(
           input.channelId,
           input.storagePath,
           input.type,
@@ -121,7 +129,7 @@ export function createMediaAssetsService(
           checksumAlgorithm: "sha256",
           checksum: input.checksum.toLowerCase(),
           internalUri,
-          storagePath: validation.normalizedStoragePath,
+          storagePath: storageValidation.normalizedStoragePath,
           origin: input.origin,
           provenance: input.provenance.trim(),
           licenseStatus: input.licenseStatus,
@@ -222,6 +230,15 @@ export function createMediaAssetsService(
             : existing.storagePath;
         const nextChecksum = input.checksum?.toLowerCase() ?? existing.checksum;
         const nextSizeBytes = input.sizeBytes ?? existing.sizeBytes;
+        assertMediaAssetSize(nextSizeBytes);
+        const nextMimeType = input.mimeType?.trim() ?? existing.mimeType;
+        const nextExtension = input.extension?.trim().toLowerCase() ?? existing.extension;
+        if (!isMimeExtensionPairAllowed(nextMimeType, nextExtension)) {
+          throw validation("MIME type and extension are incompatible", {
+            mimeType: nextMimeType,
+            extension: nextExtension,
+          });
+        }
         const nextIntegrity = buildIntegrity(nextChecksum, nextSizeBytes, now, existing.integrity);
         const next: MediaAssetBase = {
           ...existing,
@@ -229,8 +246,8 @@ export function createMediaAssetsService(
           title: input.title?.trim() ?? existing.title,
           name: input.name?.trim() ?? existing.name,
           description: input.description?.trim() ?? existing.description,
-          mimeType: input.mimeType?.trim() ?? existing.mimeType,
-          extension: input.extension?.trim().toLowerCase() ?? existing.extension,
+          mimeType: nextMimeType,
+          extension: nextExtension,
           sizeBytes: nextSizeBytes,
           checksum: nextChecksum,
           storagePath: nextStoragePath,
@@ -566,6 +583,13 @@ export function createMediaAssetsService(
           if (observedSizeBytes <= 0) {
             throw validationError("Video file must not be empty", {
               reason: "VIDEO_FILE_EMPTY",
+              channelId: input.channelId,
+              storagePath: validation.normalizedStoragePath,
+            });
+          }
+          if (observedSizeBytes > MAX_MEDIA_ASSET_SIZE_BYTES) {
+            throw validationError("Video file exceeds the allowed size", {
+              reason: "VIDEO_FILE_TOO_LARGE",
               channelId: input.channelId,
               storagePath: validation.normalizedStoragePath,
             });
@@ -1056,6 +1080,14 @@ function recordImportAudit(
 function assertChannelExists(channelsRepository: ChannelsRepository, channelId: string): void {
   if (!channelsRepository.getChannel(channelId)) {
     throw notFound("Channel not found", { channelId });
+  }
+}
+
+function assertMediaAssetSize(sizeBytes: number): void {
+  if (sizeBytes > MAX_MEDIA_ASSET_SIZE_BYTES) {
+    throw validation("Media asset exceeds the allowed size", {
+      maxSizeBytes: MAX_MEDIA_ASSET_SIZE_BYTES,
+    });
   }
 }
 

@@ -8,6 +8,7 @@ import {
   requestContextMiddleware,
   requestLoggerMiddleware,
 } from "./http/middleware.js";
+import { createAuthenticationMiddleware, createAuthorizationMiddleware } from "./http/auth.js";
 import { createHealthHandler } from "./routes/health.js";
 import { createChannelsRepository } from "./modules/channels/channel.repository.js";
 import { createChannelsRouter } from "./modules/channels/channel.routes.js";
@@ -80,6 +81,7 @@ export type CreateAppOptions = {
   youtubeRepository?: YouTubeRepository;
   youtubeExternalClient?: YouTubeExternalClient;
   metricsRepository?: MetricsRepository;
+  authTestBypass?: boolean;
 };
 
 export function createApp(options: CreateAppOptions = {}) {
@@ -223,8 +225,17 @@ export function createApp(options: CreateAppOptions = {}) {
   app.disable("x-powered-by");
   app.use(requestContextMiddleware());
   app.use(requestLoggerMiddleware(env.ARALUME_LOG_LEVEL, options.logger ?? console));
+  app.use(
+    "/api",
+    createAuthenticationMiddleware({
+      env,
+      auditRepository,
+      allowTestBypass: options.authTestBypass,
+    }),
+  );
   app.use(jsonParserMiddleware());
   app.get("/health", createHealthHandler(env));
+  app.use("/api", createAuthorizationMiddleware(auditRepository));
   app.use("/api/channels", createChannelsRouter(channelsService));
   app.use("/api", createEditorialRouter(editorialService));
   app.use(

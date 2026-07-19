@@ -60,17 +60,17 @@ Fechar os controles de entrada e isolamento que impedem a preparacao produtiva: 
 
 O header `Authorization` usa `Bearer <payload>.<signature>`, com payload JSON base64url contendo `sub`, `role`, `channelIds` e opcionalmente `exp` em epoch seconds. A assinatura e HMAC-SHA256 sobre o payload base64url usando `ARALUME_AUTH_SIGNING_SECRET`. O backend rejeita algoritmo/forma ausente, payload desconhecido, papel invalido, escopo vazio ou expiracao vencida. O formato e um contrato interno para esta unidade; nenhuma UI deve armazenar ou expor o segredo.
 
-O harness pode usar um principal de teste somente por opt-in explicito de `CreateAppOptions` e nunca quando `ARALUME_ENV=production`. O entrypoint `server/src/index.ts` nao habilita esse modo.
+O harness pode usar um principal de teste somente por opt-in explicito de `CreateAppOptions` ou pela combinacao local de `ARALUME_ENV=test` e `ARALUME_AUTH_TEST_BYPASS=true`; nunca quando `ARALUME_ENV=production`. O entrypoint somente encaminha esse bypass em testes locais explicitamente marcados, e o segredo de producao continua obrigatorio.
 
 ## Matriz minima de permissoes
 
-| Papel | Leitura | Escrita editorial | Midia/render/import | Governanca/publicacao |
-| --- | --- | --- | --- | --- |
-| `owner` | sim | sim | sim | sim |
-| `editor` | sim | sim | sim | nao |
-| `operator` | sim | nao | sim | nao |
-| `reviewer` | sim | nao | nao | sim |
-| `viewer` | sim | nao | nao | nao |
+| Papel      | Leitura | Escrita editorial | Midia/render/import | Governanca/publicacao |
+| ---------- | ------- | ----------------- | ------------------- | --------------------- |
+| `owner`    | sim     | sim               | sim                 | sim                   |
+| `editor`   | sim     | sim               | sim                 | nao                   |
+| `operator` | sim     | nao               | sim                 | nao                   |
+| `reviewer` | sim     | nao               | nao                 | sim                   |
+| `viewer`   | sim     | nao               | nao                 | nao                   |
 
 Operacoes sem um papel explicitamente permitido falham fechada. O `channelId` do request deve estar contido no escopo do principal, salvo leitura global de canais autorizada ao `owner` conforme a implementação e os testes da sprint.
 

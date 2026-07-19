@@ -150,13 +150,13 @@ function ResearchPage() {
   const sourcesQuery = useQuery({
     queryKey: ["research-sources", selectedSession?.id],
     enabled: Boolean(selectedSession?.id),
-    queryFn: () => getResearchSources(selectedSession?.id as string),
+    queryFn: () => getResearchSources(selectedSession?.id as string, activeChannelId as string),
   });
 
   const claimsQuery = useQuery({
     queryKey: ["research-claims", selectedSession?.id],
     enabled: Boolean(selectedSession?.id),
-    queryFn: () => getClaimEvidenceList(selectedSession?.id as string),
+    queryFn: () => getClaimEvidenceList(selectedSession?.id as string, activeChannelId as string),
   });
 
   const sources = useMemo(() => sourcesQuery.data?.data ?? [], [sourcesQuery.data]);
@@ -254,7 +254,7 @@ function ResearchPage() {
         throw new Error("Selecione ou crie uma sessao de pesquisa antes de registrar fontes.");
       }
 
-      return createResearchSource(selectedSession.id, {
+      return createResearchSource(selectedSession.id, activeChannelId as string, {
         title: sourceForm.title.trim(),
         url: sourceForm.url.trim() || undefined,
         publisher: sourceForm.publisher.trim() || undefined,
@@ -288,7 +288,7 @@ function ResearchPage() {
         throw new Error("Selecione uma fonte antes de registrar claims.");
       }
 
-      return createClaimEvidence(selectedSession.id, {
+      return createClaimEvidence(selectedSession.id, activeChannelId as string, {
         sourceId: claimForm.sourceId,
         claim: claimForm.claim.trim(),
         evidenceSummary: claimForm.evidenceSummary.trim(),

@@ -203,7 +203,7 @@ export const Route = createFileRoute("/scripts")({
           throw new Error("Selecione um roteiro antes de criar uma nova versao.");
         }
 
-        return createScriptVersion(selectedScript.id, {
+        return createScriptVersion(selectedScript.id, activeChannelId as string, {
           versionNumber:
             versionForm.versionNumber.trim() === ""
               ? undefined

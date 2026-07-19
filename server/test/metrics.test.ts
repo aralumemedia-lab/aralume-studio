@@ -294,6 +294,7 @@ test("metrics summary returns product-level insufficient data", () => {
 
 async function startServer(harness: ReturnType<typeof createHarness>) {
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",

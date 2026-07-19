@@ -69,6 +69,7 @@ function createHarness() {
 
 async function startServer(harness: ReturnType<typeof createHarness>) {
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",

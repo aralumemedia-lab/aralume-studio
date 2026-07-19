@@ -124,7 +124,7 @@ async function main() {
       const sourceResponsePromise = page.waitForResponse(
         (response) =>
           response.url().includes("/api/research-sessions/") &&
-          response.url().endsWith("/sources") &&
+          response.url().includes("/sources?") &&
           response.request().method() === "POST" &&
           response.status() === 201,
       );
@@ -142,7 +142,7 @@ async function main() {
       const claimResponsePromise = page.waitForResponse(
         (response) =>
           response.url().includes("/api/research-sessions/") &&
-          response.url().endsWith("/claims") &&
+          response.url().includes("/claims?") &&
           response.request().method() === "POST" &&
           response.status() === 201,
       );

@@ -56,19 +56,30 @@ export async function getResearchSessions(
   );
 }
 
-export async function getResearchSession(id: ID): Promise<ApiSuccess<ResearchSession>> {
-  return requestApiEnvelope<ApiSuccess<ResearchSession>>(`${RESEARCH_SESSIONS_PATH}/${id}`);
-}
-
-export async function getResearchSources(sessionId: ID): Promise<ApiListSuccess<ResearchSource>> {
-  return requestApiEnvelope<ApiListSuccess<ResearchSource>>(
-    `${RESEARCH_SESSIONS_PATH}/${sessionId}/sources`,
+export async function getResearchSession(
+  id: ID,
+  channelId: ID,
+): Promise<ApiSuccess<ResearchSession>> {
+  return requestApiEnvelope<ApiSuccess<ResearchSession>>(
+    withQuery(`${RESEARCH_SESSIONS_PATH}/${id}`, { channelId }),
   );
 }
 
-export async function getClaimEvidenceList(sessionId: ID): Promise<ApiListSuccess<ClaimEvidence>> {
+export async function getResearchSources(
+  sessionId: ID,
+  channelId: ID,
+): Promise<ApiListSuccess<ResearchSource>> {
+  return requestApiEnvelope<ApiListSuccess<ResearchSource>>(
+    withQuery(`${RESEARCH_SESSIONS_PATH}/${sessionId}/sources`, { channelId }),
+  );
+}
+
+export async function getClaimEvidenceList(
+  sessionId: ID,
+  channelId: ID,
+): Promise<ApiListSuccess<ClaimEvidence>> {
   return requestApiEnvelope<ApiListSuccess<ClaimEvidence>>(
-    `${RESEARCH_SESSIONS_PATH}/${sessionId}/claims`,
+    withQuery(`${RESEARCH_SESSIONS_PATH}/${sessionId}/claims`, { channelId }),
   );
 }
 
@@ -86,10 +97,11 @@ export async function createResearchSession(
 
 export async function createResearchSource(
   sessionId: ID,
+  channelId: ID,
   input: CreateResearchSourceInput,
 ): Promise<ApiSuccess<ResearchSource>> {
   return requestApiEnvelope<ApiSuccess<ResearchSource>>(
-    `${RESEARCH_SESSIONS_PATH}/${sessionId}/sources`,
+    withQuery(`${RESEARCH_SESSIONS_PATH}/${sessionId}/sources`, { channelId }),
     {
       method: "POST",
       body: JSON.stringify({
@@ -102,10 +114,11 @@ export async function createResearchSource(
 
 export async function createClaimEvidence(
   sessionId: ID,
+  channelId: ID,
   input: CreateClaimEvidenceInput,
 ): Promise<ApiSuccess<ClaimEvidence>> {
   return requestApiEnvelope<ApiSuccess<ClaimEvidence>>(
-    `${RESEARCH_SESSIONS_PATH}/${sessionId}/claims`,
+    withQuery(`${RESEARCH_SESSIONS_PATH}/${sessionId}/claims`, { channelId }),
     {
       method: "POST",
       body: JSON.stringify({

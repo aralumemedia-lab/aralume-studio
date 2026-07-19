@@ -16,6 +16,11 @@ import { channelDemoSeed } from "../src/modules/channels/channel.seed.js";
 import { createMediaAssetsRepository } from "../src/modules/media-assets/media-assets.repository.js";
 import { mediaAssetsDemoSeed } from "../src/modules/media-assets/media-assets.seed.js";
 import { createMediaAssetsService } from "../src/modules/media-assets/media-assets.service.js";
+import {
+  MAX_MEDIA_ASSET_SIZE_BYTES,
+  sizeBytesSchema,
+  videoAssetImportSchema,
+} from "../src/modules/media-assets/media-assets.schema.js";
 import { createEditorialRepository } from "../src/modules/editorial/editorial.repository.js";
 import { editorialDemoSeed } from "../src/modules/editorial/editorial.seed.js";
 import { AppError } from "../src/http/errors.js";
@@ -46,6 +51,7 @@ function createHarness() {
 async function startServer() {
   const harness = createHarness();
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",
@@ -152,6 +158,46 @@ test("media assets service enforces storage safety, cross-channel isolation and 
   assert.match(created.internalUri, /^aralume:\/\/media-assets\/ch_historia\/ma_/);
   assert.equal(created.storagePath, "ch_historia/audio/fresh.wav");
   assert.equal(created.integrity?.checksumMatches, undefined);
+
+  assert.throws(
+    () =>
+      harness.service.createMediaAsset({
+        channelId: "ch_historia",
+        type: "image",
+        category: "visual",
+        name: "Mismatched image",
+        title: "Mismatched image",
+        description: "MIME and extension must agree.",
+        mimeType: "image/png",
+        extension: "mp4",
+        sizeBytes: 12,
+        checksum: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        storagePath: "ch_historia/image/mismatched.mp4",
+        origin: "generated",
+        provenance: "Negative security test",
+        licenseStatus: "confirmed",
+        status: "available",
+        riskLevel: "ok",
+        costActualCents: 0,
+      }),
+    (error) => error instanceof AppError && error.status === 400,
+  );
+
+  assert.equal(
+    videoAssetImportSchema.safeParse({
+      channelId: "ch_historia",
+      storagePath: "ch_historia/video/unauthorized.mov",
+      title: "Invalid import extension",
+      description: "The importer only accepts the controlled MP4 path.",
+      origin: "generated",
+      provenance: "Negative security test",
+      licenseStatus: "not_applicable",
+      contentId: "idea_06",
+      idempotencyKey: "sprint24-invalid-ext",
+    }).success,
+    false,
+  );
+  assert.equal(sizeBytesSchema.safeParse(MAX_MEDIA_ASSET_SIZE_BYTES + 1).success, false);
 
   assert.throws(
     () => harness.service.getMediaAsset("ch_curiosidades", "ma_hist_narration_01"),

@@ -60,50 +60,68 @@ export type CreateEditorialServiceOptions = {
 
 export type EditorialService = {
   listContentIdeas(filters?: ContentIdeaFilters): ContentIdea[];
-  getContentIdea(id: ID): ContentIdea;
+  getContentIdea(id: ID, channelId?: ID): ContentIdea;
   createContentIdea(input: ContentIdeaCreateInput, requestId?: string): ContentIdea;
-  updateContentIdea(id: ID, input: ContentIdeaPatchInput, requestId?: string): ContentIdea;
+  updateContentIdea(
+    id: ID,
+    input: ContentIdeaPatchInput,
+    requestId?: string,
+    channelId?: ID,
+  ): ContentIdea;
   listProductionItems(filters?: ProductionItemFilters): ProductionItem[];
-  getProductionItem(id: ID): ProductionItem;
+  getProductionItem(id: ID, channelId?: ID): ProductionItem;
   listResearchSessions(filters?: ResearchSessionFilters): ResearchSession[];
-  getResearchSession(id: ID): ResearchSession;
+  getResearchSession(id: ID, channelId?: ID): ResearchSession;
   createResearchSession(input: ResearchSessionCreateInput, requestId?: string): ResearchSession;
   listResearchSources(filters?: { channelId?: ID; researchSessionId?: ID }): ResearchSource[];
-  getResearchSource(id: ID): ResearchSource;
+  getResearchSource(id: ID, channelId?: ID): ResearchSource;
   createResearchSource(
     researchSessionId: ID,
     input: ResearchSourceCreateInput,
     requestId?: string,
+    channelId?: ID,
   ): ResearchSource;
   listClaimEvidence(filters?: {
     channelId?: ID;
     researchSessionId?: ID;
     sourceId?: ID;
   }): ClaimEvidence[];
-  getClaimEvidence(id: ID): ClaimEvidence;
+  getClaimEvidence(id: ID, channelId?: ID): ClaimEvidence;
   createClaimEvidence(
     researchSessionId: ID,
     input: ClaimEvidenceCreateInput,
     requestId?: string,
+    channelId?: ID,
   ): ClaimEvidence;
   listScripts(filters?: ScriptFilters): Script[];
   getScript(id: ID, channelId?: ID): Script;
   createScript(input: ScriptCreateInput, requestId?: string): Script;
-  updateScript(id: ID, input: ScriptPatchInput, requestId?: string): Script;
+  updateScript(id: ID, input: ScriptPatchInput, requestId?: string, channelId?: ID): Script;
   listScriptVersions(filters?: { channelId?: ID; scriptId?: ID }): ScriptVersion[];
   getScriptVersion(id: ID, channelId?: ID): ScriptVersion;
   createScriptVersion(
     scriptId: ID,
     input: ScriptVersionCreateInput,
     requestId?: string,
+    channelId?: ID,
   ): ScriptVersion;
   listVisualPlans(filters?: VisualPlanFilters): VisualPlan[];
   getVisualPlan(id: ID, channelId?: ID): VisualPlan;
   createVisualPlan(input: VisualPlanCreateInput, requestId?: string): VisualPlan;
-  updateVisualPlan(id: ID, input: VisualPlanPatchInput, requestId?: string): VisualPlan;
+  updateVisualPlan(
+    id: ID,
+    input: VisualPlanPatchInput,
+    requestId?: string,
+    channelId?: ID,
+  ): VisualPlan;
   listScenePlans(filters?: { channelId?: ID; visualPlanId?: ID }): ScenePlan[];
   getScenePlan(id: ID, channelId?: ID): ScenePlan;
-  createScenePlan(visualPlanId: ID, input: ScenePlanCreateInput, requestId?: string): ScenePlan;
+  createScenePlan(
+    visualPlanId: ID,
+    input: ScenePlanCreateInput,
+    requestId?: string,
+    channelId?: ID,
+  ): ScenePlan;
 };
 
 export function createEditorialService(
@@ -121,8 +139,8 @@ export function createEditorialService(
       return repository.listContentIdeas({ ...filters, channelId });
     },
 
-    getContentIdea(id) {
-      return getRequiredContentIdea(repository, id);
+    getContentIdea(id, channelId) {
+      return getRequiredContentIdea(repository, id, channelId);
     },
 
     createContentIdea(input, requestId) {
@@ -159,8 +177,8 @@ export function createEditorialService(
       return idea;
     },
 
-    updateContentIdea(id, input, requestId) {
-      const existing = getRequiredContentIdea(repository, id);
+    updateContentIdea(id, input, requestId, channelId) {
+      const existing = getRequiredContentIdea(repository, id, channelId);
       const parsed = contentIdeaPatchSchema.parse(input);
       const now = toIso(clock());
       const next: ContentIdea = {
@@ -202,11 +220,12 @@ export function createEditorialService(
       return repository.listProductionItems({ ...filters, channelId });
     },
 
-    getProductionItem(id) {
+    getProductionItem(id, channelId) {
       const found = repository.getProductionItem(id);
       if (!found) {
         throw notFound("Production item not found", { id });
       }
+      assertOptionalChannelMatch(found.channelId, channelId, "Production item");
 
       return found;
     },
@@ -216,8 +235,8 @@ export function createEditorialService(
       return repository.listResearchSessions({ ...filters, channelId });
     },
 
-    getResearchSession(id) {
-      return getRequiredResearchSession(repository, id);
+    getResearchSession(id, channelId) {
+      return getRequiredResearchSession(repository, id, channelId);
     },
 
     createResearchSession(input, requestId) {
@@ -260,17 +279,18 @@ export function createEditorialService(
       return repository.listResearchSources({ ...filters, channelId });
     },
 
-    getResearchSource(id) {
+    getResearchSource(id, channelId) {
       const found = repository.getResearchSource(id);
       if (!found) {
         throw notFound("Research source not found", { id });
       }
+      assertOptionalChannelMatch(found.channelId, channelId, "Research source");
 
       return found;
     },
 
-    createResearchSource(researchSessionId, input, requestId) {
-      const session = getRequiredResearchSession(repository, researchSessionId);
+    createResearchSource(researchSessionId, input, requestId, channelId) {
+      const session = getRequiredResearchSession(repository, researchSessionId, channelId);
       const parsed = researchSourceCreateSchema.parse(input);
       const now = toIso(clock());
 
@@ -315,19 +335,20 @@ export function createEditorialService(
       return repository.listClaimEvidence({ ...filters, channelId });
     },
 
-    getClaimEvidence(id) {
+    getClaimEvidence(id, channelId) {
       const found = repository.getClaimEvidence(id);
       if (!found) {
         throw notFound("Claim evidence not found", { id });
       }
+      assertOptionalChannelMatch(found.channelId, channelId, "Claim evidence");
 
       return found;
     },
 
-    createClaimEvidence(researchSessionId, input, requestId) {
-      const session = getRequiredResearchSession(repository, researchSessionId);
+    createClaimEvidence(researchSessionId, input, requestId, channelId) {
+      const session = getRequiredResearchSession(repository, researchSessionId, channelId);
       const parsed = claimEvidenceCreateSchema.parse(input);
-      const source = getRequiredResearchSource(repository, parsed.sourceId);
+      const source = getRequiredResearchSource(repository, parsed.sourceId, channelId);
 
       assertSameChannel(session.channelId, source.channelId, "Research source");
       if (source.researchSessionId !== session.id) {
@@ -456,8 +477,8 @@ export function createEditorialService(
       return script;
     },
 
-    updateScript(id, input, requestId) {
-      const existing = getRequiredScript(repository, id);
+    updateScript(id, input, requestId, channelId) {
+      const existing = getRequiredScript(repository, id, channelId);
       const parsed = scriptPatchSchema.parse(input);
       const now = toIso(clock());
 
@@ -502,9 +523,9 @@ export function createEditorialService(
       return getRequiredScriptVersion(repository, id, channelId);
     },
 
-    createScriptVersion(scriptId, input, requestId) {
-      const script = getRequiredScript(repository, scriptId);
-      const contentIdea = getRequiredContentIdea(repository, script.contentId);
+    createScriptVersion(scriptId, input, requestId, channelId) {
+      const script = getRequiredScript(repository, scriptId, channelId);
+      const contentIdea = getRequiredContentIdea(repository, script.contentId, channelId);
       const parsed = scriptVersionCreateSchema.parse(input);
       const existingVersions = repository.listScriptVersions({ scriptId });
       const nextVersionNumber = existingVersions.length + 1;
@@ -613,8 +634,8 @@ export function createEditorialService(
       return plan;
     },
 
-    updateVisualPlan(id, input, requestId) {
-      const existing = getRequiredVisualPlan(repository, id);
+    updateVisualPlan(id, input, requestId, channelId) {
+      const existing = getRequiredVisualPlan(repository, id, channelId);
       const parsed = visualPlanPatchSchema.parse(input);
       const now = toIso(clock());
 
@@ -656,8 +677,8 @@ export function createEditorialService(
       return getRequiredScenePlan(repository, id, channelId);
     },
 
-    createScenePlan(visualPlanId, input, requestId) {
-      const plan = getRequiredVisualPlan(repository, visualPlanId);
+    createScenePlan(visualPlanId, input, requestId, channelId) {
+      const plan = getRequiredVisualPlan(repository, visualPlanId, channelId);
       const parsed = scenePlanCreateSchema.parse(input);
       const { channelId: sceneChannelId, ...sceneData } = parsed;
       assertSameChannel(plan.channelId, sceneChannelId, "Visual plan");
@@ -858,7 +879,11 @@ function productionSnapshotByStatus(status: ContentStatus): {
   }
 }
 
-function getRequiredContentIdea(repository: EditorialRepository, id: ID): ContentIdea {
+function getRequiredContentIdea(
+  repository: EditorialRepository,
+  id: ID,
+  channelId?: ID,
+): ContentIdea {
   const parsed = idSchema.safeParse(id);
   if (!parsed.success) {
     throw validation("Invalid content idea id", { id });
@@ -868,11 +893,16 @@ function getRequiredContentIdea(repository: EditorialRepository, id: ID): Conten
   if (!found) {
     throw notFound("Content idea not found", { id });
   }
+  assertOptionalChannelMatch(found.channelId, channelId, "Content idea");
 
   return found;
 }
 
-function getRequiredResearchSession(repository: EditorialRepository, id: ID): ResearchSession {
+function getRequiredResearchSession(
+  repository: EditorialRepository,
+  id: ID,
+  channelId?: ID,
+): ResearchSession {
   const parsed = idSchema.safeParse(id);
   if (!parsed.success) {
     throw validation("Invalid research session id", { id });
@@ -882,11 +912,16 @@ function getRequiredResearchSession(repository: EditorialRepository, id: ID): Re
   if (!found) {
     throw notFound("Research session not found", { id });
   }
+  assertOptionalChannelMatch(found.channelId, channelId, "Research session");
 
   return found;
 }
 
-function getRequiredResearchSource(repository: EditorialRepository, id: ID): ResearchSource {
+function getRequiredResearchSource(
+  repository: EditorialRepository,
+  id: ID,
+  channelId?: ID,
+): ResearchSource {
   const parsed = idSchema.safeParse(id);
   if (!parsed.success) {
     throw validation("Invalid research source id", { id });
@@ -896,6 +931,7 @@ function getRequiredResearchSource(repository: EditorialRepository, id: ID): Res
   if (!found) {
     throw notFound("Research source not found", { id });
   }
+  assertOptionalChannelMatch(found.channelId, channelId, "Research source");
 
   return found;
 }
@@ -974,6 +1010,16 @@ function getRequiredScenePlan(repository: EditorialRepository, id: ID, channelId
   }
 
   return found;
+}
+
+function assertOptionalChannelMatch(
+  actualChannelId: ID,
+  requestedChannelId: ID | undefined,
+  entityName: string,
+): void {
+  if (requestedChannelId && actualChannelId !== requestedChannelId) {
+    throw notFound(`${entityName} not found`, {});
+  }
 }
 
 function idToProductionItemId(contentId: ID): ID {

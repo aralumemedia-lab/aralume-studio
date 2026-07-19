@@ -321,13 +321,13 @@ O R14 foi concluido com 18/18 criterios `PASS` e integrado pela PR #37. A Sprint
 
 Esta unidade funcional pertence ao E15 e foi formalizada antes da implementacao. Ela remedia os bloqueadores de autenticacao inbound, autorizacao por canal, protecao de midia e limites de importacao identificados na Sprint 23. O readiness permanece `NOT_READY` durante toda a execucao.
 
-| ID | Tipo | Escopo | Prioridade | Spec | Dependencias |
-| --- | --- | --- | --- | --- | --- |
-| SEC24-01 | Seguranca | Autenticacao inbound fail-closed e principal validado | P0 | `docs/specs/025-sprint-24-security-isolation.md` | PR #38 integrada; E15 |
-| SEC24-02 | Seguranca | Papeis, permissoes e isolamento server-side por canal | P0 | mesma spec | SEC24-01 |
-| SEC24-03 | Seguranca | Rotas de midia, renders, cortes e arquivos autorizadas | P0 | mesma spec | SEC24-01, SEC24-02 |
-| SEC24-04 | Seguranca | Limites de payload, upload e importacao de storage | P0 | mesma spec | SEC24-01, SEC24-02 |
-| SEC24-05 | Evidencia | Auditoria sanitizada, testes negativos e evidencia operacional | P0 | mesma spec | SEC24-01 a SEC24-04 |
+| ID       | Tipo      | Escopo                                                         | Prioridade | Spec                                             | Dependencias          |
+| -------- | --------- | -------------------------------------------------------------- | ---------- | ------------------------------------------------ | --------------------- |
+| SEC24-01 | Seguranca | Autenticacao inbound fail-closed e principal validado          | P0         | `docs/specs/025-sprint-24-security-isolation.md` | PR #38 integrada; E15 |
+| SEC24-02 | Seguranca | Papeis, permissoes e isolamento server-side por canal          | P0         | mesma spec                                       | SEC24-01              |
+| SEC24-03 | Seguranca | Rotas de midia, renders, cortes e arquivos autorizadas         | P0         | mesma spec                                       | SEC24-01, SEC24-02    |
+| SEC24-04 | Seguranca | Limites de payload, upload e importacao de storage             | P0         | mesma spec                                       | SEC24-01, SEC24-02    |
+| SEC24-05 | Evidencia | Auditoria sanitizada, testes negativos e evidencia operacional | P0         | mesma spec                                       | SEC24-01 a SEC24-04   |
 
 ### Definition of Ready da Sprint 24
 
@@ -343,6 +343,8 @@ Esta unidade funcional pertence ao E15 e foi formalizada antes da implementacao.
 - Midia, renders, cortes e importacoes aplicam autenticacao, autorizacao, canal e limites no backend.
 - Auditoria registra ator, papel, canal, acao, recurso, resultado, motivo sanitizado, requestId e timestamp sem credenciais.
 - Testes negativos e positivos, lint, checks, build e evidencias operacionais executados sem corrigir indiscriminadamente os 18 diagnosticos TypeScript globais.
+- Evidencia operacional: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 89/89 testes oficiais, runners 15-21 com exit code 0 e 56 screenshots novas.
+- Estado: implementacao concluida; `READY_FOR_REVIEW`; nenhum merge, release, tag ou deploy.
 
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 

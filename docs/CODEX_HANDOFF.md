@@ -215,6 +215,8 @@ recriacao do frontend e limpeza administrativa da S12.
 - Bypass: somente harness de testes local explicitamente habilitado, fora de producao; nenhum fallback permissivo no entrypoint produtivo.
 - Fora de escopo: backup/restore, rollback, topologia, ingress, deploy, release, tag, novos fluxos editoriais e correcao ampla dos diagnosticos TypeScript globais.
 - Gate: endpoints operacionais fail-closed, isolamento e midia negativos reproduziveis, limites aplicados, auditoria sanitizada, testes e build aprovados, sem regressao dos fluxos R14.
+- Evidencia: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 89/89 testes oficiais, runners 15-21 com exit code 0, 56 screenshots novas, portas livres e nenhum processo orfao.
+- Estado de handoff: `READY_FOR_REVIEW`; a revisao independente deve ocorrer antes de qualquer merge. A release continua `NOT_READY`, sem release, tag ou deploy.
 
 ## Definition of Done
 

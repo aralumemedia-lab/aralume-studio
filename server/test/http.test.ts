@@ -24,6 +24,7 @@ const captureLogger = {
 
 before(async () => {
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "development",
       ARALUME_LOG_LEVEL: "info",

@@ -229,7 +229,13 @@ function spawnCommand(command, args, extraEnv = {}) {
     shell: false,
     stdio: "inherit",
     windowsHide: true,
-    env: { ...process.env, ARALUME_ENV: "test", ARALUME_LOG_LEVEL: "info", ...extraEnv },
+    env: {
+      ...process.env,
+      ARALUME_ENV: "test",
+      ARALUME_LOG_LEVEL: "info",
+      ARALUME_AUTH_TEST_BYPASS: "true",
+      ...extraEnv,
+    },
   });
 }
 
