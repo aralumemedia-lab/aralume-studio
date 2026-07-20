@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import { z } from "zod";
 
 import { AppError } from "../../http/errors.js";
+import { createAuthorizationMiddleware } from "../../http/auth.js";
 import { createListSuccessResponse, createSuccessResponse } from "../../http/response.js";
 import {
   channelIdParamsSchema,
@@ -11,9 +12,15 @@ import {
   updateChannelProfileBodySchema,
 } from "./channel.schema.js";
 import type { ChannelsService } from "./channel.service.js";
+import type { AuditRepository } from "../audit/audit.types.js";
 
-export function createChannelsRouter(service: ChannelsService): Router {
+export function createChannelsRouter(
+  service: ChannelsService,
+  auditRepository: AuditRepository,
+): Router {
   const router = Router();
+
+  router.use("/:channelId", createAuthorizationMiddleware(auditRepository));
 
   router.get("/", (req, res) => {
     const principal = req.auth;
@@ -40,9 +47,9 @@ export function createChannelsRouter(service: ChannelsService): Router {
     );
   });
 
-  router.get("/:id", (req, res) => {
+  router.get("/:channelId", (req, res) => {
     const params = parseParams(channelIdParamsSchema, req.params);
-    const channel = service.getChannel(params.id);
+    const channel = service.getChannel(params.channelId);
     res.json(
       createSuccessResponse(channel, {
         requestId: getRequestId(res),
@@ -50,10 +57,10 @@ export function createChannelsRouter(service: ChannelsService): Router {
     );
   });
 
-  router.patch("/:id", (req, res) => {
+  router.patch("/:channelId", (req, res) => {
     const params = parseParams(channelIdParamsSchema, req.params);
     const body = parseBody(updateChannelBodySchema, req.body);
-    const updated = service.updateChannel(params.id, body);
+    const updated = service.updateChannel(params.channelId, body);
     res.json(
       createSuccessResponse(updated, {
         requestId: getRequestId(res),
@@ -61,9 +68,9 @@ export function createChannelsRouter(service: ChannelsService): Router {
     );
   });
 
-  router.get("/:id/profile", (req, res) => {
+  router.get("/:channelId/profile", (req, res) => {
     const params = parseParams(channelIdParamsSchema, req.params);
-    const profile = service.getChannelProfile(params.id);
+    const profile = service.getChannelProfile(params.channelId);
     res.json(
       createSuccessResponse(profile, {
         requestId: getRequestId(res),
@@ -71,10 +78,10 @@ export function createChannelsRouter(service: ChannelsService): Router {
     );
   });
 
-  router.patch("/:id/profile", (req, res) => {
+  router.patch("/:channelId/profile", (req, res) => {
     const params = parseParams(channelIdParamsSchema, req.params);
     const body = parseBody(updateChannelProfileBodySchema, req.body);
-    const updated = service.updateChannelProfile(params.id, body, getRequestId(res));
+    const updated = service.updateChannelProfile(params.channelId, body, getRequestId(res));
     res.json(
       createSuccessResponse(updated, {
         requestId: getRequestId(res),
@@ -82,9 +89,9 @@ export function createChannelsRouter(service: ChannelsService): Router {
     );
   });
 
-  router.get("/:id/settings", (req, res) => {
+  router.get("/:channelId/settings", (req, res) => {
     const params = parseParams(channelIdParamsSchema, req.params);
-    const settings = service.getChannelSettings(params.id);
+    const settings = service.getChannelSettings(params.channelId);
     res.json(
       createSuccessResponse(settings, {
         requestId: getRequestId(res),

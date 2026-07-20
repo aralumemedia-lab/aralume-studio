@@ -237,8 +237,13 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use(jsonParserMiddleware());
   app.use(jsonDepthMiddleware());
   app.get("/health", createHealthHandler(env));
-  app.use("/api", createAuthorizationMiddleware(auditRepository));
-  app.use("/api/channels", createChannelsRouter(channelsService));
+  app.use(
+    "/api",
+    createAuthorizationMiddleware(auditRepository, {
+      deferPathChannelAuthorization: true,
+    }),
+  );
+  app.use("/api/channels", createChannelsRouter(channelsService, auditRepository));
   app.use("/api", createEditorialRouter(editorialService));
   app.use(
     "/api",
@@ -248,7 +253,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use("/api", createGovernanceRouter(governanceService));
   app.use("/api", createPublicationsRouter(publicationsService));
   app.use("/api", createYouTubeRouter(youtubeService));
-  app.use("/api", createCostsRouter(costsService));
+  app.use("/api", createCostsRouter(costsService, auditRepository));
   app.use("/api", createAuditRouter(auditService));
   app.use("/api", createMetricsRouter(metricsService));
   app.use("/api", createCockpitsRouter(cockpitsService));

@@ -130,7 +130,10 @@ export function createAuthenticationMiddleware(options: AuthOptions): RequestHan
   };
 }
 
-export function createAuthorizationMiddleware(auditRepository: AuditRepository): RequestHandler {
+export function createAuthorizationMiddleware(
+  auditRepository: AuditRepository,
+  options: { deferPathChannelAuthorization?: boolean } = {},
+): RequestHandler {
   return (req, res, next) => {
     try {
       const principal = req.auth as AuthPrincipal | undefined;
@@ -145,8 +148,17 @@ export function createAuthorizationMiddleware(auditRepository: AuditRepository):
         throw forbidden();
       }
 
+      const pathChannel = extractPathChannel(req);
       const requestedChannel = extractRequestedChannel(req);
-      if (!requestedChannel && requiresChannelContext(req) && !principal.channelIds.includes("*")) {
+      const deferPathChannelAuthorization =
+        options.deferPathChannelAuthorization === true && !pathChannel && isPathChannelRequest(req);
+
+      if (
+        !requestedChannel &&
+        requiresChannelContext(req) &&
+        !principal.channelIds.includes("*") &&
+        !deferPathChannelAuthorization
+      ) {
         throw forbidden();
       }
 
@@ -154,11 +166,11 @@ export function createAuthorizationMiddleware(auditRepository: AuditRepository):
         throw forbidden();
       }
 
-      if (hasConflictingChannelContext(req)) {
+      if (hasConflictingChannelContext(req, pathChannel)) {
         throw forbidden();
       }
 
-      if (isMutatingRequest(req)) {
+      if (isMutatingRequest(req) && !deferPathChannelAuthorization) {
         recordAuthDecision(auditRepository, req, res, principal, "success", permission);
       }
       next();
@@ -306,19 +318,22 @@ function permissionForRequest(req: Request): AuthPermission {
 }
 
 function extractRequestedChannel(req: Request): string | undefined {
-  const queryChannel = readContextValue(req.query);
-  const bodyChannel = readContextValue(req.body);
-  const paramChannel = readContextValue(req.params);
-  if (queryChannel) {
-    return queryChannel;
-  }
-  if (bodyChannel) {
-    return bodyChannel;
-  }
-  if (req.path.startsWith("/channels/") && paramChannel) {
-    return paramChannel;
-  }
-  return undefined;
+  return extractPathChannel(req) ?? readContextValue(req.query) ?? readContextValue(req.body);
+}
+
+function extractPathChannel(req: Request): string | undefined {
+  return readContextValue(req.params);
+}
+
+function isPathChannelRequest(req: Request): boolean {
+  return req.path.startsWith("/channels/") || req.path.startsWith("/operational-modes/channels/");
+}
+
+function hasConflictingChannelContext(req: Request, pathChannel?: string): boolean {
+  const values = [pathChannel, readContextValue(req.query), readContextValue(req.body)].filter(
+    (value): value is string => Boolean(value),
+  );
+  return new Set(values).size > 1;
 }
 
 function requiresChannelContext(req: Request): boolean {
@@ -327,13 +342,6 @@ function requiresChannelContext(req: Request): boolean {
   }
 
   return true;
-}
-
-function hasConflictingChannelContext(req: Request): boolean {
-  const values = [readContextValue(req.query), readContextValue(req.body)].filter(
-    (value): value is string => Boolean(value),
-  );
-  return new Set(values).size > 1;
 }
 
 function readContextValue(value: unknown): string | undefined {

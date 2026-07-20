@@ -2,8 +2,9 @@ import { Router, type Response } from "express";
 import { z } from "zod";
 
 import { AppError } from "../../http/errors.js";
-import { getTrustedAuditActor } from "../../http/auth.js";
+import { createAuthorizationMiddleware, getTrustedAuditActor } from "../../http/auth.js";
 import { createListSuccessResponse, createSuccessResponse } from "../../http/response.js";
+import type { AuditRepository } from "../audit/audit.types.js";
 import {
   channelIdParamsSchema,
   costEntryIdParamsSchema,
@@ -17,8 +18,13 @@ import {
 } from "./costs.schema.js";
 import type { CostsService } from "./costs.types.js";
 
-export function createCostsRouter(service: CostsService): Router {
+export function createCostsRouter(service: CostsService, auditRepository: AuditRepository): Router {
   const router = Router();
+
+  router.use(
+    "/operational-modes/channels/:channelId",
+    createAuthorizationMiddleware(auditRepository),
+  );
 
   router.get("/costs", (req, res) => {
     const query = parseQuery(costListQuerySchema, req.query);

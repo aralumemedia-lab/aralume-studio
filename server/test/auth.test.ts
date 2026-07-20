@@ -20,6 +20,16 @@ const viewer: AuthPrincipal = {
   role: "viewer",
   channelIds: ["ch_historia"],
 };
+const multiChannelOwner: AuthPrincipal = {
+  sub: "owner-multi-24",
+  role: "owner",
+  channelIds: ["ch_historia", "ch_curiosidades"],
+};
+const wildcardOwner: AuthPrincipal = {
+  sub: "owner-wildcard-24",
+  role: "owner",
+  channelIds: ["*"],
+};
 
 let server: Server;
 let baseUrl = "";
@@ -194,6 +204,93 @@ test("conflicting channel context is rejected before the domain operation", asyn
   assert.equal(response.status, 403);
   assert.equal(payload.error.code, "FORBIDDEN");
   assert.deepEqual(payload.error.details, {});
+});
+
+test("path channel authorization uses explicit scopes and cannot be replaced by body or query", async () => {
+  const channelResponse = await fetch(`${baseUrl}/api/channels/ch_historia`, {
+    headers: { authorization: authHeader(owner) },
+  });
+  assert.equal(channelResponse.status, 200);
+
+  const requestId = "auth-path-channel-explicit-scope";
+  const allowed = await fetch(`${baseUrl}/api/operational-modes/channels/ch_historia`, {
+    method: "PATCH",
+    headers: {
+      authorization: authHeader(owner),
+      "content-type": "application/json",
+      "x-request-id": requestId,
+    },
+    body: JSON.stringify({ mode: "paused" }),
+  });
+  assert.equal(allowed.status, 200);
+
+  const beforeRejectedMutations = await fetch(
+    `${baseUrl}/api/operational-modes?channelId=ch_historia`,
+    { headers: { authorization: authHeader(owner) } },
+  );
+  const beforePayload = (await beforeRejectedMutations.json()) as {
+    data: { effectivePolicy: { mode: string } };
+  };
+
+  const crossChannel = await fetch(`${baseUrl}/api/operational-modes/channels/ch_curiosidades`, {
+    method: "PATCH",
+    headers: {
+      authorization: authHeader(owner),
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ mode: "paused" }),
+  });
+  assert.equal(crossChannel.status, 403);
+
+  const bodyOverride = await fetch(`${baseUrl}/api/operational-modes/channels/ch_historia`, {
+    method: "PATCH",
+    headers: {
+      authorization: authHeader(multiChannelOwner),
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ mode: "demo", channelId: "ch_curiosidades" }),
+  });
+  assert.equal(bodyOverride.status, 403);
+
+  const queryOverride = await fetch(
+    `${baseUrl}/api/operational-modes/channels/ch_historia?channelId=ch_curiosidades`,
+    {
+      method: "PATCH",
+      headers: {
+        authorization: authHeader(multiChannelOwner),
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ mode: "demo" }),
+    },
+  );
+  assert.equal(queryOverride.status, 403);
+
+  const afterRejectedMutations = await fetch(
+    `${baseUrl}/api/operational-modes?channelId=ch_historia`,
+    { headers: { authorization: authHeader(owner) } },
+  );
+  const afterPayload = (await afterRejectedMutations.json()) as {
+    data: { effectivePolicy: { mode: string } };
+  };
+  assert.equal(afterPayload.data.effectivePolicy.mode, beforePayload.data.effectivePolicy.mode);
+
+  const audit = auditRepository
+    .listAuditLogs()
+    .find((entry) => entry.action === "cost.policy_updated" && entry.requestId === requestId);
+  assert.equal(audit?.actorName, owner.sub);
+  assert.equal(audit?.channelId, "ch_historia");
+  assert.equal(audit?.metadata?.actorId, owner.sub);
+  assert.equal(audit?.metadata?.role, owner.role);
+
+  const wildcard = await fetch(`${baseUrl}/api/operational-modes/channels/ch_curiosidades`, {
+    method: "PATCH",
+    headers: {
+      authorization: authHeader(wildcardOwner),
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ mode: "paused" }),
+  });
+  assert.equal(wildcard.status, 200);
 });
 
 test("oversized payload is rejected with a sanitized limit error", async () => {
