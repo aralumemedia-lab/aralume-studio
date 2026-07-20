@@ -40,9 +40,12 @@ pre-implementation preflight. No historical branch was deleted.
 
 ## Current formalization state
 
-The Sprint 25 implementation was subsequently formalized and published:
+The Sprint 25 implementation and its focused corrective follow-up were
+formalized and published:
 
-- commit: `9e7017c233715ac693cf2eb933bcae9f939140db`;
+- implementation commit: `9e7017c233715ac693cf2eb933bcae9f939140db`;
+- corrective commit: `22b7347cdb624f62f588c60550cb2d9538278945`;
+- current HEAD: `22b7347cdb624f62f588c60550cb2d9538278945`;
 - branch: `codex/sprint-25-release-readiness-hardening`;
 - push: completed to `origin/codex/sprint-25-release-readiness-hardening`;
 - pull request: [#41](https://github.com/aralumemedia-lab/aralume-studio/pull/41), open and draft;
