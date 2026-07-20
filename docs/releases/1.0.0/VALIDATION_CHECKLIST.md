@@ -28,7 +28,7 @@ The command `npx tsc --noEmit` returns exit code 2 with 18 diagnostics on both t
 
 ## Security and runtime gates
 
-- [x] no hardcoded secret found by initial pattern scan
+- [x] no real secret found by heuristic diff scan on validated Sprint 25 code (b8febec); 0 high-confidence hits, known fixtures: none in changed files
 - [x] local anonymous HTTP probe captured
 - [ ] close 55 deferred security worklist rows
 - [ ] resolve or formally accept dependency advisories
@@ -46,7 +46,9 @@ The Sprint 25 hardening evidence is recorded in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
 The global TypeScript gate now passes with zero diagnostics, `bun audit` reports
 no vulnerabilities after fixed-version overrides, and the E2E runners validate
-the exact service and per-run identity. The release remains **NOT READY** because
+the exact service, nonce, IPC-confirmed process identity, and per-run identity.
+The lifecycle and registry stress evidence is recorded in the Sprint 25 evidence.
+The release remains **NOT READY** because
 production configuration/secrets, backup/restore, rollback, observability,
 production topology/ingress, and the integral release-readiness evaluation are
 outside this unit and still pending.

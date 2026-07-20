@@ -40,18 +40,24 @@ pre-implementation preflight. No historical branch was deleted.
 
 ## Current formalization state
 
-The Sprint 25 implementation and its focused corrective follow-up were
-formalized and published:
+The Sprint 25 implementation and its focused lifecycle/traceability remediation
+were formalized and published:
 
 - implementation commit: `9e7017c233715ac693cf2eb933bcae9f939140db`;
 - corrective commit: `22b7347cdb624f62f588c60550cb2d9538278945`;
-- current HEAD: `22b7347cdb624f62f588c60550cb2d9538278945`;
+- F-01--F-06 remediation code commit: `b8febec`;
+- validated code HEAD for the gates below: `b8febec`;
 - branch: `codex/sprint-25-release-readiness-hardening`;
 - push: completed to `origin/codex/sprint-25-release-readiness-hardening`;
 - pull request: [#41](https://github.com/aralumemedia-lab/aralume-studio/pull/41), open and draft;
 - base: `15d113ad0181164af306e28a61aae5b0ec28bea5`;
 - merge: not performed;
 - tag, release, and deploy: not created or executed.
+
+The documentary update is a subsequent normal commit after `b8febec`; the
+final branch SHA is recorded in the PR metadata and handoff comment after that
+commit. The validated code SHA above is the immutable SHA used for the
+technical gates and is not a provisional implementation reference.
 
 ## Baseline and corrections
 
@@ -95,7 +101,7 @@ keeps the direct dependency graph unchanged apart from the test-only `undici`
 declaration and avoids broad package upgrades. Build, lint, and the full test
 suite provide the compatibility coverage for the lockfile change.
 
-### Service identity
+### Service identity and lifecycle remediation
 
 Each E2E invocation now creates a cryptographically random `runId`, propagates it
 to child processes as `ARALUME_E2E_RUN_ID`, and waits for all of the following:
@@ -104,23 +110,30 @@ to child processes as `ARALUME_E2E_RUN_ID`, and waits for all of the following:
 2. `ok === true`;
 3. the exact expected service name is returned;
 4. the exact current `runId` is returned;
-5. the child process is still alive.
+5. the endpoint returns an IPC-confirmed startup nonce;
+6. the endpoint returns an IPC-confirmed PID from the spawned process or its
+   tsx descendant;
+7. the endpoint returns the requested port;
+8. the confirmed process is still alive after the response is read.
 
-The backend includes the run id in `/health` only when explicitly supplied by the
-test environment. Vite exposes `GET /__aralume/e2e-identity` only in test mode
-with a run id, returning the fixed `aralume-web` identity. Runners 15–21 and the
-HMAC runner use this identity gate instead of generic HTTP liveness. This rejects
-an old server, another execution, the wrong service, or an unrelated process on
-the expected port.
+The backend includes run id, nonce, PID, and port in the health response only
+when ARALUME_ENV=test and both test identity values are present. Vite exposes its
+identity endpoint only in test mode. Runners 15–21 and the HMAC runner use this
+identity gate instead of generic HTTP liveness. A server that is alive on the
+port but did not confirm the nonce over IPC is rejected. Production responses do
+not expose this test identity mechanism.
 
-`node --test scripts/e2e-process-utils.test.mjs` covers the positive identity,
-stale run id, wrong service, process exit, and teardown paths (8/8 passed).
+The lifecycle utility now uses an AsyncLocalStorage context per execution, one
+close promise per process, single-flight teardown, cleanup after close, and an
+AbortController per readiness fetch attempt. Startup observes message, error,
+exit, close, and a bounded timeout; exit before handshake cannot leave a pending
+promise. The focused lifecycle suite passed 13/13.
 
-Before the lifecycle correction, the fixed-delay test reproduced the race: the
-targeted case passed 50/50 sequentially but failed 8/8 under eight-way
-concurrency; the complete lifecycle file passed 20/20 sequential runs. The
-corrective change replaces the 300 ms inference with an explicit child IPC
-startup message followed by the child `close` event.
+The obsolete fixed-delay inference was removed. Reproductions passed 50/50
+critical sequential executions, 8/8 concurrent executions, and 20/20 complete
+lifecycle suites. Additional stress passed 20/20 HTTP timeout cases, 20/20
+early-handshake cases, 50/50 registry pairs, and 20/20 false
+process/endpoint-association cases.
 
 ## Reproducible gates
 
@@ -134,11 +147,15 @@ Executed from the repository root on 2026-07-20:
 | `npm run backend:check` | PASS |
 | `npm test` | PASS, 92/92 tests |
 | `npm run build` | PASS |
-| `node --test scripts/e2e-process-utils.test.mjs` | PASS, 8/8 tests |
+| `bun install --frozen-lockfile` | PASS, no lockfile changes |
+| `node --test scripts/e2e-process-utils.test.mjs` | PASS, 13/13 tests |
+| lifecycle stress | PASS, 50 sequential; 8 concurrent; 20 full suites; 20 timeout; 20 early handshake; 50 registry pairs; 20 false association |
 | `node scripts/sprint15-browser-e2e.mjs` through `sprint21-browser-e2e.mjs` | PASS, all exit 0 with identity-gated startup |
 | `node scripts/sprint24-security-hmac-e2e.mjs` | PASS, exit 0; authorization, isolation, conflict, missing/invalid signature cases preserved |
+| heuristic secret scan of added diff | PASS, high-confidence private-key/API-key/token patterns; 0 hits; known fixtures: none in changed files; no real secret found; validated code HEAD `b8febec` |
 | `git diff --check` | PASS |
 | post-run ports 3001, 4173, 8080 | clear |
+| post-run project processes | clear; no orphaned runner/backend/frontend process |
 
 The runners generated local screenshot artifacts during execution; those
 artifacts were restored to the clean baseline and are not part of this unit.
@@ -149,22 +166,24 @@ The PR has no hosted checks (`statusCheckRollup=[]`); the repository also has no
 branch protection, rulesets, or CODEOWNERS. The technical gates in this document
 were reproduced locally, but the missing CI/enforcement is a governance risk and
 is not silently treated as a functional Sprint 25 correction. A separate unit
-should establish CI and branch protection.
+should establish CI and branch protection. This remediation did not create or
+claim any hosted check.
 
 ## Agent lifecycle
 
-Four fresh read-only agents were created after the preflight and normative
-decision, one each for TypeScript, dependencies, service identity, and
-documentation/gates. All four returned reports, their findings were consolidated
-before implementation/validation, and all four threads were closed. The tool
-surface did not expose a thread-list operation, so pre-existing thread inventory
-could not be independently enumerated; no known active legacy thread was reused
-or left running.
+The original Sprint 25 unit used four fresh read-only agents for TypeScript,
+dependencies, service identity, and documentation/gates; all four were closed.
+This remediation created three fresh read-only agents for lifecycle,
+process/endpoint association, and evidence. The lifecycle report arrived after
+the initial wait; all three reports were consolidated and all three threads were
+closed before implementation completion. No subagent edited files, committed,
+pushed, changed the PR, or merged.
 
 ## Residual blockers and explicit non-scope
 
-This hardening unit removes the three known technical blockers, but the product
-remains `NOT_READY`. Production configuration and secrets, backup/restore,
+This hardening unit removes the three known technical blockers and the six
+review findings addressed here, but the product remains `NOT_READY`. Production
+configuration and secrets, backup/restore,
 rollback, broad observability, production topology/ingress, the next integral
 release-readiness evaluation, release, tag, and deploy remain pending and were
 not implemented or authorized.

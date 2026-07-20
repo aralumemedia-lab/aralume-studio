@@ -29,8 +29,10 @@ V1 acceptance remains valid as a functional acceptance of the evaluated SHA. It 
 
 Sprint 25 / Spec 026 corrected the 14 global TypeScript diagnostics, resolved the
 three known transitive advisories (`@babel/core`, `brace-expansion`, and `js-yaml`),
-and added per-run service identity checks to E2E startup. Reproducible evidence is
-available in
+and added per-run service identity checks to E2E startup. The follow-up remediation
+at validated code HEAD b8febec added nonce/IPC/PID/port association, cancelable
+readiness fetches, deterministic early-handshake failure, per-execution registry
+cleanup, and single-flight teardown. Reproducible evidence is available in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
 
 These corrections do not change the release decision: V1.0.0 remains **NOT READY
