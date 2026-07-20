@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { spawn } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { createHmac, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { createServer } from "node:net";
 import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
@@ -14,6 +14,56 @@ const bootstrapModule = pathToFileURL(
 ).href;
 
 export const e2eRunId = randomUUID();
+
+const identityChallengeHeader = "x-aralume-e2e-challenge";
+
+function identityProofMessage({ challenge, service, runId, pid, port }) {
+  return [challenge, service, runId, String(pid), String(port)].join("\n");
+}
+
+function identityMac(secret, values) {
+  return createHmac("sha256", secret).update(identityProofMessage(values)).digest("hex");
+}
+
+function hasValidIdentityMac(actual, expected) {
+  if (typeof actual !== "string" || !/^[0-9a-f]{64}$/i.test(actual)) {
+    return false;
+  }
+  return timingSafeEqual(Buffer.from(actual, "hex"), Buffer.from(expected, "hex"));
+}
+
+function nextIdentityChallenge(record) {
+  let challenge;
+  do {
+    challenge = randomBytes(32).toString("hex");
+  } while (record.usedChallenges.has(challenge));
+  record.usedChallenges.add(challenge);
+  return challenge;
+}
+
+function combineFailures(primary, cleanup) {
+  const failures = [];
+  const seen = new Set();
+  const add = (failure) => {
+    if (failure instanceof AggregateError) {
+      failure.errors.forEach(add);
+      return;
+    }
+    if (failure instanceof Error && !seen.has(failure)) {
+      seen.add(failure);
+      failures.push(failure);
+    }
+  };
+  add(primary);
+  add(cleanup);
+  if (failures.length === 0) {
+    return null;
+  }
+  if (failures.length === 1) {
+    return failures[0];
+  }
+  return new AggregateError(failures, "E2E execution and teardown failed.");
+}
 
 function currentContext() {
   return executionStorage.getStore() ?? fallbackContext;
@@ -59,7 +109,16 @@ function settleStartup(record, error) {
   record.startup.resolve(error ? { error } : record);
 }
 
-function createProcessRecord(child, command, args, runId, startupNonce, context) {
+function createProcessRecord(
+  child,
+  command,
+  args,
+  runId,
+  startupNonce,
+  startupCorrelationId,
+  identitySecret,
+  context,
+) {
   const startup = createDeferred();
   const closed = createDeferred();
   const record = {
@@ -69,6 +128,8 @@ function createProcessRecord(child, command, args, runId, startupNonce, context)
     context,
     runId,
     startupNonce,
+    startupCorrelationId,
+    identitySecret,
     terminationRequested: false,
     exitCode: null,
     signalCode: null,
@@ -79,6 +140,7 @@ function createProcessRecord(child, command, args, runId, startupNonce, context)
     startupError: null,
     startupConfirmed: false,
     startupPids: new Set([child.pid]),
+    usedChallenges: new Set(),
     closed: false,
     closePromise: closed.promise,
     closeResolve: closed.resolve,
@@ -97,6 +159,7 @@ function createProcessRecord(child, command, args, runId, startupNonce, context)
     if (
       message.runId !== record.runId ||
       message.nonce !== record.startupNonce ||
+      message.correlationId !== record.startupCorrelationId ||
       !Number.isInteger(message.pid) ||
       message.pid <= 0
     ) {
@@ -223,6 +286,8 @@ export function spawnCommand(
   const runId =
     extraEnv.ARALUME_E2E_RUN_ID ?? context.runId ?? process.env.ARALUME_E2E_RUN_ID ?? e2eRunId;
   const startupNonce = randomUUID();
+  const startupCorrelationId = randomUUID();
+  const identitySecret = randomBytes(32).toString("hex");
   const inheritedNodeOptions = extraEnv.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? "";
   const nodeOptions =
     extraEnv.ARALUME_E2E_BOOTSTRAP_DISABLED === "true"
@@ -242,10 +307,21 @@ export function spawnCommand(
       ARALUME_E2E_RUN_ID: runId,
       ARALUME_E2E_STARTUP_NONCE: startupNonce,
       ...extraEnv,
+      ARALUME_E2E_STARTUP_CORRELATION_ID: startupCorrelationId,
+      ARALUME_E2E_IDENTITY_SECRET: identitySecret,
       NODE_OPTIONS: nodeOptions,
     },
   });
-  createProcessRecord(child, command, args, runId, startupNonce, context);
+  createProcessRecord(
+    child,
+    command,
+    args,
+    runId,
+    startupNonce,
+    startupCorrelationId,
+    identitySecret,
+    context,
+  );
   return child;
 }
 
@@ -261,7 +337,6 @@ export async function waitForProcessStartup(child, timeoutMs = 120_000) {
     return record;
   }
   const result = await withTimeout(record.startup.promise, timeoutMs, () => {
-    cleanupStartupListener(record);
     return new Error("Timed out waiting for E2E child startup handshake: " + describe(record));
   });
   if (result?.error) {
@@ -350,11 +425,11 @@ export async function terminateProcesses(children) {
   }
 }
 
-async function fetchWithTimeout(url, timeoutMs) {
+async function fetchWithTimeout(url, timeoutMs, options = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { signal: controller.signal });
+    return await fetch(url, { ...options, signal: controller.signal });
   } finally {
     clearTimeout(timer);
   }
@@ -398,17 +473,28 @@ export async function waitForServiceIdentity(url, child, expectedService, timeou
     }
 
     const remaining = timeoutMs - (Date.now() - started);
+    const challenge = nextIdentityChallenge(record);
     try {
-      const response = await fetchWithTimeout(url, Math.min(1_000, remaining));
+      const response = await fetchWithTimeout(url, Math.min(1_000, remaining), {
+        headers: { [identityChallengeHeader]: challenge },
+      });
       if (response.ok) {
         const payload = await response.json();
+        const expectedMac = identityMac(record.identitySecret, {
+          challenge,
+          service: expectedService,
+          runId: record.runId,
+          pid: payload?.pid,
+          port: payload?.port,
+        });
         const valid =
           payload?.ok === true &&
           payload.service === expectedService &&
           payload.runId === record.runId &&
           payload.startupNonce === record.startupNonce &&
           record.startupPids.has(payload.pid) &&
-          payload.port === expectedPort;
+          payload.port === expectedPort &&
+          hasValidIdentityMac(payload.identityMac, expectedMac);
         if (valid) {
           if (record.closed || child.exitCode !== null || child.signalCode !== null) {
             throw new Error(
@@ -421,7 +507,7 @@ export async function waitForServiceIdentity(url, child, expectedService, timeou
         throw new Error(
           "E2E service identity mismatch for " +
             expectedService +
-            ": expected runId, startupNonce, IPC-confirmed PID and port belonging to the spawned process.",
+            ": expected runId, startupNonce, IPC-confirmed PID, port and challenge-response proof belonging to the spawned process.",
         );
       }
     } catch (error) {
@@ -457,7 +543,7 @@ export async function runE2E(main) {
       try {
         await terminateProcesses([...context.records].map((record) => record.child));
       } catch (cleanupError) {
-        failure ??= cleanupError;
+        failure = combineFailures(failure, cleanupError);
       }
       context.records.clear();
     }
@@ -465,7 +551,5 @@ export async function runE2E(main) {
   if (failure) {
     console.error(failure);
     process.exitCode = 1;
-  } else {
-    process.exitCode = 0;
   }
 }

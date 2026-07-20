@@ -44,18 +44,27 @@ function longRunningChild(extraEnv = {}) {
   });
 }
 
-async function startIdentityChild({ exitAfterStartup = false } = {}) {
+async function startIdentityChild({ exitAfterStartup = false, replayIdentityMac = false } = {}) {
   const child = spawnCommand(
     process.execPath,
     [
       "-e",
       [
         "const { createServer } = require('node:http');",
+        "const { createHmac } = require('node:crypto');",
         "const runId = process.env.ARALUME_E2E_RUN_ID;",
         "const startupNonce = process.env.ARALUME_E2E_STARTUP_NONCE;",
+        "const identitySecret = process.env.ARALUME_E2E_IDENTITY_SECRET;",
+        replayIdentityMac ? "let replayedMac;" : "",
         "const server = createServer((request, response) => {",
+        "  const challenge = request.headers['x-aralume-e2e-challenge'];",
+        "  const port = response.socket.localPort;",
+        "  const calculatedMac = challenge ? createHmac('sha256', identitySecret).update([challenge, 'aralume-api', runId, String(process.pid), String(port)].join('\\n')).digest('hex') : undefined;",
+        replayIdentityMac
+          ? "  const identityMac = replayedMac ?? calculatedMac; replayedMac ??= calculatedMac;"
+          : "  const identityMac = calculatedMac;",
         "  response.setHeader('content-type', 'application/json');",
-        "  response.end(JSON.stringify({ ok: true, service: 'aralume-api', runId, startupNonce, pid: process.pid, port: response.socket.localPort }));",
+        "  response.end(JSON.stringify({ ok: true, service: 'aralume-api', runId, startupNonce, pid: process.pid, port, ...(identityMac ? { identityMac } : {}) }));",
         "});",
         "server.listen(0, '127.0.0.1', () => {",
         "  process.send({ type: 'identity-port', port: server.address().port });",
@@ -75,7 +84,12 @@ async function startIdentityServer(payload, { hang = false } = {}) {
       return;
     }
     response.setHeader("content-type", "application/json");
-    response.end(JSON.stringify(payload));
+    response.end(
+      JSON.stringify({
+        ...payload,
+        ...(payload.port === undefined ? { port: response.socket.localPort } : {}),
+      }),
+    );
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   const address = server.address();
@@ -103,13 +117,25 @@ test("accepts only the spawned process identity", async () => {
 
 test("rejects an endpoint served by another process", async () => {
   const child = longRunningChild();
+  let started;
+  child.on("message", (message) => {
+    if (message?.type === "aralume-e2e-started") {
+      started = message;
+    }
+  });
+  await waitForProcessStartup(child);
   const { server, url } = await startIdentityServer({
     ok: true,
     service: "aralume-api",
-    runId: e2eRunId,
-    startupNonce: "wrong-process",
-    pid: child.pid,
-    port: 1,
+    get runId() {
+      return started.runId;
+    },
+    get startupNonce() {
+      return started.nonce;
+    },
+    get pid() {
+      return started.pid;
+    },
   });
   try {
     await assert.rejects(
@@ -183,7 +209,7 @@ test("cancels a stalled identity fetch at the operation timeout", async () => {
 
 test("rejects a service whose child dies after the startup handshake", async () => {
   const { child, url } = await startIdentityChild({ exitAfterStartup: true });
-  await new Promise((resolve) => setTimeout(resolve, 150));
+  await waitForClose(child);
   await assert.rejects(
     () => waitForServiceIdentity(url, child, "aralume-api", 1_000),
     /exited unexpectedly|exited before identity confirmation|identity mismatch/,
@@ -207,6 +233,19 @@ test("rejects an explicit runId override that does not match the endpoint", asyn
   } finally {
     await terminateProcess(child);
     await closeServer(server);
+  }
+});
+
+test("rejects a replayed challenge proof", async () => {
+  const { child, url } = await startIdentityChild({ replayIdentityMac: true });
+  try {
+    await waitForServiceIdentity(url, child, "aralume-api", 1_000);
+    await assert.rejects(
+      () => waitForServiceIdentity(url, child, "aralume-api", 200),
+      /identity mismatch/,
+    );
+  } finally {
+    await terminateProcess(child);
   }
 });
 
@@ -262,6 +301,63 @@ test("runE2E cleans active children and reports a child failure", () => {
     encoding: "utf8",
   });
   assert.equal(result.status, 1, result.stderr);
+});
+
+test("keeps concurrent startup waiters isolated after one timeout", async () => {
+  const child = spawnCommand(
+    process.execPath,
+    [
+      "-e",
+      "setTimeout(() => process.send({ type: 'aralume-e2e-started', runId: process.env.ARALUME_E2E_RUN_ID, nonce: process.env.ARALUME_E2E_STARTUP_NONCE, correlationId: process.env.ARALUME_E2E_STARTUP_CORRELATION_ID, pid: process.pid }), 200)",
+    ],
+    { ARALUME_E2E_BOOTSTRAP_DISABLED: "true" },
+  );
+  const short = waitForProcessStartup(child, 50).then(
+    () => "resolved",
+    (error) => error.message,
+  );
+  const long = waitForProcessStartup(child, 700).then(
+    () => "resolved",
+    (error) => error.message,
+  );
+  assert.match(await short, /Timed out/);
+  assert.equal(await long, "resolved");
+  await terminateProcess(child);
+  assert.equal(child.listenerCount("message"), 0);
+});
+
+test("preserves primary and teardown errors in one report", () => {
+  const script = [
+    'import { runE2E, spawnCommand, waitForProcessClose } from "./scripts/e2e-process-utils.mjs";',
+    "await runE2E(async () => {",
+    "  const child = spawnCommand('aralume-command-that-does-not-exist', [], { ARALUME_E2E_BOOTSTRAP_DISABLED: 'true' });",
+    "  await waitForProcessClose(child);",
+    "  throw new Error('PRIMARY_MAIN_FAILURE');",
+    "});",
+  ].join("\n");
+  const result = spawnSync(process.execPath, ["--input-type=module", "-e", script], {
+    cwd: process.cwd(),
+    encoding: "utf8",
+  });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /PRIMARY_MAIN_FAILURE/);
+  assert.match(result.stderr, /E2E child process failed to start/);
+});
+
+test("does not reset a failure exit code during concurrent runE2E", () => {
+  const script = [
+    'import { runE2E } from "./scripts/e2e-process-utils.mjs";',
+    "await Promise.all([",
+    "  runE2E(async () => { throw new Error('FAST_PRIMARY_FAILURE'); }),",
+    "  runE2E(async () => { await new Promise((resolve) => setTimeout(resolve, 100)); }),",
+    "]);",
+  ].join("\n");
+  const result = spawnSync(process.execPath, ["--input-type=module", "-e", script], {
+    cwd: process.cwd(),
+    encoding: "utf8",
+  });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /FAST_PRIMARY_FAILURE/);
 });
 
 test("registry returns to baseline after independent executions", async () => {
