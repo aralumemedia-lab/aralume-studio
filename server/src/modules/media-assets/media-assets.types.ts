@@ -3,6 +3,7 @@ import type {
   ID as ChannelID,
   ISODate as ChannelISODate,
 } from "../channels/channel.types.js";
+import type { AuditRequestContext } from "../audit/audit.types.js";
 import type { WorkflowStatus } from "../editorial/editorial.types.js";
 
 export type ID = string;
@@ -401,23 +402,35 @@ export type CreateMediaAssetsServiceOptions = {
 export type MediaAssetsService = {
   listMediaAssets(filters: MediaAssetFilters): MediaAssetBase[];
   getMediaAsset(channelId: ID, id: ID): MediaAssetBase;
-  createMediaAsset(input: MediaAssetCreateInput, requestId?: string): MediaAssetBase;
+  createMediaAsset(
+    input: MediaAssetCreateInput,
+    requestId?: string,
+    auditContext?: AuditRequestContext,
+  ): MediaAssetBase;
   updateMediaAsset(
     channelId: ID,
     id: ID,
     input: MediaAssetPatchInput,
     requestId?: string,
+    auditContext?: AuditRequestContext,
   ): MediaAssetBase;
-  validateStorageReference(input: StorageReferenceValidationInput): MediaAssetStorageValidation;
+  validateStorageReference(
+    input: StorageReferenceValidationInput,
+    auditContext?: AuditRequestContext,
+  ): MediaAssetStorageValidation;
   validateAssetIntegrity(
     channelId: ID,
     id: ID,
     input?: IntegrityValidationInput,
+    auditContext?: AuditRequestContext,
   ): MediaAssetIntegrityValidation;
   listMediaAssetUsages(channelId: ID, id: ID): MediaAssetUsage[];
   listVideoAssets(filters: VideoAssetFilters): VideoAsset[];
   getVideoAsset(channelId: ID, id: ID): VideoAsset;
-  importVideoAssetFromStorage(input: VideoAssetImportInput): Promise<VideoAsset>;
+  importVideoAssetFromStorage(
+    input: VideoAssetImportInput,
+    auditContext?: AuditRequestContext,
+  ): Promise<VideoAsset>;
   listDerivedClips(filters: DerivedClipFilters): DerivedClip[];
   getDerivedClip(channelId: ID, id: ID): DerivedClip;
 };

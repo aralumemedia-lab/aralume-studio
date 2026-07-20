@@ -222,33 +222,50 @@ test("media assets service enforces storage safety, cross-channel isolation and 
 
 test("media assets create and update narration with queryable audit state", () => {
   const harness = createHarness();
-  const created = harness.service.createMediaAsset({
+  const auditContext = {
+    actorId: "owner-media-test",
+    actorName: "owner-media-test",
+    role: "owner" as const,
     channelId: "ch_negocios",
-    type: "narration",
-    category: "audio",
-    name: "Sprint 17 narration",
-    title: "Sprint 17 narration",
-    description: "Narration asset created for persistence checks.",
-    mimeType: "audio/wav",
-    extension: "wav",
-    sizeBytes: 2048,
-    checksum: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    storagePath: "ch_negocios/narration/sprint-17.wav",
-    origin: "generated",
-    provenance: "Created by the controlled persistence test.",
-    licenseStatus: "confirmed",
-    status: "pending",
-    riskLevel: "ok",
-    costActualCents: 0,
-    providerName: "Aralume TTS",
-    modelName: "voice-v3",
-  });
+    requestId: "req-media-create",
+  };
+  const created = harness.service.createMediaAsset(
+    {
+      channelId: "ch_negocios",
+      type: "narration",
+      category: "audio",
+      name: "Sprint 17 narration",
+      title: "Sprint 17 narration",
+      description: "Narration asset created for persistence checks.",
+      mimeType: "audio/wav",
+      extension: "wav",
+      sizeBytes: 2048,
+      checksum: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      storagePath: "ch_negocios/narration/sprint-17.wav",
+      origin: "generated",
+      provenance: "Created by the controlled persistence test.",
+      licenseStatus: "confirmed",
+      status: "pending",
+      riskLevel: "ok",
+      costActualCents: 0,
+      providerName: "Aralume TTS",
+      modelName: "voice-v3",
+    },
+    auditContext.requestId,
+    auditContext,
+  );
 
-  const updated = harness.service.updateMediaAsset("ch_negocios", created.id, {
-    description: "Narration asset updated for persistence checks.",
-    usageSummary: "Used to verify same-process reload persistence.",
-    sizeBytes: 4096,
-  });
+  const updated = harness.service.updateMediaAsset(
+    "ch_negocios",
+    created.id,
+    {
+      description: "Narration asset updated for persistence checks.",
+      usageSummary: "Used to verify same-process reload persistence.",
+      sizeBytes: 4096,
+    },
+    "req-media-update",
+    { ...auditContext, requestId: "req-media-update" },
+  );
   const queried = harness.service.getMediaAsset("ch_negocios", updated.id);
 
   assert.equal(queried.channelId, "ch_negocios");
@@ -260,6 +277,17 @@ test("media assets create and update narration with queryable audit state", () =
       .listAuditLogs({ channelId: "ch_negocios" })
       .some((log) => log.action === "media_asset.updated"),
   );
+  const registeredAudit = harness.auditRepository
+    .listAuditLogs({ channelId: "ch_negocios" })
+    .find((log) => log.action === "media_asset.registered");
+  const updatedAudit = harness.auditRepository
+    .listAuditLogs({ channelId: "ch_negocios" })
+    .find((log) => log.action === "media_asset.updated");
+  assert.equal(registeredAudit?.actorName, "owner-media-test");
+  assert.equal(registeredAudit?.requestId, "req-media-create");
+  assert.equal(registeredAudit?.metadata?.actorId, "owner-media-test");
+  assert.equal(updatedAudit?.actorName, "owner-media-test");
+  assert.equal(updatedAudit?.requestId, "req-media-update");
 });
 
 test("available media registration validates the real file and leaves no rejected asset", () => {
@@ -278,6 +306,12 @@ test("available media registration validates the real file and leaves no rejecte
   mkdirSync(path.join(storageRoot, "ch_historia", "image", "directory.png"), {
     recursive: true,
   });
+  const truncatedMp4Path = path.join(storageRoot, "ch_historia", "video", "truncated.mp4");
+  mkdirSync(path.dirname(truncatedMp4Path), { recursive: true });
+  writeFileSync(
+    truncatedMp4Path,
+    Buffer.from([0, 0, 0, 12, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d]),
+  );
   const checksum = createHash("sha256").update(file).digest("hex");
 
   const service = createMediaAssetsService(
@@ -320,6 +354,18 @@ test("available media registration validates the real file and leaves no rejecte
       { ...baseInput, name: "Wrong size", sizeBytes: file.length + 1 },
       { ...baseInput, name: "Wrong checksum", checksum: "f".repeat(64) },
       { ...baseInput, name: "Cross channel", storagePath: "ch_curiosidades/image/other.png" },
+      {
+        ...baseInput,
+        type: "video" as const,
+        category: "video" as const,
+        name: "Truncated MP4",
+        title: "Truncated MP4",
+        mimeType: "video/mp4",
+        extension: "mp4",
+        sizeBytes: statSync(truncatedMp4Path).size,
+        checksum: createHash("sha256").update(readFileSync(truncatedMp4Path)).digest("hex"),
+        storagePath: "ch_historia/video/truncated.mp4",
+      },
     ]) {
       assert.throws(
         () => service.createMediaAsset(invalidInput, "req_media_rejected"),
@@ -331,7 +377,7 @@ test("available media registration validates the real file and leaves no rejecte
     const rejectedAudits = auditRepository
       .listAuditLogs({ channelId: "ch_historia" })
       .filter((log) => log.action === "media_asset.registration_rejected");
-    assert.equal(rejectedAudits.length, 6);
+    assert.equal(rejectedAudits.length, 7);
     assert.equal(
       auditRepository
         .listAuditLogs({ channelId: "ch_historia" })
@@ -339,6 +385,12 @@ test("available media registration validates the real file and leaves no rejecte
           (log) =>
             log.action === "media_asset.registered" && log.requestId === "req_media_rejected",
         ),
+      false,
+    );
+    assert.equal(
+      auditRepository
+        .listAuditLogs({ channelId: "ch_historia" })
+        .some((log) => log.entityId === "truncated.mp4" && log.status === "success"),
       false,
     );
   } finally {
@@ -552,6 +604,13 @@ test("official video import calculates integrity, preserves old assets and is id
     contentId: "idea_06",
     idempotencyKey: "e13-video-import-001",
   };
+  const auditContext = {
+    actorId: "owner-import-test",
+    actorName: "owner-import-test",
+    role: "owner" as const,
+    channelId: "ch_historia",
+    requestId: "req-video-import-replay",
+  };
 
   try {
     const [first, concurrent] = await Promise.all([
@@ -580,8 +639,14 @@ test("official video import calculates integrity, preserves old assets and is id
       "ch_historia/video/vd_historia_01.mp4",
     );
 
-    const replay = await service.importVideoAssetFromStorage(input);
+    const replay = await service.importVideoAssetFromStorage(input, auditContext);
     assert.equal(replay.id, first.id);
+    const replayAudit = auditRepository
+      .listAuditLogs({ channelId: "ch_historia" })
+      .find((log) => log.action === "video_asset.import_idempotent_replay");
+    assert.equal(replayAudit?.actorName, "owner-import-test");
+    assert.equal(replayAudit?.requestId, "req-video-import-replay");
+    assert.equal(replayAudit?.metadata?.actorId, "owner-import-test");
     await assert.rejects(
       () =>
         service.importVideoAssetFromStorage({

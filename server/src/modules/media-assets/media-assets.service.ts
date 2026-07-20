@@ -3,6 +3,7 @@ import { existsSync, lstatSync, realpathSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { AppError } from "../../http/errors.js";
+import type { AuditRequestContext } from "../audit/audit.types.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
 import { isMimeExtensionPairAllowed, MAX_MEDIA_ASSET_SIZE_BYTES } from "./media-assets.schema.js";
 import {
@@ -94,7 +95,7 @@ export function createMediaAssetsService(
       );
     },
 
-    createMediaAsset(input, requestId) {
+    createMediaAsset(input, requestId, auditContext) {
       try {
         assertChannelExists(dependencies.channelsRepository, input.channelId);
         assertMediaAssetSize(input.sizeBytes);
@@ -178,14 +179,14 @@ export function createMediaAssetsService(
           id: `au_${idFactory()}`,
           channelId: asset.channelId,
           requestId,
-          actorType: "system",
-          actorName: "Aralume Core",
+          ...auditActorFields(auditContext, requestId),
           action: "media_asset.registered",
           entityType: "MediaAsset",
           entityId: asset.id,
           status: "success",
           message: "Media asset registered.",
           metadata: {
+            ...auditMetadata(auditContext),
             type: asset.type,
             category: asset.category,
             storagePath: asset.storagePath,
@@ -207,6 +208,7 @@ export function createMediaAssetsService(
           clock,
           input.channelId,
           requestId,
+          auditContext,
           {
             action: "media_asset.registration_rejected",
             entityType: "MediaAsset",
@@ -224,7 +226,7 @@ export function createMediaAssetsService(
       }
     },
 
-    updateMediaAsset(channelId, id, input, requestId) {
+    updateMediaAsset(channelId, id, input, requestId, auditContext) {
       try {
         const existing = getAssetForChannel(
           repository,
@@ -312,8 +314,7 @@ export function createMediaAssetsService(
           id: `au_${idFactory()}`,
           channelId,
           requestId,
-          actorType: "system",
-          actorName: "Aralume Core",
+          ...auditActorFields(auditContext, requestId),
           action: "media_asset.updated",
           entityType: "MediaAsset",
           entityId: next.id,
@@ -336,12 +337,14 @@ export function createMediaAssetsService(
           clock,
           channelId,
           requestId,
+          auditContext,
           {
             action: "media_asset.update_rejected",
             entityType: "MediaAsset",
             entityId: id,
             error,
             metadata: {
+              ...auditMetadata(auditContext),
               changedFields: Object.keys(input),
               storagePath: input.storagePath,
               origin: input.origin,
@@ -353,7 +356,7 @@ export function createMediaAssetsService(
       }
     },
 
-    validateStorageReference(input) {
+    validateStorageReference(input, auditContext) {
       try {
         assertChannelExists(dependencies.channelsRepository, input.channelId);
         const result = validateStorageReferenceInternal(
@@ -365,14 +368,14 @@ export function createMediaAssetsService(
         recordAudit(dependencies.auditRepository, {
           id: `au_${idFactory()}`,
           channelId: input.channelId,
-          actorType: "system",
-          actorName: "Aralume Core",
+          ...auditActorFields(auditContext),
           action: "media_asset.storage_validated",
           entityType: "MediaAsset",
           entityId: `storage:${input.channelId}:${result.normalizedStoragePath}`,
           status: "success",
           message: "Storage reference validated.",
           metadata: {
+            ...auditMetadata(auditContext),
             type: input.type,
             storagePath: result.normalizedStoragePath,
             internalUri: result.internalUri,
@@ -387,6 +390,7 @@ export function createMediaAssetsService(
           clock,
           input.channelId,
           undefined,
+          auditContext,
           {
             action: "media_asset.storage_rejected",
             entityType: "MediaAsset",
@@ -402,7 +406,7 @@ export function createMediaAssetsService(
       }
     },
 
-    validateAssetIntegrity(channelId, id, input) {
+    validateAssetIntegrity(channelId, id, input, auditContext) {
       const asset = getAssetForChannel(
         repository,
         channelId,
@@ -443,14 +447,14 @@ export function createMediaAssetsService(
       recordAudit(dependencies.auditRepository, {
         id: `au_${idFactory()}`,
         channelId,
-        actorType: "system",
-        actorName: "Aralume Core",
+        ...auditActorFields(auditContext),
         action: valid ? "media_asset.integrity_validated" : "media_asset.integrity_mismatch",
         entityType: "MediaAsset",
         entityId: next.id,
         status: valid ? "success" : "warning",
         message: valid ? "Media asset integrity validated." : "Media asset integrity mismatch.",
         metadata: {
+          ...auditMetadata(auditContext),
           checksumMatches,
           sizeMatches,
           observedChecksum,
@@ -534,7 +538,7 @@ export function createMediaAssetsService(
       return found;
     },
 
-    async importVideoAssetFromStorage(input: VideoAssetImportInput) {
+    async importVideoAssetFromStorage(input: VideoAssetImportInput, auditContext) {
       assertChannelExists(dependencies.channelsRepository, input.channelId);
       const content = dependencies.editorialRepository?.getContentIdea(input.contentId);
       if (!content || content.channelId !== input.channelId) {
@@ -570,6 +574,7 @@ export function createMediaAssetsService(
             storagePath: existing.storagePath,
             idempotencyKey: input.idempotencyKey,
           },
+          auditContext,
         );
         return existing;
       }
@@ -638,8 +643,14 @@ export function createMediaAssetsService(
             `storage:${validation.normalizedStoragePath}`,
             "video_asset.import_validation_started",
             { storagePath: validation.normalizedStoragePath },
+            auditContext,
           );
           const probe = await probeVideoFile(absolutePath);
+          if (!isMp4Container(probe.containerFormat)) {
+            throw validationError("Video container does not match the authorized MP4 contract", {
+              reason: "VIDEO_CONTAINER_MISMATCH",
+            });
+          }
           const checksum = checksumFile(absolutePath);
           const finalSizeBytes = readFileSizeBytes(absolutePath);
           if (finalSizeBytes !== observedSizeBytes) {
@@ -711,6 +722,7 @@ export function createMediaAssetsService(
               durationSeconds: asset.durationSeconds,
               resolution: asset.resolution,
             },
+            auditContext,
           );
           return asset;
         } catch (error) {
@@ -725,6 +737,7 @@ export function createMediaAssetsService(
               storagePath: input.storagePath,
               reason: error instanceof AppError ? error.code : "IMPORT_FAILED",
             },
+            auditContext,
           );
           throw error;
         }
@@ -1068,6 +1081,7 @@ function auditRejectedMediaAsset(
   clock: () => Date,
   channelId: string,
   requestId: string | undefined,
+  auditContext: AuditRequestContext | undefined,
   input: {
     action: string;
     entityType: string;
@@ -1087,15 +1101,14 @@ function auditRejectedMediaAsset(
   recordAudit(auditRepository, {
     id: `au_${idFactory()}`,
     channelId,
-    requestId,
-    actorType: "system",
-    actorName: "Aralume Core",
+    ...auditActorFields(auditContext, requestId),
     action: input.action,
     entityType: input.entityType,
     entityId: input.entityId,
     status: "warning",
     message: input.error.message,
     metadata: {
+      ...auditMetadata(auditContext),
       ...input.metadata,
       errorStatus: input.error.status,
       errorCode: input.error.code,
@@ -1162,20 +1175,54 @@ function recordImportAudit(
   entityId: string,
   action: string,
   metadata: Record<string, unknown>,
+  auditContext?: AuditRequestContext,
 ): void {
   recordAudit(auditRepository, {
     id: `au_${idFactory()}`,
     channelId,
-    actorType: "user",
-    actorName: "Aralume Operator",
+    ...auditActorFields(auditContext),
     action,
     entityType: "VideoAsset",
     entityId,
     status: action.endsWith("failed") ? "failed" : "success",
     message: "Video asset import event.",
-    metadata,
+    metadata: { ...auditMetadata(auditContext), ...metadata },
     createdAt: clock().toISOString(),
   });
+}
+
+function isMp4Container(containerFormat: string): boolean {
+  return ["mov", "mp4"].includes(containerFormat.trim().toLowerCase());
+}
+
+function auditActorFields(
+  auditContext: AuditRequestContext | undefined,
+  fallbackRequestId?: string,
+): {
+  requestId?: string;
+  actorType: "user" | "system";
+  actorName: string;
+} {
+  return auditContext
+    ? {
+        requestId: auditContext.requestId,
+        actorType: "user",
+        actorName: auditContext.actorName,
+      }
+    : {
+        requestId: fallbackRequestId,
+        actorType: "system",
+        actorName: "Aralume Core",
+      };
+}
+
+function auditMetadata(auditContext: AuditRequestContext | undefined): Record<string, unknown> {
+  return auditContext
+    ? {
+        actorId: auditContext.actorId,
+        role: auditContext.role,
+      }
+    : {};
 }
 
 function assertChannelExists(channelsRepository: ChannelsRepository, channelId: string): void {

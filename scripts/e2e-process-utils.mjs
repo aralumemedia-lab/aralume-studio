@@ -1,4 +1,6 @@
 import { spawn } from "node:child_process";
+import { createServer } from "node:net";
+import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
@@ -7,11 +9,43 @@ export function evidenceDir(sprint) {
   return path.join(root, `sprint-${sprint}`);
 }
 
+export async function resetEvidenceDir(sprint) {
+  const directory = evidenceDir(sprint);
+  await rm(directory, { recursive: true, force: true });
+  await mkdir(directory, { recursive: true });
+  return directory;
+}
+
+export async function assertPortsAvailable(urls) {
+  for (const url of urls) {
+    const parsed = new URL(url);
+    const port = Number(parsed.port || (parsed.protocol === "https:" ? 443 : 80));
+    await assertPortAvailable(port);
+  }
+}
+
+function assertPortAvailable(port) {
+  return new Promise((resolve, reject) => {
+    const probe = createServer();
+    probe.once("error", (error) => {
+      if (error.code === "EADDRINUSE") {
+        reject(new Error(`E2E port ${port} is already in use; refusing stale-process reuse.`));
+        return;
+      }
+      reject(error);
+    });
+    probe.listen(port, "127.0.0.1", () => {
+      probe.close(() => resolve());
+    });
+  });
+}
+
 export function spawnCommand(command, args, extraEnv = {}) {
   const child = spawn(command, args, {
     cwd: process.cwd(),
     shell: false,
     windowsHide: true,
+    detached: process.platform !== "win32",
     stdio: "inherit",
     env: {
       ...process.env,
@@ -42,7 +76,7 @@ export async function terminateProcess(child, timeoutMs = 10_000) {
       stdio: "ignore",
     });
   } else {
-    child.kill("SIGTERM");
+    process.kill(-child.pid, "SIGTERM");
   }
 
   await Promise.race([exited, delay(timeoutMs)]);
@@ -53,9 +87,13 @@ export async function terminateProcess(child, timeoutMs = 10_000) {
         stdio: "ignore",
       });
     } else {
-      child.kill("SIGKILL");
+      process.kill(-child.pid, "SIGKILL");
     }
     await Promise.race([exited, delay(2_000)]);
+  }
+
+  if (child.exitCode === null && child.signalCode === null) {
+    throw new Error(`E2E child process ${child.pid} did not terminate.`);
   }
 }
 

@@ -154,6 +154,9 @@ export function detectFileMimeType(filePath: string): string | undefined {
     return "video/webm";
   }
   if (ascii(bytes, 4, 8) === "ftyp") {
+    if (!isStructurallyValidIsoBmff(filePath)) {
+      return undefined;
+    }
     return ascii(bytes, 8, 12) === "qt  " ? "video/quicktime" : "video/mp4";
   }
   if (startsWith(bytes, [0x50, 0x4b, 0x03, 0x04])) {
@@ -177,6 +180,53 @@ function startsWith(value: Uint8Array, expected: number[]): boolean {
 
 function ascii(value: Uint8Array, start: number, end: number): string {
   return Buffer.from(value.subarray(start, end)).toString("ascii");
+}
+
+function isStructurallyValidIsoBmff(filePath: string): boolean {
+  const file = readFileSync(filePath);
+  let offset = 0;
+  let boxCount = 0;
+  let hasFileType = false;
+  let hasMovie = false;
+  let hasMediaData = false;
+
+  while (offset + 8 <= file.length && boxCount < 4096) {
+    const declaredSize = file.readUInt32BE(offset);
+    const type = file.toString("ascii", offset + 4, offset + 8);
+    let headerSize = 8;
+    let boxSize = declaredSize;
+
+    if (declaredSize === 1) {
+      if (offset + 16 > file.length) {
+        return false;
+      }
+      const extendedSize = Number(file.readBigUInt64BE(offset + 8));
+      headerSize = 16;
+      boxSize = extendedSize;
+    } else if (declaredSize === 0) {
+      boxSize = file.length - offset;
+    }
+
+    if (!Number.isSafeInteger(boxSize) || boxSize < headerSize || offset + boxSize > file.length) {
+      return false;
+    }
+
+    if (boxCount === 0 && type !== "ftyp") {
+      return false;
+    }
+    if (type === "ftyp") {
+      hasFileType = boxSize >= 16;
+    } else if (type === "moov") {
+      hasMovie = true;
+    } else if (type === "mdat") {
+      hasMediaData = true;
+    }
+
+    offset += boxSize;
+    boxCount += 1;
+  }
+
+  return offset === file.length && boxCount > 0 && hasFileType && hasMovie && hasMediaData;
 }
 
 export type VideoFileProbe = {

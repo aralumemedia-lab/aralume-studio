@@ -6,14 +6,20 @@ import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { chromium } from "playwright";
-import { evidenceDir, runE2E } from "./e2e-process-utils.mjs";
+import {
+  assertPortsAvailable,
+  evidenceDir,
+  resetEvidenceDir,
+  runE2E,
+} from "./e2e-process-utils.mjs";
 
 const BACKEND_BASE_URL = "http://127.0.0.1:3001";
 const FRONTEND_BASE_URL = "http://127.0.0.1:4173";
 const SCREENSHOT_DIR = evidenceDir(18);
 
 async function main() {
-  await mkdir(SCREENSHOT_DIR, { recursive: true });
+  await resetEvidenceDir(18);
+  await assertPortsAvailable([BACKEND_BASE_URL, FRONTEND_BASE_URL]);
   const storageRoot = path.join(os.tmpdir(), `aralume-sprint18-${Date.now()}`);
   await mkdir(storageRoot, { recursive: true });
   await seedRenderPolicy(storageRoot);
@@ -275,6 +281,7 @@ function spawnCommand(command, args, extraEnv = {}) {
     shell: false,
     stdio: "inherit",
     windowsHide: true,
+    detached: process.platform !== "win32",
     env: {
       ...process.env,
       ARALUME_ENV: "test",
@@ -481,11 +488,15 @@ async function terminateProcess(child) {
     });
     await waitForProcessExit(killer, 10_000);
   } else {
-    child.kill("SIGTERM");
+    process.kill(-child.pid, "SIGTERM");
   }
   if (!(await waitForProcessExit(child, 5_000))) {
-    child.kill("SIGKILL");
+    process.kill(-child.pid, "SIGKILL");
     await waitForProcessExit(child, 5_000);
+  }
+
+  if (child.exitCode === null && child.signalCode === null) {
+    throw new Error(`E2E child process ${child.pid} did not terminate.`);
   }
 }
 

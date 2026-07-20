@@ -10,6 +10,11 @@ export type AuditActorContext = {
   role: string;
 };
 
+export type AuditRequestContext = AuditActorContext & {
+  channelId: ID;
+  requestId: string;
+};
+
 export type AuditLog = {
   id: ID;
   channelId?: ID;
