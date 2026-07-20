@@ -6,6 +6,10 @@ This release unit records the formally accepted V1 functional baseline (`d2b53c9
 
 ## Included baseline
 
+> The baseline and blocker statements in this section are historical Sprint 23
+> release-readiness records. Sprint 25 resolution status is recorded separately
+> below and does not authorize production release.
+
 - V1.0 acceptance R14: 18/18 criteria passed.
 - Sprint 22 remediation: audit request IDs, editorial audit coverage, channel isolation, and E2E runner corrections.
 - Sprint 23 engineering gates: lint, backend check, official tests, and build passed; the global TypeScript check was recorded as FAIL with exit code 2 and 18 pre-existing diagnostics, and the dependency audit remains a blocking follow-up.

@@ -139,10 +139,17 @@ test("converts a spawn error into a controlled failure", async () => {
 
 test("runE2E exits non-zero when a child fails after startup", () => {
   const script = `
+    import { once } from "node:events";
     import { runE2E, spawnCommand } from "./scripts/e2e-process-utils.mjs";
     await runE2E(async () => {
-      spawnCommand(process.execPath, ["-e", "process.exit(7)"], { ARALUME_AUTH_TEST_BYPASS: "false" });
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      const child = spawnCommand(
+        process.execPath,
+        ["-e", "process.send({ type: 'started' }); setTimeout(() => process.exit(7), 10)"],
+        { ARALUME_AUTH_TEST_BYPASS: "false" },
+        ["ignore", "ignore", "inherit", "ipc"],
+      );
+      await once(child, "message");
+      await once(child, "close");
     });
   `;
   const result = spawnSync(process.execPath, ["--input-type=module", "-e", script], {

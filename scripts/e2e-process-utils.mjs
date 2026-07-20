@@ -87,13 +87,13 @@ function assertPortAvailable(port) {
   });
 }
 
-export function spawnCommand(command, args, extraEnv = {}) {
+export function spawnCommand(command, args, extraEnv = {}, stdio = "inherit") {
   const child = spawn(command, args, {
     cwd: process.cwd(),
     shell: false,
     windowsHide: true,
     detached: process.platform !== "win32",
-    stdio: "inherit",
+    stdio,
     env: {
       ...process.env,
       ARALUME_ENV: process.env.ARALUME_ENV ?? "test",

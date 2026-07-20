@@ -4,6 +4,11 @@ Status: **NOT READY**
 
 ## Build and code gates
 
+> The TypeScript failure below is the historical Sprint 23 baseline snapshot.
+> Current Sprint 25 technical status is recorded in the section at the end of
+> this document and in the linked Sprint 25 evidence; the historical checklist
+> is preserved for chronology.
+
 - [x] `git diff --check`
 - [x] lint
 - [x] backend typecheck

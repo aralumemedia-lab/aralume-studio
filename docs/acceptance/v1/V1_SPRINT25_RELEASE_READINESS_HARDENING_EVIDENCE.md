@@ -29,15 +29,26 @@ registered Sprint 25 / Spec 026 before implementation:
 | Git root | `C:/Users/carol/Documents/aralume-studio V2/aralume-studio` |
 | HEAD, `main`, `origin/main` | all `15d113ad0181164af306e28a61aae5b0ec28bea5` |
 | Divergence | `0/0` before branch creation |
-| Working tree | clean before implementation; no staged, modified, or untracked files |
-| Final worktree | one worktree, current branch shown above |
-| Open related PRs | none (`gh pr list --state open` returned `[]`) |
+| Initial working tree | clean before implementation; no staged, modified, or untracked files |
+| Initial related PRs | none (`gh pr list --state open` returned `[]`) |
+| Current worktree | one worktree, current branch shown above |
 | Ports 3001, 4173, 8080 | no listeners before and after runner execution |
 | Application processes | no application process was running in preflight; observed Node processes belonged to `./mcp/server.mjs` |
 
-The local and remote branch inventories were collected during preflight. No
-historical branch was deleted. The new branch is intentionally uncommitted;
-commit, push, PR, tag, release, and deploy were not requested or performed.
+The local and remote branch inventories were collected during the initial
+pre-implementation preflight. No historical branch was deleted.
+
+## Current formalization state
+
+The Sprint 25 implementation was subsequently formalized and published:
+
+- commit: `9e7017c233715ac693cf2eb933bcae9f939140db`;
+- branch: `codex/sprint-25-release-readiness-hardening`;
+- push: completed to `origin/codex/sprint-25-release-readiness-hardening`;
+- pull request: [#41](https://github.com/aralumemedia-lab/aralume-studio/pull/41), open and draft;
+- base: `15d113ad0181164af306e28a61aae5b0ec28bea5`;
+- merge: not performed;
+- tag, release, and deploy: not created or executed.
 
 ## Baseline and corrections
 
@@ -102,6 +113,12 @@ the expected port.
 `node --test scripts/e2e-process-utils.test.mjs` covers the positive identity,
 stale run id, wrong service, process exit, and teardown paths (8/8 passed).
 
+Before the lifecycle correction, the fixed-delay test reproduced the race: the
+targeted case passed 50/50 sequentially but failed 8/8 under eight-way
+concurrency; the complete lifecycle file passed 20/20 sequential runs. The
+corrective change replaces the 300 ms inference with an explicit child IPC
+startup message followed by the child `close` event.
+
 ## Reproducible gates
 
 Executed from the repository root on 2026-07-20:
@@ -122,6 +139,14 @@ Executed from the repository root on 2026-07-20:
 
 The runners generated local screenshot artifacts during execution; those
 artifacts were restored to the clean baseline and are not part of this unit.
+
+## GitHub governance residual
+
+The PR has no hosted checks (`statusCheckRollup=[]`); the repository also has no
+branch protection, rulesets, or CODEOWNERS. The technical gates in this document
+were reproduced locally, but the missing CI/enforcement is a governance risk and
+is not silently treated as a functional Sprint 25 correction. A separate unit
+should establish CI and branch protection.
 
 ## Agent lifecycle
 
