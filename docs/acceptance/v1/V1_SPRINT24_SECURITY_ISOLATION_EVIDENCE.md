@@ -10,7 +10,7 @@
 - Base original autorizada: `0e81d9dc1e77bd0959cf1d223097312e555587d3`
 - Merge de integracao: `3e198e1` (`Merge origin/main into Sprint 24 security isolation`)
 - Commit funcional avaliado: `e818b4094e8ac9d52a22921cb3a4951c07d26493`
-- HEAD final da revisao: `6d27bbf`
+- HEAD funcional avaliado antes desta remediacao: `31bb41610d9c35d0941006aadcdbd54436ddead17`
 - V1 funcional: `V1.0 ACCEPTED`, R14 com 18/18 criterios `PASS`
 - Readiness da release: `NOT_READY`
 - Esta unidade nao autoriza merge da PR, release, tag ou deploy.
