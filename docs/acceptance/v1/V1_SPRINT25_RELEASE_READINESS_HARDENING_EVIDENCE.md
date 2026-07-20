@@ -1,6 +1,6 @@
 # V1.0.0 — Sprint 25 technical hardening evidence
 
-Status: **FOCUSED LIFECYCLE GATES PASS; RELEASE NOT_READY; AUDIT FOLLOW-UP REQUIRED**
+Status: **FOCUSED LIFECYCLE REVIEW BLOCKED; RELEASE NOT_READY; AUDIT FOLLOW-UP REQUIRED**
 
 Date: 2026-07-20
 Base: `15d113ad0181164af306e28a61aae5b0ec28bea5`
@@ -49,7 +49,8 @@ were formalized and published:
 - validated code HEAD for the gates below: `b8febec`;
 - focused F-02/F-07/F-08 remediation commit: `176f3f694656d66a3b999ef6757e5cc166cfebe3`;
 - focused test and regression coverage commit: `28155fac96b5f2f4a3731214c195c7fec9989d62`;
-- validated focused code HEAD: `28155fac96b5f2f4a3731214c195c7fec9989d62`;
+- focused documentation commits: `a0a358f`, `78fb9db`, and `c99a6dcf89865c0bf737572c2e2e2662bb5e7644`;
+- current review HEAD: `c99a6dcf89865c0bf737572c2e2e2662bb5e7644`;
 - branch: `codex/sprint-25-release-readiness-hardening`;
 - push: completed to `origin/codex/sprint-25-release-readiness-hardening`;
 - pull request: [#41](https://github.com/aralumemedia-lab/aralume-studio/pull/41), open and draft;
@@ -57,11 +58,11 @@ were formalized and published:
 - merge: not performed;
 - tag, release, and deploy: not created or executed.
 
-The earlier documentary update was a subsequent normal commit after `b8febec`.
-The focused documentation update follows the validated code commits above; the
-final branch SHA is recorded in the PR metadata and the new review-request
-comment after that commit. The validated code SHA above is the immutable SHA
-used for the technical gates and is not a provisional implementation reference.
+The earlier documentary updates were normal commits after the implementation
+and test commits. The current review was executed on the exact final branch
+HEAD `c99a6dcf89865c0bf737572c2e2e2662bb5e7644`; this SHA includes the final
+documentation alignment. The PR remains open and draft; no merge, tag, release,
+or deploy has occurred.
 
 ## Baseline and corrections
 
@@ -101,9 +102,14 @@ The three original findings were transitively resolved with Bun overrides in
 
 `bun pm why` confirmed these are not direct application runtime dependencies.
 The historical Sprint 25 audit passed after the selective overrides. On the
-focused remediation HEAD, the current Bun advisory database reports a new
-`brace-expansion` advisory (`GHSA-3jxr-9vmj-r5cp`); no dependency changes were
-authorized in this unit and the release remains blocked on that separate decision.
+current review HEAD, `bun audit` fails with two high-severity advisories:
+`brace-expansion` `GHSA-3jxr-9vmj-r5cp` and `js-yaml` `GHSA-52cp-r559-cp3m`.
+The base lockfile already contained affected versions (`brace-expansion` 1.1.14
+and `js-yaml` 4.1.1); this PR moved them to 5.0.6 and 4.2.0, respectively, but
+both remain within the currently affected ranges. No dependency changes were
+authorized in the focused lifecycle remediation. These advisories are not
+introduced by the lifecycle changes, but they remain release blockers and are
+not a false PASS.
 The override approach
 keeps the direct dependency graph unchanged apart from the test-only `undici`
 declaration and avoids broad package upgrades. Build, lint, and the full test
@@ -148,6 +154,31 @@ cases, 100/100 event-based lifecycle cases, and 16/16 concurrent lifecycle
 cases. Additional stress passed 20/20 HTTP timeout cases, 20/20 early-handshake
 cases, and 50/50 registry pairs.
 
+## Current independent review findings
+
+The focused review was executed on `c99a6dcf89865c0bf737572c2e2e2662bb5e7644`.
+The following direct lifecycle regressions were reproduced and block merge:
+
+- `scripts/e2e-process-utils.mjs:428-435`: the readiness timeout aborts the
+  request only until `fetch()` resolves. A response that sends headers and a
+  partial JSON body leaves `response.json()` pending beyond the declared 150 ms
+  timeout (`BODY_TIMEOUT_RESULT=still-pending-after-500ms`).
+- `scripts/e2e-process-utils.mjs:189-237,534-538`: a child that exits with code
+  0 before the startup handshake records `startupError`, but `failureFor()` and
+  `runE2E()` do not report it. The coordinator reproduced
+  `EARLY_EXIT_STATUS=0` with no error report.
+- `server/src/routes/health.ts:16-29` and `vite.config.ts:24-32`: the test-only
+  endpoints accept a previously valid challenge indefinitely. The verifier
+  generates a fresh challenge for each attempt, but the service has no
+  server-side consumed-challenge set or TTL. Reuse after 1.2 seconds was
+  accepted. This is a direct Spec 026 challenge replay/expiry criterion failure
+  and remains scoped to the test/E2E identity mechanism.
+
+These findings are not resolved by documentation. The PR must remain draft until
+the implementation makes the response body cancellable, treats every child
+that exits before handshake as a failure, and rejects expired or reused
+challenges in the test-only identity endpoints.
+
 ## Reproducible gates
 
 Executed from the repository root on 2026-07-20:
@@ -155,7 +186,7 @@ Executed from the repository root on 2026-07-20:
 | Command                                                                    | Result                                                                                                                                                                               |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `npx tsc --noEmit`                                                         | PASS, exit 0, zero diagnostics                                                                                                                                                       |
-| `bun audit`                                                                | FAIL, exit 1: current database reports `brace-expansion` `>=3.0.0 <5.0.7` (`GHSA-3jxr-9vmj-r5cp`); dependency changes out of scope                                                   |
+| `bun audit`                                                                | FAIL, exit 1: 2 high advisories — `brace-expansion` `>=3.0.0 <5.0.7` (`GHSA-3jxr-9vmj-r5cp`) and `js-yaml` `>=4.0.0 <4.3.0` (`GHSA-52cp-r559-cp3m`); no dependency changes in focused remediation |
 | `npm run lint`                                                             | PASS                                                                                                                                                                                 |
 | `npm run backend:check`                                                    | PASS                                                                                                                                                                                 |
 | `npm test`                                                                 | PASS, 92/92 tests                                                                                                                                                                    |
@@ -166,7 +197,7 @@ Executed from the repository root on 2026-07-20:
 | prior lifecycle stress                                                     | PASS, 50 sequential; 8 concurrent; 20 timeout; 20 early handshake; 50 registry pairs; 20 false association                                                                           |
 | `node scripts/sprint15-browser-e2e.mjs` through `sprint21-browser-e2e.mjs` | PASS, all exit 0 with identity-gated startup                                                                                                                                         |
 | `node scripts/sprint24-security-hmac-e2e.mjs`                              | PASS, exit 0; authorization, isolation, conflict, missing/invalid signature cases preserved                                                                                          |
-| heuristic secret scan of added diff                                        | PASS, high-confidence private-key/API-key/token patterns; 0 hits; known fixtures: none in changed files; no real secret found; focused code HEAD `28155fa`                           |
+| heuristic secret scan of added diff                                        | PASS, high-confidence private-key/API-key/token patterns; 0 hits; known fixtures: none in changed files; no real secret found; current review HEAD `c99a6dc`                           |
 | `git diff --check`                                                         | PASS                                                                                                                                                                                 |
 | post-run ports 3001, 4173, 8080                                            | clear                                                                                                                                                                                |
 | post-run project processes                                                 | clear; no orphaned runner/backend/frontend process                                                                                                                                   |
@@ -188,17 +219,20 @@ claim any hosted check.
 The original Sprint 25 unit used four fresh read-only agents for TypeScript,
 dependencies, service identity, and documentation/gates; all four were closed.
 This remediation created three fresh read-only agents for lifecycle,
-process/endpoint association, and evidence. The lifecycle report arrived after
-the initial wait; all three reports were consolidated and all three threads were
-closed before implementation completion. No subagent edited files, committed,
-pushed, changed the PR, or merged.
+process/endpoint association, and evidence. The current independent review
+created four fresh read-only agents for challenge-response, lifecycle,
+stress/runners, and documentation/advisories. Their reports were collected or
+interrupted after the coordinator reproduced the decisive findings; all four
+were closed. No subagent edited files, committed, pushed, changed the PR, or
+merged.
 
 ## Residual blockers and explicit non-scope
 
-This hardening unit removes the three known technical blockers and the focused
-lifecycle/readiness findings addressed here, but the product remains `NOT_READY`.
-The current `brace-expansion` audit advisory is explicitly not remediated in
-this focused unit and remains a separate release blocker. Production
+This hardening unit corrected the previously reported TypeScript and initial
+lifecycle findings, but the current independent review found two direct
+lifecycle regressions and the product remains `NOT_READY`. The current
+`brace-expansion` and `js-yaml` audit advisories are explicitly not remediated in
+this focused unit and remain separate release blockers. Production
 configuration and secrets, backup/restore,
 rollback, broad observability, production topology/ingress, the next integral
 release-readiness evaluation, release, tag, and deploy remain pending and were

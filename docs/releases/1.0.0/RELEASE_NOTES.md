@@ -27,19 +27,27 @@ V1 acceptance remains valid as a functional acceptance of the evaluated SHA. It 
 
 ## Sprint 25 technical hardening
 
-Sprint 25 / Spec 026 corrected the 14 global TypeScript diagnostics, resolved the
-three known transitive advisories (`@babel/core`, `brace-expansion`, and `js-yaml`),
-and added per-run service identity checks to E2E startup. The follow-up remediation
-at validated code HEAD b8febec added nonce/IPC/PID/port association, cancelable
+Sprint 25 / Spec 026 corrected the 14 global TypeScript diagnostics, applied
+selective dependency overrides, and added per-run service identity checks to E2E
+startup. The historical audit passed after those overrides, but the current
+advisory database reports unresolved affected versions of `brace-expansion` and
+`js-yaml`; the release remains blocked and no audit PASS is claimed. The follow-up
+remediation at validated code HEAD b8febec added nonce/IPC/PID/port association, cancelable
 readiness fetches, deterministic early-handshake failure, per-execution registry
 cleanup, and single-flight teardown. The focused lifecycle remediation further
 adds HMAC challenge-response ownership proof, isolated startup waiters, aggregated
 primary/teardown failures, and event-based termination synchronization. Reproducible evidence is available in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
-The focused code validation used HEAD `28155fac96b5f2f4a3731214c195c7fec9989d62`.
-The current audit database also reports a new `brace-expansion` advisory
-(`GHSA-3jxr-9vmj-r5cp`); no dependency change is included in this focused unit,
-so the release remains blocked on that separate dependency decision.
+The current review HEAD is
+`c99a6dcf89865c0bf737572c2e2e2662bb5e7644`. The current `bun audit` result is
+FAIL (exit 1) for high advisories `GHSA-3jxr-9vmj-r5cp` on
+`brace-expansion@5.0.6` and `GHSA-52cp-r559-cp3m` on `js-yaml@4.2.0`.
+No dependency change is included in the focused lifecycle review. The review
+also reproduced two direct lifecycle blockers: a response body can outlive the
+readiness timeout, and an exit-0 child can be accepted before the startup
+handshake. The test-only identity endpoints also accept a replayed challenge
+without server-side expiry. The PR remains draft pending implementation
+remediation.
 
 These corrections do not change the release decision: V1.0.0 remains **NOT READY
 FOR PRODUCTION DEPLOYMENT** while the production and operational gates listed

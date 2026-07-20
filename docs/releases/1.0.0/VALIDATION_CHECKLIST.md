@@ -28,7 +28,7 @@ The command `npx tsc --noEmit` returns exit code 2 with 18 diagnostics on both t
 
 ## Security and runtime gates
 
-- [x] no real secret found by heuristic diff scan on validated Sprint 25 code (b8febec); 0 high-confidence hits, known fixtures: none in changed files
+- [x] no real secret found by heuristic diff scan on current review HEAD (c99a6dc); 0 high-confidence hits, known fixtures: none in changed files
 - [x] local anonymous HTTP probe captured
 - [ ] close 55 deferred security worklist rows
 - [ ] resolve or formally accept dependency advisories
@@ -45,18 +45,25 @@ The R14 evidence remains the governing functional acceptance: V1-01 through V1-1
 The Sprint 25 hardening evidence is recorded in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
 The global TypeScript gate now passes with zero diagnostics. The historical
-Sprint 25 audit passed after fixed-version overrides; the current focused HEAD
+Sprint 25 audit passed after fixed-version overrides; the current review HEAD
 audit limitation is recorded below. The E2E runners validate
 the exact service, nonce, IPC-confirmed process identity, and per-run identity.
 The lifecycle and registry stress evidence is recorded in the Sprint 25 evidence;
-the focused remediation code HEAD is `28155fac96b5f2f4a3731214c195c7fec9989d62`.
-The focused HEAD audit currently reports a new `brace-expansion` advisory
-(`GHSA-3jxr-9vmj-r5cp`); dependencies were intentionally not changed in this
-unit and the advisory remains a separate release blocker.
+the current review HEAD is `c99a6dcf89865c0bf737572c2e2e2662bb5e7644`.
+The current HEAD audit fails with two high advisories: `brace-expansion`
+(`GHSA-3jxr-9vmj-r5cp`, fixed in 5.0.7) and `js-yaml`
+(`GHSA-52cp-r559-cp3m`, affected range reported by Bun as `>=4.0.0 <4.3.0`).
+Dependencies were intentionally not changed in the focused lifecycle review;
+both advisories remain release blockers and are not treated as PASS.
 The focused remediation adds HMAC challenge-response ownership proof, isolated
 startup waiters, aggregated primary/teardown failures, and event-based lifecycle
 synchronization; its final code and documentation SHAs are recorded in the PR
 metadata and canonical evidence.
+The current independent review also reproduced a pending HTTP response-body
+timeout and an exit-0-before-handshake false success; the PR remains draft until
+those direct lifecycle regressions are fixed. It also found that the test-only
+identity endpoints accept a replayed challenge without TTL or server-side
+consumption; the challenge replay/expiry criterion remains open.
 The release remains **NOT READY** because
 production configuration/secrets, backup/restore, rollback, observability,
 production topology/ingress, and the integral release-readiness evaluation are
