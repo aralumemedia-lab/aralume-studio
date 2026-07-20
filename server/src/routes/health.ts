@@ -5,12 +5,24 @@ import type { RuntimeEnv } from "../env.js";
 
 export function createHealthHandler(env: RuntimeEnv): RequestHandler {
   return (_req, res) => {
+    const testIdentity =
+      env.ARALUME_ENV === "test" &&
+      env.ARALUME_E2E_RUN_ID &&
+      env.ARALUME_E2E_STARTUP_NONCE &&
+      res.socket?.localPort;
     const payload = {
       ok: true,
       service: serviceName,
       environment: env.ARALUME_ENV,
       version: serviceVersion,
-      ...(env.ARALUME_E2E_RUN_ID ? { runId: env.ARALUME_E2E_RUN_ID } : {}),
+      ...(testIdentity
+        ? {
+            runId: env.ARALUME_E2E_RUN_ID,
+            startupNonce: env.ARALUME_E2E_STARTUP_NONCE,
+            pid: process.pid,
+            port: res.socket.localPort,
+          }
+        : {}),
     };
     res.json(payload);
   };

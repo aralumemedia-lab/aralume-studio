@@ -21,7 +21,16 @@ function e2eIdentityPlugin(): Plugin {
 
         response.statusCode = 200;
         response.setHeader("content-type", "application/json; charset=utf-8");
-        response.end(JSON.stringify({ ok: true, service: "aralume-web", runId }));
+        response.end(
+          JSON.stringify({
+            ok: true,
+            service: "aralume-web",
+            runId,
+            startupNonce: process.env.ARALUME_E2E_STARTUP_NONCE,
+            pid: process.pid,
+            port: response.socket?.localPort,
+          }),
+        );
       });
     },
   };
