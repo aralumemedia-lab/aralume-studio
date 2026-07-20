@@ -326,6 +326,25 @@ test("keeps concurrent startup waiters isolated after one timeout", async () => 
   assert.equal(child.listenerCount("message"), 0);
 });
 
+test("routes one handshake to three independent waiters", async () => {
+  const child = spawnCommand(
+    process.execPath,
+    [
+      "-e",
+      "setTimeout(() => process.send({ type: 'aralume-e2e-started', runId: process.env.ARALUME_E2E_RUN_ID, nonce: process.env.ARALUME_E2E_STARTUP_NONCE, correlationId: process.env.ARALUME_E2E_STARTUP_CORRELATION_ID, pid: process.pid }), 100)",
+    ],
+    { ARALUME_E2E_BOOTSTRAP_DISABLED: "true" },
+  );
+  const waiters = [
+    waitForProcessStartup(child, 500),
+    waitForProcessStartup(child, 700),
+    waitForProcessStartup(child, 900),
+  ];
+  await Promise.all(waiters);
+  await terminateProcess(child);
+  assert.equal(child.listenerCount("message"), 0);
+});
+
 test("preserves primary and teardown errors in one report", () => {
   const script = [
     'import { runE2E, spawnCommand, waitForProcessClose } from "./scripts/e2e-process-utils.mjs";',
