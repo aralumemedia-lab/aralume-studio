@@ -71,6 +71,51 @@ A partir da Sprint 11, o projeto passa a usar uma separacao formal entre epicos,
 - A linguagem de execucao nova nao autoriza adotar Scrum completo, story points obrigatorios ou cerimonias obrigatorias adicionais.
 - SDD continua obrigatorio e prevalece sobre qualquer prompt ou plano local.
 
+## Uso controlado de subagentes
+
+O Codex deve considerar subagentes quando houver ganho real de cobertura,
+independencia, paralelismo ou reducao de risco. Tarefas simples, lineares ou
+fortemente acopladas podem ser executadas por um unico agente quando a divisao
+nao trouxer beneficio verificavel.
+
+Quando subagentes forem usados:
+
+- deve existir um coordenador responsavel pelo escopo, plano, decisoes,
+  consolidacao e veredito final;
+- cada subagente deve ter escopo claro, nao sobreposto, e produzir comandos,
+  resultados e evidencia reproduzivel;
+- revisoes devem ser somente leitura; revisores nao podem alterar arquivos,
+  fazer commit, push, merge, release, tag ou deploy;
+- cada arquivo de implementacao deve ter um unico proprietario; implementacoes
+  paralelas devem usar worktrees isoladas;
+- alteracoes concorrentes no mesmo arquivo sao proibidas sem coordenacao
+  explicita, e a concorrencia deve permanecer limitada para preservar
+  rastreabilidade e evitar duplicidade;
+- findings duplicados devem ser consolidados, e findings materiais devem ser
+  reproduzidos pelo coordenador com impacto e evidencia;
+- nenhum agente pode aprovar a propria implementacao. Revisao tecnica
+  independente nao substitui aprovacao humana formal, regras do GitHub,
+  branch protection, rulesets, CODEOWNERS ou required reviews;
+- o coordenador deve registrar conflitos, decisoes descartadas e limitacoes.
+
+Casos favoraveis incluem revisao de seguranca, pull request ampla, reaceite
+integral, release readiness, analise independente de multiplos dominios,
+testes nao conflitantes em paralelo, comparacao de evidencias e tarefas com
+risco de autoavaliacao ou vies de implementacao. Casos desfavoraveis incluem
+alteracao pequena, tarefa linear de baixo risco, arquivos fortemente
+acoplados, ausencia de paralelismo real, risco de conflito maior que o ganho,
+sequencia transacional unica ou ausencia de isolamento seguro.
+
+O fluxo normativo e: preflight e plano pelo coordenador; descoberta ou revisao
+isolada; consolidacao e remocao de duplicidades; reproducao de findings
+`BLOCKER` e `HIGH`; atribuicao de proprietario unico por arquivo;
+validacoes independentes; revisao do diff final pelo coordenador; veredito
+somente do coordenador; e, por fim, commit, PR, merge, release e deploy segundo
+as regras existentes. O relatorio final deve identificar coordenador,
+subagentes, escopos, modo de execucao, worktrees, findings consolidados e
+decisao final. A especificacao completa esta em
+`docs/architecture/adrs/004-controlled-multi-agent-execution.md`.
+
 ## Documentos obrigatorios de leitura
 
 Antes de qualquer alteracao, ler e confrontar a tarefa com:

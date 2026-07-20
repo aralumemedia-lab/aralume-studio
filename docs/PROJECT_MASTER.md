@@ -1493,6 +1493,30 @@ NÃƒÂ£o misturar:
 - publicaÃƒÂ§ÃƒÂ£o real com protÃƒÂ³tipo;
 - refatoraÃƒÂ§ÃƒÂ£o grande com feature nova.
 
+### 23.1. Uso controlado de subagentes
+
+O Codex deve considerar subagentes quando houver ganho real de cobertura,
+independencia, paralelismo ou reducao de risco. Tarefas simples, lineares ou
+fortemente acopladas podem permanecer com um unico agente. O coordenador deve
+definir o escopo, consolidar resultados, reproduzir findings materiais, revisar
+o diff final e emitir o unico veredito.
+
+Subagentes devem ter escopos claros e nao sobrepostos, operar com evidencia
+reproduzivel e registrar comandos e resultados. Revisoes sao somente leitura e
+nao autorizam alteracao de arquivos, commit, push, merge, release, tag ou
+deploy. Cada arquivo de implementacao possui um proprietario unico; trabalho
+paralelo usa worktrees isoladas e alteracoes concorrentes no mesmo arquivo
+exigem coordenacao explicita. A concorrencia deve ser limitada para preservar
+rastreabilidade; findings duplicados sao consolidados e `BLOCKER`/`HIGH` sao
+reproduzidos pelo coordenador.
+
+Nenhum agente aprova a propria implementacao. Revisao tecnica independente nao
+substitui aprovacao formal humana nem as regras do GitHub, incluindo branch
+protection, rulesets, CODEOWNERS e required reviews. O uso de subagentes nao
+autoriza bypass dessas regras. Conflitos, decisoes descartadas e limitacoes
+devem ser registrados. Casos favoraveis, casos desfavoraveis e o fluxo
+operacional completo estao em `docs/architecture/adrs/004-controlled-multi-agent-execution.md`.
+
 ---
 
 ## 24. AntipadrÃƒÂµes proibidos

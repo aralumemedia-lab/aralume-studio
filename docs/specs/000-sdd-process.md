@@ -42,6 +42,29 @@ Lower-level documents cannot contradict higher-level normative documents. If a l
 7. Spec update when the implementation changes the long-term rule set or operating assumptions.
 8. Pull request with a concise, source-backed summary.
 
+## Controlled multi-agent execution
+
+Subagents are optional and must be considered only when they provide real
+coverage, independence, parallelism, or risk reduction. A coordinator owns the
+scope, decisions, consolidation, reproduction of material findings, final
+diff review, and final verdict. Simple, linear, or strongly coupled work may
+remain with one agent.
+
+Subagents must have isolated, non-overlapping scopes and reproducible evidence.
+Review agents operate read-only and cannot edit files or perform commit, push,
+merge, release, tag, or deploy actions. Each implementation file has one
+owner; parallel implementation uses isolated worktrees; concurrent edits to a
+file require explicit coordination. Duplicate findings are consolidated and
+`BLOCKER`/`HIGH` findings are reproduced by the coordinator. No agent approves
+its own implementation, and technical review never replaces human approval or
+GitHub rules such as branch protection, rulesets, CODEOWNERS, or required
+reviews.
+
+The coordinator records conflicts, discarded decisions, limitations, agents,
+scopes, execution mode, worktrees, commands, evidence, consolidated findings,
+and the final decision. Favorable and unfavorable use cases and the complete
+operational flow are defined in ADR 004.
+
 ## Definition of Ready for historias
 
 A historia can enter a sprint only when all of the following are true:

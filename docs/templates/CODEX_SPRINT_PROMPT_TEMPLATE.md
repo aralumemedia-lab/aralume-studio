@@ -106,6 +106,26 @@ Before editing any file, provide a plan containing:
 - Risks
 - Definition of Done
 
+## Controlled multi-agent execution
+
+Decide explicitly whether subagents provide real coverage, independence,
+parallelism, or risk reduction. Record the decision and justification.
+
+- Coordinator:
+- Subagents and isolated scopes:
+- Execution mode: single agent / read-only review / parallel implementation
+- Worktrees:
+- File ownership map:
+- Coordination and conflict policy:
+- Findings consolidation and reproduction plan:
+- Independent validation plan:
+
+Subagents must not receive overlapping scopes. Review agents are read-only and
+cannot edit, commit, push, merge, release, tag, or deploy. No agent may approve
+its own implementation. Human approval and GitHub branch protection, rulesets,
+CODEOWNERS, and required reviews remain mandatory. See
+`docs/architecture/adrs/004-controlled-multi-agent-execution.md`.
+
 ## Implementation rules
 
 - Do not implement outside the spec.

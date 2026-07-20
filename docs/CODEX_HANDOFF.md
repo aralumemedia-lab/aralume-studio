@@ -215,8 +215,32 @@ recriacao do frontend e limpeza administrativa da S12.
 - Bypass: somente harness de testes local explicitamente habilitado, fora de producao; nenhum fallback permissivo no entrypoint produtivo.
 - Fora de escopo: backup/restore, rollback, topologia, ingress, deploy, release, tag, novos fluxos editoriais e correcao ampla dos diagnosticos TypeScript globais.
 - Gate: endpoints operacionais fail-closed, isolamento e midia negativos reproduziveis, limites aplicados, auditoria sanitizada, testes e build aprovados, sem regressao dos fluxos R14.
-- Evidencia: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 89/89 testes oficiais, runners 15-21 com exit code 0, 56 screenshots novas, portas livres e nenhum processo orfao.
+- Evidencia: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; contagens e baselines devem ser reproduzidos no HEAD final, com runners 15-21, evidencias HMAC, portas livres e nenhum processo orfao.
 - Estado de handoff: `READY_FOR_REVIEW`; a revisao independente deve ocorrer antes de qualquer merge. A release continua `NOT_READY`, sem release, tag ou deploy.
+## Regra operacional - execucao controlada com subagentes
+
+Subagentes devem ser considerados somente quando produzirem ganho real de
+cobertura, independencia, paralelismo ou reducao de risco. Tarefas simples,
+lineares ou fortemente acopladas podem usar um unico agente. Quando houver
+subagentes, o coordenador e responsavel pelo preflight, escopo, decisoes,
+consolidacao, reproducao de findings `BLOCKER` e `HIGH`, revisao do diff e
+veredito final.
+
+Cada subagente recebe escopo isolado e nao sobreposto. Revisores operam em
+somente leitura e nao podem alterar arquivos, fazer commit, push, merge,
+release, tag ou deploy. Cada arquivo de implementacao tem um proprietario
+unico; implementacoes paralelas usam worktrees isoladas e alteracoes
+concorrentes no mesmo arquivo exigem coordenacao explicita. Findings duplicados
+sao consolidados, opinioes sem reproducao, impacto e evidencia nao sao
+findings, e nenhum agente aprova a propria implementacao.
+
+Revisao tecnica independente nao substitui aprovacao humana formal nem as
+regras do GitHub, branch protection, rulesets, CODEOWNERS ou required reviews.
+O coordenador registra conflitos, decisoes descartadas, limitacoes, comandos,
+evidencias, agentes, escopos, modo de execucao, worktrees e findings
+consolidados. O ADR 004 define os casos favoraveis, desfavoraveis e o fluxo
+completo. Commit, PR, merge, release e deploy permanecem sob as regras
+existentes.
 
 ## Definition of Done
 

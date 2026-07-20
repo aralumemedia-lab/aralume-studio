@@ -21,6 +21,20 @@ Use this template for the final report of a sprint or documentation task.
 - Partial stories:
 - Blocked stories:
 
+## Controlled multi-agent execution
+
+- Coordinator:
+- Subagents:
+- Scopes:
+- Execution mode:
+- Worktrees:
+- File ownership:
+- Findings consolidated:
+- `BLOCKER`/`HIGH` findings reproduced by coordinator:
+- Conflicts and discarded decisions:
+- Limitations:
+- Final verdict issued by coordinator:
+
 ## Acceptance
 
 - Criteria met:
