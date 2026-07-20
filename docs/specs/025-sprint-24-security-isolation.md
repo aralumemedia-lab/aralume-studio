@@ -39,6 +39,7 @@ Fechar os controles de entrada e isolamento que impedem a preparacao produtiva: 
 - Media assets, validacao de storage/integridade, usos, videos, renders, cortes, arquivos de cortes e importacoes usam a mesma fronteira de autenticacao/autorizacao.
 - O ativo de entrada deve existir no canal autorizado; referencias e paths arbitrarios sao rejeitados.
 - Um ativo marcado como `available` somente e persistido apos confirmar arquivo regular, nao-symlink, existencia, tamanho real, checksum e tipo real compativel com MIME/extensao declarados.
+- Para MP4, a validacao deve confirmar estrutura ISO-BMFF suficiente para rejeitar boxes truncados ou incompletos; a importacao deve confirmar que o container reportado corresponde ao contrato autorizado.
 - Downloads e leituras de arquivo verificam canal, status, storage root e arquivo regular antes de responder.
 - Erros de acesso cross-channel sao sanitizados e nao retornam paths internos ou ids de objetos de outros canais.
 
@@ -50,6 +51,7 @@ Fechar os controles de entrada e isolamento que impedem a preparacao produtiva: 
 - Arquivos devem ser regulares, existir, ter tamanho dentro do limite, MIME/extensao permitidos e metadados tecnicos validaveis.
 - Duplicatas, traversal, storage cross-channel, payload excessivo e quantidade excessiva de itens falham com resposta sanitizada.
 - Timeouts de importacao/validacao sao definidos no service e nao permitem trabalho ilimitado.
+- A evidencia E2E deve distinguir runners historicos com bypass de teste do runner HMAC real, com principal de escopo explicito e sem wildcard.
 
 ### H24.5 - Auditoria e evidencia negativa
 
@@ -93,6 +95,8 @@ Operacoes sem um papel explicitamente permitido falham fechada. O `channelId` do
 - suite oficial e testes negativos especificos de auth, autorizacao, canal, midia e importacao
 - build e analise de seguranca aplicavel
 - runners E2E afetados, quando a interface correspondente for exercitada
+- runner HMAC real com escopos explicitos, incluindo sucesso, cross-channel, conflitos, token ausente/invalido e teardown
+- verificacao de portas antes e depois dos runners, limpeza de evidencia e ausencia de processos orfaos
 - inspeccao de segredos, processos orfaos, portas e working tree
 
 ## Criterios de bloqueio

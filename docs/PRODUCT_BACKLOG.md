@@ -343,7 +343,7 @@ Esta unidade funcional pertence ao E15 e foi formalizada antes da implementacao.
 - Midia, renders, cortes e importacoes aplicam autenticacao, autorizacao, canal e limites no backend.
 - Auditoria registra ator, papel, canal, acao, recurso, resultado, motivo sanitizado, requestId e timestamp sem credenciais.
 - Testes negativos e positivos, lint, checks, build e evidencias operacionais executados sem corrigir indiscriminadamente os 18 diagnosticos TypeScript globais.
-- Evidencia operacional: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 89/89 testes oficiais, runners 15-21 com exit code 0 e 56 screenshots novas.
+- Evidencia operacional: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 92/92 testes oficiais, runners 15-21 com exit code 0, runner HMAC real aprovado, 56 screenshots historicas e 2 screenshots HMAC suplementares.
 - Estado: implementacao concluida; `READY_FOR_REVIEW`; nenhum merge, release, tag ou deploy.
 
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend

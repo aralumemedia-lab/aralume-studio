@@ -1,70 +1,71 @@
-# Sprint 24 — Evidência de segurança de entrada e isolamento multicanal
+# Sprint 24 - Evidencia de seguranca de entrada e isolamento multicanal
 
-## Estado
+## Estado e governanca
 
 - Sprint: Sprint 24
-- Épico: E15 — Hardening V1.0
+- Epico: E15 - Hardening V1.0
 - Spec: `docs/specs/025-sprint-24-security-isolation.md`
 - Branch: `codex/sprint-24-production-security-isolation`
-- Base funcional: `0e81d9dc1e77bd0959cf1d223097312e555587d3`
-- V1 funcional: `V1.0 ACCEPTED`, R14 com 18/18 critérios `PASS`
-- Readiness de release: `NOT_READY`; esta sprint não autoriza release, tag, deploy ou merge
+- Base integrada: `origin/main` em `92f72f5e283b2921f4af62b0a9d7c37b8d477cb2`
+- Merge de integracao: `3e198e1` (`Merge origin/main into Sprint 24 security isolation`)
+- Commit funcional avaliado: `e818b4094e8ac9d52a22921cb3a4951c07d26493`
+- V1 funcional: `V1.0 ACCEPTED`, R14 com 18/18 criterios `PASS`
+- Readiness da release: `NOT_READY`
+- Esta unidade nao autoriza merge da PR, release, tag ou deploy.
 - Estado desta unidade: `READY_FOR_REVIEW`
 
-## Entregas por história
+## Entregas
 
-- H24.1: bearer token HMAC-SHA256 validado no backend, expiração validada, ausência/invalidade rejeitada com `UNAUTHORIZED`, segredo obrigatório em produção e bypass somente em testes explicitamente marcados.
-- H24.2: matriz de papéis `owner`, `editor`, `operator`, `reviewer` e `viewer`; permissões fail-closed; `channelId` obrigatório nas superfícies operacionais; conflitos de canal, IDOR e cross-channel rejeitados com `FORBIDDEN` sanitizado.
-- H24.3: media assets, usos, vídeos, renders, cortes, arquivos de cortes e importações permanecem protegidos por autenticação, autorização, canal e storage root.
-- H24.4: limite de JSON, limite de itens de render/cenas, MIME/extensão compatíveis, importação somente de MP4 relativo sob storage autorizado e rejeição de traversal/cross-channel.
-- H24.5: decisões de autenticação/autorização registram `requestId`, ator, papel, canal, ação, recurso, resultado e motivo sanitizado; tokens, cookies e segredos não entram nos logs.
+- H24.1/H24.2: autenticacao HMAC-SHA256 fail-closed, matriz de papeis, permissao server-side, escopo explicito de `channelIds`, autorizacao de parametros de path depois do matching da rota, isolamento e erros sanitizados.
+- H24.3: ativos, usos, videos, renders, cortes, arquivos e importacoes preservam storage root, canal autorizado, protecao contra traversal e IDOR.
+- H24.4: payload, quantidade, MIME, extensao, profundidade JSON e importacao sao limitados; ativos `available` exigem arquivo regular existente, nao-symlink, tamanho/checksum reais e tipo real compativel.
+- H24.5: auditoria de media/importacao recebe o principal autenticado validado, `channelId` e `requestId`; campos de identidade enviados pelo cliente nao substituem o ator confiavel.
 
-## Validações reproduzíveis
+## Gates reproduziveis
 
-| Comando                             | Resultado                                           |
-| ----------------------------------- | --------------------------------------------------- |
-| `git diff --check`                  | PASS                                                |
-| `npm run lint`                      | PASS                                                |
-| `npm run backend:check`             | PASS                                                |
-| `npm test`                          | PASS — 91/91                                        |
-| `npm run build`                     | PASS                                                |
-| `npx tsc --noEmit` na branch        | FAIL — exit code 2; 14 diagnósticos restantes       |
-| `npx tsc --noEmit` em `origin/main` | FAIL — exit code 2; 18 diagnósticos preexistentes   |
-| `bun audit`                         | FAIL — 3 advisories transitivos (1 low, 2 moderate) |
-| inspeção de segredos com `rg`       | PASS — nenhum padrão sensível encontrado            |
+| Comando | Resultado |
+| --- | --- |
+| `git diff --check` | PASS |
+| `npm run lint` | PASS |
+| `npm run backend:check` | PASS |
+| `npm test` | PASS - 92/92 |
+| `node --import tsx --test server/test/media-assets.test.ts server/test/auth.test.ts server/test/costs.test.ts` | PASS - 19/19 |
+| `npm run build` | PASS |
+| `npx tsc --noEmit` na branch | FAIL - exit code 2, 14 diagnosticos |
+| `npx tsc --noEmit` em worktree de `origin/main` | FAIL - exit code 2, 18 diagnosticos |
+| `bun audit` | FAIL - 3 advisories transitivos (1 low, 2 moderate) |
+| scan de segredos | PASS - nenhum segredo material encontrado |
 
-Os quatro diagnósticos de `ScenePlanCreateInput.channelId` foram diretamente tocados pela exigência de escopo da Sprint 24 e corrigidos. Os 14 restantes permanecem equivalentes ao baseline nas áreas de `server/test/clips.test.ts`, `server/test/metrics.test.ts`, `src/mocks/mock-metrics.ts`, `src/routes/media-assets.tsx` e `src/routes/production.tsx`; não foram ampliados pela sprint.
+O typecheck global continua sendo um gate falho. A branch possui 14 diagnosticos; o baseline atual de `origin/main` possui 18. A comparacao foi executada em worktree temporaria e confirmou que os quatro diagnosticos adicionais do baseline estao em fixtures editoriais que foram ajustadas pela correcao de escopo de canal da propria Sprint 24. Os 14 diagnosticos restantes nao foram ocultados por `any`, `@ts-ignore`, exclusao de arquivo ou alteracao de `tsconfig`; permanecem registrados como risco e bloqueador de release.
 
-## Correções dos findings da revisão independente
+## Correcoes e evidencias negativas
 
-- Identidade de auditoria: `decidedBy`, `x-aralume-actor` e campos equivalentes deixaram de ser fontes de identidade confiável. Governança e políticas usam o principal autenticado (`test-harness` somente nos testes locais) e propagam o `requestId` diretamente para `AuditLog.requestId`, com papel e identificador do ator apenas em metadata sanitizada.
-- Registro de mídia: estados `available` exigem arquivo regular existente, não-symlink, dentro do storage root e do namespace do canal, tamanho real, checksum real e assinatura de conteúdo compatível com MIME/extensão. Rejeições não persistem ativo nem auditoria falsa de sucesso.
-- Profundidade JSON: `MAX_JSON_DEPTH=32` é aplicado por travessia iterativa sobre objetos e arrays. Payloads no limite são aceitos; acima do limite, inclusive 1.200 níveis, retornam `413 VALIDATION_ERROR` sem stack trace e sem persistência.
-- O runner da Sprint 17 passou a criar fixtures reais e determinísticas no storage temporário para preservar a validação de ativos `available`; isso não altera o escopo funcional da sprint.
+- Identidade de auditoria: media e importacao recebem contexto derivado de `getTrustedAuditActor(req)`. `decidedBy`, `x-aralume-actor` e campos equivalentes nao sao autoridade. Auditorias de sucesso, rejeicao, replay e falha carregam o principal autenticado e o `AuditLog.requestId`; token, cookie, assinatura e segredo nao sao persistidos.
+- MP4 estrutural: a deteccao ISO-BMFF exige boxes validos, `ftyp` como primeiro box, limites de tamanho, `moov` e `mdat`; um arquivo de 12 bytes com apenas `ftyp` e rejeitado. Importacao tambem exige resultado FFprobe compativel com o contrato MP4, timeout e caminho previamente autorizado.
+- Persistencia: arquivo inexistente, diretorio, symlink, traversal, canal incorreto, checksum/tamanho/MIME/extensao incompatíveis e conteudo truncado nao criam ativo `available` nem auditoria de sucesso falsa.
+- Profundidade JSON: `MAX_JSON_DEPTH=32`, travessia iterativa para objetos e arrays, rejeicao antes da persistencia e resposta sem stack trace.
+- Testes de regressao: cobertura focada inclui identidade forjada, principal confiavel, `requestId`, validacao de arquivo real, MP4 truncado, auditoria de importacao e ausencia de persistencia apos rejeicao.
 
-Testes focados dos três findings passaram: identidade forjada em decisão e política, requestId de eventos de política, arquivo inexistente/diretório/conteúdo/tamanho/checksum cross-channel e traversal iterativo abaixo/no/acima do limite com arrays e 1.200 níveis.
+## E2E e evidencias operacionais
 
-Testes específicos executados incluem autenticação ausente/inválida, identidade fornecida pelo cliente, papel sem permissão, canal ausente/divergente, leituras cross-channel, payload acima do limite, auditoria sanitizada, MIME/extensão incompatíveis, traversal, storage cross-channel e importação inválida. O teste editorial de regressão também preservou criação, alteração, versões, planos visuais e cenas no canal correto.
+Os runners historicos `scripts/sprint15-browser-e2e.mjs` a `scripts/sprint21-browser-e2e.mjs` passaram individualmente com exit code 0. Eles continuam documentados como cobertura funcional com bypass de teste explicitamente marcado (`ARALUME_ENV=test`, `ARALUME_AUTH_TEST_BYPASS=true`), e nao como prova de autenticacao real.
 
-## E2E e operação
+O novo runner `scripts/sprint24-security-hmac-e2e.mjs` passou com credencial HMAC efemera em runtime, principal owner com `channelIds: ["ch_historia"]`, sem wildcard e sem bypass. Reproduziu autorizacao `200`, cross-channel `403`, conflitos body/query `403`, token ausente `401`, token invalido `401`, papel insuficiente `403`, ausencia de mutacao rejeitada e auditoria confiavel com `requestId`. Foram geradas duas screenshots suplementares em `screenshots/sprint-24-security-hmac/`. As 56 screenshots historicas em `screenshots/sprint-24-security/` permanecem preservadas.
 
-Os runners `scripts/sprint15-browser-e2e.mjs` até `scripts/sprint21-browser-e2e.mjs` foram executados com o bypass de teste explicitamente marcado (`ARALUME_ENV=test`, `ARALUME_AUTH_TEST_BYPASS=true`) e concluíram com exit code 0. As evidências novas foram gravadas sem sobrescrever históricos em `screenshots/sprint-24-security/`, com 56 screenshots.
+O utilitario de processo agora limpa diretorios de evidencia antes de cada runner, verifica portas antes de iniciar servidores, mata a arvore de processos no Windows e grupos de processo em POSIX, e falha se o processo filho permanecer ativo apos o teardown.
 
-Após os runners:
+## Dependencias e riscos residuais
 
-- porta 3001: livre;
-- porta 4173: livre;
-- porta 8080: livre;
-- processos `tsx`, Vite e runners da aplicação: encerrados; nenhum processo órfão identificado;
-- working tree: validada após a consolidação da unidade.
+`bun audit` retornou:
 
-## Riscos residuais e condição de produção
+- `@babel/core`, cadeia `@tanstack/router-plugin`/`@vitejs/plugin-react`/`@tanstack/react-start`: low, GHSA-4x5r-pxfx-6jf8;
+- `brace-expansion`, cadeia de ESLint/TypeScript tooling: moderate, GHSA-jxxr-4gwj-5jf2;
+- `js-yaml`, cadeia de ESLint/TanStack Start: moderate, GHSA-h67p-54hq-rp68.
 
-- A release 1.0.0 continua `NOT_READY`. Autenticação/isolation foram endurecidas, mas backup/restore, rollback, observabilidade produtiva, topologia/ingress e advisories de dependências continuam fora desta sprint.
-- Os 14 diagnósticos globais restantes devem ser tratados em sprint e PR funcional próprias antes da liberação produtiva; não há aceite formal de risco nesta unidade.
-- O projeto usa Bun e possui `bun.lock`; `bun audit` foi executado e retornou 3 advisories transitivos (1 low, 2 moderate). `bun pm scan` continua indisponível por ausência de scanner configurado, sem alteração de lockfile. A correção de dependências permanece em unidade própria.
-- O bypass de teste não é uma credencial de produção e não deve ser habilitado fora de execução local explicitamente marcada.
+Os advisories sao transitivos, nao foram introduzidos ou agravados por esta unidade e nenhum `package.json` ou `bun.lock` foi alterado. Eles continuam bloqueadores de release e devem ser tratados em unidade propria.
 
-## Decisão
+A release 1.0.0 permanece `NOT_READY` por pendencias de backup/restore, rollback, observabilidade produtiva, topologia/ingress, advisories e os 14 diagnosticos TypeScript globais. Nao existe aceite formal de risco nesta unidade.
 
-A implementação da Sprint 24 está pronta para revisão independente (`READY_FOR_REVIEW`). A decisão não altera o aceite funcional histórico do R14 e não transforma o readiness `NOT_READY` em autorização de release.
+## Decisao
+
+`READY_FOR_REVIEW`. A implementacao esta pronta para nova revisao independente. O aceite funcional historico do R14 permanece valido, mas este resultado nao autoriza producao, release, tag ou deploy.
