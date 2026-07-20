@@ -44,8 +44,9 @@ The R14 evidence remains the governing functional acceptance: V1-01 through V1-1
 
 The Sprint 25 hardening evidence is recorded in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
-The global TypeScript gate now passes with zero diagnostics, `bun audit` reports
-no vulnerabilities after fixed-version overrides, and the E2E runners validate
+The global TypeScript gate now passes with zero diagnostics. The historical
+Sprint 25 audit passed after fixed-version overrides; the current focused HEAD
+audit limitation is recorded below. The E2E runners validate
 the exact service, nonce, IPC-confirmed process identity, and per-run identity.
 The lifecycle and registry stress evidence is recorded in the Sprint 25 evidence;
 the focused remediation code HEAD is `28155fac96b5f2f4a3731214c195c7fec9989d62`.
