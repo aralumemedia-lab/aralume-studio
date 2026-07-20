@@ -31,11 +31,13 @@ import {
 } from "@/lib/format";
 import type {
   MediaAssetBase,
+  MediaAssetCategory,
   MediaAssetLicenseStatus,
   MediaAssetOrigin,
   MediaAssetStatus,
   MediaAssetType,
 } from "@/contracts/types";
+import type { CreateMediaAssetInput } from "@/services/media-assets-api";
 import {
   createMediaAsset,
   describeMediaAssetsApiError,
@@ -1054,13 +1056,18 @@ function typeDefaults(
   };
 }
 
-function buildPayload(draft: AssetDraft, channelId: string) {
+function buildPayload(draft: AssetDraft, channelId: string): CreateMediaAssetInput {
+  const title = draft.title.trim();
+  if (!title) {
+    throw new Error("O titulo do ativo e obrigatorio.");
+  }
+
   return {
     channelId,
     type: draft.type,
     category: deriveCategory(draft.type),
     name: draft.name.trim(),
-    title: draft.title.trim() || undefined,
+    title,
     description: draft.description.trim(),
     mimeType: draft.mimeType.trim(),
     extension: draft.extension.trim().replace(/^\./, ""),
@@ -1111,7 +1118,7 @@ function assetToDraft(asset: MediaAssetBase): AssetDraft {
   };
 }
 
-function deriveCategory(type: MediaAssetType) {
+function deriveCategory(type: MediaAssetType): MediaAssetCategory {
   if (type === "narration") {
     return "audio";
   }

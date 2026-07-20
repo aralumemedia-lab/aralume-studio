@@ -5,6 +5,7 @@ import test, { after, before } from "node:test";
 import type { Server } from "node:http";
 
 import { createApp } from "../src/app.js";
+import { createE2EIdentityChallengeGuard } from "../src/routes/e2e-identity-challenge.js";
 import { createErrorResponse, createSuccessResponse } from "../src/http/response.js";
 import { exceedsJsonDepth, MAX_JSON_DEPTH } from "../src/http/middleware.js";
 
@@ -128,6 +129,72 @@ test("GET /health returns the foundation health payload", async () => {
     logLines.some((line) => line.includes("?")),
     false,
   );
+});
+
+test("E2E identity challenges are server-issued, single-use and scoped", async () => {
+  const e2eApp = createApp({
+    authTestBypass: true,
+    env: {
+      ARALUME_ENV: "test",
+      ARALUME_LOG_LEVEL: "info",
+      ARALUME_E2E_RUN_ID: "http-test-run",
+      ARALUME_E2E_STARTUP_NONCE: "http-test-nonce",
+      ARALUME_E2E_IDENTITY_SECRET: "http-test-secret",
+    },
+    logger: captureLogger,
+  });
+  const e2eServer = e2eApp.listen(0);
+  await once(e2eServer, "listening");
+  const address = e2eServer.address();
+  assert.ok(address && typeof address !== "string");
+  const url = `http://127.0.0.1:${address.port}/health`;
+  const request = (challenge: string) =>
+    fetch(url, { headers: { "x-aralume-e2e-challenge": challenge } });
+
+  try {
+    const issued = await fetch(url, {
+      headers: { "x-aralume-e2e-issue-challenge": "1" },
+    }).then((response) => response.json());
+    assert.equal(typeof issued.identityChallenge, "string");
+    const challenge = issued.identityChallenge as string;
+    const first = await request(challenge).then((response) => response.json());
+    const replay = await request(challenge).then((response) => response.json());
+    assert.equal(typeof first.identityMac, "string");
+    assert.equal(replay.identityMac, undefined);
+
+    const concurrentChallenge = (
+      await fetch(url, {
+        headers: { "x-aralume-e2e-issue-challenge": "1" },
+      }).then((response) => response.json())
+    ).identityChallenge as string;
+    const concurrent = await Promise.all(
+      Array.from({ length: 20 }, () =>
+        fetch(url, { headers: { "x-aralume-e2e-challenge": concurrentChallenge } }).then(
+          (response) => response.json(),
+        ),
+      ),
+    );
+    assert.equal(concurrent.filter((payload) => typeof payload.identityMac === "string").length, 1);
+
+    const expiredGuard = createE2EIdentityChallengeGuard(10);
+    const expiredChallenge = expiredGuard.issue("http-test-run", 1_000);
+    assert.equal(typeof expiredChallenge, "string");
+    assert.equal(expiredGuard.consume("http-test-run", expiredChallenge as string, 1_011), false);
+    assert.equal(expiredGuard.consume("other-run", challenge), false);
+
+    const boundedGuard = createE2EIdentityChallengeGuard(5_000);
+    const retainedChallenge = boundedGuard.issue("bounded-run", Date.now());
+    for (let index = 0; index < 1_023; index += 1) {
+      assert.equal(typeof boundedGuard.issue("bounded-run"), "string");
+    }
+    assert.equal(boundedGuard.issue("bounded-run"), null);
+    assert.equal(boundedGuard.consume("bounded-run", retainedChallenge as string), true);
+    assert.equal(boundedGuard.consume("bounded-run", retainedChallenge as string), false);
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      e2eServer.close((error?: Error) => (error ? reject(error) : resolve())),
+    );
+  }
 });
 
 test("POST /health with invalid JSON returns the standard error envelope", async () => {

@@ -237,12 +237,13 @@ test("metrics summary generates a reproducible recommendation and keeps channels
 });
 
 test("metrics summary does not recommend without a comparable baseline", () => {
-  const seed: PerformanceMetric[] = [
+  const seedRows: Array<[string, string, string, number]> = [
     ["current-youtube-1", "youtube", "idea_06", 0.65],
     ["current-youtube-2", "youtube", "idea_02", 0.62],
     ["current-tiktok-1", "tiktok", "idea_06", 0.3],
     ["current-tiktok-2", "tiktok", "idea_02", 0.25],
-  ].map(([id, platform, contentId, completionRate]) => ({
+  ];
+  const seed: PerformanceMetric[] = seedRows.map(([id, platform, contentId, completionRate]) => ({
     ...baseInput,
     id,
     platform,

@@ -12,7 +12,7 @@ import {
   runE2E,
   spawnCommand,
   terminateProcesses,
-  waitForHttp,
+  waitForServiceIdentity,
 } from "./e2e-process-utils.mjs";
 
 const BACKEND = "http://127.0.0.1:3001";
@@ -50,8 +50,8 @@ async function main() {
   const mutationRequests = [];
 
   try {
-    await waitForHttp(`${BACKEND}/api/channels`);
-    await waitForHttp(FRONTEND);
+    await waitForServiceIdentity(`${BACKEND}/health`, backend, "aralume-api");
+    await waitForServiceIdentity(`${FRONTEND}/__aralume/e2e-identity`, frontend, "aralume-web");
     const channels = await apiGet("/channels");
     const channelA = channels.data.find((channel) => channel.id === "ch_historia");
     const channelB = channels.data.find((channel) => channel.id === "ch_negocios");

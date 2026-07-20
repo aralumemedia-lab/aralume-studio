@@ -10,7 +10,7 @@ import {
   runE2E,
   spawnCommand,
   terminateProcesses,
-  waitForHttp,
+  waitForServiceIdentity,
 } from "./e2e-process-utils.mjs";
 
 const BACKEND_BASE_URL = "http://127.0.0.1:3001";
@@ -34,8 +34,12 @@ async function main() {
   ]);
 
   try {
-    await waitForHttp(`${BACKEND_BASE_URL}/api/channels`);
-    await waitForHttp(FRONTEND_BASE_URL);
+    await waitForServiceIdentity(`${BACKEND_BASE_URL}/health`, backend, "aralume-api");
+    await waitForServiceIdentity(
+      `${FRONTEND_BASE_URL}/__aralume/e2e-identity`,
+      frontend,
+      "aralume-web",
+    );
     const channels = await apiGet("/channels");
     assert.ok(channels.data.length >= 2, "expected two seeded channels");
     const channelA =

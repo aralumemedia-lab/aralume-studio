@@ -347,16 +347,20 @@ test("derived clip HTTP routes create a real clip and survive a repository resta
 
     const concludedParentVideo = harness.mediaAssetsRepository.getVideoAsset("vd_historia_01");
     assert.ok(concludedParentVideo);
+    const renderedVideo = harness.mediaAssetsRepository.getVideoAsset(
+      renderedPayload.data.outputAssetId,
+    );
+    assert.ok(renderedVideo);
     harness.mediaAssetsRepository.upsertVideoAsset({
       ...concludedParentVideo!,
       status: "editing",
-      complianceStatus: "pending",
-      qualityStatus: "pending",
-      storagePath: renderedPayload.data.outputStoragePath,
-      sizeBytes: renderedPayload.data.outputSizeBytes,
-      checksum: renderedPayload.data.outputChecksum,
+      complianceStatus: "needs_human_review",
+      qualityStatus: "not_checked",
+      storagePath: renderedVideo.storagePath,
+      sizeBytes: renderedVideo.sizeBytes,
+      checksum: renderedVideo.checksum,
       checksumAlgorithm: "sha256",
-      durationSeconds: renderedPayload.data.durationSeconds,
+      durationSeconds: renderedVideo.durationSeconds,
     });
 
     const clipResponse = await fetch(`${baseUrl}/api/clips`, {

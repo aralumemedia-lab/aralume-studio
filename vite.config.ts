@@ -5,8 +5,60 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { createHmac } from "node:crypto";
+import type { Plugin } from "vite";
+import { createE2EIdentityChallengeGuard } from "./server/src/routes/e2e-identity-challenge";
+
+function e2eIdentityPlugin(): Plugin {
+  const challengeGuard = createE2EIdentityChallengeGuard();
+  return {
+    name: "aralume-e2e-identity",
+    configureServer(server) {
+      server.middlewares.use("/__aralume/e2e-identity", (request, response) => {
+        const runId = process.env.ARALUME_E2E_RUN_ID?.trim();
+        const identitySecret = process.env.ARALUME_E2E_IDENTITY_SECRET?.trim();
+        if (process.env.ARALUME_ENV !== "test" || !runId) {
+          response.statusCode = 404;
+          response.end();
+          return;
+        }
+
+        const port = response.socket?.localPort;
+        const issuedChallenge =
+          identitySecret && request.headers["x-aralume-e2e-issue-challenge"] === "1"
+            ? challengeGuard.issue(runId)
+            : null;
+        const challenge = request.headers["x-aralume-e2e-challenge"]?.toString().trim();
+        const identityMac =
+          identitySecret && challenge && port && challengeGuard.consume(runId, challenge)
+            ? createHmac("sha256", identitySecret)
+                .update(
+                  [challenge, "aralume-web", runId, String(process.pid), String(port)].join("\n"),
+                )
+                .digest("hex")
+            : undefined;
+
+        response.statusCode = 200;
+        response.setHeader("content-type", "application/json; charset=utf-8");
+        response.end(
+          JSON.stringify({
+            ok: true,
+            service: "aralume-web",
+            runId,
+            startupNonce: process.env.ARALUME_E2E_STARTUP_NONCE,
+            pid: process.pid,
+            port,
+            ...(issuedChallenge ? { identityChallenge: issuedChallenge } : {}),
+            ...(identityMac ? { identityMac } : {}),
+          }),
+        );
+      });
+    },
+  };
+}
 
 export default defineConfig({
+  plugins: [e2eIdentityPlugin()],
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
