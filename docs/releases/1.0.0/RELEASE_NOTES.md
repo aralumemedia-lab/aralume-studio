@@ -38,14 +38,15 @@ cleanup, and single-flight teardown. The focused lifecycle remediation further
 adds HMAC challenge-response ownership proof, isolated startup waiters, aggregated
 primary/teardown failures, and event-based termination synchronization. Reproducible evidence is available in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
-The current code HEAD for the final focused correction is `0b8e5e2`. The
+The current code HEAD for the final focused correction is `1d943dc`. The
 current `bun audit` result is
 FAIL (exit 1) for high advisories `GHSA-3jxr-9vmj-r5cp` on
 `brace-expansion@5.0.6` and `GHSA-52cp-r559-cp3m` on `js-yaml@4.2.0`.
 No dependency change is included in the focused lifecycle review. The review
 remediation now bounds response-body consumption with the readiness timeout,
-rejects exit-0 children before the startup handshake, and consumes test-only
-identity challenges once with a short TTL. The process suite is 20/20, the
+rejects exit-0 children before the startup handshake, and issues/consumes
+test-only identity challenges once with a short TTL, rejecting unissued and
+cross-execution challenges. The process suite is 20/20, the
 official suite is 93/93, body-timeout stress is 30/30, early-exit stress is
 50/50 sequential plus 16/16 concurrent, replay stress is 50/50 sequential plus
 20/20 concurrent, and runners 15–21 plus HMAC passed. The PR remains draft

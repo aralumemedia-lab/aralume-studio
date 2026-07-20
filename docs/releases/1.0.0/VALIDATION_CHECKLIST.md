@@ -52,7 +52,7 @@ Sprint 25 audit passed after fixed-version overrides; the current review HEAD
 audit limitation is recorded below. The E2E runners validate
 the exact service, nonce, IPC-confirmed process identity, and per-run identity.
 The lifecycle and registry stress evidence is recorded in the Sprint 25 evidence;
-the current code HEAD is `0b8e5e2`.
+the current code HEAD is `1d943dc`.
 The current HEAD audit fails with two high advisories: `brace-expansion`
 (`GHSA-3jxr-9vmj-r5cp`, fixed in 5.0.7) and `js-yaml`
 (`GHSA-52cp-r559-cp3m`, affected range reported by Bun as `>=4.0.0 <4.3.0`).
@@ -61,9 +61,11 @@ both advisories remain release blockers and are not treated as PASS.
 The focused remediation adds HMAC challenge-response ownership proof, isolated
 startup waiters, aggregated primary/teardown failures, event-based lifecycle
 synchronization, total response-body cancellation, strict early-exit failure,
-and single-use expiring identity challenges. The focused process suite is
-20/20 and the official suite is 93/93; runners 15–21 and HMAC passed. The PR
-remains draft for independent review of this final correction.
+and server-issued, single-use expiring identity challenges. The focused process
+suite is 20/20 and the official suite is 93/93; runners 15–21 and HMAC passed.
+The challenge registry rejects unissued challenges and does not evict valid
+records before TTL expiry. The PR remains draft for independent review of this
+final correction.
 The release remains **NOT READY** because
 production configuration/secrets, backup/restore, rollback, observability,
 production topology/ingress, and the integral release-readiness evaluation are

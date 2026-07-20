@@ -51,7 +51,8 @@ were formalized and published:
 - focused test and regression coverage commit: `28155fac96b5f2f4a3731214c195c7fec9989d62`;
 - focused documentation commits: `a0a358f`, `78fb9db`, and `c99a6dcf89865c0bf737572c2e2e2662bb5e7644`;
 - timeout, early-handshake, and challenge-replay remediation commit: `0b8e5e2`;
-- current code HEAD used for the focused gates: `0b8e5e2`;
+- server-issued challenge hardening commit: `1d943dc`;
+- current code HEAD used for the focused gates: `1d943dc`;
 - branch: `codex/sprint-25-release-readiness-hardening`;
 - push: completed to `origin/codex/sprint-25-release-readiness-hardening`;
 - pull request: [#41](https://github.com/aralumemedia-lab/aralume-studio/pull/41), open and draft;
@@ -163,16 +164,19 @@ cases. Runners 15–21 and the HMAC runner passed with zero project orphans.
 ## Focused remediation result
 
 The three blockers reproduced on the prior review HEAD were corrected in
-`0b8e5e2` and revalidated on the resulting code:
+`0b8e5e2` and the server-issued challenge hardening in `1d943dc`, then
+revalidated on the resulting code:
 
 - body timeout now covers `fetch()`, complete body consumption, and JSON parse;
   30/30 stalled-body repetitions terminated within the configured budget;
 - a service child exiting with code 0 before its handshake is reported as a
   startup failure by `runE2E()`, with 50/50 sequential and 16/16 concurrent
   repetitions rejected;
-- backend and Vite test-only identity endpoints consume each challenge once,
-  reject expired/future challenges, bound retained state, and reject concurrent
-  replays; stress passed 50/50 sequential and 20/20 concurrent pairs.
+- backend and Vite test-only identity endpoints issue challenges server-side,
+  associate them with the execution, consume each challenge once, reject
+  expired/future/unknown challenges, retain valid consumed records until TTL
+  expiry, and reject concurrent replays; stress passed 50/50 sequential and
+  20/20 concurrent pairs.
 
 The PR remains draft pending independent review. These corrections do not
 authorize merge, tag, release, or deploy.
