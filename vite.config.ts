@@ -7,8 +7,10 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { createHmac } from "node:crypto";
 import type { Plugin } from "vite";
+import { createE2EIdentityChallengeGuard } from "./server/src/routes/e2e-identity-challenge";
 
 function e2eIdentityPlugin(): Plugin {
+  const challengeGuard = createE2EIdentityChallengeGuard();
   return {
     name: "aralume-e2e-identity",
     configureServer(server) {
@@ -24,7 +26,7 @@ function e2eIdentityPlugin(): Plugin {
         const port = response.socket?.localPort;
         const challenge = request.headers["x-aralume-e2e-challenge"]?.toString().trim();
         const identityMac =
-          identitySecret && challenge && port
+          identitySecret && challenge && port && challengeGuard.consume(runId, challenge)
             ? createHmac("sha256", identitySecret)
                 .update(
                   [challenge, "aralume-web", runId, String(process.pid), String(port)].join("\n"),

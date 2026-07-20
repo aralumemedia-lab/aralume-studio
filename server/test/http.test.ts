@@ -130,6 +130,53 @@ test("GET /health returns the foundation health payload", async () => {
   );
 });
 
+test("E2E identity challenges are single-use and expire", async () => {
+  const e2eApp = createApp({
+    authTestBypass: true,
+    env: {
+      ARALUME_ENV: "test",
+      ARALUME_LOG_LEVEL: "info",
+      ARALUME_E2E_RUN_ID: "http-test-run",
+      ARALUME_E2E_STARTUP_NONCE: "http-test-nonce",
+      ARALUME_E2E_IDENTITY_SECRET: "http-test-secret",
+    },
+    logger: captureLogger,
+  });
+  const e2eServer = e2eApp.listen(0);
+  await once(e2eServer, "listening");
+  const address = e2eServer.address();
+  assert.ok(address && typeof address !== "string");
+  const url = `http://127.0.0.1:${address.port}/health`;
+  const challenge = Date.now().toString(36) + "." + "a".repeat(64);
+  const request = () => fetch(url, { headers: { "x-aralume-e2e-challenge": challenge } });
+
+  try {
+    const first = await request().then((response) => response.json());
+    const replay = await request().then((response) => response.json());
+    assert.equal(typeof first.identityMac, "string");
+    assert.equal(replay.identityMac, undefined);
+
+    const concurrentChallenge = Date.now().toString(36) + "." + "b".repeat(64);
+    const concurrent = await Promise.all(
+      Array.from({ length: 20 }, () =>
+        fetch(url, { headers: { "x-aralume-e2e-challenge": concurrentChallenge } }).then(
+          (response) => response.json(),
+        ),
+      ),
+    );
+    assert.equal(concurrent.filter((payload) => typeof payload.identityMac === "string").length, 1);
+
+    const expired = await fetch(url, {
+      headers: { "x-aralume-e2e-challenge": "0." + "c".repeat(64) },
+    }).then((response) => response.json());
+    assert.equal(expired.identityMac, undefined);
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      e2eServer.close((error?: Error) => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
 test("POST /health with invalid JSON returns the standard error envelope", async () => {
   logLines.length = 0;
   const response = await fetch(`${baseUrl}/health`, {

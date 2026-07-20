@@ -35,7 +35,7 @@ function hasValidIdentityMac(actual, expected) {
 function nextIdentityChallenge(record) {
   let challenge;
   do {
-    challenge = randomBytes(32).toString("hex");
+    challenge = Date.now().toString(36) + "." + randomBytes(32).toString("hex");
   } while (record.usedChallenges.has(challenge));
   record.usedChallenges.add(challenge);
   return challenge;
@@ -187,21 +187,8 @@ function createProcessRecord(
     record.exitCode = code;
     record.signalCode = signal;
     if (!record.terminationRequested) {
-      if (record.startupConfirmed || code !== 0 || signal !== null) {
-        record.unexpectedFailure ??= new Error(
-          "E2E child process exited unexpectedly: " +
-            describe(record) +
-            " (code=" +
-            (code ?? "null") +
-            ", signal=" +
-            (signal ?? "null") +
-            ")",
-        );
-      }
-      if (!record.startupSettled) {
-        settleStartup(
-          record,
-          new Error(
+      const exitFailure = !record.startupConfirmed
+        ? new Error(
             "E2E child process exited before startup handshake: " +
               describe(record) +
               " (code=" +
@@ -209,8 +196,19 @@ function createProcessRecord(
               ", signal=" +
               (signal ?? "null") +
               ")",
-          ),
-        );
+          )
+        : new Error(
+            "E2E child process exited unexpectedly: " +
+              describe(record) +
+              " (code=" +
+              (code ?? "null") +
+              ", signal=" +
+              (signal ?? "null") +
+              ")",
+          );
+      record.unexpectedFailure ??= exitFailure;
+      if (!record.startupSettled) {
+        settleStartup(record, exitFailure);
       }
     }
   });
@@ -233,7 +231,7 @@ function findRecord(child) {
 }
 
 function failureFor(record) {
-  return record.unexpectedFailure ?? record.spawnError;
+  return record.unexpectedFailure ?? record.spawnError ?? record.startupError;
 }
 
 export function processRecordCount() {
@@ -425,11 +423,13 @@ export async function terminateProcesses(children) {
   }
 }
 
-async function fetchWithTimeout(url, timeoutMs, options = {}) {
+async function fetchWithTimeout(url, timeoutMs, options = {}, { parseJson = false } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { ...options, signal: controller.signal });
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    const body = await response.text();
+    return { response, body: parseJson ? JSON.parse(body) : body };
   } finally {
     clearTimeout(timer);
   }
@@ -440,7 +440,7 @@ export async function waitForHttp(url, timeoutMs = 120_000) {
   while (Date.now() - started < timeoutMs) {
     const remaining = timeoutMs - (Date.now() - started);
     try {
-      const response = await fetchWithTimeout(url, Math.min(1_000, remaining));
+      const { response } = await fetchWithTimeout(url, Math.min(1_000, remaining));
       if (response.ok) {
         return;
       }
@@ -475,11 +475,13 @@ export async function waitForServiceIdentity(url, child, expectedService, timeou
     const remaining = timeoutMs - (Date.now() - started);
     const challenge = nextIdentityChallenge(record);
     try {
-      const response = await fetchWithTimeout(url, Math.min(1_000, remaining), {
-        headers: { [identityChallengeHeader]: challenge },
-      });
+      const { response, body: payload } = await fetchWithTimeout(
+        url,
+        Math.min(1_000, remaining),
+        { headers: { [identityChallengeHeader]: challenge } },
+        { parseJson: true },
+      );
       if (response.ok) {
-        const payload = await response.json();
         const expectedMac = identityMac(record.identitySecret, {
           challenge,
           service: expectedService,

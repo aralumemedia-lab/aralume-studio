@@ -207,6 +207,36 @@ test("cancels a stalled identity fetch at the operation timeout", async () => {
   }
 });
 
+test("cancels an identity response whose body never completes", async () => {
+  const child = longRunningChild();
+  const server = createServer((_request, response) => {
+    response.writeHead(200, { "content-type": "application/json" });
+    response.flushHeaders();
+    response.write('{"ok":true');
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  try {
+    await assert.rejects(
+      () =>
+        waitForServiceIdentity(
+          "http://127.0.0.1:" + address.port + "/identity",
+          child,
+          "aralume-api",
+          150,
+        ),
+      /Timed out waiting for aralume-api identity/,
+    );
+  } finally {
+    if (server.closeAllConnections) {
+      server.closeAllConnections();
+    }
+    await terminateProcess(child);
+    await closeServer(server);
+  }
+});
+
 test("rejects a service whose child dies after the startup handshake", async () => {
   const { child, url } = await startIdentityChild({ exitAfterStartup: true });
   await waitForClose(child);
@@ -301,6 +331,22 @@ test("runE2E cleans active children and reports a child failure", () => {
     encoding: "utf8",
   });
   assert.equal(result.status, 1, result.stderr);
+});
+
+test("runE2E reports exit 0 before the startup handshake", () => {
+  const script = [
+    'import { runE2E, spawnCommand } from "./scripts/e2e-process-utils.mjs";',
+    "await runE2E(async () => {",
+    "  const child = spawnCommand(process.execPath, ['-e', 'process.exit(0)'], { ARALUME_E2E_BOOTSTRAP_DISABLED: 'true' });",
+    "  await new Promise((resolve) => child.once('close', resolve));",
+    "});",
+  ].join("\n");
+  const result = spawnSync(process.execPath, ["--input-type=module", "-e", script], {
+    cwd: process.cwd(),
+    encoding: "utf8",
+  });
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stderr, /exited before startup handshake/);
 });
 
 test("keeps concurrent startup waiters isolated after one timeout", async () => {
