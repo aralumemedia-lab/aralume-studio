@@ -32,8 +32,11 @@ three known transitive advisories (`@babel/core`, `brace-expansion`, and `js-yam
 and added per-run service identity checks to E2E startup. The follow-up remediation
 at validated code HEAD b8febec added nonce/IPC/PID/port association, cancelable
 readiness fetches, deterministic early-handshake failure, per-execution registry
-cleanup, and single-flight teardown. Reproducible evidence is available in
+cleanup, and single-flight teardown. The focused lifecycle remediation further
+adds HMAC challenge-response ownership proof, isolated startup waiters, aggregated
+primary/teardown failures, and event-based termination synchronization. Reproducible evidence is available in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
+The focused code validation used HEAD `28155fac96b5f2f4a3731214c195c7fec9989d62`.
 
 These corrections do not change the release decision: V1.0.0 remains **NOT READY
 FOR PRODUCTION DEPLOYMENT** while the production and operational gates listed

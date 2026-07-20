@@ -34,7 +34,7 @@ The command `npx tsc --noEmit` returns exit code 2 with 18 diagnostics on both t
 - [ ] resolve or formally accept dependency advisories
 - [ ] verify filesystem permissions and storage isolation in production topology
 - [ ] verify external integration credentials and redirect policy
-- [ ] verify no orphaned processes and required ports after smoke execution
+- [x] verify no orphaned processes and required ports after smoke execution (Sprint 25 result; see canonical evidence; historical Sprint 23 rows remain preserved above)
 
 ## V1 functional preservation
 
@@ -47,7 +47,12 @@ The Sprint 25 hardening evidence is recorded in
 The global TypeScript gate now passes with zero diagnostics, `bun audit` reports
 no vulnerabilities after fixed-version overrides, and the E2E runners validate
 the exact service, nonce, IPC-confirmed process identity, and per-run identity.
-The lifecycle and registry stress evidence is recorded in the Sprint 25 evidence.
+The lifecycle and registry stress evidence is recorded in the Sprint 25 evidence;
+the focused remediation code HEAD is `28155fac96b5f2f4a3731214c195c7fec9989d62`.
+The focused remediation adds HMAC challenge-response ownership proof, isolated
+startup waiters, aggregated primary/teardown failures, and event-based lifecycle
+synchronization; its final code and documentation SHAs are recorded in the PR
+metadata and canonical evidence.
 The release remains **NOT READY** because
 production configuration/secrets, backup/restore, rollback, observability,
 production topology/ingress, and the integral release-readiness evaluation are

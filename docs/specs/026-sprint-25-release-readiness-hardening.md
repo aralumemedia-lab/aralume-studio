@@ -57,6 +57,8 @@ Eliminar legitimamente os diagnósticos do typecheck global, remediar ou classif
 - Advisories: atualizar seletivamente para `@babel/core` 7.29.6, `brace-expansion` 5.0.6 e `js-yaml` 4.2.0, se a resolução do lockfile confirmar compatibilidade.
 - Identidade: usar `runId` criptograficamente aleatório por execução, propagado por ambiente; o backend deve expô-lo no health apenas quando fornecido, e o frontend deve expor endpoint de identidade somente em ambiente E2E/teste.
 - Runner: substituir health HTTP genérico por validação de identidade esperada e falha imediata se o processo iniciado morrer antes da confirmação.
+- Ownership: a aprovação de readiness também exige challenge-response HMAC com segredo efêmero em memória do processo iniciado; runId, nonce, PID e porta são metadados auxiliares, não prova de posse.
+- Lifecycle: waiters de startup devem ter timeouts independentes sem remover listeners de outros waiters; teardown deve preservar erro primário e falhas secundárias; testes devem sincronizar por eventos, nunca por sleep fixo.
 
 ## Arquivos prováveis
 
@@ -83,6 +85,8 @@ Eliminar legitimamente os diagnósticos do typecheck global, remediar ou classif
 - `node --test scripts/e2e-process-utils.test.mjs` cobre identidade correta, `runId` divergente, serviço incorreto, processo morto e teardown.
 - Runners 15-21 e `sprint24-security-hmac-e2e.mjs` validam o serviço correto e não reutilizam processos antigos.
 - Portas 3001, 4173 e 8080 estão livres antes e depois dos runners.
+- A prova HMAC rejeita endpoint independente, MAC inválida, challenge ausente, expirado ou reutilizado; o segredo não aparece em endpoint, IPC, logs ou evidência.
+- Waiters concorrentes, erros agregados, sincronização por eventos e checklist de portas/processos são cobertos na evidência canônica.
 - Não há processo órfão, segredo exposto, tag, release ou deploy.
 
 ## Critérios de bloqueio

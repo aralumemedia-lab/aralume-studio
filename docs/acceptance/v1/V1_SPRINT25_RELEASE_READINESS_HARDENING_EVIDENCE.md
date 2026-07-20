@@ -24,16 +24,16 @@ registered Sprint 25 / Spec 026 before implementation:
 
 ## Preflight
 
-| Check | Result |
-|---|---|
-| Git root | `C:/Users/carol/Documents/aralume-studio V2/aralume-studio` |
-| HEAD, `main`, `origin/main` | all `15d113ad0181164af306e28a61aae5b0ec28bea5` |
-| Divergence | `0/0` before branch creation |
-| Initial working tree | clean before implementation; no staged, modified, or untracked files |
-| Initial related PRs | none (`gh pr list --state open` returned `[]`) |
-| Current worktree | one worktree, current branch shown above |
-| Ports 3001, 4173, 8080 | no listeners before and after runner execution |
-| Application processes | no application process was running in preflight; observed Node processes belonged to `./mcp/server.mjs` |
+| Check                       | Result                                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Git root                    | `C:/Users/carol/Documents/aralume-studio V2/aralume-studio`                                             |
+| HEAD, `main`, `origin/main` | all `15d113ad0181164af306e28a61aae5b0ec28bea5`                                                          |
+| Divergence                  | `0/0` before branch creation                                                                            |
+| Initial working tree        | clean before implementation; no staged, modified, or untracked files                                    |
+| Initial related PRs         | none (`gh pr list --state open` returned `[]`)                                                          |
+| Current worktree            | one worktree, current branch shown above                                                                |
+| Ports 3001, 4173, 8080      | no listeners before and after runner execution                                                          |
+| Application processes       | no application process was running in preflight; observed Node processes belonged to `./mcp/server.mjs` |
 
 The local and remote branch inventories were collected during the initial
 pre-implementation preflight. No historical branch was deleted.
@@ -47,6 +47,9 @@ were formalized and published:
 - corrective commit: `22b7347cdb624f62f588c60550cb2d9538278945`;
 - F-01--F-06 remediation code commit: `b8febec`;
 - validated code HEAD for the gates below: `b8febec`;
+- focused F-02/F-07/F-08 remediation commit: `176f3f694656d66a3b999ef6757e5cc166cfebe3`;
+- focused test and regression coverage commit: `28155fac96b5f2f4a3731214c195c7fec9989d62`;
+- validated focused code HEAD: `28155fac96b5f2f4a3731214c195c7fec9989d62`;
 - branch: `codex/sprint-25-release-readiness-hardening`;
 - push: completed to `origin/codex/sprint-25-release-readiness-hardening`;
 - pull request: [#41](https://github.com/aralumemedia-lab/aralume-studio/pull/41), open and draft;
@@ -54,10 +57,11 @@ were formalized and published:
 - merge: not performed;
 - tag, release, and deploy: not created or executed.
 
-The documentary update is a subsequent normal commit after `b8febec`; the
-final branch SHA is recorded in the PR metadata and handoff comment after that
-commit. The validated code SHA above is the immutable SHA used for the
-technical gates and is not a provisional implementation reference.
+The earlier documentary update was a subsequent normal commit after `b8febec`.
+The focused documentation update follows the validated code commits above; the
+final branch SHA is recorded in the PR metadata and the new review-request
+comment after that commit. The validated code SHA above is the immutable SHA
+used for the technical gates and is not a provisional implementation reference.
 
 ## Baseline and corrections
 
@@ -89,11 +93,11 @@ exit code 0 with zero diagnostics.
 The three original findings were transitively resolved with Bun overrides in
 `package.json` and the corresponding lockfile entries:
 
-| Package | Advisory / severity | Original → fixed | Main chain and execution domain | Residual |
-|---|---|---|---|---|
-| `@babel/core` | GHSA-4x5r-pxfx-6jf8 / CVE-2026-49356, low | `7.29.0` → `7.29.6` | TanStack router/start and Vite React build tooling; build/development | no known audit finding after resolution |
-| `brace-expansion` | GHSA-jxxr-4gwj-5jf2 / CVE-2026-45149, moderate | `5.0.5` → `5.0.6` | `minimatch` via ESLint / typescript-eslint; lint/development | no known audit finding after resolution |
-| `js-yaml` | GHSA-h67p-54hq-rp68 / CVE-2026-53550, moderate | `4.1.1` → `4.2.0` | ESLint eslintrc and TanStack start plugin; lint/build/development | no known audit finding after resolution |
+| Package           | Advisory / severity                            | Original → fixed    | Main chain and execution domain                                       | Residual                                |
+| ----------------- | ---------------------------------------------- | ------------------- | --------------------------------------------------------------------- | --------------------------------------- |
+| `@babel/core`     | GHSA-4x5r-pxfx-6jf8 / CVE-2026-49356, low      | `7.29.0` → `7.29.6` | TanStack router/start and Vite React build tooling; build/development | no known audit finding after resolution |
+| `brace-expansion` | GHSA-jxxr-4gwj-5jf2 / CVE-2026-45149, moderate | `5.0.5` → `5.0.6`   | `minimatch` via ESLint / typescript-eslint; lint/development          | no known audit finding after resolution |
+| `js-yaml`         | GHSA-h67p-54hq-rp68 / CVE-2026-53550, moderate | `4.1.1` → `4.2.0`   | ESLint eslintrc and TanStack start plugin; lint/build/development     | no known audit finding after resolution |
 
 `bun pm why` confirmed these are not direct application runtime dependencies.
 `bun audit` now exits 0 with `No vulnerabilities found`. The override approach
@@ -127,35 +131,41 @@ The lifecycle utility now uses an AsyncLocalStorage context per execution, one
 close promise per process, single-flight teardown, cleanup after close, and an
 AbortController per readiness fetch attempt. Startup observes message, error,
 exit, close, and a bounded timeout; exit before handshake cannot leave a pending
-promise. The focused lifecycle suite passed 13/13.
+promise. The focused remediation adds a per-process HMAC challenge-response
+proof, a correlation id for the startup handshake, independent waiter timeouts,
+aggregation of primary and teardown failures, and event-based lifecycle tests
+without fixed-delay synchronization. The focused lifecycle suite passed 18/18.
 
 The obsolete fixed-delay inference was removed. Reproductions passed 50/50
 critical sequential executions, 8/8 concurrent executions, and 20/20 complete
-lifecycle suites. Additional stress passed 20/20 HTTP timeout cases, 20/20
-early-handshake cases, 50/50 registry pairs, and 20/20 false
-process/endpoint-association cases.
+lifecycle suites. Focused remediation stress passed 50/50 false associations,
+50/50 waiter pairs, 20/20 waiter triplets, 50/50 primary-plus-teardown error
+cases, 100/100 event-based lifecycle cases, and 16/16 concurrent lifecycle
+cases. Additional stress passed 20/20 HTTP timeout cases, 20/20 early-handshake
+cases, and 50/50 registry pairs.
 
 ## Reproducible gates
 
 Executed from the repository root on 2026-07-20:
 
-| Command | Result |
-|---|---|
-| `npx tsc --noEmit` | PASS, exit 0, zero diagnostics |
-| `bun audit` | PASS, exit 0, no vulnerabilities |
-| `npm run lint` | PASS |
-| `npm run backend:check` | PASS |
-| `npm test` | PASS, 92/92 tests |
-| `npm run build` | PASS |
-| `bun install --frozen-lockfile` | PASS, no lockfile changes |
-| `node --test scripts/e2e-process-utils.test.mjs` | PASS, 13/13 tests |
-| lifecycle stress | PASS, 50 sequential; 8 concurrent; 20 full suites; 20 timeout; 20 early handshake; 50 registry pairs; 20 false association |
-| `node scripts/sprint15-browser-e2e.mjs` through `sprint21-browser-e2e.mjs` | PASS, all exit 0 with identity-gated startup |
-| `node scripts/sprint24-security-hmac-e2e.mjs` | PASS, exit 0; authorization, isolation, conflict, missing/invalid signature cases preserved |
-| heuristic secret scan of added diff | PASS, high-confidence private-key/API-key/token patterns; 0 hits; known fixtures: none in changed files; no real secret found; validated code HEAD `b8febec` |
-| `git diff --check` | PASS |
-| post-run ports 3001, 4173, 8080 | clear |
-| post-run project processes | clear; no orphaned runner/backend/frontend process |
+| Command                                                                    | Result                                                                                                                                                                               |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npx tsc --noEmit`                                                         | PASS, exit 0, zero diagnostics                                                                                                                                                       |
+| `bun audit`                                                                | PASS, exit 0, no vulnerabilities                                                                                                                                                     |
+| `npm run lint`                                                             | PASS                                                                                                                                                                                 |
+| `npm run backend:check`                                                    | PASS                                                                                                                                                                                 |
+| `npm test`                                                                 | PASS, 92/92 tests                                                                                                                                                                    |
+| `npm run build`                                                            | PASS                                                                                                                                                                                 |
+| `bun install --frozen-lockfile`                                            | PASS, no lockfile changes                                                                                                                                                            |
+| `node --test scripts/e2e-process-utils.test.mjs`                           | PASS, 18/18 tests                                                                                                                                                                    |
+| focused lifecycle stress                                                   | PASS, 50 false associations; 50 waiter pairs; 20 waiter triplets; 50 primary-plus-teardown errors; 100 sequential event-based cases; 16 concurrent event-based cases; 20 full suites |
+| prior lifecycle stress                                                     | PASS, 50 sequential; 8 concurrent; 20 timeout; 20 early handshake; 50 registry pairs; 20 false association                                                                           |
+| `node scripts/sprint15-browser-e2e.mjs` through `sprint21-browser-e2e.mjs` | PASS, all exit 0 with identity-gated startup                                                                                                                                         |
+| `node scripts/sprint24-security-hmac-e2e.mjs`                              | PASS, exit 0; authorization, isolation, conflict, missing/invalid signature cases preserved                                                                                          |
+| heuristic secret scan of added diff                                        | PASS, high-confidence private-key/API-key/token patterns; 0 hits; known fixtures: none in changed files; no real secret found; focused code HEAD `28155fa`                           |
+| `git diff --check`                                                         | PASS                                                                                                                                                                                 |
+| post-run ports 3001, 4173, 8080                                            | clear                                                                                                                                                                                |
+| post-run project processes                                                 | clear; no orphaned runner/backend/frontend process                                                                                                                                   |
 
 The runners generated local screenshot artifacts during execution; those
 artifacts were restored to the clean baseline and are not part of this unit.
