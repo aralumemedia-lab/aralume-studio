@@ -1,6 +1,6 @@
 # V1.0.0 — Sprint 25 technical hardening evidence
 
-Status: **TECHNICAL GATES PASS; RELEASE NOT_READY**
+Status: **FOCUSED LIFECYCLE GATES PASS; RELEASE NOT_READY; AUDIT FOLLOW-UP REQUIRED**
 
 Date: 2026-07-20
 Base: `15d113ad0181164af306e28a61aae5b0ec28bea5`
@@ -100,7 +100,11 @@ The three original findings were transitively resolved with Bun overrides in
 | `js-yaml`         | GHSA-h67p-54hq-rp68 / CVE-2026-53550, moderate | `4.1.1` → `4.2.0`   | ESLint eslintrc and TanStack start plugin; lint/build/development     | no known audit finding after resolution |
 
 `bun pm why` confirmed these are not direct application runtime dependencies.
-`bun audit` now exits 0 with `No vulnerabilities found`. The override approach
+The historical Sprint 25 audit passed after the selective overrides. On the
+focused remediation HEAD, the current Bun advisory database reports a new
+`brace-expansion` advisory (`GHSA-3jxr-9vmj-r5cp`); no dependency changes were
+authorized in this unit and the release remains blocked on that separate decision.
+The override approach
 keeps the direct dependency graph unchanged apart from the test-only `undici`
 declaration and avoids broad package upgrades. Build, lint, and the full test
 suite provide the compatibility coverage for the lockfile change.
@@ -151,7 +155,7 @@ Executed from the repository root on 2026-07-20:
 | Command                                                                    | Result                                                                                                                                                                               |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `npx tsc --noEmit`                                                         | PASS, exit 0, zero diagnostics                                                                                                                                                       |
-| `bun audit`                                                                | PASS, exit 0, no vulnerabilities                                                                                                                                                     |
+| `bun audit`                                                                | FAIL, exit 1: current database reports `brace-expansion` `>=3.0.0 <5.0.7` (`GHSA-3jxr-9vmj-r5cp`); dependency changes out of scope                                                   |
 | `npm run lint`                                                             | PASS                                                                                                                                                                                 |
 | `npm run backend:check`                                                    | PASS                                                                                                                                                                                 |
 | `npm test`                                                                 | PASS, 92/92 tests                                                                                                                                                                    |
@@ -191,8 +195,10 @@ pushed, changed the PR, or merged.
 
 ## Residual blockers and explicit non-scope
 
-This hardening unit removes the three known technical blockers and the six
-review findings addressed here, but the product remains `NOT_READY`. Production
+This hardening unit removes the three known technical blockers and the focused
+lifecycle/readiness findings addressed here, but the product remains `NOT_READY`.
+The current `brace-expansion` audit advisory is explicitly not remediated in
+this focused unit and remains a separate release blocker. Production
 configuration and secrets, backup/restore,
 rollback, broad observability, production topology/ingress, the next integral
 release-readiness evaluation, release, tag, and deploy remain pending and were

@@ -49,6 +49,9 @@ no vulnerabilities after fixed-version overrides, and the E2E runners validate
 the exact service, nonce, IPC-confirmed process identity, and per-run identity.
 The lifecycle and registry stress evidence is recorded in the Sprint 25 evidence;
 the focused remediation code HEAD is `28155fac96b5f2f4a3731214c195c7fec9989d62`.
+The focused HEAD audit currently reports a new `brace-expansion` advisory
+(`GHSA-3jxr-9vmj-r5cp`); dependencies were intentionally not changed in this
+unit and the advisory remains a separate release blocker.
 The focused remediation adds HMAC challenge-response ownership proof, isolated
 startup waiters, aggregated primary/teardown failures, and event-based lifecycle
 synchronization; its final code and documentation SHAs are recorded in the PR

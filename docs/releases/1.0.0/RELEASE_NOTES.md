@@ -37,6 +37,9 @@ adds HMAC challenge-response ownership proof, isolated startup waiters, aggregat
 primary/teardown failures, and event-based termination synchronization. Reproducible evidence is available in
 [`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
 The focused code validation used HEAD `28155fac96b5f2f4a3731214c195c7fec9989d62`.
+The current audit database also reports a new `brace-expansion` advisory
+(`GHSA-3jxr-9vmj-r5cp`); no dependency change is included in this focused unit,
+so the release remains blocked on that separate dependency decision.
 
 These corrections do not change the release decision: V1.0.0 remains **NOT READY
 FOR PRODUCTION DEPLOYMENT** while the production and operational gates listed
