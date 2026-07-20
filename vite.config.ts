@@ -24,6 +24,10 @@ function e2eIdentityPlugin(): Plugin {
         }
 
         const port = response.socket?.localPort;
+        const issuedChallenge =
+          identitySecret && request.headers["x-aralume-e2e-issue-challenge"] === "1"
+            ? challengeGuard.issue(runId)
+            : null;
         const challenge = request.headers["x-aralume-e2e-challenge"]?.toString().trim();
         const identityMac =
           identitySecret && challenge && port && challengeGuard.consume(runId, challenge)
@@ -44,6 +48,7 @@ function e2eIdentityPlugin(): Plugin {
             startupNonce: process.env.ARALUME_E2E_STARTUP_NONCE,
             pid: process.pid,
             port,
+            ...(issuedChallenge ? { identityChallenge: issuedChallenge } : {}),
             ...(identityMac ? { identityMac } : {}),
           }),
         );

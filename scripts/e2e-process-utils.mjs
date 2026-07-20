@@ -16,6 +16,7 @@ const bootstrapModule = pathToFileURL(
 export const e2eRunId = randomUUID();
 
 const identityChallengeHeader = "x-aralume-e2e-challenge";
+const identityChallengeIssueHeader = "x-aralume-e2e-issue-challenge";
 
 function identityProofMessage({ challenge, service, runId, pid, port }) {
   return [challenge, service, runId, String(pid), String(port)].join("\n");
@@ -30,15 +31,6 @@ function hasValidIdentityMac(actual, expected) {
     return false;
   }
   return timingSafeEqual(Buffer.from(actual, "hex"), Buffer.from(expected, "hex"));
-}
-
-function nextIdentityChallenge(record) {
-  let challenge;
-  do {
-    challenge = Date.now().toString(36) + "." + randomBytes(32).toString("hex");
-  } while (record.usedChallenges.has(challenge));
-  record.usedChallenges.add(challenge);
-  return challenge;
 }
 
 function combineFailures(primary, cleanup) {
@@ -140,7 +132,6 @@ function createProcessRecord(
     startupError: null,
     startupConfirmed: false,
     startupPids: new Set([child.pid]),
-    usedChallenges: new Set(),
     closed: false,
     closePromise: closed.promise,
     closeResolve: closed.resolve,
@@ -473,11 +464,28 @@ export async function waitForServiceIdentity(url, child, expectedService, timeou
     }
 
     const remaining = timeoutMs - (Date.now() - started);
-    const challenge = nextIdentityChallenge(record);
     try {
-      const { response, body: payload } = await fetchWithTimeout(
+      const issued = await fetchWithTimeout(
         url,
         Math.min(1_000, remaining),
+        { headers: { [identityChallengeIssueHeader]: "1" } },
+        { parseJson: true },
+      );
+      if (!issued.response.ok || typeof issued.body?.identityChallenge !== "string") {
+        throw new Error(
+          "E2E service did not issue a challenge for " +
+            expectedService +
+            ": expected a server-issued single-use identity challenge.",
+        );
+      }
+      const challenge = issued.body.identityChallenge;
+      const proofRemaining = timeoutMs - (Date.now() - started);
+      if (proofRemaining <= 0) {
+        throw new Error("Timed out waiting for " + expectedService + " identity proof.");
+      }
+      const { response, body: payload } = await fetchWithTimeout(
+        url,
+        Math.min(1_000, proofRemaining),
         { headers: { [identityChallengeHeader]: challenge } },
         { parseJson: true },
       );

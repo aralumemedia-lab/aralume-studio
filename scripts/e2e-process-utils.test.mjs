@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { test } from "node:test";
 
@@ -51,20 +52,24 @@ async function startIdentityChild({ exitAfterStartup = false, replayIdentityMac 
       "-e",
       [
         "const { createServer } = require('node:http');",
-        "const { createHmac } = require('node:crypto');",
+        "const { createHmac, randomBytes } = require('node:crypto');",
         "const runId = process.env.ARALUME_E2E_RUN_ID;",
         "const startupNonce = process.env.ARALUME_E2E_STARTUP_NONCE;",
         "const identitySecret = process.env.ARALUME_E2E_IDENTITY_SECRET;",
         replayIdentityMac ? "let replayedMac;" : "",
+        "const issuedChallenges = new Set();",
         "const server = createServer((request, response) => {",
+        "  const issue = request.headers['x-aralume-e2e-issue-challenge'] === '1';",
+        "  const issuedChallenge = issue ? Date.now().toString(36) + '.' + randomBytes(32).toString('hex') : undefined;",
+        "  if (issuedChallenge) issuedChallenges.add(issuedChallenge);",
         "  const challenge = request.headers['x-aralume-e2e-challenge'];",
         "  const port = response.socket.localPort;",
-        "  const calculatedMac = challenge ? createHmac('sha256', identitySecret).update([challenge, 'aralume-api', runId, String(process.pid), String(port)].join('\\n')).digest('hex') : undefined;",
+        "  const calculatedMac = challenge && issuedChallenges.delete(challenge) ? createHmac('sha256', identitySecret).update([challenge, 'aralume-api', runId, String(process.pid), String(port)].join('\\n')).digest('hex') : undefined;",
         replayIdentityMac
           ? "  const identityMac = replayedMac ?? calculatedMac; replayedMac ??= calculatedMac;"
           : "  const identityMac = calculatedMac;",
         "  response.setHeader('content-type', 'application/json');",
-        "  response.end(JSON.stringify({ ok: true, service: 'aralume-api', runId, startupNonce, pid: process.pid, port, ...(identityMac ? { identityMac } : {}) }));",
+        "  response.end(JSON.stringify({ ok: true, service: 'aralume-api', runId, startupNonce, pid: process.pid, port, ...(issuedChallenge ? { identityChallenge: issuedChallenge } : {}), ...(identityMac ? { identityMac } : {}) }));",
         "});",
         "server.listen(0, '127.0.0.1', () => {",
         "  process.send({ type: 'identity-port', port: server.address().port });",
@@ -83,10 +88,15 @@ async function startIdentityServer(payload, { hang = false } = {}) {
     if (hang) {
       return;
     }
+    const issue = _request.headers["x-aralume-e2e-issue-challenge"] === "1";
+    const issuedChallenge = issue
+      ? Date.now().toString(36) + "." + randomBytes(32).toString("hex")
+      : undefined;
     response.setHeader("content-type", "application/json");
     response.end(
       JSON.stringify({
         ...payload,
+        ...(issuedChallenge ? { identityChallenge: issuedChallenge } : {}),
         ...(payload.port === undefined ? { port: response.socket.localPort } : {}),
       }),
     );

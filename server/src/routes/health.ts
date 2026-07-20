@@ -14,6 +14,10 @@ export function createHealthHandler(env: RuntimeEnv): RequestHandler {
     const port = res.socket?.localPort;
     const testIdentity =
       env.ARALUME_ENV === "test" && runId && startupNonce && identitySecret && port;
+    const issuedChallenge =
+      testIdentity && req.get("x-aralume-e2e-issue-challenge") === "1"
+        ? challengeGuard.issue(runId)
+        : null;
     const challenge = req.get("x-aralume-e2e-challenge")?.trim();
     const identityMac =
       testIdentity && challenge && challengeGuard.consume(runId, challenge)
@@ -32,6 +36,7 @@ export function createHealthHandler(env: RuntimeEnv): RequestHandler {
             startupNonce,
             pid: process.pid,
             port: res.socket.localPort,
+            ...(issuedChallenge ? { identityChallenge: issuedChallenge } : {}),
             ...(identityMac ? { identityMac } : {}),
           }
         : {}),
