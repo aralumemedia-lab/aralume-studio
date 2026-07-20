@@ -6,7 +6,9 @@
 - Epico governante: E15 - Hardening V1.0
 - Spec: `docs/specs/025-sprint-24-security-isolation.md`
 - Branch: `codex/sprint-24-production-security-isolation`
-- Base autorizada: `0e81d9dc1e77bd0959cf1d223097312e555587d3`
+- Base original autorizada: `0e81d9dc1e77bd0959cf1d223097312e555587d3`
+- Base integrada efetivamente revisada: `92f72f5e283b2921f4af62b0a9d7c37b8d477cb2`
+- HEAD final da Sprint: `31bb41610d9c35d0941006aadcdbd54436ddead17`
 - Dependencia: Sprint 23 integrada pela PR #38 com readiness `NOT_READY`
 - V1 funcional: R14 `V1.0 ACCEPTED`, 18/18 `PASS`
 - Limite: nenhuma release, tag, implantacao ou remediacao de backup/restore/rollback nesta unidade

@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -11,6 +10,9 @@ import {
   evidenceDir,
   resetEvidenceDir,
   runE2E,
+  spawnCommand,
+  terminateProcesses,
+  waitForHttp,
 } from "./e2e-process-utils.mjs";
 
 const BACKEND_BASE_URL = "http://127.0.0.1:3001";
@@ -28,16 +30,24 @@ async function main() {
   const backend = spawnCommand(
     process.execPath,
     [path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"), "server/src/index.ts"],
-    { ARALUME_ASSET_STORAGE_ROOT: storageRoot },
+    {
+      ARALUME_ASSET_STORAGE_ROOT: storageRoot,
+      ARALUME_ENV: "test",
+      ARALUME_AUTH_TEST_BYPASS: "true",
+    },
   );
-  const frontend = spawnCommand(process.execPath, [
-    path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
-    "dev",
-    "--host",
-    "127.0.0.1",
-    "--port",
-    "4173",
-  ]);
+  const frontend = spawnCommand(
+    process.execPath,
+    [
+      path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
+      "dev",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "4173",
+    ],
+    { ARALUME_ENV: "test", ARALUME_AUTH_TEST_BYPASS: "true" },
+  );
 
   try {
     await waitForHttp(`${BACKEND_BASE_URL}/api/channels`);
@@ -269,41 +279,18 @@ async function main() {
       await browser.close();
     }
   } finally {
-    await terminateProcess(frontend);
-    await terminateProcess(backend);
-    await rm(storageRoot, { recursive: true, force: true });
-  }
-}
-
-function spawnCommand(command, args, extraEnv = {}) {
-  return spawn(command, args, {
-    cwd: process.cwd(),
-    shell: false,
-    stdio: "inherit",
-    windowsHide: true,
-    detached: process.platform !== "win32",
-    env: {
-      ...process.env,
-      ARALUME_ENV: "test",
-      ARALUME_LOG_LEVEL: "info",
-      ARALUME_AUTH_TEST_BYPASS: "true",
-      ...extraEnv,
-    },
-  });
-}
-
-async function waitForHttp(url) {
-  const started = Date.now();
-  while (Date.now() - started < 120_000) {
+    let teardownError;
     try {
-      const response = await fetch(url);
-      if (response.ok) return;
-    } catch {
-      // Keep retrying while the child process boots.
+      await terminateProcesses([frontend, backend]);
+    } catch (error) {
+      teardownError = error;
     }
-    await delay(500);
+    try {
+      await rm(storageRoot, { recursive: true, force: true });
+    } finally {
+      if (teardownError) throw teardownError;
+    }
   }
-  throw new Error(`Timed out waiting for ${url}`);
 }
 
 async function seedRenderPolicy(storageRoot) {
@@ -476,43 +463,6 @@ async function capture(page, filename) {
 async function listScreenshots() {
   const fs = await import("node:fs/promises");
   return (await fs.readdir(SCREENSHOT_DIR)).sort();
-}
-
-async function terminateProcess(child) {
-  if (!child?.pid || child.exitCode !== null || child.signalCode !== null) return;
-  if (process.platform === "win32") {
-    const killer = spawn("taskkill", ["/pid", String(child.pid), "/t", "/f"], {
-      stdio: "ignore",
-      shell: false,
-      windowsHide: true,
-    });
-    await waitForProcessExit(killer, 10_000);
-  } else {
-    process.kill(-child.pid, "SIGTERM");
-  }
-  if (!(await waitForProcessExit(child, 5_000))) {
-    process.kill(-child.pid, "SIGKILL");
-    await waitForProcessExit(child, 5_000);
-  }
-
-  if (child.exitCode === null && child.signalCode === null) {
-    throw new Error(`E2E child process ${child.pid} did not terminate.`);
-  }
-}
-
-async function waitForProcessExit(child, timeoutMs) {
-  if (child.exitCode !== null || child.signalCode !== null) return true;
-  return new Promise((resolve) => {
-    const timeout = setTimeout(() => {
-      child.removeListener("exit", onExit);
-      resolve(false);
-    }, timeoutMs);
-    function onExit() {
-      clearTimeout(timeout);
-      resolve(true);
-    }
-    child.once("exit", onExit);
-  });
 }
 
 await runE2E(main);

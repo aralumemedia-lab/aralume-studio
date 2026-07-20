@@ -7,8 +7,10 @@
 - Spec: `docs/specs/025-sprint-24-security-isolation.md`
 - Branch: `codex/sprint-24-production-security-isolation`
 - Base integrada: `origin/main` em `92f72f5e283b2921f4af62b0a9d7c37b8d477cb2`
+- Base original autorizada: `0e81d9dc1e77bd0959cf1d223097312e555587d3`
 - Merge de integracao: `3e198e1` (`Merge origin/main into Sprint 24 security isolation`)
 - Commit funcional avaliado: `e818b4094e8ac9d52a22921cb3a4951c07d26493`
+- HEAD final da revisao: `31bb41610d9c35d0941006aadcdbd54436ddead17`
 - V1 funcional: `V1.0 ACCEPTED`, R14 com 18/18 criterios `PASS`
 - Readiness da release: `NOT_READY`
 - Esta unidade nao autoriza merge da PR, release, tag ou deploy.
@@ -23,18 +25,19 @@
 
 ## Gates reproduziveis
 
-| Comando | Resultado |
-| --- | --- |
-| `git diff --check` | PASS |
-| `npm run lint` | PASS |
-| `npm run backend:check` | PASS |
-| `npm test` | PASS - 92/92 |
-| `node --import tsx --test server/test/media-assets.test.ts server/test/auth.test.ts server/test/costs.test.ts` | PASS - 19/19 |
-| `npm run build` | PASS |
-| `npx tsc --noEmit` na branch | FAIL - exit code 2, 14 diagnosticos |
-| `npx tsc --noEmit` em worktree de `origin/main` | FAIL - exit code 2, 18 diagnosticos |
-| `bun audit` | FAIL - 3 advisories transitivos (1 low, 2 moderate) |
-| scan de segredos | PASS - nenhum segredo material encontrado |
+| Comando                                                                                                        | Resultado                                            |
+| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `git diff --check`                                                                                             | PASS                                                 |
+| `npm run lint`                                                                                                 | PASS                                                 |
+| `npm run backend:check`                                                                                        | PASS                                                 |
+| `npm test`                                                                                                     | PASS - 92/92                                         |
+| `node --import tsx --test server/test/media-assets.test.ts server/test/auth.test.ts server/test/costs.test.ts` | PASS - 19/19                                         |
+| `npm run build`                                                                                                | PASS                                                 |
+| `npx tsc --noEmit` na branch                                                                                   | FAIL - exit code 2, 14 diagnosticos                  |
+| `npx tsc --noEmit` em worktree de `origin/main`                                                                | FAIL - exit code 2, 18 diagnosticos                  |
+| `bun audit`                                                                                                    | FAIL - 3 advisories transitivos (1 low, 2 moderate)  |
+| scan de segredos                                                                                               | PASS - nenhum segredo material encontrado            |
+| `node --test scripts/e2e-process-utils.test.mjs`                                                               | PASS - 5/5 testes de lifecycle, exit code e teardown |
 
 O typecheck global continua sendo um gate falho. A branch possui 14 diagnosticos; o baseline atual de `origin/main` possui 18. A comparacao foi executada em worktree temporaria e confirmou que os quatro diagnosticos adicionais do baseline estao em fixtures editoriais que foram ajustadas pela correcao de escopo de canal da propria Sprint 24. Os 14 diagnosticos restantes nao foram ocultados por `any`, `@ts-ignore`, exclusao de arquivo ou alteracao de `tsconfig`; permanecem registrados como risco e bloqueador de release.
 
@@ -52,7 +55,7 @@ Os runners historicos `scripts/sprint15-browser-e2e.mjs` a `scripts/sprint21-bro
 
 O novo runner `scripts/sprint24-security-hmac-e2e.mjs` passou com credencial HMAC efemera em runtime, principal owner com `channelIds: ["ch_historia"]`, sem wildcard e sem bypass. Reproduziu autorizacao `200`, cross-channel `403`, conflitos body/query `403`, token ausente `401`, token invalido `401`, papel insuficiente `403`, ausencia de mutacao rejeitada e auditoria confiavel com `requestId`. Foram geradas duas screenshots suplementares em `screenshots/sprint-24-security-hmac/`. As 56 screenshots historicas em `screenshots/sprint-24-security/` permanecem preservadas.
 
-O utilitario de processo agora limpa diretorios de evidencia antes de cada runner, verifica portas antes de iniciar servidores, mata a arvore de processos no Windows e grupos de processo em POSIX, e falha se o processo filho permanecer ativo apos o teardown.
+O utilitario de processo agora limpa diretorios de evidencia antes de cada runner, verifica portas antes de iniciar servidores, registra `error`/`exit`/`close`, diferencia encerramento solicitado de falha inesperada, propaga exit codes nao-zero, agrega falhas de teardown, mata a arvore de processos no Windows e grupos de processo em POSIX, e falha se o processo filho permanecer ativo apos o teardown. Os runners 17-21 passaram a consumir o mesmo lifecycle compartilhado; os testes de regressao cobrem falha tardia, erro de spawn, teardown agregado e exit code do coordenador.
 
 ## Dependencias e riscos residuais
 
@@ -62,7 +65,7 @@ O utilitario de processo agora limpa diretorios de evidencia antes de cada runne
 - `brace-expansion`, cadeia de ESLint/TypeScript tooling: moderate, GHSA-jxxr-4gwj-5jf2;
 - `js-yaml`, cadeia de ESLint/TanStack Start: moderate, GHSA-h67p-54hq-rp68.
 
-Os advisories sao transitivos, nao foram introduzidos ou agravados por esta unidade e nenhum `package.json` ou `bun.lock` foi alterado. Eles continuam bloqueadores de release e devem ser tratados em unidade propria.
+Os advisories sao transitivos, nao foram introduzidos ou agravados por esta unidade. O `package.json` foi alterado somente para incluir `server/test/auth.test.ts` na suite oficial; nao houve alteracao de dependencias, versoes ou do `bun.lock`. Eles continuam bloqueadores de release e devem ser tratados em unidade propria.
 
 A release 1.0.0 permanece `NOT_READY` por pendencias de backup/restore, rollback, observabilidade produtiva, topologia/ingress, advisories e os 14 diagnosticos TypeScript globais. Nao existe aceite formal de risco nesta unidade.
 
