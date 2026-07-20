@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import { z } from "zod";
 
 import { AppError } from "../../http/errors.js";
+import { getTrustedAuditActor } from "../../http/auth.js";
 import { createListSuccessResponse, createSuccessResponse } from "../../http/response.js";
 import {
   approvalCreateSchema,
@@ -30,7 +31,7 @@ export function createGovernanceRouter(service: GovernanceService): Router {
 
   router.post("/approvals", (req, res) => {
     const body = parseBody(approvalCreateSchema, req.body);
-    const created = service.createApproval(body, getRequestId(res));
+    const created = service.createApproval(body, getRequestId(res), getTrustedAuditActor(req));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -44,21 +45,36 @@ export function createGovernanceRouter(service: GovernanceService): Router {
   router.post("/approvals/:id/approve", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
     const body = parseBody(approvalDecisionSchema, req.body);
-    const updated = service.approveApproval(params.id, body, getRequestId(res));
+    const updated = service.approveApproval(
+      params.id,
+      body,
+      getRequestId(res),
+      getTrustedAuditActor(req),
+    );
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.post("/approvals/:id/reject", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
     const body = parseBody(approvalDecisionSchema, req.body);
-    const updated = service.rejectApproval(params.id, body, getRequestId(res));
+    const updated = service.rejectApproval(
+      params.id,
+      body,
+      getRequestId(res),
+      getTrustedAuditActor(req),
+    );
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
   router.post("/approvals/:id/request-changes", (req, res) => {
     const params = parseParams(approvalIdParamsSchema, req.params);
     const body = parseBody(approvalDecisionSchema, req.body);
-    const updated = service.requestApprovalChanges(params.id, body, getRequestId(res));
+    const updated = service.requestApprovalChanges(
+      params.id,
+      body,
+      getRequestId(res),
+      getTrustedAuditActor(req),
+    );
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
@@ -77,7 +93,7 @@ export function createGovernanceRouter(service: GovernanceService): Router {
 
   router.post("/quality-checks", (req, res) => {
     const body = parseBody(qualityCheckCreateSchema, req.body);
-    const created = service.createQualityCheck(body, getRequestId(res));
+    const created = service.createQualityCheck(body, getRequestId(res), getTrustedAuditActor(req));
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
@@ -96,7 +112,11 @@ export function createGovernanceRouter(service: GovernanceService): Router {
 
   router.post("/compliance-checks", (req, res) => {
     const body = parseBody(complianceCheckCreateSchema, req.body);
-    const created = service.createComplianceCheck(body, getRequestId(res));
+    const created = service.createComplianceCheck(
+      body,
+      getRequestId(res),
+      getTrustedAuditActor(req),
+    );
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 

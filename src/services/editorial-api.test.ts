@@ -102,7 +102,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/content-ideas/idea_1" && init?.method === "PATCH") {
+      if (url === "/api/content-ideas/idea_1?channelId=ch_1" && init?.method === "PATCH") {
         return jsonResponse({
           data: {
             id: "idea_1",
@@ -151,7 +151,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/research-sessions/rs_1") {
+      if (url === "/api/research-sessions/rs_1?channelId=ch_1") {
         return jsonResponse({
           data: {
             id: "rs_1",
@@ -170,7 +170,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/research-sessions/rs_1/sources" && init?.method === "POST") {
+      if (url === "/api/research-sessions/rs_1/sources?channelId=ch_1" && init?.method === "POST") {
         return jsonResponse({
           data: {
             id: "src_1",
@@ -189,7 +189,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/research-sessions/rs_1/sources" && !init?.method) {
+      if (url === "/api/research-sessions/rs_1/sources?channelId=ch_1" && !init?.method) {
         return jsonResponse({
           data: [
             {
@@ -208,7 +208,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/research-sessions/rs_1/claims" && init?.method === "POST") {
+      if (url === "/api/research-sessions/rs_1/claims?channelId=ch_1" && init?.method === "POST") {
         return jsonResponse({
           data: {
             id: "ce_1",
@@ -227,7 +227,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/research-sessions/rs_1/claims" && !init?.method) {
+      if (url === "/api/research-sessions/rs_1/claims?channelId=ch_1" && !init?.method) {
         return jsonResponse({
           data: [
             {
@@ -317,7 +317,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         return jsonResponse({ data: [], meta: { ...baseMeta, total: 0, page: 1, pageSize: 0 } });
       }
 
-      if (url === "/api/scripts/sc_1/versions" && init?.method === "POST") {
+      if (url === "/api/scripts/sc_1/versions?channelId=ch_1" && init?.method === "POST") {
         return jsonResponse({
           data: {
             id: "scv_2",
@@ -398,7 +398,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/visual-plans/vp_1" && init?.method === "PATCH") {
+      if (url === "/api/visual-plans/vp_1?channelId=ch_1" && init?.method === "PATCH") {
         return jsonResponse({
           data: {
             id: "vp_1",
@@ -417,7 +417,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         });
       }
 
-      if (url === "/api/visual-plans/vp_1/scenes" && init?.method === "POST") {
+      if (url === "/api/visual-plans/vp_1/scenes?channelId=ch_1" && init?.method === "POST") {
         return jsonResponse({
           data: {
             id: "scn_1",
@@ -453,7 +453,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         riskLevel: "ok",
         status: "idea",
       });
-      await updateContentIdea("idea_1", { title: "Ideia editada" });
+      await updateContentIdea("idea_1", "ch_1", { title: "Ideia editada" });
       await getProductionItems({ channelId: "ch_1" });
       await getResearchSessions({ channelId: "ch_1" });
       await createResearchSession({
@@ -466,8 +466,8 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         confidenceScore: 80,
         riskLevel: "ok",
       });
-      await getResearchSession("rs_1");
-      await createResearchSource("rs_1", {
+      await getResearchSession("rs_1", "ch_1");
+      await createResearchSource("rs_1", "ch_1", {
         title: "Fonte",
         accessedAt: "2026-07-13T03:30:00.000Z",
         sourceType: "article",
@@ -475,8 +475,8 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         freshnessRisk: "ok",
         usageNotes: "Notas",
       });
-      await getResearchSources("rs_1");
-      await createClaimEvidence("rs_1", {
+      await getResearchSources("rs_1", "ch_1");
+      await createClaimEvidence("rs_1", "ch_1", {
         sourceId: "src_1",
         claim: "Claim",
         evidenceSummary: "Resumo",
@@ -484,7 +484,7 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         confidenceLevel: "high",
         riskLevel: "ok",
       });
-      await getClaimEvidenceList("rs_1");
+      await getClaimEvidenceList("rs_1", "ch_1");
       await getScripts({ channelId: "ch_1" });
       await createScript({
         channelId: "ch_1",
@@ -503,9 +503,9 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         },
       });
       await getScript("sc_1", "ch_1");
-      await updateScript("sc_1", { title: "Roteiro editado" });
+      await updateScript("sc_1", "ch_1", { title: "Roteiro editado" });
       await getScriptVersions("sc_1", "ch_1");
-      await createScriptVersion("sc_1", {
+      await createScriptVersion("sc_1", "ch_1", {
         versionNumber: 2,
         narrationText: "Texto",
         sceneCount: 4,
@@ -523,9 +523,9 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         visualStyle: "Cinematografico",
       });
       await getVisualPlan("vp_1", "ch_1");
-      await updateVisualPlan("vp_1", { title: "Plano editado" });
+      await updateVisualPlan("vp_1", "ch_1", { title: "Plano editado" });
       await getScenePlans("vp_1", "ch_1");
-      await createScenePlan("vp_1", {
+      await createScenePlan("vp_1", "ch_1", {
         channelId: "ch_1",
         order: 1,
         title: "Cena",
@@ -541,24 +541,28 @@ test("editorial frontend services hit the expected API endpoints", async () => {
         true,
       );
       assert.equal(
-        calls.some((call) => call.url === "/api/research-sessions/rs_1/sources"),
+        calls.some((call) => call.url === "/api/research-sessions/rs_1/sources?channelId=ch_1"),
         true,
       );
       assert.equal(
         calls.some(
-          (call) => call.url === "/api/research-sessions/rs_1/sources" && !call.init?.method,
+          (call) =>
+            call.url === "/api/research-sessions/rs_1/sources?channelId=ch_1" && !call.init?.method,
         ),
         true,
       );
       assert.equal(
         calls.some(
-          (call) => call.url === "/api/research-sessions/rs_1/claims" && !call.init?.method,
+          (call) =>
+            call.url === "/api/research-sessions/rs_1/claims?channelId=ch_1" && !call.init?.method,
         ),
         true,
       );
       assert.equal(
         calls.some(
-          (call) => call.url === "/api/scripts/sc_1/versions" && call.init?.method === "POST",
+          (call) =>
+            call.url === "/api/scripts/sc_1/versions?channelId=ch_1" &&
+            call.init?.method === "POST",
         ),
         true,
       );
@@ -575,7 +579,10 @@ test("editorial frontend services hit the expected API endpoints", async () => {
       );
       assert.equal(
         calls.some((call) => {
-          if (call.url !== "/api/visual-plans/vp_1/scenes" || call.init?.method !== "POST") {
+          if (
+            call.url !== "/api/visual-plans/vp_1/scenes?channelId=ch_1" ||
+            call.init?.method !== "POST"
+          ) {
             return false;
           }
 

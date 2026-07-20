@@ -1,12 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { existsSync, lstatSync } from "node:fs";
+import { existsSync, lstatSync, realpathSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { AppError } from "../../http/errors.js";
+import type { AuditRequestContext } from "../audit/audit.types.js";
 import type { ChannelsRepository } from "../channels/channel.types.js";
+import { isMimeExtensionPairAllowed, MAX_MEDIA_ASSET_SIZE_BYTES } from "./media-assets.schema.js";
 import {
   buildInternalUri,
   checksumFile,
+  detectFileMimeType,
   normalizeRelativeStoragePath,
   probeVideoFile,
   readFileSizeBytes,
@@ -92,10 +95,17 @@ export function createMediaAssetsService(
       );
     },
 
-    createMediaAsset(input, requestId) {
+    createMediaAsset(input, requestId, auditContext) {
       try {
         assertChannelExists(dependencies.channelsRepository, input.channelId);
-        const validation = validateStorageReferenceInternal(
+        assertMediaAssetSize(input.sizeBytes);
+        if (!isMimeExtensionPairAllowed(input.mimeType, input.extension)) {
+          throw validation("MIME type and extension are incompatible", {
+            mimeType: input.mimeType,
+            extension: input.extension,
+          });
+        }
+        const storageValidation = validateStorageReferenceInternal(
           input.channelId,
           input.storagePath,
           input.type,
@@ -104,7 +114,24 @@ export function createMediaAssetsService(
         const now = clock().toISOString();
         const assetId = `ma_${idFactory()}`;
         const internalUri = buildInternalUri(input.channelId, assetId);
-        const integrity = buildIntegrity(input.checksum, input.sizeBytes, now);
+        const fileValidation =
+          input.status === "available"
+            ? validateAvailableMediaFile(
+                storageRoot,
+                storageValidation.normalizedStoragePath,
+                input.mimeType,
+                input.extension,
+                input.sizeBytes,
+                input.checksum,
+              )
+            : undefined;
+        const integrity = buildIntegrity(
+          input.checksum,
+          input.sizeBytes,
+          now,
+          undefined,
+          fileValidation,
+        );
         assertUsableState(input.status, input.origin, input.licenseStatus, integrity);
 
         const asset: MediaAssetBase = {
@@ -121,7 +148,7 @@ export function createMediaAssetsService(
           checksumAlgorithm: "sha256",
           checksum: input.checksum.toLowerCase(),
           internalUri,
-          storagePath: validation.normalizedStoragePath,
+          storagePath: storageValidation.normalizedStoragePath,
           origin: input.origin,
           provenance: input.provenance.trim(),
           licenseStatus: input.licenseStatus,
@@ -152,14 +179,14 @@ export function createMediaAssetsService(
           id: `au_${idFactory()}`,
           channelId: asset.channelId,
           requestId,
-          actorType: "system",
-          actorName: "Aralume Core",
+          ...auditActorFields(auditContext, requestId),
           action: "media_asset.registered",
           entityType: "MediaAsset",
           entityId: asset.id,
           status: "success",
           message: "Media asset registered.",
           metadata: {
+            ...auditMetadata(auditContext),
             type: asset.type,
             category: asset.category,
             storagePath: asset.storagePath,
@@ -181,6 +208,7 @@ export function createMediaAssetsService(
           clock,
           input.channelId,
           requestId,
+          auditContext,
           {
             action: "media_asset.registration_rejected",
             entityType: "MediaAsset",
@@ -198,7 +226,7 @@ export function createMediaAssetsService(
       }
     },
 
-    updateMediaAsset(channelId, id, input, requestId) {
+    updateMediaAsset(channelId, id, input, requestId, auditContext) {
       try {
         const existing = getAssetForChannel(
           repository,
@@ -222,15 +250,42 @@ export function createMediaAssetsService(
             : existing.storagePath;
         const nextChecksum = input.checksum?.toLowerCase() ?? existing.checksum;
         const nextSizeBytes = input.sizeBytes ?? existing.sizeBytes;
-        const nextIntegrity = buildIntegrity(nextChecksum, nextSizeBytes, now, existing.integrity);
+        assertMediaAssetSize(nextSizeBytes);
+        const nextMimeType = input.mimeType?.trim() ?? existing.mimeType;
+        const nextExtension = input.extension?.trim().toLowerCase() ?? existing.extension;
+        const nextStatus = input.status ?? existing.status;
+        if (!isMimeExtensionPairAllowed(nextMimeType, nextExtension)) {
+          throw validation("MIME type and extension are incompatible", {
+            mimeType: nextMimeType,
+            extension: nextExtension,
+          });
+        }
+        const fileValidation =
+          nextStatus === "available"
+            ? validateAvailableMediaFile(
+                storageRoot,
+                nextStoragePath,
+                nextMimeType,
+                nextExtension,
+                nextSizeBytes,
+                nextChecksum,
+              )
+            : undefined;
+        const nextIntegrity = buildIntegrity(
+          nextChecksum,
+          nextSizeBytes,
+          now,
+          existing.integrity,
+          fileValidation,
+        );
         const next: MediaAssetBase = {
           ...existing,
           ...input,
           title: input.title?.trim() ?? existing.title,
           name: input.name?.trim() ?? existing.name,
           description: input.description?.trim() ?? existing.description,
-          mimeType: input.mimeType?.trim() ?? existing.mimeType,
-          extension: input.extension?.trim().toLowerCase() ?? existing.extension,
+          mimeType: nextMimeType,
+          extension: nextExtension,
           sizeBytes: nextSizeBytes,
           checksum: nextChecksum,
           storagePath: nextStoragePath,
@@ -238,7 +293,7 @@ export function createMediaAssetsService(
           provenance: input.provenance?.trim() ?? existing.provenance,
           licenseStatus: input.licenseStatus ?? existing.licenseStatus,
           licenseName: input.licenseName?.trim() ?? existing.licenseName,
-          status: input.status ?? existing.status,
+          status: nextStatus,
           riskLevel: input.riskLevel ?? existing.riskLevel,
           costActualCents: input.costActualCents ?? existing.costActualCents,
           providerName: input.providerName?.trim() ?? existing.providerName,
@@ -259,8 +314,7 @@ export function createMediaAssetsService(
           id: `au_${idFactory()}`,
           channelId,
           requestId,
-          actorType: "system",
-          actorName: "Aralume Core",
+          ...auditActorFields(auditContext, requestId),
           action: "media_asset.updated",
           entityType: "MediaAsset",
           entityId: next.id,
@@ -283,12 +337,14 @@ export function createMediaAssetsService(
           clock,
           channelId,
           requestId,
+          auditContext,
           {
             action: "media_asset.update_rejected",
             entityType: "MediaAsset",
             entityId: id,
             error,
             metadata: {
+              ...auditMetadata(auditContext),
               changedFields: Object.keys(input),
               storagePath: input.storagePath,
               origin: input.origin,
@@ -300,7 +356,7 @@ export function createMediaAssetsService(
       }
     },
 
-    validateStorageReference(input) {
+    validateStorageReference(input, auditContext) {
       try {
         assertChannelExists(dependencies.channelsRepository, input.channelId);
         const result = validateStorageReferenceInternal(
@@ -312,14 +368,14 @@ export function createMediaAssetsService(
         recordAudit(dependencies.auditRepository, {
           id: `au_${idFactory()}`,
           channelId: input.channelId,
-          actorType: "system",
-          actorName: "Aralume Core",
+          ...auditActorFields(auditContext),
           action: "media_asset.storage_validated",
           entityType: "MediaAsset",
           entityId: `storage:${input.channelId}:${result.normalizedStoragePath}`,
           status: "success",
           message: "Storage reference validated.",
           metadata: {
+            ...auditMetadata(auditContext),
             type: input.type,
             storagePath: result.normalizedStoragePath,
             internalUri: result.internalUri,
@@ -334,6 +390,7 @@ export function createMediaAssetsService(
           clock,
           input.channelId,
           undefined,
+          auditContext,
           {
             action: "media_asset.storage_rejected",
             entityType: "MediaAsset",
@@ -349,7 +406,7 @@ export function createMediaAssetsService(
       }
     },
 
-    validateAssetIntegrity(channelId, id, input) {
+    validateAssetIntegrity(channelId, id, input, auditContext) {
       const asset = getAssetForChannel(
         repository,
         channelId,
@@ -390,14 +447,14 @@ export function createMediaAssetsService(
       recordAudit(dependencies.auditRepository, {
         id: `au_${idFactory()}`,
         channelId,
-        actorType: "system",
-        actorName: "Aralume Core",
+        ...auditActorFields(auditContext),
         action: valid ? "media_asset.integrity_validated" : "media_asset.integrity_mismatch",
         entityType: "MediaAsset",
         entityId: next.id,
         status: valid ? "success" : "warning",
         message: valid ? "Media asset integrity validated." : "Media asset integrity mismatch.",
         metadata: {
+          ...auditMetadata(auditContext),
           checksumMatches,
           sizeMatches,
           observedChecksum,
@@ -481,7 +538,7 @@ export function createMediaAssetsService(
       return found;
     },
 
-    async importVideoAssetFromStorage(input: VideoAssetImportInput) {
+    async importVideoAssetFromStorage(input: VideoAssetImportInput, auditContext) {
       assertChannelExists(dependencies.channelsRepository, input.channelId);
       const content = dependencies.editorialRepository?.getContentIdea(input.contentId);
       if (!content || content.channelId !== input.channelId) {
@@ -517,6 +574,7 @@ export function createMediaAssetsService(
             storagePath: existing.storagePath,
             idempotencyKey: input.idempotencyKey,
           },
+          auditContext,
         );
         return existing;
       }
@@ -570,6 +628,13 @@ export function createMediaAssetsService(
               storagePath: validation.normalizedStoragePath,
             });
           }
+          if (observedSizeBytes > MAX_MEDIA_ASSET_SIZE_BYTES) {
+            throw validationError("Video file exceeds the allowed size", {
+              reason: "VIDEO_FILE_TOO_LARGE",
+              channelId: input.channelId,
+              storagePath: validation.normalizedStoragePath,
+            });
+          }
           recordImportAudit(
             dependencies.auditRepository,
             idFactory,
@@ -578,8 +643,14 @@ export function createMediaAssetsService(
             `storage:${validation.normalizedStoragePath}`,
             "video_asset.import_validation_started",
             { storagePath: validation.normalizedStoragePath },
+            auditContext,
           );
           const probe = await probeVideoFile(absolutePath);
+          if (!isMp4Container(probe.containerFormat)) {
+            throw validationError("Video container does not match the authorized MP4 contract", {
+              reason: "VIDEO_CONTAINER_MISMATCH",
+            });
+          }
           const checksum = checksumFile(absolutePath);
           const finalSizeBytes = readFileSizeBytes(absolutePath);
           if (finalSizeBytes !== observedSizeBytes) {
@@ -651,6 +722,7 @@ export function createMediaAssetsService(
               durationSeconds: asset.durationSeconds,
               resolution: asset.resolution,
             },
+            auditContext,
           );
           return asset;
         } catch (error) {
@@ -665,6 +737,7 @@ export function createMediaAssetsService(
               storagePath: input.storagePath,
               reason: error instanceof AppError ? error.code : "IMPORT_FAILED",
             },
+            auditContext,
           );
           throw error;
         }
@@ -785,6 +858,70 @@ function validateStorageReferenceInternal(
   };
 }
 
+type ValidatedMediaFile = {
+  observedChecksum: string;
+  observedSizeBytes: number;
+};
+
+function validateAvailableMediaFile(
+  storageRoot: string,
+  normalizedStoragePath: string,
+  declaredMimeType: string,
+  declaredExtension: string,
+  declaredSizeBytes: number,
+  declaredChecksum: string,
+): ValidatedMediaFile {
+  const resolution = resolveAbsoluteStoragePath(storageRoot, normalizedStoragePath);
+  let fileStats: ReturnType<typeof statSync>;
+  try {
+    const linkStats = lstatSync(resolution.absolutePath);
+    if (linkStats.isSymbolicLink() || !linkStats.isFile()) {
+      throw validation("Media asset file validation failed", { reason: "MEDIA_FILE_INVALID" });
+    }
+    fileStats = statSync(resolution.absolutePath);
+    const realRoot = realpathSync(storageRoot);
+    const realFile = realpathSync(resolution.absolutePath);
+    const relative = path.relative(realRoot, realFile);
+    if (relative.startsWith("..") || path.isAbsolute(relative)) {
+      throw validation("Media asset file validation failed", { reason: "MEDIA_FILE_OUTSIDE_ROOT" });
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw validation("Media asset file validation failed", { reason: "MEDIA_FILE_UNAVAILABLE" });
+  }
+
+  const actualExtension = path.posix.extname(normalizedStoragePath).slice(1).toLowerCase();
+  if (actualExtension !== declaredExtension.trim().toLowerCase().replace(/^\./, "")) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_EXTENSION_MISMATCH" });
+  }
+
+  const actualMimeType = detectFileMimeType(resolution.absolutePath);
+  if (!actualMimeType || !mimeTypesMatch(actualMimeType, declaredMimeType)) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_MIME_MISMATCH" });
+  }
+  if (fileStats.size !== declaredSizeBytes) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_SIZE_MISMATCH" });
+  }
+
+  const observedChecksum = checksumFile(resolution.absolutePath);
+  if (observedChecksum !== declaredChecksum.trim().toLowerCase()) {
+    throw validation("Media asset file validation failed", { reason: "MEDIA_CHECKSUM_MISMATCH" });
+  }
+
+  return {
+    observedChecksum,
+    observedSizeBytes: fileStats.size,
+  };
+}
+
+function mimeTypesMatch(actualMimeType: string, declaredMimeType: string): boolean {
+  const actual = actualMimeType.trim().toLowerCase();
+  const declared = declaredMimeType.trim().toLowerCase();
+  return actual === declared || (actual === "audio/wav" && declared === "audio/x-wav");
+}
+
 function assertStoragePathMatchesChannel(channelId: string, storagePath: string): void {
   const [pathChannelId, ...segments] = storagePath.split("/");
   if (pathChannelId !== channelId || segments.length < 2) {
@@ -800,16 +937,17 @@ function buildIntegrity(
   sizeBytes: number,
   now: string,
   existing?: MediaAssetBase["integrity"],
+  fileValidation?: ValidatedMediaFile,
 ) {
   return {
     checksumAlgorithm: existing?.checksumAlgorithm ?? "sha256",
     checksum,
     sizeBytes,
     lastValidatedAt: now,
-    observedChecksum: existing?.observedChecksum,
-    observedSizeBytes: existing?.observedSizeBytes,
-    checksumMatches: existing?.checksumMatches,
-    sizeMatches: existing?.sizeMatches,
+    observedChecksum: fileValidation?.observedChecksum ?? existing?.observedChecksum,
+    observedSizeBytes: fileValidation?.observedSizeBytes ?? existing?.observedSizeBytes,
+    checksumMatches: fileValidation ? true : existing?.checksumMatches,
+    sizeMatches: fileValidation ? true : existing?.sizeMatches,
   };
 }
 
@@ -943,6 +1081,7 @@ function auditRejectedMediaAsset(
   clock: () => Date,
   channelId: string,
   requestId: string | undefined,
+  auditContext: AuditRequestContext | undefined,
   input: {
     action: string;
     entityType: string;
@@ -962,15 +1101,14 @@ function auditRejectedMediaAsset(
   recordAudit(auditRepository, {
     id: `au_${idFactory()}`,
     channelId,
-    requestId,
-    actorType: "system",
-    actorName: "Aralume Core",
+    ...auditActorFields(auditContext, requestId),
     action: input.action,
     entityType: input.entityType,
     entityId: input.entityId,
     status: "warning",
     message: input.error.message,
     metadata: {
+      ...auditMetadata(auditContext),
       ...input.metadata,
       errorStatus: input.error.status,
       errorCode: input.error.code,
@@ -1037,25 +1175,67 @@ function recordImportAudit(
   entityId: string,
   action: string,
   metadata: Record<string, unknown>,
+  auditContext?: AuditRequestContext,
 ): void {
   recordAudit(auditRepository, {
     id: `au_${idFactory()}`,
     channelId,
-    actorType: "user",
-    actorName: "Aralume Operator",
+    ...auditActorFields(auditContext),
     action,
     entityType: "VideoAsset",
     entityId,
     status: action.endsWith("failed") ? "failed" : "success",
     message: "Video asset import event.",
-    metadata,
+    metadata: { ...auditMetadata(auditContext), ...metadata },
     createdAt: clock().toISOString(),
   });
+}
+
+function isMp4Container(containerFormat: string): boolean {
+  return ["mov", "mp4"].includes(containerFormat.trim().toLowerCase());
+}
+
+function auditActorFields(
+  auditContext: AuditRequestContext | undefined,
+  fallbackRequestId?: string,
+): {
+  requestId?: string;
+  actorType: "user" | "system";
+  actorName: string;
+} {
+  return auditContext
+    ? {
+        requestId: auditContext.requestId,
+        actorType: "user",
+        actorName: auditContext.actorName,
+      }
+    : {
+        requestId: fallbackRequestId,
+        actorType: "system",
+        actorName: "Aralume Core",
+      };
+}
+
+function auditMetadata(auditContext: AuditRequestContext | undefined): Record<string, unknown> {
+  return auditContext
+    ? {
+        actorId: auditContext.actorId,
+        role: auditContext.role,
+      }
+    : {};
 }
 
 function assertChannelExists(channelsRepository: ChannelsRepository, channelId: string): void {
   if (!channelsRepository.getChannel(channelId)) {
     throw notFound("Channel not found", { channelId });
+  }
+}
+
+function assertMediaAssetSize(sizeBytes: number): void {
+  if (sizeBytes > MAX_MEDIA_ASSET_SIZE_BYTES) {
+    throw validation("Media asset exceeds the allowed size", {
+      maxSizeBytes: MAX_MEDIA_ASSET_SIZE_BYTES,
+    });
   }
 }
 

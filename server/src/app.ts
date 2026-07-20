@@ -3,11 +3,13 @@ import express from "express";
 import { loadEnv, type RuntimeEnv } from "./env.js";
 import {
   errorHandlerMiddleware,
+  jsonDepthMiddleware,
   jsonParserMiddleware,
   notFoundMiddleware,
   requestContextMiddleware,
   requestLoggerMiddleware,
 } from "./http/middleware.js";
+import { createAuthenticationMiddleware, createAuthorizationMiddleware } from "./http/auth.js";
 import { createHealthHandler } from "./routes/health.js";
 import { createChannelsRepository } from "./modules/channels/channel.repository.js";
 import { createChannelsRouter } from "./modules/channels/channel.routes.js";
@@ -80,6 +82,7 @@ export type CreateAppOptions = {
   youtubeRepository?: YouTubeRepository;
   youtubeExternalClient?: YouTubeExternalClient;
   metricsRepository?: MetricsRepository;
+  authTestBypass?: boolean;
 };
 
 export function createApp(options: CreateAppOptions = {}) {
@@ -223,9 +226,24 @@ export function createApp(options: CreateAppOptions = {}) {
   app.disable("x-powered-by");
   app.use(requestContextMiddleware());
   app.use(requestLoggerMiddleware(env.ARALUME_LOG_LEVEL, options.logger ?? console));
+  app.use(
+    "/api",
+    createAuthenticationMiddleware({
+      env,
+      auditRepository,
+      allowTestBypass: options.authTestBypass,
+    }),
+  );
   app.use(jsonParserMiddleware());
+  app.use(jsonDepthMiddleware());
   app.get("/health", createHealthHandler(env));
-  app.use("/api/channels", createChannelsRouter(channelsService));
+  app.use(
+    "/api",
+    createAuthorizationMiddleware(auditRepository, {
+      deferPathChannelAuthorization: true,
+    }),
+  );
+  app.use("/api/channels", createChannelsRouter(channelsService, auditRepository));
   app.use("/api", createEditorialRouter(editorialService));
   app.use(
     "/api",
@@ -235,7 +253,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use("/api", createGovernanceRouter(governanceService));
   app.use("/api", createPublicationsRouter(publicationsService));
   app.use("/api", createYouTubeRouter(youtubeService));
-  app.use("/api", createCostsRouter(costsService));
+  app.use("/api", createCostsRouter(costsService, auditRepository));
   app.use("/api", createAuditRouter(auditService));
   app.use("/api", createMetricsRouter(metricsService));
   app.use("/api", createCockpitsRouter(cockpitsService));

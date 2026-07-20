@@ -266,7 +266,7 @@ export const Route = createFileRoute("/production")({
           throw new Error("Selecione um plano visual antes de adicionar cenas.");
         }
 
-        return createScenePlan(selectedVisualPlan.id, {
+        return createScenePlan(selectedVisualPlan.id, activeChannelId as string, {
           channelId: activeChannelId,
           order: Number.parseInt(sceneForm.order, 10) || 0,
           title: sceneForm.title.trim(),

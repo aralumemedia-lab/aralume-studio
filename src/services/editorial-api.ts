@@ -43,8 +43,10 @@ export async function getContentIdeas(
   return requestApiEnvelope<ApiListSuccess<ContentIdea>>(withQuery(CONTENT_IDEAS_PATH, filters));
 }
 
-export async function getContentIdea(id: ID): Promise<ApiSuccess<ContentIdea>> {
-  return requestApiEnvelope<ApiSuccess<ContentIdea>>(`${CONTENT_IDEAS_PATH}/${id}`);
+export async function getContentIdea(id: ID, channelId: ID): Promise<ApiSuccess<ContentIdea>> {
+  return requestApiEnvelope<ApiSuccess<ContentIdea>>(
+    withQuery(`${CONTENT_IDEAS_PATH}/${id}`, { channelId }),
+  );
 }
 
 export async function createContentIdea(
@@ -61,15 +63,19 @@ export async function createContentIdea(
 
 export async function updateContentIdea(
   id: ID,
+  channelId: ID,
   input: UpdateContentIdeaInput,
 ): Promise<ApiSuccess<ContentIdea>> {
-  return requestApiEnvelope<ApiSuccess<ContentIdea>>(`${CONTENT_IDEAS_PATH}/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      ...input,
-      requestedBy: input.requestedBy ?? DEFAULT_REQUESTED_BY,
-    }),
-  });
+  return requestApiEnvelope<ApiSuccess<ContentIdea>>(
+    withQuery(`${CONTENT_IDEAS_PATH}/${id}`, { channelId }),
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        ...input,
+        requestedBy: input.requestedBy ?? DEFAULT_REQUESTED_BY,
+      }),
+    },
+  );
 }
 
 export async function getProductionItems(
@@ -80,8 +86,13 @@ export async function getProductionItems(
   );
 }
 
-export async function getProductionItem(id: ID): Promise<ApiSuccess<ProductionItem>> {
-  return requestApiEnvelope<ApiSuccess<ProductionItem>>(`${PRODUCTION_ITEMS_PATH}/${id}`);
+export async function getProductionItem(
+  id: ID,
+  channelId: ID,
+): Promise<ApiSuccess<ProductionItem>> {
+  return requestApiEnvelope<ApiSuccess<ProductionItem>>(
+    withQuery(`${PRODUCTION_ITEMS_PATH}/${id}`, { channelId }),
+  );
 }
 
 export function describeEditorialApiError(

@@ -503,11 +503,11 @@ function describeEntityError(entityType: GovernanceEntityType, error: unknown): 
 async function fetchGovernanceTarget(check: ComplianceCheck, channelId?: string) {
   switch (check.entityType) {
     case "content_idea":
-      return getContentIdea(check.entityId);
+      return channelId ? getContentIdea(check.entityId, channelId) : undefined;
     case "production_item":
-      return getProductionItem(check.entityId);
+      return channelId ? getProductionItem(check.entityId, channelId) : undefined;
     case "research_session":
-      return getResearchSession(check.entityId);
+      return channelId ? getResearchSession(check.entityId, channelId) : undefined;
     case "script":
       return channelId ? getScript(check.entityId, channelId) : undefined;
     case "visual_plan":

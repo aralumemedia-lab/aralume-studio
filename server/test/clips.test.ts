@@ -295,6 +295,7 @@ test("derived clip HTTP routes create a real clip and survive a repository resta
 
   const harness = createHttpHarness(ffmpegPath);
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",
@@ -417,6 +418,7 @@ test("derived clip HTTP routes create a real clip and survive a repository resta
     assert.equal(missingClipFileResponse.status, 404);
 
     const reloadedApp = createApp({
+      authTestBypass: true,
       env: {
         ARALUME_ENV: "test",
         ARALUME_LOG_LEVEL: "info",

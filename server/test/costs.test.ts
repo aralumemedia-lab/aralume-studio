@@ -39,6 +39,7 @@ function createHarness() {
 async function startServer() {
   const harness = createHarness();
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",
@@ -328,6 +329,18 @@ test("costs HTTP routes expose summaries, reject invalid payloads and keep chann
       "DEMO_PUBLICATION_BLOCKED",
     );
 
+    const policyRequestId = "req_policy_trusted_actor";
+    const policyResponse = await fetch(`${baseUrl}/api/operational-modes/channels/ch_historia`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+        "x-request-id": policyRequestId,
+        "x-aralume-actor": "forged-client-actor",
+      },
+      body: JSON.stringify({ mode: "paused" }),
+    });
+    assert.equal(policyResponse.status, 200);
+
     const invalidAction = await fetch(`${baseUrl}/api/operational-modes/evaluate`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -340,11 +353,23 @@ test("costs HTTP routes expose summaries, reject invalid payloads and keep chann
 
     const auditResponse = await fetch(`${baseUrl}/api/audit-logs?channelId=ch_historia`);
     const auditPayload = (await auditResponse.json()) as {
-      data: Array<{ action: string; channelId?: string }>;
+      data: Array<{
+        action: string;
+        channelId?: string;
+        actorName?: string;
+        requestId?: string;
+        metadata?: Record<string, unknown>;
+      }>;
     };
     assert.equal(auditResponse.status, 200);
     assert.ok(auditPayload.data.length > 0);
     assert.ok(auditPayload.data.every((item) => item.channelId === "ch_historia"));
+    const policyAudit = auditPayload.data.find((item) => item.action === "cost.policy_updated");
+    assert.equal(policyAudit?.actorName, "test-harness");
+    assert.equal(policyAudit?.requestId, policyRequestId);
+    assert.equal(policyAudit?.metadata?.actorId, "test-harness");
+    assert.equal(policyAudit?.metadata?.role, "owner");
+    assert.notEqual(String(policyAudit?.actorName), "forged-client-actor");
   } finally {
     await stopServer(server);
   }

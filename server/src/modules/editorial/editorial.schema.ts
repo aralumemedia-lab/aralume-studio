@@ -107,14 +107,14 @@ export const contentIdeaPatchSchema = contentIdeaCreateSchema
 
 export const contentIdeaListQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
     status: contentStatusSchema.optional(),
   })
   .strict();
 
 export const productionItemListQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
     status: contentStatusSchema.optional(),
     contentId: idSchema.optional(),
   })
@@ -143,7 +143,7 @@ export const researchSessionCreateSchema = z
 
 export const researchSessionListQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
     status: workflowStatusSchema.optional(),
     contentId: idSchema.optional(),
   })
@@ -221,7 +221,7 @@ export const scriptPatchSchema = z
 
 export const scriptListQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
     status: contentStatusSchema.optional(),
     contentId: idSchema.optional(),
   })
@@ -285,7 +285,7 @@ export const visualPlanPatchSchema = z
 
 export const visualPlanListQuerySchema = z
   .object({
-    channelId: channelIdSchema.optional(),
+    channelId: channelIdSchema,
     status: contentStatusSchema.optional(),
     contentId: idSchema.optional(),
     scriptVersionId: idSchema.optional(),
@@ -319,7 +319,7 @@ export const scenePlanCreateSchema = z
     narrationExcerpt: z.string().trim().min(1).max(4000),
     durationSeconds: durationSecondsSchema,
     visualDescription: z.string().trim().min(1).max(4000),
-    assetRequirements: z.array(z.string().trim().min(1).max(160)).default([]),
+    assetRequirements: z.array(z.string().trim().min(1).max(160)).max(50).default([]),
   })
   .strict();
 

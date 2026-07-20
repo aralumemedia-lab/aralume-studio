@@ -8,6 +8,7 @@ import { createApp } from "../src/app.js";
 
 test("cockpit projections use real repositories and keep channels isolated", async () => {
   const app = createApp({
+    authTestBypass: true,
     env: { ARALUME_ENV: "test", ARALUME_LOG_LEVEL: "error" },
   });
   const server = app.listen(0);

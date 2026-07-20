@@ -116,7 +116,7 @@ function IdeasPage() {
 
       const payload = formToIdeaPayload(formState, activeChannelId);
       return selectedIdea
-        ? updateContentIdea(selectedIdea.id, omitChannelId(payload))
+        ? updateContentIdea(selectedIdea.id, activeChannelId, omitChannelId(payload))
         : createContentIdea(payload);
     },
     onSuccess: async (response) => {

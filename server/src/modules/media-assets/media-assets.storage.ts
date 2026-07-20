@@ -1,6 +1,14 @@
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { existsSync, realpathSync, statSync, readFileSync } from "node:fs";
+import {
+  closeSync,
+  existsSync,
+  openSync,
+  readFileSync,
+  readSync,
+  realpathSync,
+  statSync,
+} from "node:fs";
 import { spawn } from "node:child_process";
 
 import { AppError } from "../../http/errors.js";
@@ -114,6 +122,111 @@ export function checksumFile(filePath: string): string {
 
 export function readFileSizeBytes(filePath: string): number {
   return statSync(filePath).size;
+}
+
+export function detectFileMimeType(filePath: string): string | undefined {
+  const descriptor = openSync(filePath, "r");
+  const header = Buffer.alloc(4096);
+  let bytesRead = 0;
+  try {
+    bytesRead = readSync(descriptor, header, 0, header.length, 0);
+  } finally {
+    closeSync(descriptor);
+  }
+
+  const bytes = header.subarray(0, bytesRead);
+  if (startsWith(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) {
+    return "image/png";
+  }
+  if (startsWith(bytes, [0xff, 0xd8, 0xff])) {
+    return "image/jpeg";
+  }
+  if (ascii(bytes, 0, 4) === "RIFF" && ascii(bytes, 8, 12) === "WEBP") {
+    return "image/webp";
+  }
+  if (ascii(bytes, 0, 4) === "RIFF" && ascii(bytes, 8, 12) === "WAVE") {
+    return "audio/wav";
+  }
+  if (ascii(bytes, 0, 3) === "ID3" || (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0)) {
+    return "audio/mpeg";
+  }
+  if (startsWith(bytes, [0x1a, 0x45, 0xdf, 0xa3])) {
+    return "video/webm";
+  }
+  if (ascii(bytes, 4, 8) === "ftyp") {
+    if (!isStructurallyValidIsoBmff(filePath)) {
+      return undefined;
+    }
+    return ascii(bytes, 8, 12) === "qt  " ? "video/quicktime" : "video/mp4";
+  }
+  if (startsWith(bytes, [0x50, 0x4b, 0x03, 0x04])) {
+    return "application/zip";
+  }
+
+  const text = bytes.toString("utf8").replace(/^\ufeff/, "");
+  if (/^WEBVTT(?:\s|$)/.test(text)) {
+    return "text/vtt";
+  }
+  if (/^\d+\s*\r?\n\d{2}:\d{2}:\d{2}[,.]\d{3}\s+-->\s+/m.test(text)) {
+    return "application/x-subrip";
+  }
+
+  return undefined;
+}
+
+function startsWith(value: Uint8Array, expected: number[]): boolean {
+  return expected.every((byte, index) => value[index] === byte);
+}
+
+function ascii(value: Uint8Array, start: number, end: number): string {
+  return Buffer.from(value.subarray(start, end)).toString("ascii");
+}
+
+function isStructurallyValidIsoBmff(filePath: string): boolean {
+  const file = readFileSync(filePath);
+  let offset = 0;
+  let boxCount = 0;
+  let hasFileType = false;
+  let hasMovie = false;
+  let hasMediaData = false;
+
+  while (offset + 8 <= file.length && boxCount < 4096) {
+    const declaredSize = file.readUInt32BE(offset);
+    const type = file.toString("ascii", offset + 4, offset + 8);
+    let headerSize = 8;
+    let boxSize = declaredSize;
+
+    if (declaredSize === 1) {
+      if (offset + 16 > file.length) {
+        return false;
+      }
+      const extendedSize = Number(file.readBigUInt64BE(offset + 8));
+      headerSize = 16;
+      boxSize = extendedSize;
+    } else if (declaredSize === 0) {
+      boxSize = file.length - offset;
+    }
+
+    if (!Number.isSafeInteger(boxSize) || boxSize < headerSize || offset + boxSize > file.length) {
+      return false;
+    }
+
+    if (boxCount === 0 && type !== "ftyp") {
+      return false;
+    }
+    if (type === "ftyp") {
+      hasFileType = boxSize >= 16;
+    } else if (type === "moov") {
+      hasMovie = true;
+    } else if (type === "mdat") {
+      hasMediaData = true;
+    }
+
+    offset += boxSize;
+    boxCount += 1;
+  }
+
+  return offset === file.length && boxCount > 0 && hasFileType && hasMovie && hasMediaData;
 }
 
 export type VideoFileProbe = {

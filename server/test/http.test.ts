@@ -6,6 +6,7 @@ import type { Server } from "node:http";
 
 import { createApp } from "../src/app.js";
 import { createErrorResponse, createSuccessResponse } from "../src/http/response.js";
+import { exceedsJsonDepth, MAX_JSON_DEPTH } from "../src/http/middleware.js";
 
 let server: Server;
 let baseUrl = "";
@@ -24,6 +25,7 @@ const captureLogger = {
 
 before(async () => {
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "development",
       ARALUME_LOG_LEVEL: "info",
@@ -157,6 +159,58 @@ test("POST /health with invalid JSON returns the standard error envelope", async
   assert.ok(payload.meta.requestId.length > 0);
   assert.ok(payload.meta.generatedAt.length > 0);
   assert.equal("stack" in payload.error, false);
+});
+
+test("JSON depth validation is iterative, bounded and applies to objects and arrays", async () => {
+  const nested = (depth: number, array = false): unknown => {
+    let value: unknown = true;
+    for (let index = 0; index < depth; index += 1) {
+      value = array ? [value] : { nested: value };
+    }
+    return value;
+  };
+
+  assert.equal(exceedsJsonDepth(nested(MAX_JSON_DEPTH - 1)), false);
+  assert.equal(exceedsJsonDepth(nested(MAX_JSON_DEPTH)), false);
+  assert.equal(exceedsJsonDepth(nested(MAX_JSON_DEPTH + 1)), true);
+  assert.equal(exceedsJsonDepth(nested(1200)), true);
+  assert.equal(exceedsJsonDepth(nested(MAX_JSON_DEPTH + 1, true)), true);
+
+  const response = await fetch(`${baseUrl}/api/media-assets`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-request-id": "req_json_depth" },
+    body: JSON.stringify({
+      channelId: "ch_historia",
+      type: "image",
+      category: "visual",
+      name: "Deep payload",
+      description: "Rejected before schema processing or persistence.",
+      mimeType: "image/png",
+      extension: "png",
+      sizeBytes: 1,
+      checksum: "0".repeat(64),
+      storagePath: "ch_historia/image/deep.png",
+      origin: "generated",
+      provenance: "Security regression test.",
+      licenseStatus: "confirmed",
+      status: "available",
+      riskLevel: "ok",
+      costActualCents: 0,
+      technicalMetadata: nested(1200),
+    }),
+  });
+  const payload = (await response.json()) as {
+    error: { code: string; message: string; details: Record<string, unknown> };
+  };
+
+  assert.equal(response.status, 413);
+  assert.equal(payload.error.code, "VALIDATION_ERROR");
+  assert.equal(payload.error.message, "Request JSON exceeds the allowed nesting depth");
+  assert.deepEqual(payload.error.details, {});
+  assert.equal(JSON.stringify(payload).includes("stack"), false);
+
+  const healthResponse = await fetch(`${baseUrl}/health`);
+  assert.equal(healthResponse.status, 200);
 });
 
 test("GET a missing route with query returns a sanitized not found envelope and log", async () => {

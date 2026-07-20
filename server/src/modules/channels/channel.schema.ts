@@ -75,7 +75,7 @@ export const updateChannelProfileBodySchema = z
 
 export const channelIdParamsSchema = z
   .object({
-    id: z.string().trim().min(1),
+    channelId: z.string().trim().min(1),
   })
   .strict();
 

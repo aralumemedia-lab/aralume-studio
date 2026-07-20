@@ -112,7 +112,8 @@ export const providerSchema = z.string().trim().min(1).max(200);
 export const modelSchema = z.string().trim().min(1).max(200);
 export const mimeTypeSchema = z.string().trim().min(1).max(200);
 export const extensionSchema = z.string().trim().min(1).max(20);
-export const sizeBytesSchema = z.number().int().nonnegative();
+export const MAX_MEDIA_ASSET_SIZE_BYTES = 512 * 1024 * 1024;
+export const sizeBytesSchema = z.number().int().nonnegative().max(MAX_MEDIA_ASSET_SIZE_BYTES);
 export const checksumSchema = z
   .string()
   .trim()
@@ -171,7 +172,16 @@ export const mediaAssetCreateSchema = z
     sourceAssetId: idSchema.optional(),
     notes: textSchema.optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    if (!isMimeExtensionPairAllowed(value.mimeType, value.extension)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["extension"],
+        message: "MIME type and extension are incompatible",
+      });
+    }
+  });
 
 export const mediaAssetPatchSchema = z
   .object({
@@ -302,7 +312,11 @@ export const videoAssetImportSchema = z
     contentId: idSchema,
     idempotencyKey: z.string().trim().min(8).max(200),
   })
-  .strict();
+  .strict()
+  .refine((value) => /\.mp4$/i.test(value.storagePath), {
+    path: ["storagePath"],
+    message: "Video imports must use an authorized .mp4 path",
+  });
 
 export const derivedClipFiltersSchema = z
   .object({
@@ -384,4 +398,24 @@ export function isSafeRelativeStoragePath(value: string): boolean {
   }
 
   return true;
+}
+
+export function isMimeExtensionPairAllowed(mimeType: string, extension: string): boolean {
+  const normalizedMime = mimeType.trim().toLowerCase();
+  const normalizedExtension = extension.trim().toLowerCase().replace(/^\./, "");
+  const allowedByExtension: Record<string, readonly string[]> = {
+    mp4: ["video/mp4"],
+    mov: ["video/quicktime"],
+    webm: ["video/webm"],
+    wav: ["audio/wav", "audio/x-wav"],
+    mp3: ["audio/mpeg"],
+    png: ["image/png"],
+    jpg: ["image/jpeg"],
+    jpeg: ["image/jpeg"],
+    webp: ["image/webp"],
+    srt: ["application/x-subrip", "text/plain"],
+    vtt: ["text/vtt"],
+  };
+  const allowed = allowedByExtension[normalizedExtension];
+  return allowed ? allowed.includes(normalizedMime) : false;
 }

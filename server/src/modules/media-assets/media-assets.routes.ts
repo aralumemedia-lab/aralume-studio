@@ -1,8 +1,9 @@
 import { existsSync, statSync } from "node:fs";
-import { Router, type Response } from "express";
+import { Router, type Request, type Response } from "express";
 import { z } from "zod";
 
 import { AppError } from "../../http/errors.js";
+import { getTrustedAuditActor } from "../../http/auth.js";
 import { createListSuccessResponse, createSuccessResponse } from "../../http/response.js";
 import { resolveAbsoluteStoragePath } from "./media-assets.storage.js";
 import {
@@ -37,13 +38,20 @@ export function createMediaAssetsRouter(
 
   router.post("/media-assets", (req, res) => {
     const body = parseBody(mediaAssetCreateSchema, req.body);
-    const created = service.createMediaAsset(body, getRequestId(res));
+    const created = service.createMediaAsset(
+      body,
+      getRequestId(res),
+      getAuditContext(req, res, body.channelId),
+    );
     res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
   });
 
   router.post("/media-assets/validate-storage", (req, res) => {
     const body = parseBody(mediaAssetStorageValidationSchema, req.body);
-    const validated = service.validateStorageReference(body);
+    const validated = service.validateStorageReference(
+      body,
+      getAuditContext(req, res, body.channelId),
+    );
     res.json(createSuccessResponse(validated, { requestId: getRequestId(res) }));
   });
 
@@ -57,7 +65,12 @@ export function createMediaAssetsRouter(
   router.post("/media-assets/:id/validate-integrity", (req, res) => {
     const params = parseParams(mediaAssetIdParamsSchema, req.params);
     const body = parseBody(mediaAssetIntegrityValidationSchema, req.body);
-    const validated = service.validateAssetIntegrity(body.channelId, params.id, body);
+    const validated = service.validateAssetIntegrity(
+      body.channelId,
+      params.id,
+      body,
+      getAuditContext(req, res, body.channelId),
+    );
     res.json(createSuccessResponse(validated, { requestId: getRequestId(res) }));
   });
 
@@ -72,7 +85,13 @@ export function createMediaAssetsRouter(
     const params = parseParams(mediaAssetIdParamsSchema, req.params);
     const body = parseBody(mediaAssetPatchSchema, omitChannelId(req.body));
     const query = parseChannelBody(req.body);
-    const updated = service.updateMediaAsset(query.channelId, params.id, body, getRequestId(res));
+    const updated = service.updateMediaAsset(
+      query.channelId,
+      params.id,
+      body,
+      getRequestId(res),
+      getAuditContext(req, res, query.channelId),
+    );
     res.json(createSuccessResponse(updated, { requestId: getRequestId(res) }));
   });
 
@@ -85,7 +104,10 @@ export function createMediaAssetsRouter(
   router.post("/videos/import-from-storage", async (req, res, next) => {
     try {
       const body = parseBody(videoAssetImportSchema, req.body);
-      const created = await service.importVideoAssetFromStorage(body);
+      const created = await service.importVideoAssetFromStorage(
+        body,
+        getAuditContext(req, res, body.channelId),
+      );
       res.status(201).json(createSuccessResponse(created, { requestId: getRequestId(res) }));
     } catch (error) {
       next(error);
@@ -249,4 +271,13 @@ function validationError(message: string, issues: z.ZodIssue[]) {
 
 function getRequestId(res: Response): string {
   return typeof res.locals.requestId === "string" ? res.locals.requestId : "unknown";
+}
+
+function getAuditContext(req: Request, res: Response, channelId: string) {
+  const actor = getTrustedAuditActor(req);
+  return {
+    ...actor,
+    channelId,
+    requestId: getRequestId(res),
+  };
 }

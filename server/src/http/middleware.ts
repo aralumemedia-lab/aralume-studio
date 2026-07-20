@@ -37,6 +37,57 @@ export function jsonParserMiddleware(): RequestHandler {
   return express.json({ limit: "1mb" });
 }
 
+export const MAX_JSON_DEPTH = 32;
+
+export function jsonDepthMiddleware(maxDepth = MAX_JSON_DEPTH): RequestHandler {
+  return (req, _res, next) => {
+    if (req.body === undefined || req.body === null) {
+      next();
+      return;
+    }
+
+    if (exceedsJsonDepth(req.body, maxDepth)) {
+      next(
+        new AppError({
+          code: "VALIDATION_ERROR",
+          status: 413,
+          message: "Request JSON exceeds the allowed nesting depth",
+        }),
+      );
+      return;
+    }
+
+    next();
+  };
+}
+
+export function exceedsJsonDepth(value: unknown, maxDepth = MAX_JSON_DEPTH): boolean {
+  const stack: Array<{ value: unknown; depth: number }> = [{ value, depth: 1 }];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || current.value === null || typeof current.value !== "object") {
+      continue;
+    }
+
+    if (current.depth > maxDepth) {
+      return true;
+    }
+
+    if (Array.isArray(current.value)) {
+      for (const item of current.value) {
+        stack.push({ value: item, depth: current.depth + 1 });
+      }
+    } else {
+      for (const item of Object.values(current.value)) {
+        stack.push({ value: item, depth: current.depth + 1 });
+      }
+    }
+  }
+
+  return false;
+}
+
 export function requestLoggerMiddleware(
   logLevel: RuntimeEnv["ARALUME_LOG_LEVEL"],
   logger: Pick<Console, "info" | "warn" | "error"> = console,

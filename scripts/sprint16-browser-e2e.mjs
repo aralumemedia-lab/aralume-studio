@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { chromium } from "playwright";
 import {
+  assertPortsAvailable,
   evidenceDir,
+  resetEvidenceDir,
   runE2E,
   spawnCommand,
   terminateProcesses,
@@ -17,7 +18,8 @@ const FRONTEND_BASE_URL = "http://127.0.0.1:4173";
 const SCREENSHOT_DIR = evidenceDir(16);
 
 async function main() {
-  await mkdir(SCREENSHOT_DIR, { recursive: true });
+  await resetEvidenceDir(16);
+  await assertPortsAvailable([BACKEND_BASE_URL, FRONTEND_BASE_URL]);
 
   const backend = spawnCommand(process.execPath, [
     path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"),
@@ -81,7 +83,7 @@ async function main() {
 
       const planFlow = await createPlanAndScenes(page, uniqueSuffix, channelA.id);
 
-      await duplicateVersionConflict(scriptFlow.scriptId, uniqueSuffix);
+      await duplicateVersionConflict(scriptFlow.scriptId, uniqueSuffix, channelA.id);
       await duplicateSceneConflict(planFlow.visualPlanId, channelA.id);
       await capture(page, "production-1600-conflict.png");
 
@@ -108,16 +110,19 @@ async function main() {
         404,
       );
       assert.equal(
-        await apiPostStatus(`/visual-plans/${planFlow.visualPlanId}/scenes`, {
-          channelId: channelB.id,
-          order: 3,
-          title: `Cross-channel ${uniqueSuffix}`,
-          narrationExcerpt: "Narracao cross-channel.",
-          durationSeconds: 30,
-          visualDescription: "Visual cross-channel.",
-          assetRequirements: ["asset-x"],
-        }),
-        409,
+        await apiPostStatus(
+          `/visual-plans/${planFlow.visualPlanId}/scenes?channelId=${channelA.id}`,
+          {
+            channelId: channelB.id,
+            order: 3,
+            title: `Cross-channel ${uniqueSuffix}`,
+            narrationExcerpt: "Narracao cross-channel.",
+            durationSeconds: 30,
+            visualDescription: "Visual cross-channel.",
+            assetRequirements: ["asset-x"],
+          },
+        ),
+        403,
       );
 
       await page.locator("aside").getByRole("link", { name: "Roteiros", exact: true }).click();
@@ -293,24 +298,30 @@ async function createPlanAndScenes(page, uniqueSuffix, channelId) {
   await expectText(page, `Sprint 16 Visual Plan ${uniqueSuffix}`);
 
   const sceneStatuses = [
-    await apiPostStatus(`/visual-plans/${createPlanPayload.data.id}/scenes`, {
-      channelId,
-      order: 1,
-      title: `Scene 1 ${uniqueSuffix}`,
-      narrationExcerpt: "Narracao da cena 1.",
-      durationSeconds: 30,
-      visualDescription: "Visual da cena 1.",
-      assetRequirements: ["asset-a", "asset-b"],
-    }),
-    await apiPostStatus(`/visual-plans/${createPlanPayload.data.id}/scenes`, {
-      channelId,
-      order: 2,
-      title: `Scene 2 ${uniqueSuffix}`,
-      narrationExcerpt: "Narracao da cena 2.",
-      durationSeconds: 35,
-      visualDescription: "Visual da cena 2.",
-      assetRequirements: ["asset-c"],
-    }),
+    await apiPostStatus(
+      `/visual-plans/${createPlanPayload.data.id}/scenes?channelId=${channelId}`,
+      {
+        channelId,
+        order: 1,
+        title: `Scene 1 ${uniqueSuffix}`,
+        narrationExcerpt: "Narracao da cena 1.",
+        durationSeconds: 30,
+        visualDescription: "Visual da cena 1.",
+        assetRequirements: ["asset-a", "asset-b"],
+      },
+    ),
+    await apiPostStatus(
+      `/visual-plans/${createPlanPayload.data.id}/scenes?channelId=${channelId}`,
+      {
+        channelId,
+        order: 2,
+        title: `Scene 2 ${uniqueSuffix}`,
+        narrationExcerpt: "Narracao da cena 2.",
+        durationSeconds: 35,
+        visualDescription: "Visual da cena 2.",
+        assetRequirements: ["asset-c"],
+      },
+    ),
   ];
   assert.deepEqual(sceneStatuses, [201, 201]);
 
@@ -325,8 +336,8 @@ async function createPlanAndScenes(page, uniqueSuffix, channelId) {
   };
 }
 
-async function duplicateVersionConflict(scriptId, uniqueSuffix) {
-  const status = await apiPostStatus(`/scripts/${scriptId}/versions`, {
+async function duplicateVersionConflict(scriptId, uniqueSuffix, channelId) {
+  const status = await apiPostStatus(`/scripts/${scriptId}/versions?channelId=${channelId}`, {
     versionNumber: 1,
     title: `Duplicate ${uniqueSuffix}`,
     narrationText: "Narracao duplicada.",
@@ -338,15 +349,18 @@ async function duplicateVersionConflict(scriptId, uniqueSuffix) {
 }
 
 async function duplicateSceneConflict(visualPlanId, channelId) {
-  const status = await apiPostStatus(`/visual-plans/${visualPlanId}/scenes`, {
-    channelId,
-    order: 1,
-    title: "Scene duplicate",
-    narrationExcerpt: "Narracao duplicada.",
-    durationSeconds: 30,
-    visualDescription: "Visual duplicado.",
-    assetRequirements: ["asset-z"],
-  });
+  const status = await apiPostStatus(
+    `/visual-plans/${visualPlanId}/scenes?channelId=${channelId}`,
+    {
+      channelId,
+      order: 1,
+      title: "Scene duplicate",
+      narrationExcerpt: "Narracao duplicada.",
+      durationSeconds: 30,
+      visualDescription: "Visual duplicado.",
+      assetRequirements: ["asset-z"],
+    },
+  );
   assert.equal(status, 409);
 }
 

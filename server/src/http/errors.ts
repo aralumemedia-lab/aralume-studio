@@ -36,6 +36,17 @@ export function toAppError(error: unknown): AppError {
     return error;
   }
 
+  if (error && typeof error === "object" && "status" in error) {
+    const status = (error as { status?: unknown }).status;
+    if (status === 413) {
+      return new AppError({
+        code: "VALIDATION_ERROR",
+        status: 413,
+        message: "Request payload exceeds the allowed limit",
+      });
+    }
+  }
+
   if (error instanceof SyntaxError && "status" in error) {
     const status = (error as { status?: unknown }).status;
 

@@ -173,7 +173,7 @@ Relatório final obrigatório:
 - observabilidade;
 - riscos residuais;
 - commit e PR;
-- recomendação objetiva para a Sprint 24 — implantação e validação pós-release.
+- recomendação objetiva para a Sprint 24 — remediação de segurança de entrada e isolamento multicanal antes de qualquer implantação.
 
 Status final permitido:
 

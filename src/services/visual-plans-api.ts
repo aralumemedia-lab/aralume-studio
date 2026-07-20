@@ -71,22 +71,30 @@ export async function createVisualPlan(
 
 export async function updateVisualPlan(
   id: ID,
+  channelId: ID,
   input: UpdateVisualPlanInput,
 ): Promise<ApiSuccess<VisualPlan>> {
-  return requestApiEnvelope<ApiSuccess<VisualPlan>>(`${VISUAL_PLANS_PATH}/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(input),
-  });
+  return requestApiEnvelope<ApiSuccess<VisualPlan>>(
+    withQuery(`${VISUAL_PLANS_PATH}/${id}`, { channelId }),
+    {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export async function createScenePlan(
   visualPlanId: ID,
+  channelId: ID,
   input: CreateScenePlanInput,
 ): Promise<ApiSuccess<ScenePlan>> {
-  return requestApiEnvelope<ApiSuccess<ScenePlan>>(`${VISUAL_PLANS_PATH}/${visualPlanId}/scenes`, {
-    method: "POST",
-    body: JSON.stringify(input),
-  });
+  return requestApiEnvelope<ApiSuccess<ScenePlan>>(
+    withQuery(`${VISUAL_PLANS_PATH}/${visualPlanId}/scenes`, { channelId }),
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function describeVisualPlanApiError(error: unknown) {

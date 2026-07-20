@@ -5,6 +5,7 @@ import type {
   ID,
   ISODate,
 } from "../channels/channel.types.js";
+import type { AuditActorContext } from "../audit/audit.types.js";
 
 export type { Channel, ChannelsRepository, CostStatus, ID, ISODate };
 
@@ -200,14 +201,20 @@ export type CostsService = {
   getOperationalModeSnapshot(channelId?: ID): OperationalModeSnapshot;
   updateGlobalOperationalModePolicy(
     input: OperationalModePolicyUpdateInput,
-    actor?: string,
+    actor?: AuditActorContext,
+    requestId?: string,
   ): OperationalModePolicy;
   updateChannelOperationalModePolicy(
     channelId: ID,
     input: OperationalModePolicyUpdateInput,
-    actor?: string,
+    actor?: AuditActorContext,
+    requestId?: string,
   ): OperationalModePolicy;
-  evaluateOperationalAction(input: OperationalActionEvaluationInput): OperationalModeDecision;
+  evaluateOperationalAction(
+    input: OperationalActionEvaluationInput,
+    actor?: AuditActorContext,
+    requestId?: string,
+  ): OperationalModeDecision;
 };
 
 export type CreateCostEntryInput = {
@@ -266,6 +273,7 @@ export type CostsDependencies = {
     appendAuditLog(log: {
       id: ID;
       channelId?: ID;
+      requestId?: string;
       actorType: "user" | "agent" | "system";
       actorName: string;
       action: string;

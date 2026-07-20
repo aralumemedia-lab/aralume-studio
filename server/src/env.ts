@@ -8,17 +8,28 @@ const optionalText = z.preprocess((value) => {
   return value;
 }, z.string().min(1).optional());
 
-const runtimeEnvSchema = z.object({
-  ARALUME_ENV: z.enum(["development", "test", "production"]).default("development"),
-  ARALUME_LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
-  ARALUME_ASSET_STORAGE_ROOT: optionalText,
-  DATABASE_URL: optionalText,
-  TEST_DATABASE_URL: optionalText,
-  ARALUME_YOUTUBE_CLIENT_ID: optionalText,
-  ARALUME_YOUTUBE_CLIENT_SECRET: optionalText,
-  ARALUME_YOUTUBE_REDIRECT_URI: optionalText,
-  ARALUME_PUBLICATION_TOKEN_SECRET: optionalText,
-});
+const runtimeEnvSchema = z
+  .object({
+    ARALUME_ENV: z.enum(["development", "test", "production"]).default("development"),
+    ARALUME_LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+    ARALUME_AUTH_SIGNING_SECRET: optionalText,
+    ARALUME_ASSET_STORAGE_ROOT: optionalText,
+    DATABASE_URL: optionalText,
+    TEST_DATABASE_URL: optionalText,
+    ARALUME_YOUTUBE_CLIENT_ID: optionalText,
+    ARALUME_YOUTUBE_CLIENT_SECRET: optionalText,
+    ARALUME_YOUTUBE_REDIRECT_URI: optionalText,
+    ARALUME_PUBLICATION_TOKEN_SECRET: optionalText,
+  })
+  .superRefine((value, ctx) => {
+    if (value.ARALUME_ENV === "production" && !value.ARALUME_AUTH_SIGNING_SECRET) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_AUTH_SIGNING_SECRET"],
+        message: "Authentication signing secret is required in production",
+      });
+    }
+  });
 
 export type RuntimeEnv = z.infer<typeof runtimeEnvSchema>;
 
@@ -48,6 +59,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): RuntimeEnv {
   const result = runtimeEnvSchema.safeParse({
     ARALUME_ENV: source.ARALUME_ENV,
     ARALUME_LOG_LEVEL: source.ARALUME_LOG_LEVEL,
+    ARALUME_AUTH_SIGNING_SECRET: source.ARALUME_AUTH_SIGNING_SECRET,
     ARALUME_ASSET_STORAGE_ROOT: source.ARALUME_ASSET_STORAGE_ROOT,
     DATABASE_URL: source.DATABASE_URL,
     TEST_DATABASE_URL: source.TEST_DATABASE_URL,

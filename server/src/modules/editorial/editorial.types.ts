@@ -313,6 +313,7 @@ export type VisualPlanPatchInput = Partial<
 >;
 
 export type ScenePlanCreateInput = {
+  channelId: ID;
   order: number;
   title: string;
   narrationExcerpt: string;

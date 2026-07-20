@@ -38,3 +38,18 @@ test("loadEnv rejects invalid enum values without leaking input", () => {
   assert.equal(JSON.stringify(caught?.issues).includes("invalid-environment"), false);
   assert.equal(JSON.stringify(caught?.issues).includes("invalid-level"), false);
 });
+
+test("loadEnv requires the authentication signing secret in production", () => {
+  assert.throws(
+    () => loadEnv({ ARALUME_ENV: "production" } as NodeJS.ProcessEnv),
+    (error) =>
+      error instanceof EnvValidationError &&
+      error.issues.some((issue) => issue.path === "ARALUME_AUTH_SIGNING_SECRET"),
+  );
+
+  const production = loadEnv({
+    ARALUME_ENV: "production",
+    ARALUME_AUTH_SIGNING_SECRET: "production-test-secret",
+  } as NodeJS.ProcessEnv);
+  assert.equal(production.ARALUME_AUTH_SIGNING_SECRET, "production-test-secret");
+});

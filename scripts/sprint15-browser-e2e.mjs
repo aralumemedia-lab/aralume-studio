@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdir } from "node:fs/promises";
 import path from "node:path";
 
 import { chromium } from "playwright";
 
 import {
   evidenceDir,
+  assertPortsAvailable,
+  resetEvidenceDir,
   runE2E,
   spawnCommand,
   terminateProcesses,
@@ -17,7 +18,8 @@ const FRONTEND_BASE_URL = "http://127.0.0.1:4173";
 const SCREENSHOT_DIR = evidenceDir(15);
 
 async function main() {
-  await mkdir(SCREENSHOT_DIR, { recursive: true });
+  await resetEvidenceDir(15);
+  await assertPortsAvailable([BACKEND_BASE_URL, FRONTEND_BASE_URL]);
   const backend = spawnCommand(process.execPath, [
     path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"),
     "server/src/index.ts",
@@ -124,7 +126,7 @@ async function main() {
       const sourceResponsePromise = page.waitForResponse(
         (response) =>
           response.url().includes("/api/research-sessions/") &&
-          response.url().endsWith("/sources") &&
+          response.url().includes("/sources?") &&
           response.request().method() === "POST" &&
           response.status() === 201,
       );
@@ -142,7 +144,7 @@ async function main() {
       const claimResponsePromise = page.waitForResponse(
         (response) =>
           response.url().includes("/api/research-sessions/") &&
-          response.url().endsWith("/claims") &&
+          response.url().includes("/claims?") &&
           response.request().method() === "POST" &&
           response.status() === 201,
       );

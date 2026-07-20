@@ -5,7 +5,10 @@ import { EnvValidationError, loadEnv } from "./env.js";
 function startServer(): void {
   try {
     const env = loadEnv();
-    const app = createApp({ env });
+    const app = createApp({
+      env,
+      authTestBypass: env.ARALUME_ENV === "test" && process.env.ARALUME_AUTH_TEST_BYPASS === "true",
+    });
 
     app.listen(defaultPort, "127.0.0.1", () => {
       console.info(

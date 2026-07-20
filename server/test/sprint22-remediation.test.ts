@@ -38,6 +38,7 @@ async function startHarness() {
   const editorialRepository = createEditorialRepository();
   const auditRepository = createAuditRepository();
   const app = createApp({
+    authTestBypass: true,
     env: { ARALUME_ENV: "test", ARALUME_LOG_LEVEL: "error" },
     logger: { info: () => undefined, warn: () => undefined, error: () => undefined },
     channelsRepository,
@@ -123,7 +124,7 @@ test("Sprint 22: audit requestId and editorial channel isolation are enforced", 
       (
         await request(
           baseUrl,
-          `/api/content-ideas/${ideaId}`,
+          `/api/content-ideas/${ideaId}?channelId=${channelA.id}`,
           patchBody({ title: "Pauta alterada" }, "req-idea-update"),
         )
       ).response.status,
@@ -150,7 +151,7 @@ test("Sprint 22: audit requestId and editorial channel isolation are enforced", 
     const sessionId = session.body.data.id as string;
     const source = await request(
       baseUrl,
-      `/api/research-sessions/${sessionId}/sources`,
+      `/api/research-sessions/${sessionId}/sources?channelId=${channelA.id}`,
       postBody(
         {
           title: "Fonte",
@@ -168,7 +169,7 @@ test("Sprint 22: audit requestId and editorial channel isolation are enforced", 
       (
         await request(
           baseUrl,
-          `/api/research-sessions/${sessionId}/claims`,
+          `/api/research-sessions/${sessionId}/claims?channelId=${channelA.id}`,
           postBody(
             {
               sourceId,
@@ -210,7 +211,7 @@ test("Sprint 22: audit requestId and editorial channel isolation are enforced", 
       (
         await request(
           baseUrl,
-          `/api/scripts/${scriptId}`,
+          `/api/scripts/${scriptId}?channelId=${channelA.id}`,
           patchBody({ title: "Roteiro 2" }, "req-script-update"),
         )
       ).response.status,
@@ -218,7 +219,7 @@ test("Sprint 22: audit requestId and editorial channel isolation are enforced", 
     );
     const version = await request(
       baseUrl,
-      `/api/scripts/${scriptId}/versions`,
+      `/api/scripts/${scriptId}/versions?channelId=${channelA.id}`,
       postBody(
         {
           versionNumber: 2,
@@ -254,7 +255,7 @@ test("Sprint 22: audit requestId and editorial channel isolation are enforced", 
       (
         await request(
           baseUrl,
-          `/api/visual-plans/${planId}`,
+          `/api/visual-plans/${planId}?channelId=${channelA.id}`,
           patchBody({ title: "Plano 2" }, "req-plan-update"),
         )
       ).response.status,
@@ -262,7 +263,7 @@ test("Sprint 22: audit requestId and editorial channel isolation are enforced", 
     );
     const scene = await request(
       baseUrl,
-      `/api/visual-plans/${planId}/scenes`,
+      `/api/visual-plans/${planId}/scenes?channelId=${channelA.id}`,
       postBody(
         {
           channelId: channelA.id,

@@ -185,9 +185,23 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - R14 foi concluido e integrado pela PR #37; `V1.0 ACCEPTED` com 18/18 criterios `PASS`.
 - SHA funcional aceito: `d2b53c9e7bfe15c8116c07375ca4b604fce03e97`.
 - Merge documental R14: `61d313bdb35dd0228a2bf4f5af3454263f588155`.
-- Proxima unidade: Sprint 23, ainda sob E15 - Hardening V1.0.
+- Sprint 23 foi concluida e integrada pela PR #38; readiness permanece `NOT_READY`.
 - Spec normativa: `docs/specs/024-sprint-23-v1-release-readiness.md`.
 - Branch: `codex/sprint-23-v1-release-readiness`.
 - Objetivo: decidir readiness de producao e preparar planos de deploy/rollback sem executar deploy, tag ou release.
 - Gate de saida: `READY_FOR_PRODUCTION_DEPLOYMENT`, `READY_WITH_CONDITIONS` ou `NOT_READY` com evidencia reproduzivel.
-- Sprint 24 somente pode iniciar implantacao apos revisao e merge da unidade de readiness e autorizacao separada.
+- Limite: a release 1.0.0 continua bloqueada; nenhuma implantacao, tag ou release foi autorizada.
+
+## Sprint 24 - Seguranca de entrada e isolamento multicanal
+
+- Epico governante: E15 - Hardening V1.0.
+- Spec normativa: `docs/specs/025-sprint-24-security-isolation.md`.
+- Branch desta execucao: `codex/sprint-24-production-security-isolation`.
+- Estado: formalizada e em execucao; PR exclusiva em draft, sem merge automatico.
+- Historias: H24.1 autenticacao inbound fail-closed; H24.2 autorizacao e isolamento por canal; H24.3 protecao de midia; H24.4 limites de upload/importacao; H24.5 auditoria e evidencias negativas.
+- Objetivo: fechar a fronteira inbound da API, aplicar autorizacao server-side por canal e proteger midia/importacao sem alterar a matriz historica R14.
+- Fora de escopo: backup, restore, rollback, topologia produtiva, ingress, deploy, release, tag, novos requisitos editoriais e correcao ampla dos diagnosticos TypeScript globais.
+- Gate de saida: autenticacao fail-closed, autorizacao negativa reproduzivel, isolamento cross-channel comprovado, limites verificaveis, auditoria sanitizada, testes e build aprovados.
+- Dependencia: Sprint 23 integrada pela PR #38 com readiness `NOT_READY`; nenhuma unidade de release pode iniciar antes de novo readiness independente.
+- Evidencia: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 92/92 testes oficiais, runners 15-21 com exit code 0, runner HMAC real aprovado, 56 screenshots historicas e 2 screenshots HMAC suplementares.
+- Estado de saida: implementacao concluida, `READY_FOR_REVIEW`; PR exclusiva deve permanecer em draft ate revisao independente. Readiness da release continua `NOT_READY`.

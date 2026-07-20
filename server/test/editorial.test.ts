@@ -41,6 +41,7 @@ function createHarness(): Harness {
 
 async function startServer(harness: Harness) {
   const app = createApp({
+    authTestBypass: true,
     env: {
       ARALUME_ENV: "test",
       ARALUME_LOG_LEVEL: "info",
@@ -490,7 +491,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(listB.data.length, 0);
     assert.equal(listB.meta.total, 0);
 
-    const missingIdea = await fetch(`${baseUrl}/api/content-ideas/does-not-exist`);
+    const missingIdea = await fetch(
+      `${baseUrl}/api/content-ideas/does-not-exist?channelId=${encodeURIComponent(channelAJson.data.id)}`,
+    );
     const missingIdeaJson = (await missingIdea.json()) as {
       error: { code: string; message: string };
     };
@@ -541,7 +544,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(sessionJson.data.sourceCount, 0);
 
     const sourceResponse = await fetch(
-      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/sources`,
+      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/sources?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -562,7 +567,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(sourceJson.data.channelId, channelAJson.data.id);
 
     const sourcesListResponse = await fetch(
-      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/sources`,
+      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/sources?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
     );
     const sourcesList = (await sourcesListResponse.json()) as {
       data: Array<{ id: string; researchSessionId: string }>;
@@ -572,7 +579,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(sourcesList.data[0].researchSessionId, sessionJson.data.id);
 
     const claimResponse = await fetch(
-      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/claims`,
+      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/claims?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -589,7 +598,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(claimResponse.status, 201);
 
     const claimsListResponse = await fetch(
-      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/claims`,
+      `${baseUrl}/api/research-sessions/${sessionJson.data.id}/claims?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
     );
     const claimsList = (await claimsListResponse.json()) as {
       data: Array<{ id: string; sourceId: string }>;
@@ -624,7 +635,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(scriptResponse.status, 201);
 
     const duplicateVersionResponse = await fetch(
-      `${baseUrl}/api/scripts/${scriptJson.data.id}/versions`,
+      `${baseUrl}/api/scripts/${scriptJson.data.id}/versions?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -638,16 +651,21 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     );
     assert.equal(duplicateVersionResponse.status, 409);
 
-    const versionResponse = await fetch(`${baseUrl}/api/scripts/${scriptJson.data.id}/versions`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        versionNumber: 2,
-        narrationText: "Versao 2 HTTP",
-        sceneCount: 4,
-        changeSummary: "Ajuste",
-      }),
-    });
+    const versionResponse = await fetch(
+      `${baseUrl}/api/scripts/${scriptJson.data.id}/versions?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          versionNumber: 2,
+          narrationText: "Versao 2 HTTP",
+          sceneCount: 4,
+          changeSummary: "Ajuste",
+        }),
+      },
+    );
     const versionJson = (await versionResponse.json()) as {
       data: { id: string; versionNumber: number };
     };
@@ -674,7 +692,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(visualPlanResponse.status, 201);
 
     const sceneResponse = await fetch(
-      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes`,
+      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -705,7 +725,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(sceneList.data[0].order, 1);
 
     const duplicateSceneResponse = await fetch(
-      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes`,
+      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -723,7 +745,9 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
     assert.equal(duplicateSceneResponse.status, 409);
 
     const crossChannelSceneResponse = await fetch(
-      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes`,
+      `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes?channelId=${encodeURIComponent(
+        channelAJson.data.id,
+      )}`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -738,7 +762,7 @@ test("HTTP editorial endpoints validate payloads, filter by channel and reject i
         }),
       },
     );
-    assert.equal(crossChannelSceneResponse.status, 409);
+    assert.equal(crossChannelSceneResponse.status, 403);
 
     const crossChannelSceneListResponse = await fetch(
       `${baseUrl}/api/visual-plans/${visualPlanJson.data.id}/scenes?channelId=${encodeURIComponent(
