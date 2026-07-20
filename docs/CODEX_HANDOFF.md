@@ -217,6 +217,18 @@ recriacao do frontend e limpeza administrativa da S12.
 - Gate: endpoints operacionais fail-closed, isolamento e midia negativos reproduziveis, limites aplicados, auditoria sanitizada, testes e build aprovados, sem regressao dos fluxos R14.
 - Evidencia: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; contagens e baselines devem ser reproduzidos no HEAD final, com runners 15-21, evidencias HMAC, portas livres e nenhum processo orfao.
 - Estado de handoff: `READY_FOR_REVIEW`; a revisao independente deve ocorrer antes de qualquer merge. A release continua `NOT_READY`, sem release, tag ou deploy.
+
+## Handoff - Sprint 25 - Hardening tecnico de release readiness
+
+- Estado: unidade formalizada antes da implementação.
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/026-sprint-25-release-readiness-hardening.md`.
+- Branch: `codex/sprint-25-release-readiness-hardening`.
+- Base: `15d113ad0181164af306e28a61aae5b0ec28bea5`.
+- Decisão de numeração: Sprint 24/Spec 025 era o maior número normativo e não havia reserva posterior; Sprint 25/Spec 026 foi registrada como próxima unidade.
+- Objetivo: corrigir typecheck global, tratar advisories transitivos e fortalecer identidade dos serviços dos runners.
+- Fora de escopo: configuração produtiva, secrets, backup, restore, rollback, observabilidade ampla, topologia/ingress, nova avaliação integral, release, tag e deploy.
+- Estado da release: `NOT_READY`; nenhum release, tag ou deploy autorizado.
 ## Regra operacional - execucao controlada com subagentes
 
 Subagentes devem ser considerados somente quando produzirem ganho real de

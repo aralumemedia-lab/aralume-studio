@@ -265,9 +265,13 @@ export const Route = createFileRoute("/production")({
         if (!selectedVisualPlan) {
           throw new Error("Selecione um plano visual antes de adicionar cenas.");
         }
+        if (!activeChannelId) {
+          throw new Error("Nenhum canal ativo selecionado.");
+        }
 
-        return createScenePlan(selectedVisualPlan.id, activeChannelId as string, {
-          channelId: activeChannelId,
+        const channelId = activeChannelId;
+        return createScenePlan(selectedVisualPlan.id, channelId, {
+          channelId,
           order: Number.parseInt(sceneForm.order, 10) || 0,
           title: sceneForm.title.trim(),
           narrationExcerpt: sceneForm.narrationExcerpt.trim(),

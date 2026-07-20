@@ -12,6 +12,7 @@ const runtimeEnvSchema = z
   .object({
     ARALUME_ENV: z.enum(["development", "test", "production"]).default("development"),
     ARALUME_LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+    ARALUME_E2E_RUN_ID: optionalText,
     ARALUME_AUTH_SIGNING_SECRET: optionalText,
     ARALUME_ASSET_STORAGE_ROOT: optionalText,
     DATABASE_URL: optionalText,
@@ -59,6 +60,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): RuntimeEnv {
   const result = runtimeEnvSchema.safeParse({
     ARALUME_ENV: source.ARALUME_ENV,
     ARALUME_LOG_LEVEL: source.ARALUME_LOG_LEVEL,
+    ARALUME_E2E_RUN_ID: source.ARALUME_E2E_RUN_ID,
     ARALUME_AUTH_SIGNING_SECRET: source.ARALUME_AUTH_SIGNING_SECRET,
     ARALUME_ASSET_STORAGE_ROOT: source.ARALUME_ASSET_STORAGE_ROOT,
     DATABASE_URL: source.DATABASE_URL,

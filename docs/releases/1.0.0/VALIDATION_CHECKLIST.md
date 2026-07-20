@@ -34,3 +34,14 @@ The command `npx tsc --noEmit` returns exit code 2 with 18 diagnostics on both t
 ## V1 functional preservation
 
 The R14 evidence remains the governing functional acceptance: V1-01 through V1-18 are accepted at the functional SHA. This checklist does not supersede or overwrite that historical matrix.
+
+## Current Sprint 25 technical status
+
+The Sprint 25 hardening evidence is recorded in
+[`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
+The global TypeScript gate now passes with zero diagnostics, `bun audit` reports
+no vulnerabilities after fixed-version overrides, and the E2E runners validate
+the exact service and per-run identity. The release remains **NOT READY** because
+production configuration/secrets, backup/restore, rollback, observability,
+production topology/ingress, and the integral release-readiness evaluation are
+outside this unit and still pending.

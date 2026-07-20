@@ -1670,3 +1670,9 @@ O R14 foi concluido e integrado pela PR #37 com `V1.0 ACCEPTED` e 18/18 criterio
 A Sprint 23 permanece vinculada ao E15 - Hardening V1.0 e e governada por `docs/specs/024-sprint-23-v1-release-readiness.md`. Ela prepara a release 1.0.0, valida seguranca, configuracao, persistencia, backup, rollback, observabilidade e quality gates, mas nao executa deploy, tag ou GitHub Release. A Sprint 24 vigente e governada por `docs/specs/025-sprint-24-security-isolation.md` e remedia autenticacao, autorizacao, isolamento multicanal, midia e importacao antes de qualquer unidade posterior de implantacao.
 
 A Sprint 24 foi implementada na branch `codex/sprint-24-production-security-isolation`. A evidencia `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md` registra os controles fail-closed, os testes negativos, os runners 15-21 e as limitacoes remanescentes. O estado e `READY_FOR_REVIEW`; a release permanece `NOT_READY` e nao ha autorizacao de merge, release, tag ou deploy nesta unidade.
+
+### Sprint 25 - Hardening tecnico de release readiness
+
+A Sprint 25 e a próxima unidade normativa do E15. A decisão foi registrada porque a Sprint 24/Spec 025 era a maior unidade formalizada e nenhuma unidade posterior estava reservada nos documentos normativos. A spec é `docs/specs/026-sprint-25-release-readiness-hardening.md`.
+
+O escopo é limitado à eliminação dos diagnósticos TypeScript globais, remediação ou classificação dos advisories transitivos e validação inequívoca da identidade dos serviços iniciados pelos runners. Configuração produtiva, secrets, backup, restore, rollback, observabilidade ampla, topologia/ingress, nova avaliação integral, release, tag e deploy permanecem fora de escopo. A release continua `NOT_READY`.

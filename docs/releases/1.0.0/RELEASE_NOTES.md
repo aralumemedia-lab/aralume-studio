@@ -20,3 +20,15 @@ This release unit records the formally accepted V1 functional baseline (`d2b53c9
 - Global TypeScript check returns 18 pre-existing diagnostics on the accepted functional baseline; correction is required in a separate functional sprint/PR before production release.
 
 V1 acceptance remains valid as a functional acceptance of the evaluated SHA. It is not a production deployment authorization.
+
+## Sprint 25 technical hardening
+
+Sprint 25 / Spec 026 corrected the 14 global TypeScript diagnostics, resolved the
+three known transitive advisories (`@babel/core`, `brace-expansion`, and `js-yaml`),
+and added per-run service identity checks to E2E startup. Reproducible evidence is
+available in
+[`V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT25_RELEASE_READINESS_HARDENING_EVIDENCE.md).
+
+These corrections do not change the release decision: V1.0.0 remains **NOT READY
+FOR PRODUCTION DEPLOYMENT** while the production and operational gates listed
+above remain pending. No tag, release, or deploy was created.

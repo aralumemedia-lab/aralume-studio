@@ -346,6 +346,25 @@ Esta unidade funcional pertence ao E15 e foi formalizada antes da implementacao.
 - Evidencia operacional: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 92/92 testes oficiais, runners 15-21 com exit code 0, runner HMAC real aprovado, 56 screenshots historicas e 2 screenshots HMAC suplementares.
 - Estado: implementacao concluida; `READY_FOR_REVIEW`; nenhum merge, release, tag ou deploy.
 
+## Sprint 25 - Hardening tecnico de release readiness
+
+Esta unidade pertence ao E15 e foi formalizada após o merge da Sprint 24. A decisão documental registrou Sprint 25/Spec 026 como próximo número normativo, pois não havia unidade posterior reservada.
+
+| ID       | Tipo                    | Escopo                                                        | Prioridade | Spec                                                   | Dependências |
+| -------- | ----------------------- | ------------------------------------------------------------- | ---------- | ------------------------------------------------------ | ------------ |
+| RR25-01  | Qualidade técnica       | Eliminar os 14 diagnósticos do typecheck global               | P0         | `docs/specs/026-sprint-25-release-readiness-hardening.md` | Sprint 24 integrada |
+| RR25-02  | Dependências            | Remediar/classificar @babel/core, brace-expansion e js-yaml | P0         | mesma spec                                             | RR25-01 |
+| RR25-03  | Identidade operacional  | Associar runId, PID, porta e serviço nos runners             | P0         | mesma spec                                             | Sprint 24 runners |
+| RR25-04  | Evidência               | Gates reproduzíveis e testes negativos                        | P0         | mesma spec                                             | RR25-01 a RR25-03 |
+
+### Definition of Done da Sprint 25
+
+- Typecheck global verde sem enfraquecimento de strict.
+- Advisories remediados ou formalmente classificados.
+- Runners rejeitam serviço/processo de execução incorreta.
+- Evidência nova separada da Sprint 24.
+- Nenhum backup, restore, rollback, observabilidade ampla, topologia, release, tag ou deploy.
+
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
 - Status: completed, com Sprint 15 e Sprint 16 entregues.

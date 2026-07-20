@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { createServer } from "node:http";
 import { test } from "node:test";
 
 import {
@@ -7,6 +8,8 @@ import {
   spawnCommand,
   terminateProcess,
   terminateProcesses,
+  e2eRunId,
+  waitForServiceIdentity,
 } from "./e2e-process-utils.mjs";
 
 function waitForClose(child) {
@@ -21,6 +24,78 @@ function longRunningChild() {
     ARALUME_AUTH_TEST_BYPASS: "false",
   });
 }
+
+async function startIdentityServer(payload) {
+  const server = createServer((_request, response) => {
+    response.setHeader("content-type", "application/json");
+    response.end(JSON.stringify(payload));
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  return { server, url: `http://127.0.0.1:${address.port}/identity` };
+}
+
+test("accepts only the expected service and current execution identity", async () => {
+  const child = longRunningChild();
+  const { server, url } = await startIdentityServer({
+    ok: true,
+    service: "aralume-api",
+    runId: e2eRunId,
+  });
+
+  try {
+    const identity = await waitForServiceIdentity(url, child, "aralume-api", 1_000);
+    assert.equal(identity.runId, e2eRunId);
+  } finally {
+    await terminateProcess(child);
+    await new Promise((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
+test("rejects a stale execution identity even when HTTP is healthy", async () => {
+  const child = longRunningChild();
+  const { server, url } = await startIdentityServer({
+    ok: true,
+    service: "aralume-api",
+    runId: "stale-execution",
+  });
+
+  try {
+    await assert.rejects(
+      () => waitForServiceIdentity(url, child, "aralume-api", 50),
+      /Timed out waiting for aralume-api identity/,
+    );
+  } finally {
+    await terminateProcess(child);
+    await new Promise((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
+  }
+});
+
+test("rejects a healthy process advertising the wrong service", async () => {
+  const child = longRunningChild();
+  const { server, url } = await startIdentityServer({
+    ok: true,
+    service: "wrong-service",
+    runId: e2eRunId,
+  });
+
+  try {
+    await assert.rejects(
+      () => waitForServiceIdentity(url, child, "aralume-api", 50),
+      /Timed out waiting for aralume-api identity/,
+    );
+  } finally {
+    await terminateProcess(child);
+    await new Promise((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
+  }
+});
 
 test("propagates an unexpected non-zero child exit after the child already stopped", async () => {
   const child = spawnCommand(process.execPath, ["-e", "process.exit(7)"], {

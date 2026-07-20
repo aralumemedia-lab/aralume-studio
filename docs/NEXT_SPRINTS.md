@@ -205,3 +205,13 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Dependencia: Sprint 23 integrada pela PR #38 com readiness `NOT_READY`; nenhuma unidade de release pode iniciar antes de novo readiness independente.
 - Evidencia: `docs/acceptance/v1/V1_SPRINT24_SECURITY_ISOLATION_EVIDENCE.md`; 92/92 testes oficiais, runners 15-21 com exit code 0, runner HMAC real aprovado, 56 screenshots historicas e 2 screenshots HMAC suplementares.
 - Estado de saida: implementacao concluida, `READY_FOR_REVIEW`; PR exclusiva deve permanecer em draft ate revisao independente. Readiness da release continua `NOT_READY`.
+
+## Sprint 25 - Hardening tecnico de release readiness
+
+- Epico governante: E15 - Hardening V1.0.
+- Spec normativa: `docs/specs/026-sprint-25-release-readiness-hardening.md`.
+- Branch desta execucao: `codex/sprint-25-release-readiness-hardening`.
+- Decisao normativa: Sprint 24 era a maior unidade formalizada e nenhuma unidade posterior estava reservada; Sprint 25/Spec 026 foi registrada antes da implementação.
+- Objetivo: eliminar os 14 diagnósticos TypeScript globais, remediar/classificar os três advisories transitivos e validar identidade inequívoca dos serviços nos runners.
+- Fora de escopo: configuração produtiva, secrets, backup, restore, rollback, observabilidade ampla, topologia/ingress, nova avaliação integral, release, tag e deploy.
+- Estado inicial: release 1.0.0 `NOT_READY`; nenhum release, tag ou deploy autorizado.

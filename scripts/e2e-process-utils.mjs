@@ -1,10 +1,12 @@
 import { spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { createServer } from "node:net";
 import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 const processRecords = new Set();
+export const e2eRunId = randomUUID();
 
 function createProcessRecord(child, command, args) {
   const record = {
@@ -97,6 +99,7 @@ export function spawnCommand(command, args, extraEnv = {}) {
       ARALUME_ENV: process.env.ARALUME_ENV ?? "test",
       ARALUME_LOG_LEVEL: process.env.ARALUME_LOG_LEVEL ?? "info",
       ARALUME_AUTH_TEST_BYPASS: process.env.ARALUME_AUTH_TEST_BYPASS ?? "true",
+      ARALUME_E2E_RUN_ID: process.env.ARALUME_E2E_RUN_ID ?? e2eRunId,
       ...extraEnv,
     },
   });
@@ -183,6 +186,44 @@ export async function waitForHttp(url, timeoutMs = 120_000) {
     await delay(500);
   }
   throw new Error(`Timed out waiting for ${url}`);
+}
+
+export async function waitForServiceIdentity(url, child, expectedService, timeoutMs = 120_000) {
+  const started = Date.now();
+  const record = [...processRecords].find((entry) => entry.child === child);
+
+  while (Date.now() - started < timeoutMs) {
+    const failure = record ? failureFor(record) : undefined;
+    if (failure) {
+      throw failure;
+    }
+    if (child.exitCode !== null || child.signalCode !== null) {
+      throw new Error(
+        `E2E service process exited before identity confirmation: ${expectedService}`,
+      );
+    }
+
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const payload = await response.json();
+        if (
+          payload?.ok === true &&
+          payload.service === expectedService &&
+          payload.runId === e2eRunId
+        ) {
+          return payload;
+        }
+      }
+    } catch {
+      // The process may still be starting or the port may belong to another service.
+    }
+    await delay(500);
+  }
+
+  throw new Error(
+    `Timed out waiting for ${expectedService} identity at ${url} for run ${e2eRunId}`,
+  );
 }
 
 export async function runE2E(main) {
