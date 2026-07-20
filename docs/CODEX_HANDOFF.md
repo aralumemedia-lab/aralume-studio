@@ -203,6 +203,31 @@ recriacao do frontend e limpeza administrativa da S12.
 - Limite: nao executar deploy, tag, GitHub Release ou publicacao externa; Sprint 24 e unidade separada.
 - Modelo normativo incorporado: `docs/governance/PROMPT_5_RELEASE.md`; sua presenca formaliza o processo e nao resolve os bloqueadores tecnicos de readiness.
 
+## Regra operacional - execucao controlada com subagentes
+
+Subagentes devem ser considerados somente quando produzirem ganho real de
+cobertura, independencia, paralelismo ou reducao de risco. Tarefas simples,
+lineares ou fortemente acopladas podem usar um unico agente. Quando houver
+subagentes, o coordenador e responsavel pelo preflight, escopo, decisoes,
+consolidacao, reproducao de findings `BLOCKER` e `HIGH`, revisao do diff e
+veredito final.
+
+Cada subagente recebe escopo isolado e nao sobreposto. Revisores operam em
+somente leitura e nao podem alterar arquivos, fazer commit, push, merge,
+release, tag ou deploy. Cada arquivo de implementacao tem um proprietario
+unico; implementacoes paralelas usam worktrees isoladas e alteracoes
+concorrentes no mesmo arquivo exigem coordenacao explicita. Findings duplicados
+sao consolidados, opinioes sem reproducao, impacto e evidencia nao sao
+findings, e nenhum agente aprova a propria implementacao.
+
+Revisao tecnica independente nao substitui aprovacao humana formal nem as
+regras do GitHub, branch protection, rulesets, CODEOWNERS ou required reviews.
+O coordenador registra conflitos, decisoes descartadas, limitacoes, comandos,
+evidencias, agentes, escopos, modo de execucao, worktrees e findings
+consolidados. O ADR 004 define os casos favoraveis, desfavoraveis e o fluxo
+completo. Commit, PR, merge, release e deploy permanecem sob as regras
+existentes.
+
 ## Definition of Done
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
