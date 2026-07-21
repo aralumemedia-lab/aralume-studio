@@ -96,7 +96,9 @@ for that environmental run-order effect.
 
 - Spec commit: `5cc47f5` (`docs: formalize Sprint 26 dependency advisory remediation`).
 - Dependency commit: `6e34ad6` (`fix: remediate transitive dependency advisories`).
-- Push, draft PR, merge state and final documentation commit are recorded in the publication update to this evidence.
+- Push: completed to `origin/codex/sprint-26-dependency-advisory-remediation`.
+- Pull request: [#42](https://github.com/aralumemedia-lab/aralume-studio/pull/42), open and draft; base `main`; mergeability pending independent review.
+- Documentation commit: `79b1070` contains the evidence and release-document updates; this publication update is a normal follow-up commit.
 - No merge, tag, release or deploy was performed by this unit.
 - V1.0 remains functionally accepted.
 - Release 1.0.0 remains **NOT_READY** because productive configuration/secrets, recovery and rollback, observability, topology/ingress and final readiness evaluation remain outside this unit.
