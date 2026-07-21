@@ -1,1 +1,8 @@
+/.github/workflows/ @aralumemedia-lab
+/docs/releases/1.0.0/ @aralumemedia-lab
+/docs/runbooks/ @aralumemedia-lab
+/docs/specs/ @aralumemedia-lab
+/scripts/release-*.mjs @aralumemedia-lab
+/server/src/modules/auth/ @aralumemedia-lab
+/server/src/modules/recovery/ @aralumemedia-lab
 * @aralumemedia-lab

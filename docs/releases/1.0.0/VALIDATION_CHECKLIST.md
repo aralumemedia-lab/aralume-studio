@@ -160,3 +160,17 @@ Sprint 29.
 
 The release remains **NOT READY** until this remediation has been validated and
 reviewed independently.
+
+## Release 1.0.0 governance remote and promotion authorization
+
+The next normative unit is the release-level governance remediation described
+by `docs/specs/031-release-1.0.0-governance-remote.md`. It is not Sprint 29.
+
+- [x] `main` branch protection with required review and check rules
+- [x] `main-governance` ruleset active on `refs/heads/main`
+- [x] protected `production` environment with promotion authorization
+- [x] explicit CODEOWNERS coverage for governance surfaces
+- [x] repository evidence recorded in `GOVERNANCE_REMOTE_READINESS.md`
+
+The release remains **NOT READY** until the later independent release-readiness
+review is completed.

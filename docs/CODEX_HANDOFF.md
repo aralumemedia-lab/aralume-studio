@@ -283,3 +283,12 @@ existentes.
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
 reduzir os 56 existentes, persistencia e isolamento demonstrados, QA visual feito,
 PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance serÃƒÆ’Ã‚Â¡ necessÃƒÆ’Ã‚Â¡rio apÃƒÆ’Ã‚Â³s a remediaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
+## Handoff - governanca remota e autorizacao de promocao
+
+- Estado: unidade de nivel de release, posterior a `docs/specs/030-release-1.0.0-operational-readiness-remediation.md`, sem criar nova sprint numerada.
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/031-release-1.0.0-governance-remote.md`.
+- Base documental: remediacao operacional validada, com a governanca remota agora formalizada por evidencias GitHub.
+- Objetivo: formalizar branch protection, ruleset ativo, ambiente de producao protegido e ownership cobrindo as superficies de governanca.
+- Exclusoes: features editoriais novas, alteracao funcional, release, tag e deploy.
+- Estado da release: `NOT_READY`; a autorizacao operacional nao substitui a revisao integral independente de release readiness.
