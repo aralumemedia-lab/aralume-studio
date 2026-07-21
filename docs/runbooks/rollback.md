@@ -19,4 +19,9 @@ docker compose -f compose.staging.yml up --build -d
 
 ## Related recovery helper
 
-- `node scripts/sprint27-backup-restore.mjs`
+- `npm run recovery:validate`
+
+This is the canonical operator command. It wraps the loader details required by
+the checked-in recovery helper, so the runbook stays executable on Windows and
+POSIX shells without asking the operator to know the underlying Node import
+flags.

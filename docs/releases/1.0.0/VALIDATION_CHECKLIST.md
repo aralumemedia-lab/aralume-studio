@@ -166,11 +166,26 @@ reviewed independently.
 The next normative unit is the release-level governance remediation described
 by `docs/specs/031-release-1.0.0-governance-remote.md`. It is not Sprint 29.
 
-- [x] `main` branch protection with required review and check rules
+- [x] `main` branch protection with PR obligation, zero required human approvals, and required checks
 - [x] `main-governance` ruleset active on `refs/heads/main`
-- [x] protected `production` environment with promotion authorization
-- [x] explicit CODEOWNERS coverage for governance surfaces
+- [x] protected `production` environment with promotion authorization executable for the single-maintainer model
+- [x] explicit CODEOWNERS coverage for governance surfaces without a merge gate
 - [x] repository evidence recorded in `GOVERNANCE_REMOTE_READINESS.md`
 
 The release remains **NOT READY** until the later independent release-readiness
 review is completed.
+
+## Release 1.0.0 final readiness remediation
+
+The next release-level remediation is described by
+`docs/specs/032-release-1.0.0-final-readiness-remediation.md`. It closes the
+three residual findings left by the final readiness review: canonical recovery
+command, hydration mismatch elimination, and governance documentation alignment.
+
+- [x] canonical recovery command documented and executable through `npm run recovery:validate` — PASS
+- [x] browser acceptance regression fails on hydration mismatch and passes on the clean path — PASS
+- [x] governance documentation aligned to the live single-maintainer remote state — PASS
+- [x] final readiness remediation evidence recorded externally in the PR record and release docs — PASS
+
+The release remains **NOT READY** until this remediation is validated and the
+later independent release-readiness review is completed.

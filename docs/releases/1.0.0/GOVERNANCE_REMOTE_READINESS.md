@@ -28,9 +28,9 @@ The controls were applied without creating a release, tag or deploy.
 
 ### Branch protection on `main`
 
-- required pull request reviews: 1
+- required pull request reviews: 0
 - dismiss stale reviews: enabled
-- code owner reviews: required
+- code owner reviews: not required as a merge gate
 - conversation resolution: required
 - checks required: `gates`, `security`, `smoke`
 - enforce administrators: enabled
@@ -58,6 +58,13 @@ The controls were applied without creating a release, tag or deploy.
 - required reviewers: the repository owner account available in this repository context
 - self-review prevention: disabled so the gate remains executable with the single verifiable collaborator available in this repo
 
+### Single-maintainer compensating model
+
+- The repository has one verifiable human maintainer in the current context.
+- PR obligation, required checks, conversation resolution, protected branch rules, and the protected production environment remain in force.
+- Review assistance from an agent or subagent is evidence and analysis only; it is not a GitHub approval.
+- When a second legitimate maintainer is added later, the human approval gate should be re-evaluated and re-enabled if the repository policy can support it without creating an impossible merge gate.
+
 ### CODEOWNERS
 
 - Governance surfaces were updated to use explicit owner mappings for workflows, release documentation, runbooks, security-sensitive backend surfaces, and recovery/deploy paths.
@@ -76,5 +83,6 @@ The controls were applied without creating a release, tag or deploy.
 ## Residual risk
 
 - The repository has a single verifiable collaborator, so the promotion reviewer gate is formalized but not distributed across multiple distinct human owners in the current repo context.
+- The current policy is intentionally executable for a single-maintainer repository; it does not claim segregation of duties that the repository cannot support.
 - This unit does not authorize release, tag or deploy.
 - Release 1.0.0 remains NOT READY until the later independent release-readiness review is executed.

@@ -240,6 +240,14 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Nature: unit of level release, not a new sprint number.
 - Spec governante: `docs/specs/031-release-1.0.0-governance-remote.md`.
 - Base: `27ef340038d8929e3728ee2d97bb9d1ad65dd689`.
-- Objetivo: formalizar branch protection, ruleset, protected production environment and owner coverage for promotion authorization.
+- Objetivo: formalizar branch protection, ruleset, protected production environment and owner coverage for promotion authorization in the single-maintainer model.
 - Evidencia: `docs/releases/1.0.0/GOVERNANCE_REMOTE_READINESS.md`.
 - Estado da release: `NOT_READY`; no release, tag or deploy is authorized by this unit.
+
+## Release 1.0.0 final readiness remediation
+
+- Nature: unit of level release, not a new sprint number.
+- Spec governante: `docs/specs/032-release-1.0.0-final-readiness-remediation.md`.
+- Objetivo: close the canonical recovery command, hydration mismatch, and governance-documentation findings.
+- Evidencia: `docs/releases/1.0.0/FINAL_READINESS_REMEDIATION.md`.
+- Estado da release: `NOT_READY`; this unit does not authorize release, tag or deploy.

@@ -58,6 +58,9 @@ async function main() {
   const frontend = spawnCommand(process.execPath, [
     path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
     "dev",
+    "--force",
+    "--mode",
+    "production",
     "--host",
     "127.0.0.1",
     "--port",
@@ -79,6 +82,10 @@ async function main() {
       await installAuthTransport(ownerPage, ownerToken, requestId);
       await ownerPage.goto(`${FRONTEND_BASE_URL}/channels`);
       await ownerPage.waitForLoadState("networkidle");
+      await ownerPage.evaluate(() => {
+        const activeElement = document.activeElement;
+        if (activeElement instanceof HTMLElement) activeElement.blur();
+      });
       await ownerPage.screenshot({ path: path.join(SCREENSHOT_DIR, "authorized-channel.png") });
 
       const authorizedBefore = await requestApi(
@@ -143,6 +150,10 @@ async function main() {
         withoutEvaluationVolatility(crossChannelAfter.payload.data),
         withoutEvaluationVolatility(crossChannelBefore.payload.data),
       );
+      await observerPage.evaluate(() => {
+        const activeElement = document.activeElement;
+        if (activeElement instanceof HTMLElement) activeElement.blur();
+      });
       await observerPage.screenshot({
         path: path.join(SCREENSHOT_DIR, "cross-channel-rejected.png"),
       });

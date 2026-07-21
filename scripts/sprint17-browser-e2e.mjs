@@ -53,6 +53,9 @@ async function main() {
     [
       path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
       "dev",
+      "--force",
+      "--mode",
+      "production",
       "--host",
       "127.0.0.1",
       "--port",
@@ -517,6 +520,10 @@ async function waitForCreateMode(page) {
 }
 
 async function capture(page, filename) {
+  await page.evaluate(() => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement) activeElement.blur();
+  });
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, filename), fullPage: false });
 }
 

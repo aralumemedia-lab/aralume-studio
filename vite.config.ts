@@ -9,6 +9,28 @@ import { createHmac } from "node:crypto";
 import type { Plugin } from "vite";
 import { createE2EIdentityChallengeGuard } from "./server/src/routes/e2e-identity-challenge";
 
+function stripTanStackDevtoolsSourceAttributes(): Plugin {
+  return {
+    name: "aralume-strip-tanstack-devtools-source-attributes",
+    enforce: "post",
+    transform(code, id) {
+      if (!/\.[cm]?[jt]sx?$/.test(id) || !code.includes("data-tsd-source")) {
+        return null;
+      }
+
+      const transformed = code.replace(/\sdata-tsd-source="[^"]*"/g, "");
+      if (transformed === code) {
+        return null;
+      }
+
+      return {
+        code: transformed,
+        map: null,
+      };
+    },
+  };
+}
+
 function e2eIdentityPlugin(): Plugin {
   const challengeGuard = createE2EIdentityChallengeGuard();
   return {
@@ -58,7 +80,7 @@ function e2eIdentityPlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [e2eIdentityPlugin()],
+  plugins: [stripTanStackDevtoolsSourceAttributes(), e2eIdentityPlugin()],
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

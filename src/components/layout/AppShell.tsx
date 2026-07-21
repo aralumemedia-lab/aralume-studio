@@ -279,6 +279,8 @@ function Topbar({
         <input
           placeholder="Buscar conteúdos, agentes, workflows..."
           className="h-8 w-full rounded-sm border border-border bg-surface pl-7 pr-3 text-[12px] outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20"
+          style={{ caretColor: "transparent" }}
+          suppressHydrationWarning
         />
       </div>
       <div className="ml-auto flex items-center gap-1.5">

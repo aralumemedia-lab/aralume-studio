@@ -27,6 +27,9 @@ async function main() {
   const frontend = spawnCommand(process.execPath, [
     path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
     "dev",
+    "--force",
+    "--mode",
+    "production",
     "--host",
     "127.0.0.1",
     "--port",
@@ -237,6 +240,10 @@ async function expectText(page, text) {
 }
 
 async function capture(page, fileName) {
+  await page.evaluate(() => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement) activeElement.blur();
+  });
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, fileName), fullPage: true });
 }
 

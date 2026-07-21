@@ -479,8 +479,15 @@ A unidade normativa seguinte formaliza a governanca remota da release 1.0.0 sem 
 
 ### Definition of Done da governanca remota
 
-- `main` protegido com checks e revisao obrigatorios.
+- `main` protegido com PR obrigatoria, zero aprovacoes humanas obrigatorias, checks obrigatorios e conversations resolvidas.
 - `main-governance` ativo e visivel na API do GitHub.
-- Ambiente `production` protegido para promocao.
-- CODEOWNERS explicitando ownership verificavel.
+- Ambiente `production` protegido para promocao no modelo de mantenedor unico.
+- CODEOWNERS explicitando ownership verificavel sem virar gate impossivel.
 - Release 1.0.0 continua `NOT_READY` ate a revisao integral independente posterior.
+
+### Unidade normativa final de readiness
+
+- Spec `docs/specs/032-release-1.0.0-final-readiness-remediation.md`.
+- Objetivo: recovery canonico, hidratacao sem mismatch e documentacao de governanca alinhada ao estado remoto real.
+- Evidencia: `docs/releases/1.0.0/FINAL_READINESS_REMEDIATION.md`.
+- Estado: `NOT_READY` ate a revisao integral independente posterior.
