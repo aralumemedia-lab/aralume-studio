@@ -126,6 +126,7 @@ async function shutdown(code = 0) {
     if (!child.killed) {
       child.kill("SIGTERM");
     }
+    terminateProcessGroup(child, "SIGTERM");
   }
 
   if (process.platform === "win32") {
@@ -145,6 +146,7 @@ async function shutdown(code = 0) {
         if (child.exitCode === null && child.signalCode === null && !child.killed) {
           child.kill("SIGKILL");
         }
+        terminateProcessGroup(child, "SIGKILL");
       }
       resolve(undefined);
     }, 15_000);
@@ -155,6 +157,18 @@ async function shutdown(code = 0) {
   rmSync(storageRoot, { recursive: true, force: true });
   if (code !== 0) {
     process.exitCode = code;
+  }
+}
+
+function terminateProcessGroup(child, signal) {
+  if (process.platform === "win32" || !child.pid) {
+    return;
+  }
+
+  try {
+    process.kill(-child.pid, signal);
+  } catch {
+    // Ignore ESRCH/EPERM; child.kill() already covered the direct process.
   }
 }
 
