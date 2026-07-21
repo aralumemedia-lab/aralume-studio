@@ -20,7 +20,10 @@
 
 - The frontend can operate with the default relative API base `/api`.
 - `VITE_ARALUME_API_BASE_URL` is optional and public when the frontend needs an explicit base URL.
-- `ARALUME_ASSET_STORAGE_ROOT` is optional for the media asset registry and defaults to a safe local path when not set.
+- `ARALUME_AUTH_SIGNING_SECRET` is required in staging and production.
+- `ARALUME_ASSET_STORAGE_ROOT` is required in staging and production and must be absolute.
+- `ARALUME_AUTH_TEST_BYPASS`, `ARALUME_E2E_*`, and `TEST_DATABASE_URL` are test-only controls and are rejected in production-like environments.
+- `DATABASE_URL` and `ARALUME_YOUTUBE_REDIRECT_URI` are validated when provided so malformed URLs fail fast.
 
 ## E13 approved provider inventory
 
@@ -69,8 +72,10 @@
 | Variavel                              | Categoria                    | Uso esperado                                     | Status           |
 | ------------------------------------- | ---------------------------- | ------------------------------------------------ | ---------------- |
 | ARALUME_APP_NAME                      | Aplicacao                    | Metadados da aplicacao / shell                   | Futura           |
-| ARALUME_ENV                           | Aplicacao                    | Ambiente de execucao e configuracoes gerais      | Futura           |
+| ARALUME_ENV                           | Aplicacao                    | Ambiente de execucao e configuracoes gerais (`development`, `test`, `staging`, `production`) | Futura           |
 | ARALUME_LOG_LEVEL                     | Observabilidade / logs       | Nivel de log padrao do runtime                   | Futura           |
+| ARALUME_AUTH_SIGNING_SECRET           | Autenticacao                 | Assinatura de autenticacao obrigatoria em staging/production | Produção-like    |
+| ARALUME_AUTH_TEST_BYPASS              | Autenticacao / testes        | Bypass de autenticacao apenas em testes locais   | Teste            |
 | DATABASE_URL                          | Banco de dados               | Conexao do backend futuro                        | Futura           |
 | TEST_DATABASE_URL                     | Testes                       | Banco isolado para validacoes                    | Futura           |
 | OPERATOR_ACCOUNTS_JSON                | Autenticacao                 | Lista de operadores para controle interno futuro | Futura           |
@@ -82,7 +87,7 @@
 | ARALUME_TTS_MODEL                     | Voz / TTS                    | Modelo de voz futuro                             | Futura           |
 | ARALUME_TTS_PROVIDER                  | Voz / TTS                    | Provedor de voz futuro                           | Futura           |
 | ARALUME_TTS_VOICE                     | Voz / TTS                    | Voz padrao do sistema                            | Futura           |
-| ARALUME_ASSET_STORAGE_ROOT            | Storage                      | Raiz de armazenamento para midia                 | Futura           |
+| ARALUME_ASSET_STORAGE_ROOT            | Storage                      | Raiz de armazenamento para midia; obrigatoria em staging/production | Produção-like    |
 | ARALUME_FFMPEG_PATH                   | Imagem / video               | Caminho do encoder futuro                        | Futura           |
 | ARALUME_FFPROBE_PATH                  | Imagem / video               | Caminho do probe futuro                          | Futura           |
 | ARALUME_VIDEO_RENDERER                | Imagem / video               | Motor de renderizacao futuro                     | Futura           |
@@ -98,3 +103,4 @@
 - The legacy inventory was created from names only.
 - No real secret value was copied into the repository.
 - Any future backend implementation must keep the same safety rules and continue using manual secret entry.
+- Production-like environments fail closed before opening listeners if required secrets or absolute storage roots are missing.

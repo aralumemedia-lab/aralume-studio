@@ -70,3 +70,18 @@ tests, build, lifecycle, identity/readiness and runners 15-21 plus HMAC passed.
 No tag, release or deployment was created. The release remains **NOT READY**
 pending productive configuration/secrets, recovery and rollback, observability,
 topology/ingress and final release-readiness evaluation.
+
+## Sprint 27 production configuration, backup/restore and rollback
+
+Sprint 27 / Spec 028 tightens the runtime boundary for staging and production,
+adds a fail-closed configuration schema, documents the secret inventory, and
+introduces a reproducible filesystem backup/restore/rollback helper for the
+current JSON state and media storage layout. The implementation is paired with a
+real execution script and focused tests that validate backup creation, checksum
+verification, clean restore, rollback replacement, and the rejection of dirty
+targets or tampered snapshots.
+
+The operational evidence for this unit is recorded in
+[`V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md).
+The release remains **NOT READY** because the broader production evaluation,
+including later operational hardening and governance gates, is still pending.

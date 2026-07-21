@@ -68,14 +68,19 @@ Expected response:
 ## Environment variables used now
 
 Required for this foundation:
-- `ARALUME_ENV`
+- `ARALUME_ENV` (`development`, `test`, `staging`, or `production`)
 - `ARALUME_LOG_LEVEL`
+
+Required in staging/production:
+- `ARALUME_AUTH_SIGNING_SECRET`
+- `ARALUME_ASSET_STORAGE_ROOT`
 
 Optional for this foundation:
 - `DATABASE_URL`
 - `TEST_DATABASE_URL`
+- `ARALUME_AUTH_TEST_BYPASS` (test only)
 
-The backend will start with safe defaults if the required values are not set.
+The backend will start with safe defaults in development and test. Staging and production fail closed before listeners open if the required secrets or storage root are missing or invalid.
 
 ## Future variables not required now
 
@@ -87,7 +92,6 @@ The following remain documented for later phases and are not required by Sprint 
 - `ARALUME_TTS_MODEL`
 - `ARALUME_TTS_PROVIDER`
 - `ARALUME_TTS_VOICE`
-- `ARALUME_ASSET_STORAGE_ROOT`
 - `ARALUME_FFMPEG_PATH`
 - `ARALUME_FFPROBE_PATH`
 - `ARALUME_VIDEO_RENDERER`

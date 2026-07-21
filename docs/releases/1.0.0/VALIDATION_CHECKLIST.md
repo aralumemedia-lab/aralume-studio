@@ -93,3 +93,26 @@ the checklist intentionally avoids self-referencing the final commit SHA.
 This dependency unit does not authorize release. Productive configuration,
 secrets, recovery/rollback, observability, topology/ingress, CI and final
 release-readiness evaluation remain pending; release 1.0.0 remains **NOT READY**.
+
+## Current Sprint 27 operational hardening
+
+Sprint 27 / Spec 028 records the next operational unit after the dependency
+remediation. Its evidence is intentionally tracked separately from the
+historical release-readiness matrix because the runtime now enforces fail-closed
+production-like configuration and uses a reproducible filesystem backup helper.
+
+- [x] fail-closed staging/production configuration validation
+- [x] production-like secret inventory recorded without real values
+- [x] backup snapshot with checksum over JSON state and media storage
+- [x] restore into a clean target and rejection of dirty targets
+- [x] rollback replacement of the target state from the verified snapshot
+- [x] focused negative cases for missing config, invalid URLs and tampered snapshots
+- [x] lint, backend check, typecheck, official tests and build
+- [x] frozen install and bun audit
+- [x] lifecycle, identity/readiness, runners 15-21 and HMAC
+- [x] secret scan and port/process verification
+
+The current operational evidence is stored in
+[`V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md).
+The release remains **NOT READY** while broader production readiness work
+continues in later units.
