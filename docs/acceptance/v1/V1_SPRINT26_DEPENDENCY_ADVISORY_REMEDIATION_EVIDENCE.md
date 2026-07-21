@@ -4,7 +4,8 @@ Status: **READY FOR REVIEW; RELEASE NOT_READY**
 
 Date: 2026-07-20
 Base: `7a4c082ea7a3b78d1aa58fcccbf699cafe42b016`
-Code HEAD: `63cbe77`
+Documental/final HEAD: `cf772c1`
+Functional code HEAD before this documentation-only update: `63cbe77`
 Branch: `codex/sprint-26-dependency-advisory-remediation`
 
 This evidence covers only the two Bun audit advisories. It does not authorize
