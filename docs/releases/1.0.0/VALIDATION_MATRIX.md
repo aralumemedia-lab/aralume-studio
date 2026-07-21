@@ -1,6 +1,6 @@
 # Aralume Studio 1.0.0 — Validation matrix
 
-Candidate: `fa28cd8e61f86baed46dd6271b8afde7fc871ffa`  
+Candidate: `fa28cd8e61f86baed46dd6271b8afde7fc871ffa`
 Assessment date: 2026-07-21
 
 | Gate | Criterion / command | Result | Evidence / limitation |

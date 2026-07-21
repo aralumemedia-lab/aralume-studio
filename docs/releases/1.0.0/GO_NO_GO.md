@@ -1,8 +1,8 @@
 # GO / NO-GO — Aralume Studio 1.0.0
 
-Version: `1.0.0`  
-Candidate commit: `fa28cd8e61f86baed46dd6271b8afde7fc871ffa`  
-Environment target: **NOT DEFINED**  
+Version: `1.0.0`
+Candidate commit: `fa28cd8e61f86baed46dd6271b8afde7fc871ffa`
+Environment target: **NOT DEFINED**
 Assessment date: 2026-07-21
 
 ## Decision
