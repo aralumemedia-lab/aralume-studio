@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: .
+    command: ["bun", "run", "backend:start"]
+    environment:
+      ARALUME_ENV: staging
+      ARALUME_LOG_LEVEL: info
+      ARALUME_AUTH_SIGNING_SECRET: ${ARALUME_AUTH_SIGNING_SECRET:-}
+      ARALUME_AUTH_TEST_BYPASS: "false"
+      ARALUME_ASSET_STORAGE_ROOT: ${ARALUME_ASSET_STORAGE_ROOT:-/data/storage}
+      ARALUME_TRUSTED_PROXY_HOPS: ${ARALUME_TRUSTED_PROXY_HOPS:-1}
+      ARALUME_ALLOWED_HOSTS: ${ARALUME_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      ARALUME_ALLOWED_ORIGINS: ${ARALUME_ALLOWED_ORIGINS:-http://localhost,http://127.0.0.1}
+      ARALUME_BUILD_ID: ${ARALUME_BUILD_ID:-staging}
+      ARALUME_MAX_BODY_BYTES: ${ARALUME_MAX_BODY_BYTES:-1048576}
+      ARALUME_REQUEST_TIMEOUT_MS: ${ARALUME_REQUEST_TIMEOUT_MS:-5000}
+      ARALUME_SHUTDOWN_TIMEOUT_MS: ${ARALUME_SHUTDOWN_TIMEOUT_MS:-5000}
+    volumes:
+      - staging-storage:/data/storage
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: .
+    command: ["bun", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]
+    environment:
+      NODE_ENV: production
+      VITE_ARALUME_API_BASE_URL: /api
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend
+
+  ingress:
+    image: nginx:1.27-alpine
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./deploy/staging/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  staging-storage:

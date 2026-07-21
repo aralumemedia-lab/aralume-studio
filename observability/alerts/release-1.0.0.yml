@@ -1,0 +1,20 @@
+groups:
+  - name: aralume-release-1.0.0
+    interval: 1m
+    rules:
+      - alert: AralumeReadinessDown
+        expr: readiness == "degraded"
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Readiness is degraded for the release candidate.
+          runbook: docs/runbooks/incident-response.md
+      - alert: AralumeErrorRateHigh
+        expr: errorsByCode > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Error rate increased for the release candidate.
+          runbook: docs/runbooks/monitoring.md

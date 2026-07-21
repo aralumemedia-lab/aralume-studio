@@ -140,6 +140,14 @@ bun run backend:build
 bun run test
 ```
 
+Release-remediation checks:
+
+```bash
+docker compose -f compose.staging.yml config
+npm run release:smoke
+npm run release:browser
+```
+
 ## Package manager
 
 Bun is the official package manager for this repository. Keep `bun.lock` as the only lockfile and avoid regenerating `package-lock.json`.

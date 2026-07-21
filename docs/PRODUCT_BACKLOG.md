@@ -408,6 +408,29 @@ Esta unidade pertence ao E15 e e a proxima unidade normativa apos a Sprint 27. A
 - Topologia e ingress produtivos documentados e testados.
 - Nenhum merge, release, tag ou deploy.
 
+## RemediaÃ§Ã£o de prontidÃ£o operacional da release 1.0.0
+
+Esta unidade de nÃ­vel de release sucede a Sprint 28 sem criar uma nova sprint numerada. Ela usa `docs/specs/030-release-1.0.0-operational-readiness-remediation.md` e fecha os bloqueadores documentados na avaliaÃ§Ã£o `NOT_READY` da release 1.0.0.
+
+| ID      | Tipo                               | Escopo                                                                 | Prioridade | Spec                                                                            | Dependencias                        |
+| ------- | ---------------------------------- | ---------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------- | ----------------------------------- |
+| RLS-01  | Deploy / artefato                  | Artefato imutavel, topologia executavel, smoke e rollback simulados    | P0         | `docs/specs/030-release-1.0.0-operational-readiness-remediation.md`            | release assessment #45              |
+| RLS-02  | CI / ownership / branch controls    | Workflows hospedados, CODEOWNERS e controles de branch documentados    | P0         | mesma spec                                                                      | RLS-01                              |
+| RLS-03  | Configuracao / segredos            | Inventario e fail-closed da configuracao produtiva                     | P0         | mesma spec                                                                      | RLS-01                              |
+| RLS-04  | Runbooks executaveis               | Configuracao, deploy, rollback, monitoramento e incident response      | P0         | mesma spec                                                                      | RLS-01, RLS-03                      |
+| RLS-05  | Observabilidade / ownership        | Dashboards, alertas, thresholds e owners versionados                  | P0         | mesma spec                                                                      | RLS-01, RLS-03                      |
+| RLS-07  | Evidencia browser / runner         | Reaceite consolidado com exit codes, screenshots e logs rastreaveis   | P0         | mesma spec                                                                      | RLS-01 a RLS-05                     |
+
+### Definition of Done da remediaÃ§Ã£o
+
+- Artefato de implantaÃ§Ã£o identificavel e reproduzivel.
+- CI hospedado, CODEOWNERS e controles de branch definidos.
+- Configuracao produtiva, segredos e startup fail-closed formalizados.
+- Runbooks de operacao e recuperacao reconciliados com comandos reais.
+- Dashboards / alertas versionados e vinculados a owners ou pendencias formais.
+- Evidencia browser / runner consolidada em uma matriz unica.
+- Release 1.0.0 continua `NOT_READY` ate a revisao independente desta unidade.
+
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
 - Status: completed, com Sprint 15 e Sprint 16 entregues.
