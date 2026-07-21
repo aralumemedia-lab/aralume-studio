@@ -75,7 +75,9 @@ The runtime state surface is the current filesystem persistence layout:
 
 The recovery helper snapshots the storage root into a timestamped directory,
 stores a manifest with schema, checksum, file count, and per-file hashes, and
-restores only after manifest verification.
+restores only after manifest verification. The verification now compares the
+canonical `manifest.files` list against the on-disk snapshot contents and
+rejects symlink/junction aliases through canonical filesystem containment.
 
 ### Real execution script
 
@@ -96,8 +98,8 @@ Observed summary:
 | Schema | `aralume.recovery.v1` |
 | Snapshot file count | `3` |
 | Total bytes | `222` |
-| Checksum | `77d8a9d1b146f6f1b28a75440ad00463ad7cc64a09007303e32f5ec972dd9b7d` |
-| Execution duration | `55 ms` |
+| Checksum | `87621bdb339108a198b9b7d7b350bc0d9b7d306128a09ab20ed839de7eea080f` |
+| Execution duration | `84 ms` |
 | Restore target | clean restore succeeded after rejecting the dirty target |
 | Rollback target | modified target returned to the verified snapshot content |
 
@@ -106,7 +108,7 @@ Observed summary:
 | Command | Result |
 | --- | --- |
 | `node --import tsx --test server/test/env.test.ts server/test/recovery.test.ts` | PASS, 6/6 |
-| `npm test` | PASS, 96/96 |
+| `npm test` | PASS, 98/98 |
 | `npm run lint` | PASS |
 | `npm run backend:check` | PASS |
 | `npx tsc --noEmit` | PASS |
@@ -127,6 +129,8 @@ Observed summary:
 - invalid URL-like configuration is rejected when supplied;
 - dirty restore target is rejected;
 - tampered snapshot checksum is rejected;
+- tampered `manifest.files` entries are rejected when they no longer match the snapshot contents;
+- symlink and junction aliases are rejected during backup and restore;
 - nested backup roots are rejected.
 
 ## Residual risk

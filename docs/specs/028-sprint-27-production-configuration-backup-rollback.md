@@ -52,6 +52,7 @@ Esta sprint trata o modelo atual de persistencia e storage. Ela nao introduz um 
 - Calcular checksum verificavel.
 - Falhar explicitamente em falhas de leitura/escrita ou checksum.
 - Nao sobrescrever backup valido silenciosamente.
+- Validar canonicamente `manifest.files` contra o conteudo real do snapshot, com paths relativos normalizados, sem duplicidade e com checksums por arquivo.
 
 ### RC27.4 - Restore e rollback
 
@@ -59,6 +60,7 @@ Esta sprint trata o modelo atual de persistencia e storage. Ela nao introduz um 
 - Rejeitar backup corrompido, checksum divergente e schema incompativel.
 - Definir rollback de aplicacao e rollback do estado persistido como recuperacao suportada pelo backup.
 - Diferenciar rollback, restore de desastre e correcao forward.
+- Rejeitar aliases de filesystem, symlinks e junctions no backup e no restore por identidade canonica real, em Windows e POSIX.
 
 ### RC27.5 - Evidencia e gates
 

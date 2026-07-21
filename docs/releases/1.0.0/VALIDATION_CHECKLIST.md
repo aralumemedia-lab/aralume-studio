@@ -106,6 +106,8 @@ production-like configuration and uses a reproducible filesystem backup helper.
 - [x] backup snapshot with checksum over JSON state and media storage
 - [x] restore into a clean target and rejection of dirty targets
 - [x] rollback replacement of the target state from the verified snapshot
+- [x] canonical validation of `manifest.files` against snapshot contents
+- [x] symlink/junction aliases rejected by canonical filesystem containment
 - [x] focused negative cases for missing config, invalid URLs and tampered snapshots
 - [x] lint, backend check, typecheck, official tests and build
 - [x] frozen install and bun audit
