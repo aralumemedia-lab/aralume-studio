@@ -1,4 +1,4 @@
-# Aralume Studio V1.0.0 — Release Notes
+# Aralume Studio V1.0.0 â€” Release Notes
 
 Status: **NOT READY FOR PRODUCTION DEPLOYMENT**
 
@@ -49,7 +49,7 @@ test-only identity challenges once with a short TTL, rejecting unissued and
 cross-execution challenges. The process suite is 20/20, the
 official suite is 93/93, body-timeout stress is 30/30, early-exit stress is
 50/50 sequential plus 16/16 concurrent, replay stress is 50/50 sequential plus
-20/20 concurrent, and runners 15–21 plus HMAC passed. The PR remains draft
+20/20 concurrent, and runners 15â€“21 plus HMAC passed. The PR remains draft
 pending independent focused review.
 
 These corrections do not change the release decision: V1.0.0 remains **NOT READY
@@ -85,3 +85,14 @@ The operational evidence for this unit is recorded in
 [`V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md).
 The release remains **NOT READY** because the broader production evaluation,
 including later operational hardening and governance gates, is still pending.
+
+## Sprint 28 observability, topology and readiness productive hardening
+
+Sprint 28 / Spec 029 extends the runtime with distinct liveness, readiness and
+health contracts, structured sanitized logs, minimal operational metrics,
+graceful shutdown, and strict ingress policy for staging and production while
+remaining permissive for local runner execution. The operational evidence for
+this unit is recorded in
+[`V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md).
+The release remains **NOT READY** because the final readiness evaluation and
+any remaining governance work are still pending.

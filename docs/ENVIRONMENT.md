@@ -22,6 +22,9 @@
 - `VITE_ARALUME_API_BASE_URL` is optional and public when the frontend needs an explicit base URL.
 - `ARALUME_AUTH_SIGNING_SECRET` is required in staging and production.
 - `ARALUME_ASSET_STORAGE_ROOT` is required in staging and production and must be absolute.
+- `ARALUME_TRUSTED_PROXY_HOPS`, `ARALUME_ALLOWED_HOSTS`, and `ARALUME_ALLOWED_ORIGINS` are required in staging and production so ingress assumptions stay explicit.
+- `ARALUME_BUILD_ID` is optional and is used for operational build identity when supplied.
+- `ARALUME_MAX_BODY_BYTES`, `ARALUME_REQUEST_TIMEOUT_MS`, and `ARALUME_SHUTDOWN_TIMEOUT_MS` are optional operational tunables with safe defaults.
 - `ARALUME_AUTH_TEST_BYPASS`, `ARALUME_E2E_*`, and `TEST_DATABASE_URL` are test-only controls and are rejected in production-like environments.
 - `DATABASE_URL` and `ARALUME_YOUTUBE_REDIRECT_URI` are validated when provided so malformed URLs fail fast.
 
@@ -69,34 +72,34 @@
 
 ## Inventory
 
-| Variavel                              | Categoria                    | Uso esperado                                     | Status           |
-| ------------------------------------- | ---------------------------- | ------------------------------------------------ | ---------------- |
-| ARALUME_APP_NAME                      | Aplicacao                    | Metadados da aplicacao / shell                   | Futura           |
+| Variavel                              | Categoria                    | Uso esperado                                                                                 | Status           |
+| ------------------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------- | ---------------- |
+| ARALUME_APP_NAME                      | Aplicacao                    | Metadados da aplicacao / shell                                                               | Futura           |
 | ARALUME_ENV                           | Aplicacao                    | Ambiente de execucao e configuracoes gerais (`development`, `test`, `staging`, `production`) | Futura           |
-| ARALUME_LOG_LEVEL                     | Observabilidade / logs       | Nivel de log padrao do runtime                   | Futura           |
-| ARALUME_AUTH_SIGNING_SECRET           | Autenticacao                 | Assinatura de autenticacao obrigatoria em staging/production | Produção-like    |
-| ARALUME_AUTH_TEST_BYPASS              | Autenticacao / testes        | Bypass de autenticacao apenas em testes locais   | Teste            |
-| DATABASE_URL                          | Banco de dados               | Conexao do backend futuro                        | Futura           |
-| TEST_DATABASE_URL                     | Testes                       | Banco isolado para validacoes                    | Futura           |
-| OPERATOR_ACCOUNTS_JSON                | Autenticacao                 | Lista de operadores para controle interno futuro | Futura           |
-| OPERATOR_SESSION_TTL_MINUTES          | Autenticacao                 | Tempo de sessao do operador                      | Futura           |
-| ARALUME_GOOGLE_ACCOUNT                | Legado / revisar             | Conta antiga para revisao manual                 | Legado / revisar |
-| ARALUME_GOOGLE_ACCOUNT_PASSWORD       | Legado / revisar             | Credencial antiga para revisao manual            | Legado / revisar |
-| ARALUME_OPENAI_API_KEY                | OpenAI / LLM                 | IA futura controlada                             | Futura           |
-| ARALUME_TTS_API_KEY                   | Voz / TTS                    | Provedor de voz futuro                           | Futura           |
-| ARALUME_TTS_MODEL                     | Voz / TTS                    | Modelo de voz futuro                             | Futura           |
-| ARALUME_TTS_PROVIDER                  | Voz / TTS                    | Provedor de voz futuro                           | Futura           |
-| ARALUME_TTS_VOICE                     | Voz / TTS                    | Voz padrao do sistema                            | Futura           |
-| ARALUME_ASSET_STORAGE_ROOT            | Storage                      | Raiz de armazenamento para midia; obrigatoria em staging/production | Produção-like    |
-| ARALUME_FFMPEG_PATH                   | Imagem / video               | Caminho do encoder futuro                        | Futura           |
-| ARALUME_FFPROBE_PATH                  | Imagem / video               | Caminho do probe futuro                          | Futura           |
-| ARALUME_VIDEO_RENDERER                | Imagem / video               | Motor de renderizacao futuro                     | Futura           |
-| ARALUME_PUBLICATION_OFFICIAL_ADAPTERS | YouTube / OAuth / publicacao | Adaptadores oficiais de publicacao aprovados para E13 | E13 aprovado |
-| ARALUME_PUBLICATION_TOKEN_SECRET      | YouTube / OAuth / publicacao | Segredo de token para publicacao futura          | Futura           |
-| ARALUME_TIKTOK_ACCOUNT                | YouTube / OAuth / publicacao | Conta de publicacao antiga                       | Legado / revisar |
-| ARALUME_YOUTUBE_CLIENT_ID             | YouTube / OAuth / publicacao | OAuth de publicacao aprovado para E13            | E13 aprovado     |
-| ARALUME_YOUTUBE_CLIENT_SECRET         | YouTube / OAuth / publicacao | OAuth de publicacao aprovado para E13            | E13 aprovado     |
-| ARALUME_YOUTUBE_REDIRECT_URI          | YouTube / OAuth / publicacao | Fluxo de OAuth aprovado para E13                 | E13 aprovado     |
+| ARALUME_LOG_LEVEL                     | Observabilidade / logs       | Nivel de log padrao do runtime                                                               | Futura           |
+| ARALUME_AUTH_SIGNING_SECRET           | Autenticacao                 | Assinatura de autenticacao obrigatoria em staging/production                                 | ProduÃƒÂ§ÃƒÂ£o-like    |
+| ARALUME_AUTH_TEST_BYPASS              | Autenticacao / testes        | Bypass de autenticacao apenas em testes locais                                               | Teste            |
+| DATABASE_URL                          | Banco de dados               | Conexao do backend futuro                                                                    | Futura           |
+| TEST_DATABASE_URL                     | Testes                       | Banco isolado para validacoes                                                                | Futura           |
+| OPERATOR_ACCOUNTS_JSON                | Autenticacao                 | Lista de operadores para controle interno futuro                                             | Futura           |
+| OPERATOR_SESSION_TTL_MINUTES          | Autenticacao                 | Tempo de sessao do operador                                                                  | Futura           |
+| ARALUME_GOOGLE_ACCOUNT                | Legado / revisar             | Conta antiga para revisao manual                                                             | Legado / revisar |
+| ARALUME_GOOGLE_ACCOUNT_PASSWORD       | Legado / revisar             | Credencial antiga para revisao manual                                                        | Legado / revisar |
+| ARALUME_OPENAI_API_KEY                | OpenAI / LLM                 | IA futura controlada                                                                         | Futura           |
+| ARALUME_TTS_API_KEY                   | Voz / TTS                    | Provedor de voz futuro                                                                       | Futura           |
+| ARALUME_TTS_MODEL                     | Voz / TTS                    | Modelo de voz futuro                                                                         | Futura           |
+| ARALUME_TTS_PROVIDER                  | Voz / TTS                    | Provedor de voz futuro                                                                       | Futura           |
+| ARALUME_TTS_VOICE                     | Voz / TTS                    | Voz padrao do sistema                                                                        | Futura           |
+| ARALUME_ASSET_STORAGE_ROOT            | Storage                      | Raiz de armazenamento para midia; obrigatoria em staging/production                          | ProduÃƒÂ§ÃƒÂ£o-like    |
+| ARALUME_FFMPEG_PATH                   | Imagem / video               | Caminho do encoder futuro                                                                    | Futura           |
+| ARALUME_FFPROBE_PATH                  | Imagem / video               | Caminho do probe futuro                                                                      | Futura           |
+| ARALUME_VIDEO_RENDERER                | Imagem / video               | Motor de renderizacao futuro                                                                 | Futura           |
+| ARALUME_PUBLICATION_OFFICIAL_ADAPTERS | YouTube / OAuth / publicacao | Adaptadores oficiais de publicacao aprovados para E13                                        | E13 aprovado     |
+| ARALUME_PUBLICATION_TOKEN_SECRET      | YouTube / OAuth / publicacao | Segredo de token para publicacao futura                                                      | Futura           |
+| ARALUME_TIKTOK_ACCOUNT                | YouTube / OAuth / publicacao | Conta de publicacao antiga                                                                   | Legado / revisar |
+| ARALUME_YOUTUBE_CLIENT_ID             | YouTube / OAuth / publicacao | OAuth de publicacao aprovado para E13                                                        | E13 aprovado     |
+| ARALUME_YOUTUBE_CLIENT_SECRET         | YouTube / OAuth / publicacao | OAuth de publicacao aprovado para E13                                                        | E13 aprovado     |
+| ARALUME_YOUTUBE_REDIRECT_URI          | YouTube / OAuth / publicacao | Fluxo de OAuth aprovado para E13                                                             | E13 aprovado     |
 
 ## Notes
 

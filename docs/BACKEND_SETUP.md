@@ -1,7 +1,9 @@
 # Backend Setup
 
 ## Scope
+
 This setup covers the Sprint 2 backend foundation only:
+
 - Express HTTP server;
 - environment validation;
 - request ID middleware;
@@ -13,7 +15,16 @@ This setup covers the Sprint 2 backend foundation only:
 
 No domain work is included yet.
 
+The current backend also exposes operational surfaces for observability and readiness:
+
+- `GET /live`
+- `GET /ready`
+- `GET /health`
+- `GET /ops/health`
+- `GET /ops/metrics`
+
 ## Install
+
 From the repository root:
 
 ```bash
@@ -61,30 +72,44 @@ Expected response:
   "ok": true,
   "service": "aralume-api",
   "environment": "development",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "liveness": { "ok": true, "status": "alive" },
+  "readiness": { "ok": true, "status": "ready" },
+  "metrics": { "totalRequests": 0, "activeRequests": 0 }
 }
 ```
 
 ## Environment variables used now
 
 Required for this foundation:
+
 - `ARALUME_ENV` (`development`, `test`, `staging`, or `production`)
 - `ARALUME_LOG_LEVEL`
 
 Required in staging/production:
+
 - `ARALUME_AUTH_SIGNING_SECRET`
 - `ARALUME_ASSET_STORAGE_ROOT`
+- `ARALUME_TRUSTED_PROXY_HOPS`
+- `ARALUME_ALLOWED_HOSTS`
+- `ARALUME_ALLOWED_ORIGINS`
 
 Optional for this foundation:
+
 - `DATABASE_URL`
 - `TEST_DATABASE_URL`
 - `ARALUME_AUTH_TEST_BYPASS` (test only)
+- `ARALUME_BUILD_ID`
+- `ARALUME_MAX_BODY_BYTES`
+- `ARALUME_REQUEST_TIMEOUT_MS`
+- `ARALUME_SHUTDOWN_TIMEOUT_MS`
 
 The backend will start with safe defaults in development and test. Staging and production fail closed before listeners open if the required secrets or storage root are missing or invalid.
 
 ## Future variables not required now
 
 The following remain documented for later phases and are not required by Sprint 2:
+
 - `OPERATOR_ACCOUNTS_JSON`
 - `OPERATOR_SESSION_TTL_MINUTES`
 - `ARALUME_OPENAI_API_KEY`
@@ -122,6 +147,7 @@ Bun is the official package manager for this repository. Keep `bun.lock` as the 
 ## Out of scope
 
 Sprint 2 does not include:
+
 - Canais domain;
 - CRUD real;
 - frontend/backend integration;

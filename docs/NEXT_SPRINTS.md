@@ -1,4 +1,4 @@
-﻿# Next Sprints
+# Next Sprints
 
 ## Regras de sequenciamento
 
@@ -17,7 +17,7 @@
 | ----- | --------- | ------------------------------------------------------ | -------------------------------------------------------------- | ---------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1     | Sprint 12 | E13 - Integracoes Reais Autorizadas                    | `docs/specs/015-authorized-real-integrations.md`               | completed                          | released     | PR #22 mergeado; OAuth com dois escopos, descoberta, selecao, upload privado/nao listado, consulta, replay idempotente, isolamento e revogacao validados. |
 | 2     | Sprint 13 | E14 - Metricas e Aprendizado                           | `docs/specs/014-metrics-learning.md`                           | completed                          | released     | PR #23 mergeada em `9b89d1be04e7a6e319efb9a957282097c4854f31`; gate E14 atendido.                                                                         |
-| 3     | Sprint 14 | E15 - Hardening V1.0                                   | `docs/specs/012-v1-acceptance.md`                              | completed                          | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta.                                           |
+| 3     | Sprint 14 | E15 - Hardening V1.0                                   | `docs/specs/012-v1-acceptance.md`                              | completed                          | not released | Gate de aceite concluido; `V1.0 NÃƒÆ’Ã†â€™O ACEITA`; PR #24 registra 13 criterios pendentes e a remediacao proposta.                                           |
 | 4     | Sprint 15 | E16 - Pipeline Editorial Operavel pelo Frontend        | `docs/specs/016-sprint-15-editorial-profile-ideas-research.md` | completed                          | not released | PR #26 entregou H16.0, H16.1 e H16.2; a fatia complementar da Sprint 16 concluiu H16.3 e H16.4.                                                           |
 | 5     | Sprint 16 | E16 - Pipeline Editorial Operavel pelo Frontend        | `docs/specs/017-sprint-16-scripts-visual-planning.md`          | completed                          | not released | PR desta execucao entregou H16.3 e H16.4; E16 concluido.                                                                                                  |
 | 6     | Sprint 17 | E17 - Pipeline Midia e Producao Operavel pelo Frontend | `docs/specs/018-sprint-17-narration-media-assets.md`           | completed                          | not released | PR #28 entregou H17.1 e H17.2 com API real, reload, auditoria, isolamento e evidencia browser.                                                            |
@@ -53,15 +53,15 @@
 
 - Sprint 14 executada em 2026-07-15 na branch `codex/sprint-14-v1-acceptance`, a partir de `d78959a47a2bafbb343408d703eafafec8c6df59`.
 - S12 e S13 foram confirmadas como encerradas no preflight.
-- O gate concluiu com veredito `V1.0 NÃƒÆ’O ACEITA`; 5 criterios passaram, 5 falharam e 8 ficaram sem prova suficiente.
-- A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementaÃƒÂ§ÃƒÂ£o.
-- E15 foi executado como gate documental; V1.0 nÃƒÂ£o estÃƒÂ¡ liberada para release.
+- O gate concluiu com veredito `V1.0 NÃƒÆ’Ã†â€™O ACEITA`; 5 criterios passaram, 5 falharam e 8 ficaram sem prova suficiente.
+- A remediacao foi formalizada no backlog como proposta, sem iniciar sprint ou implementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
+- E15 foi executado como gate documental; V1.0 nÃƒÆ’Ã‚Â£o estÃƒÆ’Ã‚Â¡ liberada para release.
 
 ## Proposta de remediacao apos Sprint 14
 
 - Epic selecionado: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
-- CritÃƒÂ©rios V1 mapeados: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia de perfil editorial.
+- CritÃƒÆ’Ã‚Â©rios V1 mapeados: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia de perfil editorial.
 - Itens R14 mapeados: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
 - Historias propostas: H16.0 a H16.4.
 - Sequencia sugerida: Sprint 15 para H16.0-H16.2; Sprint 16 para H16.3-H16.4.
@@ -156,7 +156,7 @@
 - Objetivo: preparar readiness ou pacote/draft de publicacao consultavel pelo frontend, sem auto-send ou chamada a provedor externo.
 - Fora de escopo: OAuth, conexao ou upload YouTube, E19, reaceite, release, tag, deploy, banco e migrations.
 - Definition of Ready: contratos de readiness e pacote revisados, limite no-auto-send instrumentado, requestId auditavel e fixtures de bloqueio/ready definidas.
-- Definition of Done: pacote persistido no mesmo processo após confirmação humana, reload, isolamento, estados, auditoria requestId, E2E e screenshots aprovados; gate integrado pela PR #33.
+- Definition of Done: pacote persistido no mesmo processo apÃ³s confirmaÃ§Ã£o humana, reload, isolamento, estados, auditoria requestId, E2E e screenshots aprovados; gate integrado pela PR #33.
 
 ## Sequencia recomendada apos E17
 
@@ -211,7 +211,17 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Epico governante: E15 - Hardening V1.0.
 - Spec normativa: `docs/specs/026-sprint-25-release-readiness-hardening.md`.
 - Branch desta execucao: `codex/sprint-25-release-readiness-hardening`.
-- Decisao normativa: Sprint 24 era a maior unidade formalizada e nenhuma unidade posterior estava reservada; Sprint 25/Spec 026 foi registrada antes da implementação.
-- Objetivo: eliminar os 14 diagnósticos TypeScript globais, remediar/classificar os três advisories transitivos e validar identidade inequívoca dos serviços nos runners.
-- Fora de escopo: configuração produtiva, secrets, backup, restore, rollback, observabilidade ampla, topologia/ingress, nova avaliação integral, release, tag e deploy.
+- Decisao normativa: Sprint 24 era a maior unidade formalizada e nenhuma unidade posterior estava reservada; Sprint 25/Spec 026 foi registrada antes da implementaÃ§Ã£o.
+- Objetivo: eliminar os 14 diagnÃ³sticos TypeScript globais, remediar/classificar os trÃªs advisories transitivos e validar identidade inequÃ­voca dos serviÃ§os nos runners.
+- Fora de escopo: configuraÃ§Ã£o produtiva, secrets, backup, restore, rollback, observabilidade ampla, topologia/ingress, nova avaliaÃ§Ã£o integral, release, tag e deploy.
+- Estado inicial: release 1.0.0 `NOT_READY`; nenhum release, tag ou deploy autorizado.
+
+## Sprint 28 - Observabilidade, topologia e readiness produtivo
+
+- Epic governante: E15 - Hardening V1.0.
+- Spec normativa: `docs/specs/029-sprint-28-observability-readiness-topology-ingress.md`.
+- Branch desta execucao: `codex/sprint-28-observability-readiness-topology-ingress`.
+- Decisao normativa: Sprint 27 encerrou configuracao, backup, restore e rollback; a proxima unidade formalizada e a Sprint 28 / Spec 029.
+- Objetivo: implementar health/readiness/liveness, logs estruturados, metricas minimas, shutdown gracioso e topologia/ingress produtivos.
+- Fora de escopo: release, tag, deploy, CI hospedado, branch protection, backup/restore, rollback, features funcionais nao relacionadas e reavaliacao integral da release.
 - Estado inicial: release 1.0.0 `NOT_READY`; nenhum release, tag ou deploy autorizado.

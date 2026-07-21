@@ -1,11 +1,17 @@
 import type { RequestHandler } from "express";
 import { createHmac } from "node:crypto";
 
-import { serviceName, serviceVersion } from "../config.js";
+import { serviceName } from "../config.js";
 import type { RuntimeEnv } from "../env.js";
+import type { OperationalRuntime } from "../operational.js";
+import {
+  createOperationalLiveHandler,
+  createOperationalMetricsHandler,
+  createOperationalReadyHandler,
+} from "../operational.js";
 import { createE2EIdentityChallengeGuard } from "./e2e-identity-challenge.js";
 
-export function createHealthHandler(env: RuntimeEnv): RequestHandler {
+export function createHealthHandler(env: RuntimeEnv, runtime: OperationalRuntime): RequestHandler {
   const challengeGuard = createE2EIdentityChallengeGuard();
   return (req, res) => {
     const identitySecret = env.ARALUME_E2E_IDENTITY_SECRET;
@@ -25,11 +31,10 @@ export function createHealthHandler(env: RuntimeEnv): RequestHandler {
             .update([challenge, serviceName, runId, String(process.pid), String(port)].join("\n"))
             .digest("hex")
         : undefined;
+    const snapshot = runtime.snapshotHealth();
+
     const payload = {
-      ok: true,
-      service: serviceName,
-      environment: env.ARALUME_ENV,
-      version: serviceVersion,
+      ...snapshot,
       ...(testIdentity
         ? {
             runId,
@@ -44,3 +49,7 @@ export function createHealthHandler(env: RuntimeEnv): RequestHandler {
     res.json(payload);
   };
 }
+
+export const createLiveHandler = createOperationalLiveHandler;
+export const createReadyHandler = createOperationalReadyHandler;
+export const createMetricsHandler = createOperationalMetricsHandler;

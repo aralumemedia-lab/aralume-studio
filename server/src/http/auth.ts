@@ -122,6 +122,8 @@ export function createAuthenticationMiddleware(options: AuthOptions): RequestHan
         : parseBearerPrincipal(req.header("authorization"), secret);
       req.auth = principal;
       applyTrustedActor(req, principal);
+      res.locals.auditActor = getTrustedAuditActor(req);
+      res.locals.auditChannelId = extractRequestedChannel(req);
       next();
     } catch (error) {
       recordAuthDecision(options.auditRepository, req, res, undefined, "failed", "authentication");
@@ -142,6 +144,7 @@ export function createAuthorizationMiddleware(
       }
 
       applyTrustedActor(req, principal);
+      res.locals.auditActor = getTrustedAuditActor(req);
 
       const permission = permissionForRequest(req);
       if (!permissionMatrix[principal.role].includes(permission)) {
@@ -170,6 +173,7 @@ export function createAuthorizationMiddleware(
         throw forbidden();
       }
 
+      res.locals.auditChannelId = requestedChannel;
       if (isMutatingRequest(req) && !deferPathChannelAuthorization) {
         recordAuthDecision(auditRepository, req, res, principal, "success", permission);
       }

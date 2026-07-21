@@ -1,4 +1,4 @@
-﻿# Product Backlog
+# Product Backlog
 
 Este backlog e um indice de planejamento. As specs continuam sendo os contratos
 normativos das sprints.
@@ -12,7 +12,7 @@ normativos das sprints.
 | E12 | Publicacao Assistida          | Preparar publicacao com aprovacao, compliance e sem envio automatico. | completed | Pacote pronto sem envio externo automatico.                                                     | E10, E11                       |
 | E13 | Integracoes Reais Autorizadas | Conectar provedores com governanca, autorizacao e seguranca.          | completed | Integracao oficial sem segredo e com destino server-side comprovado.                            | E12; ADR 002; PR #22           |
 | E14 | Metricas e Aprendizado        | Fechar o ciclo com metricas por canal e recomendacoes assistidas.     | completed | Metricas geram recomendacao editorial por canal.                                                | E13 concluido; PR #23 mergeada |
-| E15 | Hardening V1.0                | Consolidar a base operacional demonstravel para V1.0.                 | completed | Gate de aceite executado; veredito binario `V1.0 NÃƒÆ’O ACEITA`; remediacao formalizada abaixo. | E13 e E14 concluidos           |
+| E15 | Hardening V1.0                | Consolidar a base operacional demonstravel para V1.0.                 | completed | Gate de aceite executado; veredito binario `V1.0 NÃƒÆ’Ã†â€™O ACEITA`; remediacao formalizada abaixo. | E13 e E14 concluidos           |
 
 ## Sprints formalizadas
 
@@ -21,7 +21,7 @@ normativos das sprints.
 | S11    | Publicacao Assistida          | E12   | `docs/specs/011-publication-assisted.md`         | completed | PR #19 mergeado.                                                                             |
 | S12    | Integracoes Reais Autorizadas | E13   | `docs/specs/015-authorized-real-integrations.md` | completed | PR #22; validacao real concluida em 2026-07-15.                                              |
 | S13    | Metricas e Aprendizado        | E14   | `docs/specs/014-metrics-learning.md`             | completed | PR #23 mergeada por merge commit `9b89d1be04e7a6e319efb9a957282097c4854f31`.                 |
-| S14    | V1 Acceptance                 | E15   | `docs/specs/012-v1-acceptance.md`                | completed | Gate concluido com veredito `V1.0 NÃƒÆ’O ACEITA`; 13 criterios pendentes; PR #24 documental. |
+| S14    | V1 Acceptance                 | E15   | `docs/specs/012-v1-acceptance.md`                | completed | Gate concluido com veredito `V1.0 NÃƒÆ’Ã†â€™O ACEITA`; 13 criterios pendentes; PR #24 documental. |
 
 ## Historias da Sprint 11
 
@@ -113,28 +113,28 @@ Esta secao transforma os 13 criterios `FAIL`/`NOT PROVEN` e os dois cockpits moc
 
 | ID           | Tipo               | Criterio / superficie       | Grupo                        | Prioridade | Dependencias                                          |
 | ------------ | ------------------ | --------------------------- | ---------------------------- | ---------- | ----------------------------------------------------- |
-| R14-02       | Historia funcional | V1-02 Perfil editorial      | A Ã¢â‚¬â€ Pipeline editorial | P1         | V1-01                                                 |
-| R14-03       | Historia funcional | V1-03 Pauta                 | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-02                                                |
-| R14-04       | Historia funcional | V1-04 Pesquisa/fontes       | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-03                                                |
-| R14-05       | Historia funcional | V1-05 Roteiro versionado    | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-04                                                |
-| R14-06       | Historia funcional | V1-06 Plano visual/cenas    | A Ã¢â‚¬â€ Pipeline editorial | P1         | R14-05                                                |
-| R14-07       | Historia funcional | V1-07 Narracao autorizada   | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-06                                                |
-| R14-08       | Historia funcional | V1-08 Ativos rastreaveis    | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-07                                                |
-| R14-09       | Historia funcional | V1-09 Render controlado     | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-08                                                |
-| R14-10       | Historia funcional | V1-10 Corte derivado        | B Ã¢â‚¬â€ Midia e producao   | P1         | R14-09                                                |
-| R14-11       | Historia funcional | V1-11 Qualidade             | C Ã¢â‚¬â€ Governanca         | P1         | R14-09, R14-10                                        |
-| R14-12       | Historia funcional | V1-12 Conformidade          | C Ã¢â‚¬â€ Governanca         | P1         | R14-08, R14-11                                        |
-| R14-13       | Historia funcional | V1-13 Aprovacao humana      | C Ã¢â‚¬â€ Governanca         | P1         | R14-11, R14-12                                        |
-| R14-14       | Historia funcional | V1-14 Publicacao assistida  | C Ã¢â‚¬â€ Governanca         | P1         | R14-13                                                |
-| R14-T01      | Tarefa tecnica     | Dashboard real              | D Ã¢â‚¬â€ Cockpits reais     | P0         | APIs reais de custos, metricas, auditoria e workflows |
-| R14-T02      | Tarefa tecnica     | Escritorio de Agentes real  | D Ã¢â‚¬â€ Cockpits reais     | P0         | Contratos reais de agentes, workflows e handoffs      |
-| R14-REACCEPT | Tarefa tecnica     | Nova execucao V1 Acceptance | E Ã¢â‚¬â€ Reaceite           | P1         | R14-02 a R14-14, R14-T01 e R14-T02                    |
+| R14-02       | Historia funcional | V1-02 Perfil editorial      | A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pipeline editorial | P1         | V1-01                                                 |
+| R14-03       | Historia funcional | V1-03 Pauta                 | A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pipeline editorial | P1         | R14-02                                                |
+| R14-04       | Historia funcional | V1-04 Pesquisa/fontes       | A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pipeline editorial | P1         | R14-03                                                |
+| R14-05       | Historia funcional | V1-05 Roteiro versionado    | A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pipeline editorial | P1         | R14-04                                                |
+| R14-06       | Historia funcional | V1-06 Plano visual/cenas    | A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pipeline editorial | P1         | R14-05                                                |
+| R14-07       | Historia funcional | V1-07 Narracao autorizada   | B ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Midia e producao   | P1         | R14-06                                                |
+| R14-08       | Historia funcional | V1-08 Ativos rastreaveis    | B ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Midia e producao   | P1         | R14-07                                                |
+| R14-09       | Historia funcional | V1-09 Render controlado     | B ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Midia e producao   | P1         | R14-08                                                |
+| R14-10       | Historia funcional | V1-10 Corte derivado        | B ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Midia e producao   | P1         | R14-09                                                |
+| R14-11       | Historia funcional | V1-11 Qualidade             | C ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Governanca         | P1         | R14-09, R14-10                                        |
+| R14-12       | Historia funcional | V1-12 Conformidade          | C ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Governanca         | P1         | R14-08, R14-11                                        |
+| R14-13       | Historia funcional | V1-13 Aprovacao humana      | C ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Governanca         | P1         | R14-11, R14-12                                        |
+| R14-14       | Historia funcional | V1-14 Publicacao assistida  | C ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Governanca         | P1         | R14-13                                                |
+| R14-T01      | Tarefa tecnica     | Dashboard real              | D ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Cockpits reais     | P0         | APIs reais de custos, metricas, auditoria e workflows |
+| R14-T02      | Tarefa tecnica     | Escritorio de Agentes real  | D ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Cockpits reais     | P0         | Contratos reais de agentes, workflows e handoffs      |
+| R14-REACCEPT | Tarefa tecnica     | Nova execucao V1 Acceptance | E ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Reaceite           | P1         | R14-02 a R14-14, R14-T01 e R14-T02                    |
 
 ### Definition of Ready comum
 
 Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisado, dados e IDs definidos, canal-scoping especificado, estrategia de persistencia e auditoria, cenarios positivos/negativos, teste de contrato, teste de rota e evidencias visuais planejadas. Nenhum item autoriza mock como comportamento final.
 
-### R14-02 Ã¢â‚¬â€ Perfil editorial
+### R14-02 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Perfil editorial
 
 - Ator/valor: operador configura a identidade editorial do canal sem editar banco ou CLI.
 - Estado atual/causa raiz: campos sao exibidos, mas a mutacao frontend completa nao foi comprovada; falta fatia de formulario + persistencia.
@@ -143,7 +143,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: perfil incorreto contamina toda a linha editorial; P1; M.
 - Dependencias: V1-01. Aceite: salvar, recarregar, isolar por canal e produzir evento auditavel sem segredo.
 
-### R14-03 Ã¢â‚¬â€ Criacao de pauta
+### R14-03 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Criacao de pauta
 
 - Ator/valor: operador cria pauta e inicia o pipeline pelo frontend.
 - Estado atual/causa raiz: `/ideas` lista dados, `Nova pauta` nao abre formulario e transicoes sao toasts mockados.
@@ -152,7 +152,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: bloqueia todo o pipeline; P1; M.
 - Dependencias: R14-02. Aceite: pauta nova aparece apos reload e cada transicao muda estado via API real.
 
-### R14-04 Ã¢â‚¬â€ Pesquisa, fontes e claims
+### R14-04 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pesquisa, fontes e claims
 
 - Ator/valor: pesquisador registra fonte e claim rastreavel ligado a pauta.
 - Estado atual/causa raiz: `/research` e consulta; comandos de fonte/claim nao foram demonstrados.
@@ -161,7 +161,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: conteudo sem sustentacao; P1; L.
 - Dependencias: R14-03. Aceite: sessao, fonte, claim e vinculo sao criados pelo frontend e consultaveis depois.
 
-### R14-05 Ã¢â‚¬â€ Roteiro versionado
+### R14-05 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Roteiro versionado
 
 - Ator/valor: editor cria roteiro e preserva historico de versoes.
 - Estado atual/causa raiz: `/scripts` lista roteiros, sem criacao/versionamento E2E.
@@ -170,7 +170,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: perda de contexto editorial; P1; M.
 - Dependencias: R14-04. Aceite: duas versoes sao criadas, a anterior permanece imutavel e o roteiro e canal-scoped.
 
-### R14-06 Ã¢â‚¬â€ Plano visual e cenas
+### R14-06 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Plano visual e cenas
 
 - Ator/valor: produtor planeja cenas ligadas ao roteiro antes do render.
 - Estado atual/causa raiz: contratos/backend existem, mas nao ha tela operacional comprovada.
@@ -179,7 +179,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: render sem plano rastreavel; P1; M.
 - Dependencias: R14-05. Aceite: plano e cenas novas aparecem no frontend e vinculam roteiro/pauta/canal.
 
-### R14-07 Ã¢â‚¬â€ Narracao autorizada
+### R14-07 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Narracao autorizada
 
 - Ator/valor: operador registra narracao propria ou autorizada com procedencia.
 - Estado atual/causa raiz: existe seed `ma_hist_narration_01`, mas seed nao prova entrada operacional.
@@ -188,7 +188,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: uso indevido de audio; P1; M.
 - Dependencias: R14-06. Aceite: narracao nova e autorizada e selecionavel pelo plano/render.
 
-### R14-08 Ã¢â‚¬â€ Ativos visuais rastreaveis
+### R14-08 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ativos visuais rastreaveis
 
 - Ator/valor: operador registra/importa imagem, video, thumbnail ou musica com procedencia.
 - Estado atual/causa raiz: `/media-assets` le e detalha, mas nao comprovou criacao/importacao frontend completa.
@@ -197,7 +197,7 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: ativo sem direitos/rastreabilidade; P1; M.
 - Dependencias: R14-07. Aceite: ativo novo e validado, canal-scoped e utilizavel no render.
 
-### R14-09 Ã¢â‚¬â€ Render controlado
+### R14-09 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Render controlado
 
 - Ator/valor: produtor inicia render auditavel pelo frontend.
 - Estado atual/causa raiz: controles e backend existem, mas nao houve transacao E2E nesta rodada.
@@ -206,16 +206,16 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: saida nao reproduzivel; P1; M.
 - Dependencias: R14-08. Aceite: job novo conclui ou falha com estado, output, custo e evento auditavel.
 
-### R14-10 Ã¢â‚¬â€ Corte derivado
+### R14-10 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Corte derivado
 
-- Ator/valor: editor gera corte rastreado do video-mÃƒÂ£e.
+- Ator/valor: editor gera corte rastreado do video-mÃƒÆ’Ã‚Â£e.
 - Estado atual/causa raiz: contrato/servico existem, mas criacao persistida nao foi observada.
 - Superficies: `/clips`; `POST /api/clips`, `GET /api/clips/:id`; persistencia do corte/arquivo/vinculo; auditoria.
 - Testes/evidencia: intervalo invalido, canal divergente, idempotencia, reload e screenshot.
 - Risco/prioridade/estimativa: derivado sem vinculo; P1; M.
 - Dependencias: R14-09. Aceite: corte novo exibe video-mae, intervalo, gancho, status e arquivo.
 
-### R14-11 Ã¢â‚¬â€ Qualidade tecnica
+### R14-11 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Qualidade tecnica
 
 - Ator/valor: revisor verifica qualidade antes de aprovar/publicar.
 - Estado atual/causa raiz: backend/servico existe, mas gate visual completo nao foi executado.
@@ -224,52 +224,52 @@ Cada item abaixo so pode iniciar quando houver contrato frontend/backend revisad
 - Risco/prioridade/estimativa: produto defeituoso avancar; P1; M.
 - Dependencias: R14-09, R14-10. Sprint proposta: Sprint 19. Aceite: qualidade bloqueada impede avanco e aprovada permite proximo gate.
 
-### R14-12 Ã¢â‚¬â€ Conformidade e direitos
+### R14-12 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Conformidade e direitos
 
-- Ator/valor: compliance bloqueia risco material e exige correÃƒÂ§ÃƒÂ£o.
-- Estado atual/causa raiz: alertas consultaveis, mas cenÃƒÂ¡rio negativo nao foi exercitado pelo frontend.
+- Ator/valor: compliance bloqueia risco material e exige correÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
+- Estado atual/causa raiz: alertas consultaveis, mas cenÃƒÆ’Ã‚Â¡rio negativo nao foi exercitado pelo frontend.
 - Superficies: `/compliance`/`/approvals`; `GET/POST /api/compliance-checks`; persistencia de findings/status; auditoria.
-- Testes/evidencia: caso blocked, correÃƒÂ§ÃƒÂ£o, revalidaÃƒÂ§ÃƒÂ£o, canal divergente e screenshot.
-- Risco/prioridade/estimativa: violaÃƒÂ§ÃƒÂ£o de direitos/policy; P1; M.
+- Testes/evidencia: caso blocked, correÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, revalidaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o, canal divergente e screenshot.
+- Risco/prioridade/estimativa: violaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de direitos/policy; P1; M.
 - Dependencias: R14-08, R14-11. Sprint proposta: Sprint 19. Aceite: bloqueio material impede aprovacao/publicacao ate revalidacao aprovada.
 
-### R14-13 Ã¢â‚¬â€ Aprovacao humana
+### R14-13 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Aprovacao humana
 
-- Ator/valor: responsÃƒÂ¡vel decide com rastreabilidade, sem aprovaÃƒÂ§ÃƒÂ£o automÃƒÂ¡tica.
-- Estado atual/causa raiz: aÃƒÂ§ÃƒÂµes reais e testes existem, mas nenhuma decisÃƒÂ£o humana E2E foi registrada.
-- Superficies: `/approvals`; endpoints approve/reject/request-changes; persistencia de decisÃƒÂ£o/histÃƒÂ³rico; auditoria.
-- Testes/evidencia: trÃƒÂªs decisÃƒÂµes, estados invÃƒÂ¡lidos, reload e screenshot com ator/timestamp.
-- Risco/prioridade/estimativa: publicaÃƒÂ§ÃƒÂ£o sem supervisÃƒÂ£o; P1; M.
+- Ator/valor: responsÃƒÆ’Ã‚Â¡vel decide com rastreabilidade, sem aprovaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o automÃƒÆ’Ã‚Â¡tica.
+- Estado atual/causa raiz: aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes reais e testes existem, mas nenhuma decisÃƒÆ’Ã‚Â£o humana E2E foi registrada.
+- Superficies: `/approvals`; endpoints approve/reject/request-changes; persistencia de decisÃƒÆ’Ã‚Â£o/histÃƒÆ’Ã‚Â³rico; auditoria.
+- Testes/evidencia: trÃƒÆ’Ã‚Âªs decisÃƒÆ’Ã‚Âµes, estados invÃƒÆ’Ã‚Â¡lidos, reload e screenshot com ator/timestamp.
+- Risco/prioridade/estimativa: publicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o sem supervisÃƒÆ’Ã‚Â£o; P1; M.
 - Dependencias: R14-11, R14-12. Sprint proposta: Sprint 19. Aceite: somente decisao valida muda o estado e o historico fica consultavel.
 
-### R14-14 Ã¢â‚¬â€ Publicacao assistida
+### R14-14 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Publicacao assistida
 
-- Ator/valor: operador prepara pacote/draft sem upload automÃƒÂ¡tico.
+- Ator/valor: operador prepara pacote/draft sem upload automÃƒÆ’Ã‚Â¡tico.
 - Estado atual/causa raiz: fluxo de pacote real implementado nesta branch; evidencia formal e merge ainda pendentes.
 - Superficies: `/publications`; targets/readiness e `POST /api/publications`; persistencia de job/payload/bloqueios; auditoria.
-- Testes/evidencia: readiness blocked/ready, aprovaÃƒÂ§ÃƒÂ£o ausente, replay, reload e screenshot; nenhum upload real.
-- Risco/prioridade/estimativa: publicaÃƒÂ§ÃƒÂ£o sem governanÃƒÂ§a; P1; M.
+- Testes/evidencia: readiness blocked/ready, aprovaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o ausente, replay, reload e screenshot; nenhum upload real.
+- Risco/prioridade/estimativa: publicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o sem governanÃƒÆ’Ã‚Â§a; P1; M.
 - Dependencias: R14-13. Sprint: Sprint 20. Aceite: pacote preparado com source video, approval, compliance, readiness, confirmacao humana e bloqueios visiveis, sem envio automatico.
 
-### R14-T01 Ã¢â‚¬â€ Dashboard real
+### R14-T01 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Dashboard real
 
 - Ator/valor: operador acompanha KPIs operacionais reais por canal.
-- Estado atual/causa raiz: `src/services/api-client.ts:91` reexporta `getDashboardSummary` de `mock-api.ts`; nÃƒÂ£o hÃƒÂ¡ superfÃƒÂ­cie real comprovada para o resumo.
-- Superficies: `/dashboard`; contratos de custos, metrics, audit e workflows; persistencia nos dominios existentes; auditoria de aÃƒÂ§ÃƒÂµes quando aplicÃƒÂ¡vel.
+- Estado atual/causa raiz: `src/services/api-client.ts:91` reexporta `getDashboardSummary` de `mock-api.ts`; nÃƒÆ’Ã‚Â£o hÃƒÆ’Ã‚Â¡ superfÃƒÆ’Ã‚Â­cie real comprovada para o resumo.
+- Superficies: `/dashboard`; contratos de custos, metrics, audit e workflows; persistencia nos dominios existentes; auditoria de aÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes quando aplicÃƒÆ’Ã‚Â¡vel.
 - Testes/evidencia: sem mock import, requests reais, loading/erro/vazio, isolamento e screenshot por viewport.
 - Risco/prioridade/estimativa: cockpit enganoso; P0; L.
-- Dependencias: R14-09 a R14-14, APIs de metrics/costs/audit e decisÃƒÂ£o de contrato.
-- Aceite: nenhum mock chega ao dashboard; KPIs e estados vÃƒÂªm de APIs reais e preservam `channelId`.
+- Dependencias: R14-09 a R14-14, APIs de metrics/costs/audit e decisÃƒÆ’Ã‚Â£o de contrato.
+- Aceite: nenhum mock chega ao dashboard; KPIs e estados vÃƒÆ’Ã‚Âªm de APIs reais e preservam `channelId`.
 
-### R14-T02 Ã¢â‚¬â€ Escritorio de Agentes real
+### R14-T02 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Escritorio de Agentes real
 
 - Ator/valor: operador acompanha agentes, workflows, handoffs, fila e bloqueios reais.
-- Estado atual/causa raiz: `src/services/api-client.ts:91,135` reexporta agentes, snapshot e workflows de `mock-api.ts`; endpoints reais nÃƒÂ£o estÃƒÂ£o comprovados.
-- Superficies: `/agent-office`; contratos `/api/agents`, `/api/agent-office/snapshot`, `/api/workflows`; persistencia de execuÃƒÂ§ÃƒÂ£o/handoff; auditoria de transiÃƒÂ§ÃƒÂµes.
+- Estado atual/causa raiz: `src/services/api-client.ts:91,135` reexporta agentes, snapshot e workflows de `mock-api.ts`; endpoints reais nÃƒÆ’Ã‚Â£o estÃƒÆ’Ã‚Â£o comprovados.
+- Superficies: `/agent-office`; contratos `/api/agents`, `/api/agent-office/snapshot`, `/api/workflows`; persistencia de execuÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o/handoff; auditoria de transiÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes.
 - Testes/evidencia: requests reais, estados loading/erro/vazio, canal, timeline, fila e screenshot por viewport.
 - Risco/prioridade/estimativa: falsa visibilidade operacional; P0; L.
-- Dependencias: contrato backend aprovado e integraÃƒÂ§ÃƒÂ£o com workflows/handoffs.
-- Aceite: nenhum fixture/mock ÃƒÂ© exibido como estado real; agentes e workflows vÃƒÂªm de APIs persistentes e auditÃƒÂ¡veis.
+- Dependencias: contrato backend aprovado e integraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o com workflows/handoffs.
+- Aceite: nenhum fixture/mock ÃƒÆ’Ã‚Â© exibido como estado real; agentes e workflows vÃƒÆ’Ã‚Âªm de APIs persistentes e auditÃƒÆ’Ã‚Â¡veis.
 
 ### E18 - Sequencia proposta
 
@@ -348,34 +348,34 @@ Esta unidade funcional pertence ao E15 e foi formalizada antes da implementacao.
 
 ## Sprint 25 - Hardening tecnico de release readiness
 
-Esta unidade pertence ao E15 e foi formalizada após o merge da Sprint 24. A decisão documental registrou Sprint 25/Spec 026 como próximo número normativo, pois não havia unidade posterior reservada.
+Esta unidade pertence ao E15 e foi formalizada apÃ³s o merge da Sprint 24. A decisÃ£o documental registrou Sprint 25/Spec 026 como prÃ³ximo nÃºmero normativo, pois nÃ£o havia unidade posterior reservada.
 
-| ID       | Tipo                    | Escopo                                                        | Prioridade | Spec                                                   | Dependências |
-| -------- | ----------------------- | ------------------------------------------------------------- | ---------- | ------------------------------------------------------ | ------------ |
-| RR25-01  | Qualidade técnica       | Eliminar os 14 diagnósticos do typecheck global               | P0         | `docs/specs/026-sprint-25-release-readiness-hardening.md` | Sprint 24 integrada |
-| RR25-02  | Dependências            | Remediar/classificar @babel/core, brace-expansion e js-yaml | P0         | mesma spec                                             | RR25-01 |
-| RR25-03  | Identidade operacional  | Associar runId, PID, porta e serviço nos runners             | P0         | mesma spec                                             | Sprint 24 runners |
-| RR25-04  | Evidência               | Gates reproduzíveis e testes negativos                        | P0         | mesma spec                                             | RR25-01 a RR25-03 |
+| ID      | Tipo                   | Escopo                                                      | Prioridade | Spec                                                      | DependÃªncias        |
+| ------- | ---------------------- | ----------------------------------------------------------- | ---------- | --------------------------------------------------------- | ------------------- |
+| RR25-01 | Qualidade tÃ©cnica      | Eliminar os 14 diagnÃ³sticos do typecheck global             | P0         | `docs/specs/026-sprint-25-release-readiness-hardening.md` | Sprint 24 integrada |
+| RR25-02 | DependÃªncias           | Remediar/classificar @babel/core, brace-expansion e js-yaml | P0         | mesma spec                                                | RR25-01             |
+| RR25-03 | Identidade operacional | Associar runId, PID, porta e serviÃ§o nos runners            | P0         | mesma spec                                                | Sprint 24 runners   |
+| RR25-04 | EvidÃªncia              | Gates reproduzÃ­veis e testes negativos                      | P0         | mesma spec                                                | RR25-01 a RR25-03   |
 
 ### Definition of Done da Sprint 25
 
 - Typecheck global verde sem enfraquecimento de strict.
 - Advisories remediados ou formalmente classificados.
-- Runners rejeitam serviço/processo de execução incorreta.
-- Evidência nova separada da Sprint 24.
+- Runners rejeitam serviÃ§o/processo de execuÃ§Ã£o incorreta.
+- EvidÃªncia nova separada da Sprint 24.
 - Nenhum backup, restore, rollback, observabilidade ampla, topologia, release, tag ou deploy.
 
 ## Sprint 27 - Configuracao produtiva, backup/restore e rollback
 
 Esta unidade pertence ao E15 e foi formalizada apos o merge da Sprint 26. A decisao documental registrou Sprint 27 / Spec 028 como o proximo numero normativo, porque a fila operacional nao reservava uma unidade posterior.
 
-| ID       | Tipo                     | Escopo                                                             | Prioridade | Spec                                                        | Dependencias |
-| -------- | ------------------------ | ------------------------------------------------------------------ | ---------- | ----------------------------------------------------------- | ------------ |
-| RC27-01  | Configuracao produtiva    | Esquema fail-closed por ambiente, secrets e rejeicao de teste      | P0         | `docs/specs/028-sprint-27-production-configuration-backup-rollback.md` | Sprint 26 integrada |
-| RC27-02  | Inventario de secrets     | Classificacao, protecao e rastreabilidade de variaveis/segredos     | P0         | mesma spec                                                 | RC27-01 |
-| RC27-03  | Backup e restore          | Snapshot consistente de JSON persistido e storage com checksum      | P0         | mesma spec                                                 | RC27-01 |
-| RC27-04  | Rollback operacional      | Recuperacao de aplicacao e estado por restore validado              | P0         | mesma spec                                                 | RC27-03 |
-| RC27-05  | Evidencia e gates         | Testes negativos, gates tecnicos e evidencia operacional reproduzivel | P0      | mesma spec                                                 | RC27-01 a RC27-04 |
+| ID      | Tipo                   | Escopo                                                                | Prioridade | Spec                                                                   | Dependencias        |
+| ------- | ---------------------- | --------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- | ------------------- |
+| RC27-01 | Configuracao produtiva | Esquema fail-closed por ambiente, secrets e rejeicao de teste         | P0         | `docs/specs/028-sprint-27-production-configuration-backup-rollback.md` | Sprint 26 integrada |
+| RC27-02 | Inventario de secrets  | Classificacao, protecao e rastreabilidade de variaveis/segredos       | P0         | mesma spec                                                             | RC27-01             |
+| RC27-03 | Backup e restore       | Snapshot consistente de JSON persistido e storage com checksum        | P0         | mesma spec                                                             | RC27-01             |
+| RC27-04 | Rollback operacional   | Recuperacao de aplicacao e estado por restore validado                | P0         | mesma spec                                                             | RC27-03             |
+| RC27-05 | Evidencia e gates      | Testes negativos, gates tecnicos e evidencia operacional reproduzivel | P0         | mesma spec                                                             | RC27-01 a RC27-04   |
 
 ### Definition of Done da Sprint 27
 
@@ -386,13 +386,35 @@ Esta unidade pertence ao E15 e foi formalizada apos o merge da Sprint 26. A deci
 - Rollback operacional testado.
 - Nenhum segredo exposto, nenhum merge, release, tag ou deploy.
 
+## Sprint 28 - Observabilidade, topologia e readiness produtivo
+
+Esta unidade pertence ao E15 e e a proxima unidade normativa apos a Sprint 27. A decisao documental registra Sprint 28 / Spec 029 como a fila operacional atual para readiness produtivo.
+
+| ID      | Tipo                                 | Escopo                                                                | Prioridade | Spec                                                                   | Dependencias        |
+| ------- | ------------------------------------ | --------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- | ------------------- |
+| OR28-01 | Health / readiness / liveness        | Contratos distintos de liveness, readiness e health sanitizado        | P0         | `docs/specs/029-sprint-28-observability-readiness-topology-ingress.md` | Sprint 27 integrada |
+| OR28-02 | Logs estruturados                    | RequestId, actorId sanitizado, channelId e redacao de dados sensiveis | P0         | mesma spec                                                             | OR28-01             |
+| OR28-03 | Metricas operacionais                | Contadores, latencia, readiness e falhas de dependencia               | P0         | mesma spec                                                             | OR28-01             |
+| OR28-04 | Shutdown gracioso                    | SIGTERM/SIGINT, withdrawal de readiness, fechamento de listeners      | P0         | mesma spec                                                             | OR28-01             |
+| OR28-05 | Topologia e ingress                  | HTTPS, trusted proxy, host/origin allowlist, limites e headers        | P0         | mesma spec                                                             | OR28-01             |
+| OR28-06 | Smoke produtivo simulado e evidencia | Cenarios positivos/negativos, portas livres e evidencia reproduzivel  | P0         | mesma spec                                                             | OR28-01 a OR28-05   |
+
+### Definition of Done da Sprint 28
+
+- Health, readiness e liveness distintos e verificaveis.
+- Logs estruturados e sanitizados com requestId.
+- Metricas operacionais minimas expostas ou registradas.
+- Shutdown gracioso com readiness retirada e sem processos orfaos.
+- Topologia e ingress produtivos documentados e testados.
+- Nenhum merge, release, tag ou deploy.
+
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
 - Status: completed, com Sprint 15 e Sprint 16 entregues.
 - Nota: esta e a proposta inicial do E16, preservada como historico; a sequencia consolidada e vigente aparece mais abaixo e inclui V1-02 no mesmo epico e E16 concluido.
 - Iniciativa: Remediacao da Operabilidade da V1.
 - Objetivo: tornar operaveis pelo frontend os fluxos editoriais de pauta, pesquisa, fontes, claims, roteiro, versao, plano visual e cenas com persistencia, auditoria e isolamento por canal.
-- CritÃƒÂ©rios V1 relacionados: V1-03 Pauta, V1-04 Pesquisa e fontes, V1-05 Roteiro versionado, V1-06 Planejamento visual.
+- CritÃƒÆ’Ã‚Â©rios V1 relacionados: V1-03 Pauta, V1-04 Pesquisa e fontes, V1-05 Roteiro versionado, V1-06 Planejamento visual.
 - Dependencia upstream: V1-02 Perfil editorial, somente como precondicao de contexto.
 - Itens R14 incluidos: R14-03, R14-04, R14-05, R14-06.
 - Itens R14 dependentes: R14-02 como dependencia de identidade/perfil editorial.
@@ -410,14 +432,14 @@ Esta unidade pertence ao E15 e foi formalizada apos o merge da Sprint 26. A deci
 
 - Nao renumerar epicos historicos.
 - Nao tratar esta proposta como inicio de sprint.
-- Nao registrar remediacao como concluida em histórico anterior, mas manter o estado atual de E16 como concluido.
+- Nao registrar remediacao como concluida em histÃ³rico anterior, mas manter o estado atual de E16 como concluido.
 
-### R14-REACCEPT Ã¢â‚¬â€ Reexecucao da V1 Acceptance
+### R14-REACCEPT ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Reexecucao da V1 Acceptance
 
-- Ator/valor: revisor independente decide novamente o aceite binÃƒÂ¡rio.
-- Estado atual/causa raiz: sÃƒÂ³ pode ocorrer apÃƒÂ³s R14-02 a R14-14 e R14-T01/T02; nenhum reaceite foi iniciado.
+- Ator/valor: revisor independente decide novamente o aceite binÃƒÆ’Ã‚Â¡rio.
+- Estado atual/causa raiz: sÃƒÆ’Ã‚Â³ pode ocorrer apÃƒÆ’Ã‚Â³s R14-02 a R14-14 e R14-T01/T02; nenhum reaceite foi iniciado.
 - Superficies: jornada inteira pelo frontend; todos os contratos acima; dados novos, IDs, persistencia e auditoria.
-- Testes/evidencia: 18 critÃƒÂ©rios, positivos/negativos, isolamento, custos, auditoria, QA visual, logs e matriz vinculada ao head.
+- Testes/evidencia: 18 critÃƒÆ’Ã‚Â©rios, positivos/negativos, isolamento, custos, auditoria, QA visual, logs e matriz vinculada ao head.
 - Risco/prioridade/estimativa: aceitar V1 sem prova; P1; L.
-- Dependencias: todos os itens obrigatÃƒÂ³rios fechados e checks verdes.
-- Aceite: cada V1-01..V1-18 tem status `PASS` com prova nova no mesmo head; caso contrÃƒÂ¡rio, permanece `V1.0 NÃƒÆ’O ACEITA`.
+- Dependencias: todos os itens obrigatÃƒÆ’Ã‚Â³rios fechados e checks verdes.
+- Aceite: cada V1-01..V1-18 tem status `PASS` com prova nova no mesmo head; caso contrÃƒÆ’Ã‚Â¡rio, permanece `V1.0 NÃƒÆ’Ã†â€™O ACEITA`.

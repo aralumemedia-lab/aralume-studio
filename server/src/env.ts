@@ -20,10 +20,43 @@ const optionalBooleanText = z.preprocess(
   z.enum(["true", "false"]).optional(),
 );
 
+const optionalIntegerText = z.preprocess((value) => {
+  if (value === "") {
+    return undefined;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isInteger(parsed) ? parsed : value;
+  }
+
+  return value;
+}, z.number().int().optional());
+
+const optionalPositiveIntegerText = z.preprocess((value) => {
+  if (value === "") {
+    return undefined;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isInteger(parsed) ? parsed : value;
+  }
+
+  return value;
+}, z.number().int().positive().optional());
+
 const runtimeEnvSchema = z
   .object({
     ARALUME_ENV: z.enum(["development", "test", "staging", "production"]).default("development"),
     ARALUME_LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+    ARALUME_BUILD_ID: optionalText,
+    ARALUME_TRUSTED_PROXY_HOPS: optionalIntegerText,
+    ARALUME_ALLOWED_HOSTS: optionalText,
+    ARALUME_ALLOWED_ORIGINS: optionalText,
+    ARALUME_MAX_BODY_BYTES: optionalPositiveIntegerText,
+    ARALUME_REQUEST_TIMEOUT_MS: optionalPositiveIntegerText,
+    ARALUME_SHUTDOWN_TIMEOUT_MS: optionalPositiveIntegerText,
     ARALUME_AUTH_TEST_BYPASS: optionalBooleanText,
     ARALUME_E2E_RUN_ID: optionalText,
     ARALUME_E2E_STARTUP_NONCE: optionalText,
@@ -81,6 +114,62 @@ const runtimeEnvSchema = z
       });
     }
 
+    if (productionLike && value.ARALUME_TRUSTED_PROXY_HOPS === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_TRUSTED_PROXY_HOPS"],
+        message: "Trusted proxy hops are required in production-like environments",
+      });
+    }
+
+    if (productionLike && !value.ARALUME_ALLOWED_HOSTS) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_ALLOWED_HOSTS"],
+        message: "Allowed hosts are required in production-like environments",
+      });
+    }
+
+    if (productionLike && !value.ARALUME_ALLOWED_ORIGINS) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_ALLOWED_ORIGINS"],
+        message: "Allowed origins are required in production-like environments",
+      });
+    }
+
+    if (value.ARALUME_TRUSTED_PROXY_HOPS !== undefined && value.ARALUME_TRUSTED_PROXY_HOPS < 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_TRUSTED_PROXY_HOPS"],
+        message: "Trusted proxy hops must be zero or greater",
+      });
+    }
+
+    if (value.ARALUME_MAX_BODY_BYTES !== undefined && value.ARALUME_MAX_BODY_BYTES < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_MAX_BODY_BYTES"],
+        message: "Maximum body bytes must be positive",
+      });
+    }
+
+    if (value.ARALUME_REQUEST_TIMEOUT_MS !== undefined && value.ARALUME_REQUEST_TIMEOUT_MS < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_REQUEST_TIMEOUT_MS"],
+        message: "Request timeout must be positive",
+      });
+    }
+
+    if (value.ARALUME_SHUTDOWN_TIMEOUT_MS !== undefined && value.ARALUME_SHUTDOWN_TIMEOUT_MS < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ARALUME_SHUTDOWN_TIMEOUT_MS"],
+        message: "Shutdown timeout must be positive",
+      });
+    }
+
     const productionRejectedKeys = [
       "ARALUME_AUTH_TEST_BYPASS",
       "ARALUME_E2E_RUN_ID",
@@ -90,8 +179,9 @@ const runtimeEnvSchema = z
     ] as const;
 
     if (productionLike) {
+      const rawValue = value as Record<string, unknown>;
       for (const key of productionRejectedKeys) {
-        if ((value as Record<string, string | undefined>)[key]) {
+        if (rawValue[key]) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: [key],
@@ -155,6 +245,13 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): RuntimeEnv {
   const result = runtimeEnvSchema.safeParse({
     ARALUME_ENV: source.ARALUME_ENV,
     ARALUME_LOG_LEVEL: source.ARALUME_LOG_LEVEL,
+    ARALUME_BUILD_ID: source.ARALUME_BUILD_ID,
+    ARALUME_TRUSTED_PROXY_HOPS: source.ARALUME_TRUSTED_PROXY_HOPS,
+    ARALUME_ALLOWED_HOSTS: source.ARALUME_ALLOWED_HOSTS,
+    ARALUME_ALLOWED_ORIGINS: source.ARALUME_ALLOWED_ORIGINS,
+    ARALUME_MAX_BODY_BYTES: source.ARALUME_MAX_BODY_BYTES,
+    ARALUME_REQUEST_TIMEOUT_MS: source.ARALUME_REQUEST_TIMEOUT_MS,
+    ARALUME_SHUTDOWN_TIMEOUT_MS: source.ARALUME_SHUTDOWN_TIMEOUT_MS,
     ARALUME_AUTH_TEST_BYPASS: source.ARALUME_AUTH_TEST_BYPASS,
     ARALUME_E2E_RUN_ID: source.ARALUME_E2E_RUN_ID,
     ARALUME_E2E_STARTUP_NONCE: source.ARALUME_E2E_STARTUP_NONCE,
