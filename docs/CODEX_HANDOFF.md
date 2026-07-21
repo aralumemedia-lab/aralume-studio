@@ -242,6 +242,17 @@ recriacao do frontend e limpeza administrativa da S12.
 - Fora de escopo: release, tag, deploy, backup, restore, rollback e qualquer expansao funcional nao relacionada.
 - Estado da release: `NOT_READY`; nenhum release, tag ou deploy autorizado.
 
+## Handoff - remediacao de prontidao operacional da release 1.0.0
+
+- Estado: unidade de nivel de release, posterior a Sprint 28, sem criar uma nova sprint numerada.
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/030-release-1.0.0-operational-readiness-remediation.md`.
+- Base documental: avaliacao de release #45 com veredito `NOT_READY`.
+- Objetivo: implementar a infraestrutura, automacao e evidencias para os blockers de release readiness documentados.
+- Inclusoes: artefato e topologia de implantacao, CI hospedado, ownership de branch, configuracao e segredos, runbooks executaveis, monitoramento e reaceite browser consolidado.
+- Exclusoes: features editoriais novas, novos contratos de produto e qualquer autorizacao de release ou deploy.
+- Estado da release: `NOT_READY`; nenhuma remediacao autoriza release ou deploy por si so.
+
 ## Regra operacional - execucao controlada com subagentes
 
 Subagentes devem ser considerados somente quando produzirem ganho real de

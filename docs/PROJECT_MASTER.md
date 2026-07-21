@@ -1682,3 +1682,18 @@ O escopo Ã© limitado Ã  eliminaÃ§Ã£o dos diagnÃ³sticos TypeScript glob
 A Sprint 28 Ã© a prÃ³xima unidade normativa do E15 apÃ³s a Sprint 27. A decisÃ£o foi registrada porque a Sprint 27/Spec 028 fechou configuraÃ§Ã£o produtiva, backup, restore e rollback sem reservar uma unidade posterior. A spec Ã© `docs/specs/029-sprint-28-observability-readiness-topology-ingress.md`.
 
 O escopo Ã© limitado a health, readiness e liveness distintos, logs estruturados e sanitizados, mÃ©tricas operacionais mÃ­nimas, shutdown gracioso, topologia produtiva documentada, requisitos de ingress/HTTPS/proxy/headers, e smoke tests de ambiente produtivo simulado. Release, tag, deploy, CI hospedado, branch protection, backup, restore e rollback permanecem fora de escopo. A release continua `NOT_READY`.
+
+### RemediaÃ§Ã£o de prontidÃ£o operacional da release 1.0.0
+
+A etapa seguinte apÃ³s a Sprint 28 nÃ£o introduz uma nova sprint numerada. Ela formaliza a remediaÃ§Ã£o de release 1.0.0 como unidade normativa de nÃ­vel de release, governada por `docs/specs/030-release-1.0.0-operational-readiness-remediation.md`.
+
+Essa unidade existe para fechar os bloqueadores documentados na avaliaÃ§Ã£o de release sem alterar a linha funcional do produto:
+
+- artefato e topologia de implantaÃ§Ã£o executÃ¡veis;
+- CI hospedado, ownership e controles de branch;
+- configuraÃ§Ã£o produtiva e segredos;
+- runbooks executÃ¡veis de operaÃ§Ã£o e recuperaÃ§Ã£o;
+- monitoramento, alertas e ownership operacional;
+- evidÃªncia browser / runner consolidada.
+
+O risco residual `RLS-06` permanece separado atÃ© uma triaagem reproduzÃ­vel e formal o absorver ou descartÃ¡-lo. A release 1.0.0 continua `NOT_READY` atÃ© a conclusÃ£o independente desta unidade.

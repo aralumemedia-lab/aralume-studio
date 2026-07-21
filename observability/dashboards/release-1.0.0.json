@@ -1,0 +1,30 @@
+{
+  "title": "Aralume Studio V1.0.0 Release Readiness",
+  "description": "Versioned operational dashboard for the release-remediation unit.",
+  "panels": [
+    {
+      "id": "requests",
+      "title": "Requests",
+      "type": "stat",
+      "targets": ["totalRequests", "activeRequests", "statusByClass"]
+    },
+    {
+      "id": "readiness",
+      "title": "Readiness",
+      "type": "table",
+      "targets": ["readiness", "live", "metrics"]
+    },
+    {
+      "id": "latency",
+      "title": "Latency",
+      "type": "timeseries",
+      "targets": ["requestLatencyMs"]
+    },
+    {
+      "id": "errors",
+      "title": "Errors",
+      "type": "timeseries",
+      "targets": ["errorsByCode", "dependencyFailures", "ingressRejections"]
+    }
+  ]
+}

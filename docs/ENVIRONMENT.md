@@ -27,6 +27,9 @@
 - `ARALUME_MAX_BODY_BYTES`, `ARALUME_REQUEST_TIMEOUT_MS`, and `ARALUME_SHUTDOWN_TIMEOUT_MS` are optional operational tunables with safe defaults.
 - `ARALUME_AUTH_TEST_BYPASS`, `ARALUME_E2E_*`, and `TEST_DATABASE_URL` are test-only controls and are rejected in production-like environments.
 - `DATABASE_URL` and `ARALUME_YOUTUBE_REDIRECT_URI` are validated when provided so malformed URLs fail fast.
+- The release-remediation unit formalizes the staging / production deployment
+  surface in `compose.staging.yml`, `Dockerfile`, and the runbooks under
+  `docs/runbooks/`.
 
 ## E13 approved provider inventory
 

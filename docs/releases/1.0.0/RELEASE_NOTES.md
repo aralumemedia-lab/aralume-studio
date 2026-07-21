@@ -96,3 +96,16 @@ this unit is recorded in
 [`V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md).
 The release remains **NOT READY** because the final readiness evaluation and
 any remaining governance work are still pending.
+## Release 1.0.0 operational readiness remediation
+
+The next release-level unit is governed by
+`docs/specs/030-release-1.0.0-operational-readiness-remediation.md`. It does
+not invent a new sprint number. The unit is dedicated to the blockers recorded
+in the release assessment PR #45: deployment artifact and rollback evidence,
+hosted CI and owner controls, production configuration and secrets inventory,
+executive runbooks, monitoring ownership, and consolidated browser / runner
+evidence.
+
+`RLS-06` hydration triage remains a separate risk unless a later unit absorbs
+it explicitly. The release remains **NOT READY** until the remediation is
+validated and reviewed independently.

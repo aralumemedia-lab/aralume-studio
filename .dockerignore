@@ -1,0 +1,12 @@
+.git
+.github
+docs
+node_modules
+server/dist
+dist
+coverage
+tmp
+screenshots
+.env.local
+.env.*.local
+*.log

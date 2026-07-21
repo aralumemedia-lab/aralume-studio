@@ -143,3 +143,20 @@ The current operational evidence is stored in
 [`V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md).
 The release remains **NOT READY** while the final release-readiness review and
 any remaining governance work continue in later units.
+## Release 1.0.0 operational readiness remediation
+
+The next normative unit is the release-level remediation described by
+`docs/specs/030-release-1.0.0-operational-readiness-remediation.md`. It is not
+Sprint 29.
+
+- [ ] `docker build` or equivalent immutable artifact build for staging
+- [ ] `docker compose config` for the staging topology
+- [ ] hosted CI workflow definitions for the release gates
+- [ ] `CODEOWNERS` with verifiable owners
+- [ ] release configuration inventory and fail-closed startup evidence
+- [ ] operational runbooks reconciled with real commands
+- [ ] monitoring surfaces versioned and linked to owners or pending admin work
+- [ ] consolidated browser / runner evidence for the release candidate
+
+The release remains **NOT READY** until this remediation has been validated and
+reviewed independently.

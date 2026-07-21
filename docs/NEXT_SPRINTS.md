@@ -225,3 +225,13 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Objetivo: implementar health/readiness/liveness, logs estruturados, metricas minimas, shutdown gracioso e topologia/ingress produtivos.
 - Fora de escopo: release, tag, deploy, CI hospedado, branch protection, backup/restore, rollback, features funcionais nao relacionadas e reavaliacao integral da release.
 - Estado inicial: release 1.0.0 `NOT_READY`; nenhum release, tag ou deploy autorizado.
+
+## RemediaÃ§Ã£o de prontidÃ£o operacional da release 1.0.0
+
+- Natureza: unidade normativa de nÃ­vel de release, nÃ£o uma sprint numerada.
+- Spec governante: `docs/specs/030-release-1.0.0-operational-readiness-remediation.md`.
+- Origem: avaliaÃ§Ã£o de release #45 com veredito `NOT_READY`.
+- Objetivo: fechar os bloqueadores documentados de governanÃ§a e prontidÃ£o operacional com artefatos executÃ¡veis e evidÃªncia reproduzÃ­vel.
+- Itens incluÃ­dos: artefato e topologia de implantaÃ§Ã£o, CI hospedado, CODEOWNERS/branch controls, configuraÃ§Ã£o e segredos, runbooks, monitoramento e evidÃªncia browser consolidada.
+- Itens excluÃ­dos: features editoriais novas, release, tag, deploy e qualquer alteraÃ§Ã£o funcional fora dos blockers autorizados.
+- Estado esperado: a release continua `NOT_READY` atÃ© a revisÃ£o independente da remediaÃ§Ã£o.
