@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { once } from "node:events";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
@@ -558,10 +567,15 @@ test("media assets HTTP create and patch routes remain queryable in the active p
 });
 
 test("official video import calculates integrity, preserves old assets and is idempotent", async () => {
+  const ffmpegPath = resolveFfmpegPath();
+  if (!ffmpegPath) {
+    return;
+  }
+
   const storageRoot = mkdtempSync(path.join(os.tmpdir(), "aralume-import-"));
   const videoPath = path.join(storageRoot, "ch_historia", "video", "e13-fixture.mp4");
   mkdirSync(path.dirname(videoPath), { recursive: true });
-  execFileSync("ffmpeg", [
+  execFileSync(ffmpegPath, [
     "-hide_banner",
     "-loglevel",
     "error",
@@ -669,3 +683,64 @@ test("official video import calculates integrity, preserves old assets and is id
     rmSync(storageRoot, { recursive: true, force: true });
   }
 });
+
+function resolveFfmpegPath(): string | undefined {
+  const candidates = new Set<string>();
+
+  if (process.env.ARALUME_FFMPEG_PATH) {
+    candidates.add(process.env.ARALUME_FFMPEG_PATH);
+  }
+
+  const command = process.platform === "win32" ? "where" : "which";
+  const result = spawnSync(command, ["ffmpeg"], { encoding: "utf8" });
+  if (result.status === 0) {
+    for (const line of result.stdout.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (trimmed) {
+        candidates.add(trimmed);
+      }
+    }
+  }
+
+  if (process.platform === "win32") {
+    const localAppData = process.env.LOCALAPPDATA;
+    if (localAppData) {
+      const packagesRoot = path.join(localAppData, "Microsoft", "WinGet", "Packages");
+      const discovered = findFileRecursive(packagesRoot, "ffmpeg.exe");
+      if (discovered) {
+        candidates.add(discovered);
+      }
+    }
+  }
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return undefined;
+}
+
+function findFileRecursive(root: string, fileName: string): string | undefined {
+  if (!existsSync(root)) {
+    return undefined;
+  }
+
+  const entries = readdirSync(root, { withFileTypes: true });
+  for (const entry of entries) {
+    const candidate = path.join(root, entry.name);
+    if (entry.isFile() && entry.name.toLowerCase() === fileName.toLowerCase()) {
+      return candidate;
+    }
+
+    if (entry.isDirectory()) {
+      const nested = findFileRecursive(candidate, fileName);
+      if (nested) {
+        return nested;
+      }
+    }
+  }
+
+  return undefined;
+}
