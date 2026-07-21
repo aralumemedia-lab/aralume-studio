@@ -4,8 +4,8 @@ Status: **READY FOR REVIEW; RELEASE NOT_READY**
 
 Date: 2026-07-20
 Base: `7a4c082ea7a3b78d1aa58fcccbf699cafe42b016`
-Documental/final HEAD: `cf772c1`
-Functional code HEAD before this documentation-only update: `63cbe77`
+Documental/final HEAD: branch head verificado externamente na revisão final da PR #42
+Functional code HEAD validado: `63cbe77`
 Branch: `codex/sprint-26-dependency-advisory-remediation`
 
 This evidence covers only the two Bun audit advisories. It does not authorize
@@ -24,6 +24,7 @@ registered before dependency changes:
 - Spec: [`027-sprint-26-dependency-advisory-remediation.md`](../../specs/027-sprint-26-dependency-advisory-remediation.md)
 - Base: Sprint 25 merge `7a4c082ea7a3b78d1aa58fcccbf699cafe42b016`
 - Scope: only `brace-expansion`, `js-yaml`, lockfile, compatibility gates and evidence
+- Chronology: dependency commit `6e34ad6`; documentary commits `cf772c1` and `c750cec`
 
 ## Preflight and lifecycle
 
@@ -100,6 +101,7 @@ for that environmental run-order effect.
 - Push: completed to `origin/codex/sprint-26-dependency-advisory-remediation`.
 - Pull request: [#42](https://github.com/aralumemedia-lab/aralume-studio/pull/42), open and draft; base `main`; mergeability pending independent review.
 - Documentation commit: `79b1070` contains the evidence and release-document updates; this publication update is a normal follow-up commit.
+- Documentary chronology: `cf772c1` and `c750cec` are the follow-up documentation commits for this unit; the final branch head is verified externally in the PR review record instead of being self-referenced in this file.
 - No merge, tag, release or deploy was performed by this unit.
 - V1.0 remains functionally accepted.
 - Release 1.0.0 remains **NOT_READY** because productive configuration/secrets, recovery and rollback, observability, topology/ingress and final readiness evaluation remain outside this unit.
