@@ -235,3 +235,11 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Itens incluÃ­dos: artefato e topologia de implantaÃ§Ã£o, CI hospedado, CODEOWNERS/branch controls, configuraÃ§Ã£o e segredos, runbooks, monitoramento e evidÃªncia browser consolidada.
 - Itens excluÃ­dos: features editoriais novas, release, tag, deploy e qualquer alteraÃ§Ã£o funcional fora dos blockers autorizados.
 - Estado esperado: a release continua `NOT_READY` atÃ© a revisÃ£o independente da remediaÃ§Ã£o.
+## Release 1.0.0 - Governance remote and promotion authorization
+
+- Nature: unit of level release, not a new sprint number.
+- Spec governante: `docs/specs/031-release-1.0.0-governance-remote.md`.
+- Base: `27ef340038d8929e3728ee2d97bb9d1ad65dd689`.
+- Objetivo: formalizar branch protection, ruleset, protected production environment and owner coverage for promotion authorization.
+- Evidencia: `docs/releases/1.0.0/GOVERNANCE_REMOTE_READINESS.md`.
+- Estado da release: `NOT_READY`; no release, tag or deploy is authorized by this unit.

@@ -466,3 +466,21 @@ Esta unidade de nÃ­vel de release sucede a Sprint 28 sem criar uma nova sprint
 - Risco/prioridade/estimativa: aceitar V1 sem prova; P1; L.
 - Dependencias: todos os itens obrigatÃƒÆ’Ã‚Â³rios fechados e checks verdes.
 - Aceite: cada V1-01..V1-18 tem status `PASS` com prova nova no mesmo head; caso contrÃƒÆ’Ã‚Â¡rio, permanece `V1.0 NÃƒÆ’Ã†â€™O ACEITA`.
+### Release 1.0.0 governance remote and promotion authorization
+
+A unidade normativa seguinte formaliza a governanca remota da release 1.0.0 sem criar uma nova sprint numerada. Ela e governada por `docs/specs/031-release-1.0.0-governance-remote.md`.
+
+| ID      | Tipo                             | Escopo                                                         | Prioridade | Spec                                                | Dependencias      |
+| ------- | -------------------------------- | -------------------------------------------------------------- | ---------- | --------------------------------------------------- | ----------------- |
+| GR31-01 | Branch protection                | Regras obrigatorias para `main`, revisao e checks requeridos    | P0         | `docs/specs/031-release-1.0.0-governance-remote.md` | release readiness |
+| GR31-02 | Ruleset                          | Regras ativas para `refs/heads/main`                           | P0         | mesma spec                                          | GR31-01           |
+| GR31-03 | Ambiente de producao protegido   | Autorizacao de promocao executavel e com reviewers definidos   | P0         | mesma spec                                          | GR31-01           |
+| GR31-04 | Ownership de governanca          | CODEOWNERS cobrindo workflows, runbooks e superficies sensiveis | P0         | mesma spec                                          | GR31-01           |
+
+### Definition of Done da governanca remota
+
+- `main` protegido com checks e revisao obrigatorios.
+- `main-governance` ativo e visivel na API do GitHub.
+- Ambiente `production` protegido para promocao.
+- CODEOWNERS explicitando ownership verificavel.
+- Release 1.0.0 continua `NOT_READY` ate a revisao integral independente posterior.

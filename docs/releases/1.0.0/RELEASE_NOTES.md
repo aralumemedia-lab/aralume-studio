@@ -109,3 +109,21 @@ evidence.
 `RLS-06` hydration triage remains a separate risk unless a later unit absorbs
 it explicitly. The release remains **NOT READY** until the remediation is
 validated and reviewed independently.
+
+## Release 1.0.0 governance remote and promotion authorization
+
+The next release-level unit is governed by
+`docs/specs/031-release-1.0.0-governance-remote.md`. It does not invent a new
+sprint number. The unit closes the remote governance blockers that were still
+open after the operational remediation:
+
+- `main` branch protection with required reviews, required checks and
+  conversation resolution;
+- an active `main-governance` ruleset;
+- a protected `production` environment for promotion authorization;
+- explicit CODEOWNERS coverage for release-governance surfaces.
+
+The evidence for this unit is recorded in
+[`GOVERNANCE_REMOTE_READINESS.md`](./GOVERNANCE_REMOTE_READINESS.md). The
+release remains **NOT READY** until the later independent release-readiness
+review is executed.

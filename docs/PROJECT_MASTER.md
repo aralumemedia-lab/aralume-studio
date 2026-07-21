@@ -1697,3 +1697,14 @@ Essa unidade existe para fechar os bloqueadores documentados na avaliaÃ§Ã£o 
 - evidÃªncia browser / runner consolidada.
 
 O risco residual `RLS-06` permanece separado atÃ© uma triaagem reproduzÃ­vel e formal o absorver ou descartÃ¡-lo. A release 1.0.0 continua `NOT_READY` atÃ© a conclusÃ£o independente desta unidade.
+### Release 1.0.0 governance remote and promotion authorization
+
+The next normative unit is the release-level governance remediation described
+by `docs/specs/031-release-1.0.0-governance-remote.md`. It closes the remote
+governance blockers by formalizing `main` branch protection, a
+`main-governance` ruleset, a protected `production` environment, and explicit
+CODEOWNERS coverage for governance surfaces.
+
+The evidence is recorded in
+`docs/releases/1.0.0/GOVERNANCE_REMOTE_READINESS.md`. The release remains
+`NOT_READY` until the later independent release-readiness review is completed.
