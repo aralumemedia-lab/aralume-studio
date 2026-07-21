@@ -24,6 +24,10 @@ const captureLogger = {
   },
 };
 
+function parseLogLine(line: string): Record<string, unknown> {
+  return JSON.parse(line) as Record<string, unknown>;
+}
+
 before(async () => {
   const app = createApp({
     authTestBypass: true,
@@ -42,6 +46,10 @@ before(async () => {
     throw new Error("Expected a TCP listener address");
   }
 
+  const operational = app.locals.operational as {
+    setListening(host: string, port: number): void;
+  };
+  operational.setListening(address.address, address.port);
   baseUrl = `http://127.0.0.1:${(address as AddressInfo).port}`;
 });
 
@@ -107,28 +115,36 @@ test("GET /health returns the foundation health payload", async () => {
     service: string;
     environment: string;
     version: string;
+    build: { version: string; buildId: string; source: string };
+    liveness: { ok: boolean; status: string };
+    readiness: { ok: boolean; status: string; checks: Array<{ name: string; status: string }> };
+    topology: { requireHttps: boolean; trustedProxyHops: number };
+    metrics: { totalRequests: number; activeRequests: number };
   };
 
   assert.equal(response.status, 200);
-  assert.deepEqual(payload, {
-    ok: true,
-    service: "aralume-api",
-    environment: "development",
-    version: "0.1.0",
-  });
+  assert.equal(payload.ok, true);
+  assert.equal(payload.service, "aralume-api");
+  assert.equal(payload.environment, "development");
+  assert.equal(payload.version, "0.1.0");
+  assert.equal(payload.build.version, "0.1.0");
+  assert.equal(typeof payload.build.buildId, "string");
+  assert.equal(typeof payload.build.source, "string");
+  assert.equal(payload.liveness.ok, true);
+  assert.equal(typeof payload.readiness.ok, "boolean");
+  assert.equal(Array.isArray(payload.readiness.checks), true);
+  assert.equal(typeof payload.topology.requireHttps, "boolean");
+  assert.equal(typeof payload.metrics.totalRequests, "number");
   assert.ok(requestId);
-  assert.equal(
-    logLines.some((line) => line.includes("/health")),
-    true,
-  );
-  assert.equal(
-    logLines.some((line) => line.includes(`[${requestId}]`)),
-    true,
-  );
-  assert.equal(
-    logLines.some((line) => line.includes("?")),
-    false,
-  );
+  const healthLog = parseLogLine(logLines.at(-1) ?? "{}");
+  assert.equal(healthLog.route, "/health");
+  assert.equal(healthLog.requestId, requestId);
+  assert.equal(healthLog.method, "GET");
+  assert.equal(healthLog.status, 200);
+  assert.equal(typeof healthLog.timestamp, "string");
+  assert.equal(typeof healthLog.durationMs, "number");
+  assert.equal(healthLog.channelId, undefined);
+  assert.equal(JSON.stringify(healthLog).includes("?"), false);
 });
 
 test("E2E identity challenges are server-issued, single-use and scoped", async () => {
@@ -308,26 +324,14 @@ test("GET a missing route with query returns a sanitized not found envelope and 
   assert.ok(requestId);
   assert.equal(requestId, payload.meta.requestId);
   assert.equal(logLines.length > 0, true);
-  assert.equal(
-    logLines.some((line) => line.includes("token=segredo")),
-    false,
-  );
-  assert.equal(
-    logLines.some((line) => line.includes("teste@example.com")),
-    false,
-  );
-  assert.equal(
-    logLines.some((line) => line.includes("?")),
-    false,
-  );
-  assert.equal(
-    logLines.some((line) => line.includes("/rota-inexistente")),
-    true,
-  );
-  assert.equal(
-    logLines.some((line) => line.startsWith(`[${payload.meta.requestId}]`)),
-    true,
-  );
+  const notFoundLog = parseLogLine(logLines.at(-1) ?? "{}");
+  assert.equal(notFoundLog.route, "/rota-inexistente");
+  assert.equal(notFoundLog.requestId, payload.meta.requestId);
+  assert.equal(notFoundLog.status, 404);
+  assert.equal(notFoundLog.method, "GET");
+  assert.equal(JSON.stringify(notFoundLog).includes("token=segredo"), false);
+  assert.equal(JSON.stringify(notFoundLog).includes("teste@example.com"), false);
+  assert.equal(JSON.stringify(notFoundLog).includes("?"), false);
   assert.ok(payload.meta.requestId.length > 0);
   assert.ok(payload.meta.generatedAt.length > 0);
 });

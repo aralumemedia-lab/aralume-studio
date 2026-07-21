@@ -1,4 +1,4 @@
-# Aralume Studio V1.0.0 — Validation Checklist
+# Aralume Studio V1.0.0 â€” Validation Checklist
 
 Status: **NOT READY**
 
@@ -12,7 +12,7 @@ Status: **NOT READY**
 - [x] `git diff --check`
 - [x] lint
 - [x] backend typecheck
-- [x] frontend/global `npx tsc --noEmit` — PASS, exit code 0, zero diagnostics on Sprint 25 code HEAD
+- [x] frontend/global `npx tsc --noEmit` â€” PASS, exit code 0, zero diagnostics on Sprint 25 code HEAD
 - [x] official test suite
 - [x] build
 - [x] dependency audit captured
@@ -62,7 +62,7 @@ The focused remediation adds HMAC challenge-response ownership proof, isolated
 startup waiters, aggregated primary/teardown failures, event-based lifecycle
 synchronization, total response-body cancellation, strict early-exit failure,
 and server-issued, single-use expiring identity challenges. The focused process
-suite is 20/20 and the official suite is 93/93; runners 15–21 and HMAC passed.
+suite is 20/20 and the official suite is 93/93; runners 15â€“21 and HMAC passed.
 The challenge registry rejects unissued challenges and does not evict valid
 records before TTL expiry. The PR remains draft for independent review of this
 final correction.
@@ -81,13 +81,13 @@ the effective versions are
 The documentary chronology for this unit is `cf772c1` followed by `c750cec`;
 the checklist intentionally avoids self-referencing the final commit SHA.
 
-- [x] `bun install --frozen-lockfile` — PASS, no lockfile changes
-- [x] `bun audit` — PASS, zero vulnerabilities
-- [x] minimatch/brace-expansion compatibility checks — PASS, including bounded input
-- [x] YAML tooling checks — PASS for valid and malformed YAML handling
-- [x] lint, backend check, global typecheck, official tests and build — PASS
-- [x] lifecycle, identity/readiness, runners 15-21 and HMAC — PASS
-- [x] secret scan — zero high-confidence hits; no real secret found
+- [x] `bun install --frozen-lockfile` â€” PASS, no lockfile changes
+- [x] `bun audit` â€” PASS, zero vulnerabilities
+- [x] minimatch/brace-expansion compatibility checks â€” PASS, including bounded input
+- [x] YAML tooling checks â€” PASS for valid and malformed YAML handling
+- [x] lint, backend check, global typecheck, official tests and build â€” PASS
+- [x] lifecycle, identity/readiness, runners 15-21 and HMAC â€” PASS
+- [x] secret scan â€” zero high-confidence hits; no real secret found
 - [x] required ports free and no project orphan process after execution
 
 This dependency unit does not authorize release. Productive configuration,
@@ -118,3 +118,28 @@ The current operational evidence is stored in
 [`V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT27_PRODUCTION_CONFIGURATION_BACKUP_ROLLBACK_EVIDENCE.md).
 The release remains **NOT READY** while broader production readiness work
 continues in later units.
+
+## Current Sprint 28 observability and readiness hardening
+
+Sprint 28 / Spec 029 records the next operational unit after Sprint 27. Its
+evidence is intentionally tracked separately because the runtime now exposes
+distinct liveness, readiness and operational health endpoints, structured logs,
+minimal metrics, graceful shutdown, and production-like ingress policy.
+
+- [x] `/live`, `/ready`, `/health`, `/ops/health` and `/ops/metrics`
+  contracts
+- [x] structured logs with requestId correlation and sanitized actor/channel
+  metadata
+- [x] operational metrics with low cardinality and readiness snapshot
+- [x] graceful shutdown with readiness withdrawal and listener closure
+- [x] production-like ingress policy with host/origin/HTTPS checks
+- [x] smoke prod simulation with startup, readiness, shutdown and recovery
+- [x] lint, backend check, typecheck, official tests and build
+- [x] frozen install and bun audit
+- [x] runners 15-21 and HMAC
+- [x] secret scan and port/process verification
+
+The current operational evidence is stored in
+[`V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md`](../../acceptance/v1/V1_SPRINT28_OBSERVABILITY_READINESS_TOPOLOGY_INGRESS_EVIDENCE.md).
+The release remains **NOT READY** while the final release-readiness review and
+any remaining governance work continue in later units.

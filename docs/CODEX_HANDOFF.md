@@ -1,4 +1,4 @@
-﻿# Codex Handoff - Sprint 13
+# Codex Handoff - Sprint 13
 
 ## Estado atual
 
@@ -12,7 +12,7 @@
 - A Sprint 13 foi encerrada no PR #23, merge commit
   `9b89d1be04e7a6e319efb9a957282097c4854f31`.
 - A Sprint 14/V1 Acceptance foi concluida em branch isolada para validacao, sem release ou deploy.
-- O resultado foi `V1.0 NÃƒÆ’O ACEITA`: 5 `PASS`, 5 `FAIL` e 8 `NOT PROVEN`; matriz, relatÃƒÂ³rio, evidÃƒÂªncias, limitaÃƒÂ§ÃƒÂµes e remediaÃƒÂ§ÃƒÂ£o estÃƒÂ£o documentados.
+- O resultado foi `V1.0 NÃƒÆ’Ã†â€™O ACEITA`: 5 `PASS`, 5 `FAIL` e 8 `NOT PROVEN`; matriz, relatÃƒÆ’Ã‚Â³rio, evidÃƒÆ’Ã‚Âªncias, limitaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes e remediaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o estÃƒÆ’Ã‚Â£o documentados.
 
 ## Baseline e branch
 
@@ -83,14 +83,14 @@ recriacao do frontend e limpeza administrativa da S12.
 
 - Branch: `codex/sprint-14-v1-acceptance`.
 - Base: `d78959a47a2bafbb343408d703eafafec8c6df59`.
-- PR: #24; commit-base do aceite e das evidÃƒÂªncias: `22388e7`.
-- O head vigente da PR deve ser consultado diretamente no GitHub; correÃƒÂ§ÃƒÂµes documentais posteriores foram feitas na mesma PR.
-- Merge ainda pendente de nova revisÃƒÂ£o; release permanece bloqueada e remediaÃƒÂ§ÃƒÂµes nÃƒÂ£o foram iniciadas.
+- PR: #24; commit-base do aceite e das evidÃƒÆ’Ã‚Âªncias: `22388e7`.
+- O head vigente da PR deve ser consultado diretamente no GitHub; correÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes documentais posteriores foram feitas na mesma PR.
+- Merge ainda pendente de nova revisÃƒÆ’Ã‚Â£o; release permanece bloqueada e remediaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes nÃƒÆ’Ã‚Â£o foram iniciadas.
 - Gates tecnicos: lint, typecheck, 64 testes, build e `git diff --check` aprovados.
-- Veredito de revisÃƒÂ£o documental: `APPROVE_WITH_NOTES`, condicionado ÃƒÂ  revisÃƒÂ£o/aprovaÃƒÂ§ÃƒÂ£o objetiva no GitHub.
+- Veredito de revisÃƒÆ’Ã‚Â£o documental: `APPROVE_WITH_NOTES`, condicionado ÃƒÆ’Ã‚Â  revisÃƒÆ’Ã‚Â£o/aprovaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o objetiva no GitHub.
 - Bloqueio principal: o frontend ainda possui fluxos obrigatorios ausentes ou mockados.
-- Backlog de remediaÃƒÂ§ÃƒÂ£o: seÃƒÂ§ÃƒÂ£o "Remediacao pos-Sprint 14 (atualizada apos Sprint 15)" em `docs/PRODUCT_BACKLOG.md`.
-- Nenhuma release, tag, deploy, publicaÃƒÂ§ÃƒÂ£o externa ou implementaÃƒÂ§ÃƒÂ£o de remediaÃƒÂ§ÃƒÂ£o foi iniciada.
+- Backlog de remediaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o: seÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o "Remediacao pos-Sprint 14 (atualizada apos Sprint 15)" em `docs/PRODUCT_BACKLOG.md`.
+- Nenhuma release, tag, deploy, publicaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o externa ou implementaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de remediaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o foi iniciada.
 
 ## Riscos
 
@@ -105,10 +105,10 @@ recriacao do frontend e limpeza administrativa da S12.
 - Nota: bloco historico da proposta inicial do E16; a remediacao funcional do E16 foi concluida nas Sprints 15 e 16 e o epic ficou fechado.
 - Epic: E16 - Pipeline Editorial Operavel pelo Frontend.
 - Iniciativa: Remediacao da Operabilidade da V1.
-- CritÃƒÂ©rios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
+- CritÃƒÆ’Ã‚Â©rios V1: V1-03, V1-04, V1-05, V1-06; V1-02 apenas como dependencia.
 - Itens R14: R14-03, R14-04, R14-05, R14-06; R14-02 como dependencia upstream.
 - Historias: H16.0, H16.1, H16.2, H16.3, H16.4.
-- Sequencia proposta: Sprint 15 e Sprint 16, ambas concluídas.
+- Sequencia proposta: Sprint 15 e Sprint 16, ambas concluÃ­das.
 - Gate futuro: reaceite da V1 somente apos evidencias, contratos e testes E2E dos epicos remanescentes.
 - Nao iniciado: nenhuma historia fora de E16 foi implementada, nenhuma sprint nova foi iniciada, nenhum release foi preparado.
 
@@ -119,7 +119,7 @@ recriacao do frontend e limpeza administrativa da S12.
 - Epic 2: E17 - Pipeline Midia e Producao Operavel pelo Frontend.
 - Epic 3: E18 - Governanca e Publicacao Assistida pelo Frontend.
 - Epic 4: E19 - Cockpits Reais e Evidencias Transversais.
-- CritÃƒÂ©rios V1: V1-02..V1-14, com R14-02..R14-14.
+- CritÃƒÆ’Ã‚Â©rios V1: V1-02..V1-14, com R14-02..R14-14.
 - Itens tecnicos: R14-T01 e R14-T02.
 - Sequencia vigente: Sprint 17, Sprint 18, Sprint 19, Sprint 20, Sprint 21, e depois R14-REACCEPT.
 - Sprint 20 foi revisada e integrada em `main` pela PR #33. E17 esta integrado pela PR #30 e Sprint 19 pela PR #32.
@@ -134,9 +134,9 @@ recriacao do frontend e limpeza administrativa da S12.
 - Spec normativa: `docs/specs/016-sprint-15-editorial-profile-ideas-research.md`.
 - Estado: completed.
 - Historias: H16.0, H16.1 e H16.2.
-- Resultado: H16.0, H16.1 e H16.2 entregues no head da PR #26; H16.3 e H16.4 foram concluídas na Sprint 16.
+- Resultado: H16.0, H16.1 e H16.2 entregues no head da PR #26; H16.3 e H16.4 foram concluÃ­das na Sprint 16.
 - Itens R14: R14-02, R14-03 e R14-04.
-- Sequencia: primeira fatia funcional do E16 entregue; H16.3 e H16.4 foram concluídas na fatia seguinte do mesmo epic.
+- Sequencia: primeira fatia funcional do E16 entregue; H16.3 e H16.4 foram concluÃ­das na fatia seguinte do mesmo epic.
 - Gate futuro: reaceite da V1 somente apos E16, E17, E18 e E19 evidenciados no mesmo head.
 - Pendente: nenhuma historia de E16 permanece pendente.
 
@@ -220,15 +220,28 @@ recriacao do frontend e limpeza administrativa da S12.
 
 ## Handoff - Sprint 25 - Hardening tecnico de release readiness
 
-- Estado: unidade formalizada antes da implementação.
+- Estado: unidade formalizada antes da implementaÃ§Ã£o.
 - Epico governante: E15 - Hardening V1.0.
 - Spec: `docs/specs/026-sprint-25-release-readiness-hardening.md`.
 - Branch: `codex/sprint-25-release-readiness-hardening`.
 - Base: `15d113ad0181164af306e28a61aae5b0ec28bea5`.
-- Decisão de numeração: Sprint 24/Spec 025 era o maior número normativo e não havia reserva posterior; Sprint 25/Spec 026 foi registrada como próxima unidade.
-- Objetivo: corrigir typecheck global, tratar advisories transitivos e fortalecer identidade dos serviços dos runners.
-- Fora de escopo: configuração produtiva, secrets, backup, restore, rollback, observabilidade ampla, topologia/ingress, nova avaliação integral, release, tag e deploy.
+- DecisÃ£o de numeraÃ§Ã£o: Sprint 24/Spec 025 era o maior nÃºmero normativo e nÃ£o havia reserva posterior; Sprint 25/Spec 026 foi registrada como prÃ³xima unidade.
+- Objetivo: corrigir typecheck global, tratar advisories transitivos e fortalecer identidade dos serviÃ§os dos runners.
+- Fora de escopo: configuraÃ§Ã£o produtiva, secrets, backup, restore, rollback, observabilidade ampla, topologia/ingress, nova avaliaÃ§Ã£o integral, release, tag e deploy.
 - Estado da release: `NOT_READY`; nenhum release, tag ou deploy autorizado.
+
+## Handoff - Sprint 28 - Observabilidade, topologia e readiness produtivo
+
+- Estado: unidade formalizada antes da implementacao.
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/029-sprint-28-observability-readiness-topology-ingress.md`.
+- Branch: `codex/sprint-28-observability-readiness-topology-ingress`.
+- Base: `0ee0cbc8454f8cc9c04c643acdd26815ffff9f16`.
+- Decisao de numeracao: Sprint 27/Spec 028 encerrou configuracao e recuperacao operacional; a Sprint 28/Spec 029 foi registrada como proxima unidade normativa.
+- Objetivo: tornar a operacao observavel e distinguivel em health/readiness/liveness, logs, metricas, shutdown, topologia e ingress.
+- Fora de escopo: release, tag, deploy, backup, restore, rollback e qualquer expansao funcional nao relacionada.
+- Estado da release: `NOT_READY`; nenhum release, tag ou deploy autorizado.
+
 ## Regra operacional - execucao controlada com subagentes
 
 Subagentes devem ser considerados somente quando produzirem ganho real de
@@ -258,4 +271,4 @@ existentes.
 
 H14.1-H14.4 implementadas, documentacao coerente, testes adicionais passando sem
 reduzir os 56 existentes, persistencia e isolamento demonstrados, QA visual feito,
-PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance serÃƒÂ¡ necessÃƒÂ¡rio apÃƒÂ³s a remediaÃƒÂ§ÃƒÂ£o.
+PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredito negativo documentado; novo V1 Acceptance serÃƒÆ’Ã‚Â¡ necessÃƒÆ’Ã‚Â¡rio apÃƒÆ’Ã‚Â³s a remediaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.

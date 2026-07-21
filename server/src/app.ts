@@ -10,7 +10,12 @@ import {
   requestLoggerMiddleware,
 } from "./http/middleware.js";
 import { createAuthenticationMiddleware, createAuthorizationMiddleware } from "./http/auth.js";
-import { createHealthHandler } from "./routes/health.js";
+import {
+  createHealthHandler,
+  createLiveHandler,
+  createMetricsHandler,
+  createReadyHandler,
+} from "./routes/health.js";
 import { createChannelsRepository } from "./modules/channels/channel.repository.js";
 import { createChannelsRouter } from "./modules/channels/channel.routes.js";
 import { createChannelsService } from "./modules/channels/channel.service.js";
@@ -64,10 +69,16 @@ import type { MetricsRepository } from "./modules/metrics/metrics.types.js";
 import { metricsDemoSeed } from "./modules/metrics/metrics.seed.js";
 import { createCockpitsRouter } from "./modules/cockpits/cockpits.routes.js";
 import { createCockpitsService } from "./modules/cockpits/cockpits.service.js";
+import {
+  createIngressMiddleware,
+  createOperationalHealthHandler,
+  createOperationalRuntime,
+} from "./operational.js";
 
 export type CreateAppOptions = {
   env?: RuntimeEnv;
   logger?: Pick<Console, "info" | "warn" | "error">;
+  operationalRuntime?: ReturnType<typeof createOperationalRuntime>;
   channelsRepository?: ChannelsRepository;
   editorialRepository?: EditorialRepository;
   mediaAssetsRepository?: MediaAssetsRepository;
@@ -87,6 +98,7 @@ export type CreateAppOptions = {
 
 export function createApp(options: CreateAppOptions = {}) {
   const env = options.env ?? loadEnv();
+  const operational = options.operationalRuntime ?? createOperationalRuntime(env);
   const channelsRepository =
     options.channelsRepository ?? createChannelsRepository(channelDemoSeed);
   const editorialRepository =
@@ -224,8 +236,10 @@ export function createApp(options: CreateAppOptions = {}) {
   const app = express();
 
   app.disable("x-powered-by");
+  app.set("trust proxy", operational.policy.trustedProxyHops);
   app.use(requestContextMiddleware());
-  app.use(requestLoggerMiddleware(env.ARALUME_LOG_LEVEL, options.logger ?? console));
+  app.use(requestLoggerMiddleware(env.ARALUME_LOG_LEVEL, options.logger ?? console, operational));
+  app.use(createIngressMiddleware(operational));
   app.use(
     "/api",
     createAuthenticationMiddleware({
@@ -234,9 +248,14 @@ export function createApp(options: CreateAppOptions = {}) {
       allowTestBypass: options.authTestBypass,
     }),
   );
-  app.use(jsonParserMiddleware());
+  app.use(jsonParserMiddleware(operational.policy.maxBodyBytes));
   app.use(jsonDepthMiddleware());
-  app.get("/health", createHealthHandler(env));
+  app.locals.operational = operational;
+  app.get("/live", createLiveHandler(operational));
+  app.get("/ready", createReadyHandler(operational));
+  app.get("/ops/health", createOperationalHealthHandler(operational));
+  app.get("/health", createHealthHandler(env, operational));
+  app.get("/ops/metrics", createMetricsHandler(operational));
   app.use(
     "/api",
     createAuthorizationMiddleware(auditRepository, {

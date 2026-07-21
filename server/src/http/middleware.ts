@@ -4,6 +4,8 @@ import { randomUUID } from "node:crypto";
 import { AppError, toAppError } from "./errors.js";
 import { createErrorResponse } from "./response.js";
 import type { RuntimeEnv } from "../env.js";
+import type { OperationalRuntime } from "../operational.js";
+import { createOperationalLogEntry, formatOperationalLogEntry } from "../operational.js";
 
 type LogLevel = RuntimeEnv["ARALUME_LOG_LEVEL"];
 
@@ -33,8 +35,8 @@ export function requestContextMiddleware(): RequestHandler {
   };
 }
 
-export function jsonParserMiddleware(): RequestHandler {
-  return express.json({ limit: "1mb" });
+export function jsonParserMiddleware(limit: string | number = "1mb"): RequestHandler {
+  return express.json({ limit });
 }
 
 export const MAX_JSON_DEPTH = 32;
@@ -91,15 +93,38 @@ export function exceedsJsonDepth(value: unknown, maxDepth = MAX_JSON_DEPTH): boo
 export function requestLoggerMiddleware(
   logLevel: RuntimeEnv["ARALUME_LOG_LEVEL"],
   logger: Pick<Console, "info" | "warn" | "error"> = console,
+  runtime?: OperationalRuntime,
 ): RequestHandler {
   return (req, res, next) => {
     const startedAt = Date.now();
     const sanitizedPath = getSanitizedPath(req.path);
+    runtime?.beginRequest();
+    let settled = false;
 
-    res.once("finish", () => {
+    const finalize = () => {
+      if (settled) {
+        return;
+      }
+      settled = true;
       const durationMs = Date.now() - startedAt;
       const requestId = typeof res.locals.requestId === "string" ? res.locals.requestId : "unknown";
-      const line = `[${requestId}] ${req.method} ${sanitizedPath} ${res.statusCode} ${durationMs}ms`;
+      const line = formatOperationalLogEntry(
+        createOperationalLogEntry(req, res, durationMs, runtime ?? fallbackRuntime),
+      );
+      runtime?.recordRequest({
+        statusCode: res.statusCode,
+        durationMs,
+        requestId,
+        actorId:
+          typeof res.locals.auditActor?.actorId === "string"
+            ? res.locals.auditActor.actorId
+            : undefined,
+        channelId:
+          typeof res.locals.auditChannelId === "string" ? res.locals.auditChannelId : undefined,
+        route: sanitizedPath,
+        method: req.method,
+        errorCode: typeof res.locals.errorCode === "string" ? res.locals.errorCode : undefined,
+      });
 
       if (res.statusCode >= 500) {
         if (shouldLog("error", logLevel)) {
@@ -118,7 +143,10 @@ export function requestLoggerMiddleware(
       if (shouldLog("info", logLevel)) {
         logger.info(line);
       }
-    });
+    };
+
+    res.once("finish", finalize);
+    res.once("close", finalize);
 
     next();
   };
@@ -148,10 +176,98 @@ export const errorHandlerMiddleware: ErrorRequestHandler = (error, _req, res, ne
 
   const appError = toAppError(error);
   const requestId = typeof res.locals.requestId === "string" ? res.locals.requestId : randomUUID();
+  res.locals.errorCode = appError.code;
 
   res.status(appError.status).json(
     createErrorResponse(appError.code, appError.message, appError.details, {
       requestId,
     }),
   );
+};
+
+const fallbackRuntime: OperationalRuntime = {
+  environment: "development",
+  state: {
+    phase: "starting",
+    startedAt: new Date().toISOString(),
+  },
+  policy: {
+    requireHttps: false,
+    trustedProxyHops: 0,
+    allowedHosts: [],
+    allowedOrigins: [],
+    maxBodyBytes: 1_048_576,
+    requestTimeoutMs: 30_000,
+    shutdownTimeoutMs: 10_000,
+    rateLimitPerMinute: Number.POSITIVE_INFINITY,
+  },
+  build: {
+    version: "0.1.0",
+    buildId: "development",
+    source: "version",
+  },
+  beginRequest() {},
+  setListening() {},
+  beginShutdown() {},
+  completeShutdown() {},
+  recordRequest() {},
+  recordDependencyFailure() {},
+  recordIngressRejection() {},
+  snapshotHealth: () => ({
+    ok: true,
+    service: "aralume-api",
+    environment: "development",
+    version: "0.1.0",
+    build: fallbackRuntime.build,
+    phase: "starting",
+    startedAt: new Date().toISOString(),
+    liveness: fallbackRuntime.snapshotLive(),
+    readiness: fallbackRuntime.snapshotReady(),
+    topology: {
+      requireHttps: false,
+      trustedProxyHops: 0,
+      allowedHosts: [],
+      allowedOrigins: [],
+      maxBodyBytes: 1_048_576,
+      requestTimeoutMs: 30_000,
+      shutdownTimeoutMs: 10_000,
+      rateLimitPerMinute: Number.POSITIVE_INFINITY,
+    },
+    metrics: fallbackRuntime.snapshotMetrics(),
+  }),
+  snapshotLive: () => ({
+    ok: true,
+    status: "alive",
+    service: "aralume-api",
+    environment: "development",
+    version: "0.1.0",
+    build: fallbackRuntime.build,
+    startedAt: new Date().toISOString(),
+  }),
+  snapshotReady: () => ({
+    ok: true,
+    status: "starting",
+    service: "aralume-api",
+    environment: "development",
+    version: "0.1.0",
+    build: fallbackRuntime.build,
+    checks: [],
+  }),
+  snapshotMetrics: () => ({
+    totalRequests: 0,
+    activeRequests: 0,
+    statusByClass: { "1xx": 0, "2xx": 0, "3xx": 0, "4xx": 0, "5xx": 0 },
+    errorsByCode: {},
+    requestLatencyMs: {
+      count: 0,
+      minMs: 0,
+      maxMs: 0,
+      averageMs: 0,
+    },
+    readinessByState: { starting: 1, ready: 0, shutting_down: 0, stopped: 0 },
+    shutdownSignals: {},
+    dependencyFailures: {},
+    ingressRejections: {},
+  }),
+  isReady: () => true,
 };
