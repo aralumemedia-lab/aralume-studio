@@ -365,6 +365,27 @@ Esta unidade pertence ao E15 e foi formalizada após o merge da Sprint 24. A dec
 - Evidência nova separada da Sprint 24.
 - Nenhum backup, restore, rollback, observabilidade ampla, topologia, release, tag ou deploy.
 
+## Sprint 27 - Configuracao produtiva, backup/restore e rollback
+
+Esta unidade pertence ao E15 e foi formalizada apos o merge da Sprint 26. A decisao documental registrou Sprint 27 / Spec 028 como o proximo numero normativo, porque a fila operacional nao reservava uma unidade posterior.
+
+| ID       | Tipo                     | Escopo                                                             | Prioridade | Spec                                                        | Dependencias |
+| -------- | ------------------------ | ------------------------------------------------------------------ | ---------- | ----------------------------------------------------------- | ------------ |
+| RC27-01  | Configuracao produtiva    | Esquema fail-closed por ambiente, secrets e rejeicao de teste      | P0         | `docs/specs/028-sprint-27-production-configuration-backup-rollback.md` | Sprint 26 integrada |
+| RC27-02  | Inventario de secrets     | Classificacao, protecao e rastreabilidade de variaveis/segredos     | P0         | mesma spec                                                 | RC27-01 |
+| RC27-03  | Backup e restore          | Snapshot consistente de JSON persistido e storage com checksum      | P0         | mesma spec                                                 | RC27-01 |
+| RC27-04  | Rollback operacional      | Recuperacao de aplicacao e estado por restore validado              | P0         | mesma spec                                                 | RC27-03 |
+| RC27-05  | Evidencia e gates         | Testes negativos, gates tecnicos e evidencia operacional reproduzivel | P0      | mesma spec                                                 | RC27-01 a RC27-04 |
+
+### Definition of Done da Sprint 27
+
+- Configuracao produtiva fail-closed antes da abertura de listeners.
+- Inventario de secrets documentado e secret scan executado.
+- Backup consistente com timestamp, versao, schema e checksum.
+- Restore validado em ambiente limpo e com corrupcao rejeitada.
+- Rollback operacional testado.
+- Nenhum segredo exposto, nenhum merge, release, tag ou deploy.
+
 ## Epico E16 - Pipeline Editorial Operavel pelo Frontend
 
 - Status: completed, com Sprint 15 e Sprint 16 entregues.

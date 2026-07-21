@@ -7,7 +7,7 @@ function startServer(): void {
     const env = loadEnv();
     const app = createApp({
       env,
-      authTestBypass: env.ARALUME_ENV === "test" && process.env.ARALUME_AUTH_TEST_BYPASS === "true",
+      authTestBypass: env.ARALUME_ENV === "test" && env.ARALUME_AUTH_TEST_BYPASS === "true",
     });
 
     app.listen(defaultPort, "127.0.0.1", () => {
