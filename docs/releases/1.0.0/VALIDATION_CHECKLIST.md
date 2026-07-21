@@ -70,3 +70,22 @@ The release remains **NOT READY** because
 production configuration/secrets, backup/restore, rollback, observability,
 production topology/ingress, and the integral release-readiness evaluation are
 outside this unit and still pending.
+
+## Current Sprint 26 dependency remediation
+
+Sprint 26 / Spec 027 updated only the existing exact overrides for the two
+transitive advisories. On code HEAD `6e34ad6`, the effective versions are
+`brace-expansion@5.0.7` and `js-yaml@4.3.0`.
+
+- [x] `bun install --frozen-lockfile` — PASS, no lockfile changes
+- [x] `bun audit` — PASS, zero vulnerabilities
+- [x] minimatch/brace-expansion compatibility checks — PASS, including bounded input
+- [x] YAML tooling checks — PASS for valid and malformed YAML handling
+- [x] lint, backend check, global typecheck, official tests and build — PASS
+- [x] lifecycle, identity/readiness, runners 15-21 and HMAC — PASS
+- [x] secret scan — zero high-confidence hits; no real secret found
+- [x] required ports free and no project orphan process after execution
+
+This dependency unit does not authorize release. Productive configuration,
+secrets, recovery/rollback, observability, topology/ingress, CI and final
+release-readiness evaluation remain pending; release 1.0.0 remains **NOT READY**.

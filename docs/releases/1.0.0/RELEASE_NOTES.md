@@ -55,3 +55,18 @@ pending independent focused review.
 These corrections do not change the release decision: V1.0.0 remains **NOT READY
 FOR PRODUCTION DEPLOYMENT** while the production and operational gates listed
 above remain pending. No tag, release, or deploy was created.
+
+## Sprint 26 dependency advisory remediation
+
+Sprint 26 / Spec 027 applies the smallest compatible update to the existing
+exact overrides: `brace-expansion` `5.0.6` to `5.0.7` and `js-yaml` `4.2.0` to
+`4.3.0`. Both findings were transitive and used by lint/build tooling. The
+package manifest and lockfile diff contains no unrelated dependency update and
+the frozen install is reproducible.
+
+`bun audit` now exits 0 with zero vulnerabilities. Compatibility checks for
+minimatch/brace expansion and YAML parsing, lint, backend check, typecheck,
+tests, build, lifecycle, identity/readiness and runners 15-21 plus HMAC passed.
+No tag, release or deployment was created. The release remains **NOT READY**
+pending productive configuration/secrets, recovery and rollback, observability,
+topology/ingress and final release-readiness evaluation.
