@@ -74,7 +74,7 @@ outside this unit and still pending.
 ## Current Sprint 26 dependency remediation
 
 Sprint 26 / Spec 027 updated only the existing exact overrides for the two
-transitive advisories. On code HEAD `6e34ad6`, the effective versions are
+transitive advisories. On code HEAD `63cbe77`, the effective versions are
 `brace-expansion@5.0.7` and `js-yaml@4.3.0`.
 
 - [x] `bun install --frozen-lockfile` — PASS, no lockfile changes
