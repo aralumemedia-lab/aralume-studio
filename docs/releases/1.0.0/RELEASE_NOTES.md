@@ -117,13 +117,29 @@ The next release-level unit is governed by
 sprint number. The unit closes the remote governance blockers that were still
 open after the operational remediation:
 
-- `main` branch protection with required reviews, required checks and
-  conversation resolution;
+- `main` branch protection with PR obligation, zero required human approvals,
+  required checks and conversation resolution;
 - an active `main-governance` ruleset;
-- a protected `production` environment for promotion authorization;
-- explicit CODEOWNERS coverage for release-governance surfaces.
+- a protected `production` environment for promotion authorization usable by
+  the single-maintainer model;
+- explicit CODEOWNERS coverage for release-governance surfaces without a merge gate.
 
 The evidence for this unit is recorded in
 [`GOVERNANCE_REMOTE_READINESS.md`](./GOVERNANCE_REMOTE_READINESS.md). The
 release remains **NOT READY** until the later independent release-readiness
 review is executed.
+
+## Release 1.0.0 final readiness remediation
+
+The next release-level unit is governed by
+`docs/specs/032-release-1.0.0-final-readiness-remediation.md`. It closes the
+last three findings from the final readiness review:
+
+- canonical recovery command documentation and operator workflow;
+- hydration mismatch removal and browser regression;
+- governance documentation alignment to the live remote state.
+
+The evidence for this unit is recorded in
+[`FINAL_READINESS_REMEDIATION.md`](./FINAL_READINESS_REMEDIATION.md). The
+release remains **NOT READY** until that remediation is validated and the later
+independent release-readiness review is executed.

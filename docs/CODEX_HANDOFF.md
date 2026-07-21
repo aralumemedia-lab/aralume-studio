@@ -289,6 +289,16 @@ PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredit
 - Epico governante: E15 - Hardening V1.0.
 - Spec: `docs/specs/031-release-1.0.0-governance-remote.md`.
 - Base documental: remediacao operacional validada, com a governanca remota agora formalizada por evidencias GitHub.
-- Objetivo: formalizar branch protection, ruleset ativo, ambiente de producao protegido e ownership cobrindo as superficies de governanca.
+- Objetivo: formalizar branch protection, ruleset ativo, ambiente de producao protegido e ownership cobrindo as superficies de governanca no modelo de mantenedor unico.
 - Exclusoes: features editoriais novas, alteracao funcional, release, tag e deploy.
 - Estado da release: `NOT_READY`; a autorizacao operacional nao substitui a revisao integral independente de release readiness.
+
+## Handoff - remediacao final de readiness
+
+- Estado: unidade de nivel de release, posterior a `docs/specs/031-release-1.0.0-governance-remote.md`, sem criar nova sprint numerada.
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/032-release-1.0.0-final-readiness-remediation.md`.
+- Base documental: governaÃ§Ã£o remota validada e os trÃªs findings finais ainda pendentes de remediaÃ§Ã£o.
+- Objetivo: formalizar o comando canonico de recovery, eliminar a divergencia de hydration e alinhar a documentacao de governanca ao estado remoto real.
+- Exclusoes: features editoriais novas, alteracao funcional, release, tag e deploy.
+- Estado da release: `NOT_READY`; a remediacao nao substitui a revisao integral independente de release readiness.

@@ -1703,8 +1703,12 @@ The next normative unit is the release-level governance remediation described
 by `docs/specs/031-release-1.0.0-governance-remote.md`. It closes the remote
 governance blockers by formalizing `main` branch protection, a
 `main-governance` ruleset, a protected `production` environment, and explicit
-CODEOWNERS coverage for governance surfaces.
+CODEOWNERS coverage for governance surfaces in the single-maintainer model.
 
 The evidence is recorded in
-`docs/releases/1.0.0/GOVERNANCE_REMOTE_READINESS.md`. The release remains
-`NOT_READY` until the later independent release-readiness review is completed.
+`docs/releases/1.0.0/GOVERNANCE_REMOTE_READINESS.md`. The later final readiness
+remediation is governed by
+`docs/specs/032-release-1.0.0-final-readiness-remediation.md`, which closes the
+recovery-command, hydration, and governance-documentation findings. The release
+remains `NOT_READY` until the later independent release-readiness review is
+completed.

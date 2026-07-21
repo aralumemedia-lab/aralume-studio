@@ -20,6 +20,7 @@
     "backend:build": "tsc -p server/tsconfig.json",
     "backend:check": "tsc -p server/tsconfig.json --noEmit",
     "backend:start": "node server/dist/index.js",
+    "recovery:validate": "node --import tsx scripts/sprint27-backup-restore.mjs",
     "postinstall": "node scripts/patch-brace-expansion.mjs",
     "secret:scan": "node scripts/secret-scan.mjs",
     "release:smoke": "node scripts/release-smoke.mjs",

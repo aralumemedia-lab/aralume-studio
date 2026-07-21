@@ -12,13 +12,13 @@
 
 ## Objective
 
-Close the remote governance blockers for release promotion by making branch protection, rulesets, protected promotion environment and owner coverage executable and reproducible from repository evidence, without authorizing release, tag or deploy.
+Close the remote governance blockers for release promotion by making branch protection, rulesets, protected promotion environment and owner coverage executable and reproducible from repository evidence, while keeping the policy executable for a single-maintainer repository and without authorizing release, tag or deploy.
 
 ## Scope
 
 Included:
 
-- main branch protection with required reviews, required checks, and conversation resolution.
+- main branch protection with PR obligation, required checks, and conversation resolution.
 - main branch ruleset that blocks deletion and non-fast-forward updates.
 - protected production environment for promotion authorization.
 - CODEOWNERS coverage for release-governance surfaces.
@@ -37,7 +37,7 @@ Excluded:
 
 ### GR31-01 - Main branch protection
 
-- Ensure main requires pull requests, one independent approval, stale review dismissal, code owner review, conversation resolution, and required checks.
+- Ensure main requires pull requests, zero required human approvals, stale review dismissal, no code owner review gate, conversation resolution, and required checks.
 - Block force pushes, deletions, and direct pushes to main.
 
 Acceptance:
@@ -70,6 +70,7 @@ Acceptance:
 ### GR31-04 - Ownership surface
 
 - Maintain CODEOWNERS coverage for workflows, release documentation, runbooks, security-sensitive backend surfaces, and recovery/deploy surfaces.
+- CODEOWNERS remains an attribution and responsibility surface, not a merge gate in the single-maintainer model.
 
 Acceptance:
 
@@ -103,8 +104,8 @@ This unit validates the repository artifacts and GitHub state with the available
 
 ## Definition of done
 
-- `main` is protected with the documented checks and review rules.
+- `main` is protected with the documented checks and PR rules.
 - The `main-governance` ruleset is active.
 - The production environment is protected and promotion is gated.
-- CODEOWNERS covers the governance surfaces with a verifiable owner.
+- CODEOWNERS covers the governance surfaces with a verifiable owner, without creating an impossible human-approval gate.
 - No release, tag or deploy is authorized by this unit.

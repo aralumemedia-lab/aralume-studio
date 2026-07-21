@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { mkdir, readdir, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -24,6 +25,18 @@ async function main() {
   await assertPortsAvailable([BACKEND, FRONTEND]);
   const storageRoot = path.join(os.tmpdir(), `aralume-sprint21-${Date.now()}`);
   await mkdir(storageRoot, { recursive: true });
+  const build = spawnSync("bun", ["run", "build"], {
+    env: {
+      ...process.env,
+      ARALUME_ENV: "test",
+      ARALUME_AUTH_TEST_BYPASS: "true",
+      ARALUME_ASSET_STORAGE_ROOT: storageRoot,
+    },
+    stdio: "inherit",
+  });
+  if ((build.status ?? 1) !== 0) {
+    throw new Error("frontend build failed before browser acceptance");
+  }
   const backend = spawnCommand(
     process.execPath,
     [path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"), "server/src/index.ts"],
@@ -38,6 +51,9 @@ async function main() {
     [
       path.join(process.cwd(), "node_modules", "vite", "bin", "vite.js"),
       "dev",
+      "--force",
+      "--mode",
+      "production",
       "--host",
       "127.0.0.1",
       "--port",
@@ -46,6 +62,7 @@ async function main() {
     { ARALUME_ENV: "test", ARALUME_AUTH_TEST_BYPASS: "true" },
   );
   const pageErrors = [];
+  const consoleErrors = [];
   const externalRequests = [];
   const mutationRequests = [];
 
@@ -63,6 +80,11 @@ async function main() {
       const context = await browser.newContext({ viewport: { width: 1366, height: 768 } });
       const page = await context.newPage();
       page.on("pageerror", (error) => pageErrors.push(error.message));
+      page.on("console", (message) => {
+        if (message.type() === "error") {
+          consoleErrors.push(message.text());
+        }
+      });
       page.on("request", (request) => {
         const url = new URL(request.url());
         if (
@@ -172,6 +194,10 @@ async function main() {
       );
       assert.equal(mutationRequests.length, 0, "cockpit E2E must remain read-only");
       assert.deepEqual(pageErrors, []);
+      const hydrationErrors = consoleErrors.filter((message) =>
+        /hydrat|server rendered HTML|didn't match the client properties/i.test(message),
+      );
+      assert.deepEqual(hydrationErrors, []);
       assert.deepEqual(externalRequests, []);
       console.log(
         JSON.stringify(
@@ -254,6 +280,10 @@ async function assertNoHorizontalOverflow(page) {
 }
 
 async function capture(page, filename) {
+  await page.evaluate(() => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement) activeElement.blur();
+  });
   await page.screenshot({ path: path.join(SCREENSHOTS, filename), fullPage: false });
 }
 

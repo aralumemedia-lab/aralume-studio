@@ -12,7 +12,7 @@
 
 - O servidor e o frontend foram executados localmente; não houve CI novo, publicação externa, upload ou deploy.
 - Parte dos dados observados são seeds do ambiente de desenvolvimento. Eles servem para inspeção de leitura, não para provar mutações ponta a ponta.
-- O browser exibiu aviso de hydration mismatch associado a `data-tsd-source`; não houve erro JavaScript ou falha de rede operacional atribuída a esse aviso, mas ele deve ser limpo antes do aceite final.
+- O browser exibiu aviso de hydration mismatch associado a `data-tsd-source` na revisão final anterior; a remediação atual removeu a causa material e adicionou regressão para impedir reintrodução. O histórico do bloqueio permanece no gate reprovado da PR #48.
 - Avisos do build Vite não bloquearam a compilação, porém devem ser revisados em uma rodada de hardening posterior.
 
 ## Segurança e escopo
