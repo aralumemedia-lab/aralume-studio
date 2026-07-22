@@ -1,6 +1,6 @@
 # Aralume Studio V1.0.0 â€” Release Notes
 
-Status: **NOT READY FOR PRODUCTION DEPLOYMENT**
+Status: **READY FOR FINAL REVIEW**
 
 This release unit records the formally accepted V1 functional baseline (`d2b53c9e7bfe15c8116c07375ca4b604fce03e97`) and Sprint 23 hardening evidence. No tag, release, or deployment was created by Sprint 23.
 
@@ -126,8 +126,8 @@ open after the operational remediation:
 
 The evidence for this unit is recorded in
 [`GOVERNANCE_REMOTE_READINESS.md`](./GOVERNANCE_REMOTE_READINESS.md). The
-release remains **NOT READY** until the later independent release-readiness
-review is executed.
+release remained **NOT READY** until the later independent release-readiness
+review was executed.
 
 ## Release 1.0.0 final readiness remediation
 
@@ -141,5 +141,14 @@ last three findings from the final readiness review:
 
 The evidence for this unit is recorded in
 [`FINAL_READINESS_REMEDIATION.md`](./FINAL_READINESS_REMEDIATION.md). The
-release remains **NOT READY** until that remediation is validated and the later
-independent release-readiness review is executed.
+release remained **NOT READY** until that remediation was validated and the
+later independent release-readiness review was executed.
+
+## Release 1.0.0 gate closure
+
+The final documentation reconciliation preserved the historical blocker
+records, formalized the promotion path, and closed the active gate to
+`READY_FOR_FINAL_REVIEW`.
+
+The later independent release-readiness review remains mandatory before any
+`READY_FOR_RELEASE` verdict.

@@ -1,6 +1,6 @@
 # Aralume Studio V1.0.0 — Rollback Readiness
 
-Status: NOT READY
+Status: READY_FOR_FINAL_REVIEW
 
 ## Minimum expected controls
 
@@ -12,5 +12,6 @@ Status: NOT READY
 
 ## Current state
 
-Rollback is documented by the operational remediation unit but remains outside
-production authorization until the release gate is reopened independently.
+Rollback is documented, executable on paper, and linked to the release gate
+closure evidence. A later independent review must still decide
+`READY_FOR_RELEASE` before any production deploy.

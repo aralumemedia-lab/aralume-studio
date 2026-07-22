@@ -491,3 +491,12 @@ A unidade normativa seguinte formaliza a governanca remota da release 1.0.0 sem 
 - Objetivo: recovery canonico, hidratacao sem mismatch e documentacao de governanca alinhada ao estado remoto real.
 - Evidencia: `docs/releases/1.0.0/FINAL_READINESS_REMEDIATION.md`.
 - Estado: `NOT_READY` ate a revisao integral independente posterior.
+
+### Release 1.0.0 gate closure
+
+- Spec `docs/specs/033-release-1.0.0-release-gate-closure.md`.
+- Objetivo: reconciliar os artefatos normativos, fechar os bloqueadores
+  historicos e formalizar a promocao do candidato imutavel.
+- Evidencia: `docs/releases/1.0.0/RELEASE_GATE_CLOSURE.md`.
+- Estado: `READY_FOR_FINAL_REVIEW` ate a revisao integral independente
+  posterior.

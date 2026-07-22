@@ -251,3 +251,14 @@ Sprint 21 foi revisada e mergeada pela PR #34. E19 esta concluido em `main`; nen
 - Objetivo: close the canonical recovery command, hydration mismatch, and governance-documentation findings.
 - Evidencia: `docs/releases/1.0.0/FINAL_READINESS_REMEDIATION.md`.
 - Estado da release: `NOT_READY`; this unit does not authorize release, tag or deploy.
+
+## Release 1.0.0 gate closure
+
+- Nature: unit of level release, not a new sprint number.
+- Spec governante: `docs/specs/033-release-1.0.0-release-gate-closure.md`.
+- Objetivo: reconcile the historical readiness artifacts, close the blocker
+  inventory, and formalize the promotion path for the candidate
+  `a6faad3bd7d4e188e57071ac3a58b3375f282e3b`.
+- Evidencia: `docs/releases/1.0.0/RELEASE_GATE_CLOSURE.md`.
+- Estado da release: `READY_FOR_FINAL_REVIEW`; this unit does not authorize
+  release, tag or deploy.

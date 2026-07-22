@@ -1,6 +1,6 @@
 # Aralume Studio V1.0.0 â€” Validation Checklist
 
-Status: **NOT READY**
+Status: **READY_FOR_FINAL_REVIEW**
 
 ## Build and code gates
 
@@ -42,6 +42,17 @@ is retained for chronology and is not the current gate result.
 ## V1 functional preservation
 
 The R14 evidence remains the governing functional acceptance: V1-01 through V1-18 are accepted at the functional SHA. This checklist does not supersede or overwrite that historical matrix.
+
+## Current gate closure status
+
+The current candidate is `a6faad3bd7d4e188e57071ac3a58b3375f282e3b`.
+The historical blockers have been reconciled into the closure evidence in
+`RELEASE_GATE_CLOSURE.md`. The active release gate is now
+`READY_FOR_FINAL_REVIEW`, not `READY_FOR_RELEASE`.
+
+The historical sections below are preserved for chronology and still describe
+the prior NOT_READY evaluation snapshots. They do not represent the current
+gate state.
 
 ## Current Sprint 25 technical status
 
