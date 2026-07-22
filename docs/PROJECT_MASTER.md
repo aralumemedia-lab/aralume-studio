@@ -1712,3 +1712,13 @@ remediation is governed by
 recovery-command, hydration, and governance-documentation findings. The release
 remains `NOT_READY` until the later independent release-readiness review is
 completed.
+
+### Release gate closure
+
+- Spec `docs/specs/033-release-1.0.0-release-gate-closure.md`.
+- Objective: reconcile the release-readiness artifacts, close the historical
+  blockers, and formalize the promotion path for the immutable candidate
+  `a6faad3bd7d4e188e57071ac3a58b3375f282e3b`.
+- Evidence: `docs/releases/1.0.0/RELEASE_GATE_CLOSURE.md`.
+- State: `READY_FOR_FINAL_REVIEW` until the later independent
+  release-readiness review emits `READY_FOR_RELEASE`.

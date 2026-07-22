@@ -1,6 +1,6 @@
 # Aralume Studio V1.0.0 — Observability Readiness
 
-Status: NOT READY
+Status: READY_FOR_FINAL_REVIEW
 
 ## Minimum expected controls
 
@@ -13,5 +13,6 @@ Status: NOT READY
 
 ## Current state
 
-The runtime has operational surfaces, but the release still requires the
-remediation unit to consolidate hosting, ownership, and evidence.
+The runtime operational surfaces, hosting evidence, and owner mapping are now
+reconciled. The release gate is closed for final review, but a later
+independent review must still decide `READY_FOR_RELEASE`.

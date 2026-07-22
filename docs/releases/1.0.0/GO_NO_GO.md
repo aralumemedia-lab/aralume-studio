@@ -6,42 +6,38 @@
 
 ## Candidate
 
-Preserved in the branch and PR record for the release-remediation unit.
+`a6faad3bd7d4e188e57071ac3a58b3375f282e3b`
 
 ## Environment target
 
-Not yet authorized for production.
+GitHub `production` environment, protected and executable for the
+single-maintainer promotion model.
 
 ## Decision
 
-NOT READY
+READY_FOR_FINAL_REVIEW
 
 ## Blockers
 
-- RLS-01
-- RLS-02
-- RLS-03
-- RLS-04
-- RLS-05
-- RLS-07
+None materially open for the candidate under review.
 
 ## Conditions
 
-- Hosted CI must exist and run the release gates.
-- Deployment and rollback evidence must be reproducible.
-- Config / secret inventory must be explicit and fail-closed.
-- Monitoring and owners must be versioned.
-- Browser / runner evidence must be consolidated.
+- A later independent review must validate this closure unit and emit
+  `READY_FOR_RELEASE` before any tag, release, or deploy.
+- The promotion execution must use the documented candidate, required checks,
+  and rollback path without rebuilding a different artifact after approval.
 
 ## Risks accepted
 
-- None for production release authorization.
+- Single-maintainer governance remains an organizational constraint, not a
+  blocker, because the GitHub controls are executable in this repository.
 
 ## Risks not accepted
 
-- Any remaining blocker above.
+- Any newly introduced blocker or stale document that reopens a closed item.
 
 ## Next action
 
-Implement the release-remediation unit, validate it, and then perform a new
-independent release-readiness review.
+Perform the later independent release-readiness review on the closure unit and
+emit `READY_FOR_RELEASE` only if the gate remains clean.

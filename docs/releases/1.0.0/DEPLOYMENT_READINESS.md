@@ -1,9 +1,9 @@
 # Aralume Studio V1.0.0 — Deployment Readiness
 
-Status: NOT READY
+Status: READY_FOR_FINAL_REVIEW
 
 This file records the repository-local deployment readiness state required by
-the release-remediation unit.
+the release gate closure unit.
 
 ## Minimum expected controls
 
@@ -17,5 +17,6 @@ the release-remediation unit.
 
 ## Current state
 
-The release requires the remediation unit in Spec 030 before the deployment
-gate can be considered again.
+The current candidate has an executable deployment path documented in the
+release gate closure unit. A later independent review must still decide
+`READY_FOR_RELEASE` before any deploy.

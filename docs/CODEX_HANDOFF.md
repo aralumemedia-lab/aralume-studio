@@ -302,3 +302,13 @@ PR #23 revisada e mergeada por merge commit. Sprint 14 foi concluida com veredit
 - Objetivo: formalizar o comando canonico de recovery, eliminar a divergencia de hydration e alinhar a documentacao de governanca ao estado remoto real.
 - Exclusoes: features editoriais novas, alteracao funcional, release, tag e deploy.
 - Estado da release: `NOT_READY`; a remediacao nao substitui a revisao integral independente de release readiness.
+
+## Handoff - fechamento do gate de release
+
+- Estado: unidade de nivel de release, posterior a `docs/specs/032-release-1.0.0-final-readiness-remediation.md`, sem criar nova sprint numerada.
+- Epico governante: E15 - Hardening V1.0.
+- Spec: `docs/specs/033-release-1.0.0-release-gate-closure.md`.
+- Base documental: evidencia funcional, operacional, de recovery, de browser e de governanca ja validada; a documentacao precisa distinguir historia de estado corrente.
+- Objetivo: reconciliar os artefatos normativos, fechar os bloqueadores historicos e formalizar a promocao do candidato imutavel.
+- Exclusoes: features editoriais novas, alteracao funcional, release, tag e deploy.
+- Estado da release: `READY_FOR_FINAL_REVIEW`; a revisao integral independente posterior continua obrigatoria antes de `READY_FOR_RELEASE`.

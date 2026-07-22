@@ -1,36 +1,38 @@
 # Aralume Studio V1.0.0 — Release Readiness Report
 
-Status: NOT READY
+Status: READY_FOR_FINAL_REVIEW
 
 ## Summary
 
-The product baseline is functionally accepted, but the release gate remains
-blocked by governance and operational readiness gaps. The remediation unit in
-Spec 030 exists to close those gaps without changing the product scope.
+The product baseline is functionally accepted. The historical readiness gaps
+have now been reconciled into a closed gate set, and the current unit exists to
+preserve the evidence while asking for one later independent
+`READY_FOR_RELEASE` review.
 
 ## Assessment source
 
-- PR #45 assessment: `NOT_READY`
-- Branch: `codex/release-1.0.0-readiness-assessment`
-- Historical head validated in the assessment PR and preserved externally in the
-  PR record
+- PR #45 assessment: `NOT_READY` (historical blocker record)
+- PR #48 / #49 / gate-closure chain preserved as historical evidence
+- Current gate closure candidate: `a6faad3bd7d4e188e57071ac3a58b3375f282e3b`
+- Historical heads remain preserved externally in the PR record
 
 ## Release-level blockers
 
-- RLS-01 deployable artifact and rollback evidence
-- RLS-02 hosted CI, CODEOWNERS, and branch controls
-- RLS-03 production configuration and secrets inventory
-- RLS-04 executable runbooks
-- RLS-05 monitoring / alerting ownership
-- RLS-07 consolidated browser / runner evidence
+All historical blockers are now verified closed in
+[`RELEASE_GATE_CLOSURE.md`](./RELEASE_GATE_CLOSURE.md).
 
 ## Residual risk
 
-- RLS-06 hydration triage
+- A later independent review must still emit `READY_FOR_RELEASE` before tag,
+  release, or deploy.
 
 ## Related evidence
 
+- `docs/specs/033-release-1.0.0-release-gate-closure.md`
+- `docs/specs/032-release-1.0.0-final-readiness-remediation.md`
+- `docs/specs/031-release-1.0.0-governance-remote.md`
 - `docs/specs/030-release-1.0.0-operational-readiness-remediation.md`
+- `docs/releases/1.0.0/RELEASE_GATE_CLOSURE.md`
 - `docs/releases/1.0.0/RELEASE_SCOPE.md`
 - `docs/releases/1.0.0/VALIDATION_MATRIX.md`
 - `docs/releases/1.0.0/OPEN_BLOCKERS.md`
